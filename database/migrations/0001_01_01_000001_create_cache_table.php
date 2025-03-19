@@ -27,6 +27,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
+    //buatkan master data pada inputan awal
     public function down(): void
     {
         Schema::dropIfExists('cache');
