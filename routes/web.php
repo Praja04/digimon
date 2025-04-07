@@ -1,9 +1,14 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Middleware\RoleMiddleware;
+use App\Http\Controllers\RMPMController;
+use App\Http\Controllers\SamplingController;
+
 
 // Login & Logout
+Route::get('/', [AuthController::class, 'loginForm']);
 Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -19,7 +24,7 @@ Route::middleware('auth')->get('/dashboard', function () {
 
 // Dashboard per-role
 Route::middleware(['auth', RoleMiddleware::class . ':analis'])->get('/analis', function () {
-    return view('roles.analis');
+    return view('analis.rmpm.pilih_jenis_gula');
 })->name('analis.dashboard');
 
 Route::middleware(['auth', RoleMiddleware::class . ':foreman'])->get('/foreman', function () {
@@ -33,3 +38,34 @@ Route::middleware(['auth', RoleMiddleware::class . ':supervisor'])->get('/superv
 Route::middleware(['auth', RoleMiddleware::class . ':dept_head'])->get('/dept_head', function () {
     return view('roles.dept_head');
 })->name('dept_head.dashboard');
+
+
+//RMPM
+Route::prefix('rmpm')->group(function () {
+    Route::get('/', [RMPMController::class, 'pilihJenisGula'])->name('rmpm.pilihJenisGula');
+    Route::get('/identitas/{jenis}', [RMPMController::class, 'formIdentitas'])->name('rmpm.formIdentitas');
+    Route::post('/identitas/simpan', [RMPMController::class, 'simpanIdentitas'])->name('rmpm.simpanIdentitas');
+    Route::get('/list/{jenis}', [RMPMController::class, 'listIdentitas'])->name('rmpm.listIdentitas');
+   
+    Route::get('/detail-identitas/{id}', [RMPMController::class, 'detailIdentitas'])->name('rmpm.detailIdentitas');
+});
+
+
+Route::prefix('sampling')->group(function () {
+    // Sampling Kondisi Mobil
+    Route::get('/kondisi-mobil/{id}', [SamplingController::class, 'showKondisiMobil'])->name('sampling.kondisi_mobil');
+    Route::post('/kondisi-mobil', [SamplingController::class, 'storeKondisiMobil'])->name('sampling.kondisi_mobil.store');
+    
+
+    // Sampling Dokumen
+    Route::get('/dokumen/{id}', [SamplingController::class, 'showDokumen'])->name('sampling.dokumen');
+    Route::post('/dokumen', [SamplingController::class, 'storeDokumen'])->name('sampling.dokumen.store');
+
+    // Sampling Fisik Kemasan
+    Route::get('/fisik-kemasan/{id}', [SamplingController::class, 'showFisikKemasan'])->name('sampling.fisik_kemasan');
+    Route::post('/fisik-kemasan', [SamplingController::class, 'storeFisikKemasan'])->name('sampling.fisik_kemasan.store');
+
+    // Sampling Fisik Raw (Hanya untuk Gula, Tidak untuk Garam)
+    Route::get('/fisik-raw/{id}', [SamplingController::class, 'showFisikRaw'])->name('sampling.fisik_raw');
+    Route::post('/fisik-raw', [SamplingController::class, 'storeFisikRaw'])->name('sampling.fisik_raw.store');
+});

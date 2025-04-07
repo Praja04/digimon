@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -25,6 +28,10 @@ class AuthController extends Controller
 
             // Ambil role user
             $user = Auth::user();
+            // Simpan informasi user ke dalam session
+            Session::put('username', $user->name);
+            Session::put('role', $user->role);
+            Cookie::queue('username', $user->name, 60);
             $redirectRoute = $this->redirectByRole($user->role);
 
             return response()->json(['redirect' => route($redirectRoute)]);
@@ -65,7 +72,7 @@ class AuthController extends Controller
     private function redirectByRole($role)
     {
         return match ($role) {
-            'analis' => 'analis.dashboard',
+            'analis' => 'rmpm.pilihJenisGula',
             'foreman' => 'foreman.dashboard',
             'supervisor' => 'supervisor.dashboard',
             'dept_head' => 'dept_head.dashboard',

@@ -1,0 +1,168 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+
+use Illuminate\Http\Request;
+use App\Models\RMPM\SamplingKondisiMobil;
+use App\Models\RMPM\SamplingDokumen;
+use App\Models\RMPM\SamplingFisikKemasan;
+use App\Models\RMPM\SamplingFisikRaw;
+use App\Models\RMPM\IdentitasRM;
+use Illuminate\Contracts\Session\Session;
+
+class SamplingController extends Controller
+{
+    // 🟢 FORM & STORE SAMPLING KONDISI MOBIL
+    public function showKondisiMobil($id)
+    {
+        $samplingExists = SamplingKondisiMobil::where('id_identitas', $id)->exists();
+
+        if ($samplingExists) {
+            return view('analis.sampling.kondisi_mobil', [
+                'identitas' => IdentitasRM::findOrFail($id),
+                'samplingExists' => true
+            ]);
+        }
+
+        $identitas = IdentitasRM::findOrFail($id);
+
+        return view('analis.sampling.kondisi_mobil', compact('identitas', 'samplingExists'));
+    }
+
+    public function storeKondisiMobil(Request $request)
+    {
+        $username = session('username');
+
+        $validated = $request->validate([
+            'id_identitas' => 'required|exists:identitas_rm_master,id',
+            'bersih' => 'required|in:yes,no',
+            'kering' => 'required|in:yes,no',
+            'benda_asing' => 'required|in:yes,no',
+            'cacat' => 'required|in:yes,no',
+            'segel' => 'required|in:yes,no',
+            'berbau' => 'required|in:yes,no',
+        ]);
+        // Cek apakah data dengan id_identitas sudah ada
+        $existing = SamplingKondisiMobil::where('id_identitas', $validated['id_identitas'])->first();
+
+        if ($existing) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Sampling Kondisi Mobil sudah pernah disimpan untuk ID ini.'
+            ], 409); // 409 = Conflict
+        }
+        // Tambahkan user ke data yang akan disimpan
+        $validated['created_by_user'] = $username;
+
+        SamplingKondisiMobil::create($validated);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Sampling Kondisi Mobil berhasil disimpan.'
+        ], 201);
+    }
+
+
+    // 🟢 FORM & STORE SAMPLING DOKUMEN
+    public function showDokumen($id)
+    {
+        if (SamplingDokumen::where('id_identitas', $id)->exists()) {
+            return redirect()->route('rmpm.detailIdentitas', $id)->with('error', 'Sampling Dokumen sudah diisi.');
+        }
+
+        return view('analis.sampling.dokumen', compact('id'));
+    }
+
+    public function storeDokumen(Request $request)
+    {
+        $username = session('username');
+        $validated = $request->validate([
+            'id_identitas' => 'required|exists:identitas_rm_master,id',
+            'coa' => 'required',
+            'surat_jalan_vendor' => 'required',
+            'packing_list' => 'required',
+            'identitas_kemasan' => 'required',
+            'logo_halal' => 'required',
+            'kesesuaian_matriks_bahan' => 'required',
+           
+        ]);
+        // Tambahkan user ke data yang akan disimpan
+        $validated['created_by_user'] = $username;
+         // Cek apakah data dengan id_identitas sudah ada
+         $existing = SamplingDokumen::where('id_identitas', $validated['id_identitas'])->first();
+
+         if ($existing) {
+             return response()->json([
+                 'status' => 'error',
+                 'message' => 'Sampling Dokumen sudah pernah disimpan untuk ID ini.'
+             ], 409); // 409 = Conflict
+         }
+        SamplingDokumen::create($validated);
+
+        return redirect()->route('rmpm.detailIdentitas', $request->id_identitas)->with('success', 'Sampling Dokumen berhasil disimpan.');
+    }
+
+    // 🟢 FORM & STORE SAMPLING FISIK KEMASAN
+    public function showFisikKemasan($id)
+    {
+        if (SamplingFisikKemasan::where('id_identitas', $id)->exists()) {
+            return redirect()->route('rmpm.detailIdentitas', $id)->with('error', 'Sampling Fisik Kemasan sudah diisi.');
+        }
+
+        return view('analis.sampling.fisik_kemasan', compact('id'));
+    }
+
+    public function storeFisikKemasan(Request $request)
+    {
+        $validated = $request->validate([
+            'id_identitas' => 'required|exists:identitas_rm,id',
+            'kotor' => 'required',
+            'rusak' => 'required',
+            'sesuai_std' => 'required',
+            'lain-lain' => 'nullable',
+            'berair' => 'required',
+            'basah' => 'required',
+            'campuran' => 'required',
+            'created_by_user' => 'required'
+        ]);
+
+        SamplingFisikKemasan::create($validated);
+
+        return redirect()->route('rmpm.detailIdentitas', $request->id_identitas)->with('success', 'Sampling Fisik Kemasan berhasil disimpan.');
+    }
+
+    // 🟢 FORM & STORE SAMPLING FISIK RAW (Hanya untuk Gula, Tidak untuk Garam)
+    public function showFisikRaw($id)
+    {
+        // Cek apakah jenis gula adalah garam (tidak bisa sampling fisik raw)
+        $identitas = \App\Models\RMPM\IdentitasRM::findOrFail($id);
+        if ($identitas->jenis_gula == 'garam') {
+            return redirect()->route('rmpm.detailIdentitas', $id)->with('error', 'Garam tidak memiliki Sampling Fisik Raw.');
+        }
+
+        if (SamplingFisikRaw::where('id_identitas', $id)->exists()) {
+            return redirect()->route('rmpm.detailIdentitas', $id)->with('error', 'Sampling Fisik Raw sudah diisi.');
+        }
+
+        return view('analis.sampling.fisik_raw', compact('id'));
+    }
+
+    public function storeFisikRaw(Request $request)
+    {
+        $validated = $request->validate([
+            'id_identitas' => 'required|exists:identitas_rm,id',
+            'leleh' => 'required',
+            'warna_std' => 'required',
+            'campuran' => 'required',
+            'aroma_std' => 'required',
+            'sesuai_std' => 'required',
+            'created_by_user' => 'required'
+        ]);
+
+        SamplingFisikRaw::create($validated);
+
+        return redirect()->route('rmpm.detailIdentitas', $request->id_identitas)->with('success', 'Sampling Fisik Raw berhasil disimpan.');
+    }
+}
