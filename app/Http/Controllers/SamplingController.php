@@ -86,19 +86,19 @@ class SamplingController extends Controller
             'identitas_kemasan' => 'required',
             'logo_halal' => 'required',
             'kesesuaian_matriks_bahan' => 'required',
-           
+
         ]);
         // Tambahkan user ke data yang akan disimpan
         $validated['created_by_user'] = $username;
-         // Cek apakah data dengan id_identitas sudah ada
-         $existing = SamplingDokumen::where('id_identitas', $validated['id_identitas'])->first();
+        // Cek apakah data dengan id_identitas sudah ada
+        $existing = SamplingDokumen::where('id_identitas', $validated['id_identitas'])->first();
 
-         if ($existing) {
-             return response()->json([
-                 'status' => 'error',
-                 'message' => 'Sampling Dokumen sudah pernah disimpan untuk ID ini.'
-             ], 409); // 409 = Conflict
-         }
+        if ($existing) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Sampling Dokumen sudah pernah disimpan untuk ID ini.'
+            ], 409); // 409 = Conflict
+        }
         SamplingDokumen::create($validated);
 
         return redirect()->route('rmpm.detailIdentitas', $request->id_identitas)->with('success', 'Sampling Dokumen berhasil disimpan.');
@@ -116,8 +116,9 @@ class SamplingController extends Controller
 
     public function storeFisikKemasan(Request $request)
     {
+        $username = session('username');
         $validated = $request->validate([
-            'id_identitas' => 'required|exists:identitas_rm,id',
+            'id_identitas' => 'required|exists:identitas_rm_master,id',
             'kotor' => 'required',
             'rusak' => 'required',
             'sesuai_std' => 'required',
@@ -125,8 +126,18 @@ class SamplingController extends Controller
             'berair' => 'required',
             'basah' => 'required',
             'campuran' => 'required',
-            'created_by_user' => 'required'
         ]);
+        // Tambahkan user ke data yang akan disimpan
+        $validated['created_by_user'] = $username;
+        // Cek apakah data dengan id_identitas sudah ada
+        $existing = SamplingFisikKemasan::where('id_identitas', $validated['id_identitas'])->first();
+
+        if ($existing) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Sampling Kemasan sudah pernah disimpan untuk ID ini.'
+            ], 409); // 409 = Conflict
+        }
 
         SamplingFisikKemasan::create($validated);
 
@@ -151,17 +162,30 @@ class SamplingController extends Controller
 
     public function storeFisikRaw(Request $request)
     {
+        $username = session('username');
         $validated = $request->validate([
-            'id_identitas' => 'required|exists:identitas_rm,id',
+            'id_identitas' => 'required|exists:identitas_rm_master,id',
             'leleh' => 'required',
             'warna_std' => 'required',
             'campuran' => 'required',
             'aroma_std' => 'required',
             'sesuai_std' => 'required',
-            'created_by_user' => 'required'
+            
         ]);
+         // Tambahkan user ke data yang akan disimpan
+         $validated['created_by_user'] = $username;
+         // Cek apakah data dengan id_identitas sudah ada
+         $existing = SamplingFisikRaw::where('id_identitas', $validated['id_identitas'])->first();
+ 
+         if ($existing) {
+             return response()->json([
+                 'status' => 'error',
+                 'message' => 'Sampling Raw sudah pernah disimpan untuk ID ini.'
+             ], 409); // 409 = Conflict
+         }
 
         SamplingFisikRaw::create($validated);
+        
 
         return redirect()->route('rmpm.detailIdentitas', $request->id_identitas)->with('success', 'Sampling Fisik Raw berhasil disimpan.');
     }

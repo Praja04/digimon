@@ -2,7 +2,7 @@
     <!-- LOGO -->
     <div class="navbar-brand-box">
         <!-- Light Logo-->
-        <a href="{{ url('menu') }}" class="logo logo-light">
+        <a href="{{ url('rmpm') }}" class="logo logo-light">
             <span class="logo-sm">
                 <img src="{{ asset('assets/images/icon-utility/kecap.png') }}" alt="" height="25">
             </span>
@@ -42,27 +42,27 @@
                 </li> -->
 
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="widgets.html">
+                    <a class="nav-link menu-link" href="{{url('rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">RMPM</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="widgets.html">
+                    <a class="nav-link menu-link" href="{{url('rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Gula Tebu</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="widgets.html">
+                    <a class="nav-link menu-link" href="{{url('rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Gula Kelapa</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="widgets.html">
+                    <a class="nav-link menu-link" href="{{url('rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Gula</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="widgets.html">
+                    <a class="nav-link menu-link" href="{{url('rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Garam</span>
                     </a>
                 </li>
@@ -89,27 +89,27 @@
 </li> -->
 
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="widgets.html">
+                    <a class="nav-link menu-link" href="{{ url('rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">RMPM</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="widgets.html">
+                    <a class="nav-link menu-link" href="{{ url('rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Gula Tebu</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="widgets.html">
+                    <a class="nav-link menu-link" href="{{ url('rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Gula Kelapa</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="widgets.html">
+                    <a class="nav-link menu-link" href="{{ url('rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Gula</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="widgets.html">
+                    <a class="nav-link menu-link" href="{{ url('rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Garam</span>
                     </a>
                 </li>

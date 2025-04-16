@@ -73,9 +73,11 @@
                                     <th>No</th>
                                     <th>No SPB</th>
                                     <th>Nama Bahan</th>
+                                    <th>Suplier</th>
                                     <th class="sort" data-sort="tanggal_kedatangan">Tanggal Kedatangan</th>
 
                                     <th>Asal Bahan</th>
+                                    <th>Jumlah Kedatangan</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -86,8 +88,10 @@
                                     <td>{{ $index + 1 }}</td>
                                     <td class="no_spb">{{ $identitas->no_spb }}</td>
                                     <td class="nama_bahan">{{ $identitas->nama_bahan }}</td>
+                                    <td class="suplier">{{ $identitas->suplier_manufactur }}</td>
                                     <td class="tanggal_kedatangan">{{ $identitas->tanggal_kedatangan }}</td>
                                     <td class="asal_bahan">{{ $identitas->asal_bahan }}</td>
+                                    <td class="jumlah_kedatangan">{{ $identitas->jumlah_kedatangan }}</td>
 
                                     <td>
                                         <a href="{{ route('rmpm.detailIdentitas', ['id' => $identitas->id]) }}" class="btn btn-sm btn-info">
@@ -200,8 +204,8 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="jumlah_kedatangan" class="form-label">Jumlah Kedatangan</label>
-                        <input type="number" class="form-control" id="jumlah_kedatangan" name="jumlah_kedatangan" required>
+                        <label for="jumlah_kedatangan" class="form-label">Jumlah Kedatangan (kg)</label>
+                        <input type="number" class="form-control" id="jumlah_kedatangan" name="jumlah_kedatangan" placeholder="input dalam kilogram" required>
                     </div>
 
                     <div class="mb-3">

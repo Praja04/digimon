@@ -46,7 +46,7 @@ Route::prefix('rmpm')->group(function () {
     Route::get('/identitas/{jenis}', [RMPMController::class, 'formIdentitas'])->name('rmpm.formIdentitas');
     Route::post('/identitas/simpan', [RMPMController::class, 'simpanIdentitas'])->name('rmpm.simpanIdentitas');
     Route::get('/list/{jenis}', [RMPMController::class, 'listIdentitas'])->name('rmpm.listIdentitas');
-   
+
     Route::get('/detail-identitas/{id}', [RMPMController::class, 'detailIdentitas'])->name('rmpm.detailIdentitas');
 });
 
@@ -55,7 +55,7 @@ Route::prefix('sampling')->group(function () {
     // Sampling Kondisi Mobil
     Route::get('/kondisi-mobil/{id}', [SamplingController::class, 'showKondisiMobil'])->name('sampling.kondisi_mobil');
     Route::post('/kondisi-mobil', [SamplingController::class, 'storeKondisiMobil'])->name('sampling.kondisi_mobil.store');
-    
+
 
     // Sampling Dokumen
     Route::get('/dokumen/{id}', [SamplingController::class, 'showDokumen'])->name('sampling.dokumen');
@@ -68,4 +68,23 @@ Route::prefix('sampling')->group(function () {
     // Sampling Fisik Raw (Hanya untuk Gula, Tidak untuk Garam)
     Route::get('/fisik-raw/{id}', [SamplingController::class, 'showFisikRaw'])->name('sampling.fisik_raw');
     Route::post('/fisik-raw', [SamplingController::class, 'storeFisikRaw'])->name('sampling.fisik_raw.store');
+});
+
+Route::prefix('analisa')->group(function () {
+    Route::post('/garam-gula', [RMPMController::class, 'storeGaramGula']);
+    Route::post('/long-term', [RMPMController::class, 'storeLongTerm']);
+    Route::post('/short-term', [RMPMController::class, 'storeShortTerm']);
+    
+    Route::get('/garam-gula/{id_identitas}', [RMPMController::class, 'showGaramGula']);
+    Route::get('/long-term/{id_identitas}', [RMPMController::class, 'showLongTerm']);
+    Route::get('/short-term/{id_identitas}', [RMPMController::class, 'showShortTerm']);
+
+
+    Route::put('/garam-gula/{id}', [RMPMController::class, 'updateGaramGula']);
+    Route::put('/long-term/{id}', [RMPMController::class, 'updateLongTerm']);
+    Route::put('/short-term/{id}', [RMPMController::class, 'updateShortTerm']);
+
+    Route::delete('/garam-gula/{id}', [RMPMController::class, 'destroyGaramGula']);
+    Route::delete('/long-term/{id}', [RMPMController::class, 'destroyLongTerm']);
+    Route::delete('/short-term/{id}', [RMPMController::class, 'destroyShortTerm']);
 });

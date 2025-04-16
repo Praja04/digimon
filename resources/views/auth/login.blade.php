@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="0">
@@ -174,9 +175,9 @@
 </style>
 
 <body>
-<div id="loading-animation" style="display: none; position: fixed; width: 100%; height: 100vh; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center;">
-    <div id="lottie-animation" style="width: 200px; height: 200px;"></div>
-</div>
+    <div id="loading-animation" style="display: none; position: fixed; width: 100%; height: 100vh; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center;">
+        <div id="lottie-animation" style="width: 200px; height: 200px;"></div>
+    </div>
     <div class="page">
         <div class="container">
             <div class="left">
@@ -206,15 +207,13 @@
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Sweet Alerts js -->
+<script src="{{ asset('material/assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
+
+<!-- Sweet alert init js-->
+<script src="{{ asset('material/assets/js/pages/sweetalerts.init.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js"></script>
-<script>
-     var animation = lottie.loadAnimation({
-        container: document.getElementById('lottie-animation'),
-        renderer: 'svg',
-        loop: true,
-        autoplay: false,
-        path: "{{ asset('animations/loading.json') }}" // Sesuaikan dengan path animasi
-    });
+<!-- <script>
     var current = null;
     document.querySelector('#email').addEventListener('focus', function(e) {
         if (current) current.pause();
@@ -273,16 +272,25 @@
             var email = $('#email').val();
             var password = $('#password').val();
 
-            $('#error-message').text(""); // Reset error message
-
             if (email === "" || password === "") {
-                $('#error-message').text("Email dan password harus diisi.");
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Email dan password harus diisi!',
+                    confirmButtonColor: '#d33'
+                });
                 return;
             }
 
-            // Tampilkan animasi loading sebelum request Ajax
-            $('#loading-animation').fadeIn();
-            animation.play();
+            // Show loading SweetAlert
+            Swal.fire({
+                title: 'Sedang masuk...',
+                text: 'Mohon tunggu sebentar',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
 
             $.ajax({
                 url: "{{ route('login.submit') }}",
@@ -293,17 +301,144 @@
                     password: password
                 },
                 success: function(response) {
-                    window.location.href = response.redirect;
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil masuk!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = response.redirect;
+                    });
                 },
                 error: function(xhr) {
-                    $('#loading-animation').fadeOut(); // Sembunyikan animasi jika error
-                    animation.stop();
-                    
+                    let message = 'Terjadi kesalahan. Coba lagi.';
                     if (xhr.status === 401) {
-                        $('#error-message').text("Email atau password salah.");
-                    } else {
-                        $('#error-message').text("Terjadi kesalahan. Coba lagi.");
+                        message = 'Email atau password salah.';
                     }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Login gagal',
+                        text: message,
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            });
+        });
+
+    });
+</script> -->
+
+<script>
+    $(document).ready(function() {
+        var current = null;
+
+        $('#email').focus(function() {
+            if (current) current.pause();
+            current = anime({
+                targets: 'path',
+                strokeDashoffset: {
+                    value: 0,
+                    duration: 700,
+                    easing: 'easeOutQuart'
+                },
+                strokeDasharray: {
+                    value: '240 1386',
+                    duration: 700,
+                    easing: 'easeOutQuart'
+                }
+            });
+        });
+
+        $('#password').focus(function() {
+            if (current) current.pause();
+            current = anime({
+                targets: 'path',
+                strokeDashoffset: {
+                    value: -336,
+                    duration: 700,
+                    easing: 'easeOutQuart'
+                },
+                strokeDasharray: {
+                    value: '240 1386',
+                    duration: 700,
+                    easing: 'easeOutQuart'
+                }
+            });
+        });
+
+        $('#submit').focus(function() {
+            if (current) current.pause();
+            current = anime({
+                targets: 'path',
+                strokeDashoffset: {
+                    value: -730,
+                    duration: 700,
+                    easing: 'easeOutQuart'
+                },
+                strokeDasharray: {
+                    value: '530 1386',
+                    duration: 700,
+                    easing: 'easeOutQuart'
+                }
+            });
+        });
+
+        $('#submit').click(function(e) {
+            e.preventDefault();
+
+            var email = $('#email').val();
+            var password = $('#password').val();
+
+            if (email === "" || password === "") {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Email dan password harus diisi!',
+                    confirmButtonColor: '#d33'
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: 'Sedang masuk...',
+                text: 'Mohon tunggu sebentar',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.ajax({
+                url: "{{ route('login.submit') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    email: email,
+                    password: password
+                },
+                success: function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil masuk!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = response.redirect;
+                    });
+                },
+                error: function(xhr) {
+                    let message = 'Terjadi kesalahan. Coba lagi.';
+                    if (xhr.status === 401) {
+                        message = 'Email atau password salah.';
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Login gagal',
+                        text: message,
+                        confirmButtonColor: '#d33'
+                    });
                 }
             });
         });
