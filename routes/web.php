@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\RMPMController;
 use App\Http\Controllers\SamplingController;
+use App\Http\Controllers\ProductionBatchController;
 
 
 // Login & Logout
@@ -74,7 +75,7 @@ Route::prefix('analisa')->group(function () {
     Route::post('/garam-gula', [RMPMController::class, 'storeGaramGula']);
     Route::post('/long-term', [RMPMController::class, 'storeLongTerm']);
     Route::post('/short-term', [RMPMController::class, 'storeShortTerm']);
-    
+
     Route::get('/garam-gula/{id_identitas}', [RMPMController::class, 'showGaramGula']);
     Route::get('/long-term/{id_identitas}', [RMPMController::class, 'showLongTerm']);
     Route::get('/short-term/{id_identitas}', [RMPMController::class, 'showShortTerm']);
@@ -88,3 +89,19 @@ Route::prefix('analisa')->group(function () {
     Route::delete('/long-term/{id}', [RMPMController::class, 'destroyLongTerm']);
     Route::delete('/short-term/{id}', [RMPMController::class, 'destroyShortTerm']);
 });
+
+
+//gga ggas
+
+
+Route::resource('productionbatch', ProductionBatchController::class);
+Route::post('productionbatch/{id}/storeGgaGgas', [ProductionBatchController::class, 'storeGgaGgas'])->name('productionbatch.storeGgaGgas');
+Route::post('ggaggas/{id}/storeAnalysis', [ProductionBatchController::class, 'storeAnalysis'])->name('ggaggas.storeAnalysis');
+
+// Jika Anda belum memiliki rute 'createGgaGgas', tambahkan seperti ini:
+Route::get('productionbatch/{id}/createGgaGgas', [ProductionBatchController::class, 'createGgaGgas'])->name('productionbatch.createGgaGgas');
+
+Route::get('ggaggas/select', [ProductionBatchController::class, 'selectGgaGgas'])->name('productionbatch.selectGgaGgas');
+
+// Rute untuk menampilkan detail data GGA/GGAS berdasarkan ID
+Route::get('ggaggas/{id}', [ProductionBatchController::class, 'show'])->name('ggaggas.show');

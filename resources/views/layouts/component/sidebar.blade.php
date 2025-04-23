@@ -47,23 +47,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{url('rmpm')}}">
-                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Gula Tebu</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{url('rmpm')}}">
-                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Gula Kelapa</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{url('rmpm')}}">
-                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Gula</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{url('rmpm')}}">
-                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Garam</span>
+                    <a class="nav-link menu-link" href="{{url('productionbatch')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Persiapan Masak</span>
                     </a>
                 </li>
                 @elseif(Session::get('role') === 'supervisor')

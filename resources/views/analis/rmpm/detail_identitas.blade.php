@@ -83,7 +83,7 @@
 
 
 <div class="row justify-content-center">
-    <div class="col-xxl-9">
+    <div class="col-xxl-12">
         <div class="card" id="demo">
             <div class="row">
                 <div class="col-lg-12">
@@ -257,6 +257,35 @@
                     </div>
                 </div>
 
+                <div class="col-lg-12">
+                    <div class="card-body p-4">
+                        <div class="table-responsive">
+                            <table class="table table-borderless text-center table-nowrap align-middle mb-0">
+                                <thead>
+                                    <!-- pakein if identitas.jenis_gula -->
+                                    @if ($identitas->jenis_gula == 'Gula Tebu' || $identitas->jenis_gula == 'Gula Kelapa' )
+                                    <!-- kode jika identitas.jenis_gula true -->
+                                    @else
+                                    <!-- kode jika identitas.jenis_gula false -->
+                                    @endif
+                                    <tr class="table-active">
+                                        <th scope="col" style="width: 50px;">#</th>
+                                        <th scope="col">Product Details</th>
+                                        <th scope="col">Rate</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col" class="text-end">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="list-detail">
+
+                                </tbody>
+                            </table><!--end table-->
+                        </div>
+                    </div>
+                    <!--end card-body-->
+                </div>
+
+
                 <!-- Menu Sampling & Analisa -->
                 <div class="col-lg-12">
                     <div class="card-body p-4 border-top border-top-dashed">
@@ -271,11 +300,11 @@
                         </div>
                     </div>
                 </div>
-
             </div> <!-- end row -->
         </div> <!-- end card -->
     </div> <!-- end col -->
 </div> <!-- end row -->
+
 
 
 <!-- modal -->
@@ -665,605 +694,596 @@
     </div>
 </div>
 
-<<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer">
-    </script>
-    <script>
-        document.getElementById('downloadBtn').addEventListener('click', function() {
-            var element = document.getElementById('demo');
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+</script>
+<script>
+    document.getElementById('downloadBtn').addEventListener('click', function() {
+        var element = document.getElementById('demo');
 
-            var opt = {
-                margin: 0.5,
-                filename: 'data-kedatangan.pdf',
-                image: {
-                    type: 'jpeg',
-                    quality: 0.98
-                },
-                html2canvas: {
-                    scale: 1
-                },
-                jsPDF: {
-                    unit: 'in',
-                    format: 'letter',
-                    orientation: 'portrait'
-                }
-            };
-
-            html2pdf().set(opt).from(element).save();
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const samplingButtons = document.querySelectorAll('.sampling-option');
-
-            samplingButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const samplingType = this.getAttribute('data-sampling');
-
-                    setTimeout(() => {
-                        let modalId = '';
-
-                        switch (samplingType) {
-                            case 'kondisi_mobil':
-                                modalId = 'modalKondisiMobil';
-                                break;
-                            case 'kondisi_dokumen':
-                                modalId = 'modalDokumen';
-                                break;
-                            case 'kondisi_kemasan':
-                                modalId = 'modalKemasan';
-                                break;
-                            case 'kondisi_raw':
-                                modalId = 'modalRaw';
-                                break;
-                        }
-
-                        if (modalId) {
-                            const modal = new bootstrap.Modal(document.getElementById(modalId));
-                            modal.show();
-                        }
-                    }, 500);
-                });
-            });
-        });
-
-        $('#form-kondisi-mobil').on('submit', function(e) {
-            e.preventDefault();
-
-            let form = $(this);
-            let submitBtn = $('#submitBtn');
-            submitBtn.prop('disabled', true).text('Menyimpan...');
-
-            $.ajax({
-                url: "{{ route('sampling.kondisi_mobil.store') }}",
-                method: "POST",
-                data: form.serialize(),
-                success: function(response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil',
-                        text: response.message,
-                        showConfirmButton: true
-                    }).then(() => {
-                        location.reload(); // reload setelah klik "OK"
-                    });
-                    form.trigger('reset');
-                },
-                error: function(xhr) {
-                    const handlers = {
-                        422: function() {
-                            let errors = xhr.responseJSON.errors;
-                            let list = '';
-                            $.each(errors, function(key, value) {
-                                list += `<li>${value[0]}</li>`;
-                            });
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Validasi Gagal',
-                                html: `<ul style="text-align:left;">${list}</ul>`
-                            });
-                        },
-                        409: function() {
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'Data Sudah Ada',
-                                text: xhr.responseJSON.message
-                            });
-                        },
-                        500: function() {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Server Error',
-                                text: 'Terjadi kesalahan pada server. Silakan coba lagi nanti.'
-                            });
-                        },
-                        default: function() {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Gagal',
-                                text: 'Terjadi kesalahan saat menyimpan data.'
-                            });
-                        }
-                    };
-
-                    (handlers[xhr.status] || handlers.default)(); // panggil handler sesuai status
-                },
-                complete: function() {
-                    submitBtn.prop('disabled', false).text('Simpan Sampling');
-                }
-            });
-        });
-
-
-        $('#form-dokumen').on('submit', function(e) {
-            e.preventDefault();
-
-            let form = $(this);
-            let submitBtn = $('#submitBtnDokumen');
-            submitBtn.prop('disabled', true).text('Menyimpan...');
-
-            $.ajax({
-                url: "{{ route('sampling.dokumen.store') }}",
-                method: "POST",
-                data: form.serialize(),
-                success: function(response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil',
-                        text: response.message,
-                        showConfirmButton: true
-                    }).then(() => {
-                        location.reload(); // reload setelah klik "OK"
-                    });
-                    form.trigger('reset');
-                },
-                error: function(xhr) {
-                    const handlers = {
-                        422: function() {
-                            let errors = xhr.responseJSON.errors;
-                            let list = '';
-                            $.each(errors, function(key, value) {
-                                list += `<li>${value[0]}</li>`;
-                            });
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Validasi Gagal',
-                                html: `<ul style="text-align:left;">${list}</ul>`
-                            });
-                        },
-                        409: function() {
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'Data Sudah Ada',
-                                text: xhr.responseJSON.message
-                            });
-                        },
-                        500: function() {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Server Error',
-                                text: 'Terjadi kesalahan pada server. Silakan coba lagi nanti.'
-                            });
-                        },
-                        default: function() {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Gagal',
-                                text: 'Terjadi kesalahan saat menyimpan data.'
-                            });
-                        }
-                    };
-
-                    (handlers[xhr.status] || handlers.default)(); // panggil handler sesuai status
-                },
-                complete: function() {
-                    submitBtn.prop('disabled', false).text('Simpan Sampling');
-                }
-            });
-        });
-
-        // $('#form-kemasan').on('submit', function(e) {
-        //     e.preventDefault();
-
-        //     let form = $(this);
-        //     let submitBtn = $('#submitBtnKemasan');
-        //     submitBtn.prop('disabled', true).text('Menyimpan...');
-
-        //     $.ajax({
-        //         url: "{{ route('sampling.fisik_kemasan.store') }}",
-        //         method: "POST",
-        //         data: form.serialize(),
-        //         success: function(response) {
-        //             Swal.fire({
-        //                 icon: 'success',
-        //                 title: 'Berhasil',
-        //                 text: response.message,
-        //                 timer: 2000,
-        //                 showConfirmButton: false
-        //             });
-        //             form.trigger('reset');
-        //         },
-        //         error: function(xhr) {
-        //             const handlers = {
-        //                 422: function() {
-        //                     let errors = xhr.responseJSON.errors;
-        //                     let list = '';
-        //                     $.each(errors, function(key, value) {
-        //                         list += `<li>${value[0]}</li>`;
-        //                     });
-        //                     Swal.fire({
-        //                         icon: 'error',
-        //                         title: 'Validasi Gagal',
-        //                         html: `<ul style="text-align:left;">${list}</ul>`
-        //                     });
-        //                 },
-        //                 409: function() {
-        //                     Swal.fire({
-        //                         icon: 'warning',
-        //                         title: 'Data Sudah Ada',
-        //                         text: xhr.responseJSON.message
-        //                     });
-        //                 },
-        //                 500: function() {
-        //                     Swal.fire({
-        //                         icon: 'error',
-        //                         title: 'Server Error',
-        //                         text: 'Terjadi kesalahan pada server. Silakan coba lagi nanti.'
-        //                     });
-        //                 },
-        //                 default: function() {
-        //                     Swal.fire({
-        //                         icon: 'error',
-        //                         title: 'Gagal',
-        //                         text: 'Terjadi kesalahan saat menyimpan data.'
-        //                     });
-        //                 }
-        //             };
-
-        //             (handlers[xhr.status] || handlers.default)(); // panggil handler sesuai status
-        //         },
-        //         complete: function() {
-        //             submitBtn.prop('disabled', false).text('Simpan Sampling');
-        //         }
-        //     });
-        // });
-
-        $('#form-kemasan').on('submit', function(e) {
-            e.preventDefault();
-
-            let form = $(this);
-            let submitBtn = $('#submitBtnKemasan');
-            submitBtn.prop('disabled', true).text('Menyimpan...');
-
-            // Ambil data dari form
-            let formData = form.serializeArray();
-            let jenisGula = "{{ $identitas->jenis_gula }}";
-
-            // Konversi ke objek
-            let data = {};
-            formData.forEach(item => {
-                data[item.name] = item.value;
-            });
-
-            // Tambahkan field yang tidak dikirim di form (isi default '-')
-            if (jenisGula === 'Garam') {
-                data['lain-lain'] = '-';
-                if (!data['rusak']) data['rusak'] = 'no';
-                if (!data['sesuai_std']) data['sesuai_std'] = 'no';
-            } else {
-                data['berair'] = '-';
-                data['basah'] = '-';
-                data['campuran'] = '-';
-                if (!data['lain-lain'] || data['lain-lain'].trim() === '') {
-                    data['lain-lain'] = '-';
-                }
+        var opt = {
+            margin: 0.5,
+            filename: 'data-kedatangan.pdf',
+            image: {
+                type: 'jpeg',
+                quality: 0.98
+            },
+            html2canvas: {
+                scale: 1
+            },
+            jsPDF: {
+                unit: 'in',
+                format: 'letter',
+                orientation: 'portrait'
             }
+        };
 
-            // Kirim lewat AJAX
-            $.ajax({
-                url: "{{ route('sampling.fisik_kemasan.store') }}",
-                method: "POST",
-                data: {
-                    ...data,
-                    _token: $('input[name="_token"]').val()
-                },
-                success: function(response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil',
-                        text: response.message,
-                        showConfirmButton: true
-                    }).then(() => {
-                        location.reload(); // reload setelah klik "OK"
-                    });
-                    form.trigger('reset');
-                },
-                error: function(xhr) {
-                    const handlers = {
-                        422: function() {
-                            let errors = xhr.responseJSON.errors;
-                            let list = '';
-                            $.each(errors, function(key, value) {
-                                list += `<li>${value[0]}</li>`;
-                            });
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Validasi Gagal',
-                                html: `<ul style="text-align:left;">${list}</ul>`
-                            });
-                        },
-                        409: function() {
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'Data Sudah Ada',
-                                text: xhr.responseJSON.message
-                            });
-                        },
-                        500: function() {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Server Error',
-                                text: 'Terjadi kesalahan pada server. Silakan coba lagi nanti.'
-                            });
-                        },
-                        default: function() {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Gagal',
-                                text: 'Terjadi kesalahan saat menyimpan data.'
-                            });
-                        }
-                    };
+        html2pdf().set(opt).from(element).save();
+    });
 
-                    (handlers[xhr.status] || handlers.default)();
-                },
-                complete: function() {
-                    submitBtn.prop('disabled', false).text('Simpan Sampling');
-                }
+    document.addEventListener('DOMContentLoaded', function() {
+        const samplingButtons = document.querySelectorAll('.sampling-option');
+
+        samplingButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const samplingType = this.getAttribute('data-sampling');
+
+                setTimeout(() => {
+                    let modalId = '';
+
+                    switch (samplingType) {
+                        case 'kondisi_mobil':
+                            modalId = 'modalKondisiMobil';
+                            break;
+                        case 'kondisi_dokumen':
+                            modalId = 'modalDokumen';
+                            break;
+                        case 'kondisi_kemasan':
+                            modalId = 'modalKemasan';
+                            break;
+                        case 'kondisi_raw':
+                            modalId = 'modalRaw';
+                            break;
+                    }
+
+                    if (modalId) {
+                        const modal = new bootstrap.Modal(document.getElementById(modalId));
+                        modal.show();
+                    }
+                }, 500);
             });
         });
+    });
+
+    $('#form-kondisi-mobil').on('submit', function(e) {
+        e.preventDefault();
+
+        let form = $(this);
+        let submitBtn = $('#submitBtn');
+        submitBtn.prop('disabled', true).text('Menyimpan...');
+
+        $.ajax({
+            url: "{{ route('sampling.kondisi_mobil.store') }}",
+            method: "POST",
+            data: form.serialize(),
+            success: function(response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: response.message,
+                    showConfirmButton: true
+                }).then(() => {
+                    location.reload(); // reload setelah klik "OK"
+                });
+                form.trigger('reset');
+            },
+            error: function(xhr) {
+                const handlers = {
+                    422: function() {
+                        let errors = xhr.responseJSON.errors;
+                        let list = '';
+                        $.each(errors, function(key, value) {
+                            list += `<li>${value[0]}</li>`;
+                        });
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Validasi Gagal',
+                            html: `<ul style="text-align:left;">${list}</ul>`
+                        });
+                    },
+                    409: function() {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Data Sudah Ada',
+                            text: xhr.responseJSON.message
+                        });
+                    },
+                    500: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Server Error',
+                            text: 'Terjadi kesalahan pada server. Silakan coba lagi nanti.'
+                        });
+                    },
+                    default: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: 'Terjadi kesalahan saat menyimpan data.'
+                        });
+                    }
+                };
+
+                (handlers[xhr.status] || handlers.default)(); // panggil handler sesuai status
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).text('Simpan Sampling');
+            }
+        });
+    });
 
 
-        $('#form-raw').on('submit', function(e) {
-            e.preventDefault();
+    $('#form-dokumen').on('submit', function(e) {
+        e.preventDefault();
 
-            let form = $(this);
-            let submitBtn = $('#submitBtnRaw');
-            submitBtn.prop('disabled', true).text('Menyimpan...');
+        let form = $(this);
+        let submitBtn = $('#submitBtnDokumen');
+        submitBtn.prop('disabled', true).text('Menyimpan...');
 
-            $.ajax({
-                url: "{{ route('sampling.fisik_raw.store') }}",
-                method: "POST",
-                data: form.serialize(),
-                success: function(response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil',
-                        text: response.message,
-                        showConfirmButton: true
-                    }).then(() => {
-                        location.reload(); // reload setelah klik "OK"
-                    });
-                    form.trigger('reset');
-                },
-                error: function(xhr) {
-                    const handlers = {
-                        422: function() {
-                            let errors = xhr.responseJSON.errors;
-                            let list = '';
-                            $.each(errors, function(key, value) {
-                                list += `<li>${value[0]}</li>`;
-                            });
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Validasi Gagal',
-                                html: `<ul style="text-align:left;">${list}</ul>`
-                            });
-                        },
-                        409: function() {
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'Data Sudah Ada',
-                                text: xhr.responseJSON.message
-                            });
-                        },
-                        500: function() {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Server Error',
-                                text: 'Terjadi kesalahan pada server. Silakan coba lagi nanti.'
-                            });
-                        },
-                        default: function() {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Gagal',
-                                text: 'Terjadi kesalahan saat menyimpan data.'
-                            });
-                        }
-                    };
+        $.ajax({
+            url: "{{ route('sampling.dokumen.store') }}",
+            method: "POST",
+            data: form.serialize(),
+            success: function(response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: response.message,
+                    showConfirmButton: true
+                }).then(() => {
+                    location.reload(); // reload setelah klik "OK"
+                });
+                form.trigger('reset');
+            },
+            error: function(xhr) {
+                const handlers = {
+                    422: function() {
+                        let errors = xhr.responseJSON.errors;
+                        let list = '';
+                        $.each(errors, function(key, value) {
+                            list += `<li>${value[0]}</li>`;
+                        });
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Validasi Gagal',
+                            html: `<ul style="text-align:left;">${list}</ul>`
+                        });
+                    },
+                    409: function() {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Data Sudah Ada',
+                            text: xhr.responseJSON.message
+                        });
+                    },
+                    500: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Server Error',
+                            text: 'Terjadi kesalahan pada server. Silakan coba lagi nanti.'
+                        });
+                    },
+                    default: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: 'Terjadi kesalahan saat menyimpan data.'
+                        });
+                    }
+                };
 
-                    (handlers[xhr.status] || handlers.default)(); // panggil handler sesuai status
-                },
-                complete: function() {
-                    submitBtn.prop('disabled', false).text('Simpan Sampling');
-                }
-            });
+                (handlers[xhr.status] || handlers.default)(); // panggil handler sesuai status
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).text('Simpan Sampling');
+            }
+        });
+    });
+
+    // $('#form-kemasan').on('submit', function(e) {
+    //     e.preventDefault();
+
+    //     let form = $(this);
+    //     let submitBtn = $('#submitBtnKemasan');
+    //     submitBtn.prop('disabled', true).text('Menyimpan...');
+
+    //     $.ajax({
+    //         url: "{{ route('sampling.fisik_kemasan.store') }}",
+    //         method: "POST",
+    //         data: form.serialize(),
+    //         success: function(response) {
+    //             Swal.fire({
+    //                 icon: 'success',
+    //                 title: 'Berhasil',
+    //                 text: response.message,
+    //                 timer: 2000,
+    //                 showConfirmButton: false
+    //             });
+    //             form.trigger('reset');
+    //         },
+    //         error: function(xhr) {
+    //             const handlers = {
+    //                 422: function() {
+    //                     let errors = xhr.responseJSON.errors;
+    //                     let list = '';
+    //                     $.each(errors, function(key, value) {
+    //                         list += `<li>${value[0]}</li>`;
+    //                     });
+    //                     Swal.fire({
+    //                         icon: 'error',
+    //                         title: 'Validasi Gagal',
+    //                         html: `<ul style="text-align:left;">${list}</ul>`
+    //                     });
+    //                 },
+    //                 409: function() {
+    //                     Swal.fire({
+    //                         icon: 'warning',
+    //                         title: 'Data Sudah Ada',
+    //                         text: xhr.responseJSON.message
+    //                     });
+    //                 },
+    //                 500: function() {
+    //                     Swal.fire({
+    //                         icon: 'error',
+    //                         title: 'Server Error',
+    //                         text: 'Terjadi kesalahan pada server. Silakan coba lagi nanti.'
+    //                     });
+    //                 },
+    //                 default: function() {
+    //                     Swal.fire({
+    //                         icon: 'error',
+    //                         title: 'Gagal',
+    //                         text: 'Terjadi kesalahan saat menyimpan data.'
+    //                     });
+    //                 }
+    //             };
+
+    //             (handlers[xhr.status] || handlers.default)(); // panggil handler sesuai status
+    //         },
+    //         complete: function() {
+    //             submitBtn.prop('disabled', false).text('Simpan Sampling');
+    //         }
+    //     });
+    // });
+
+    $('#form-kemasan').on('submit', function(e) {
+        e.preventDefault();
+
+        let form = $(this);
+        let submitBtn = $('#submitBtnKemasan');
+        submitBtn.prop('disabled', true).text('Menyimpan...');
+
+        // Ambil data dari form
+        let formData = form.serializeArray();
+        let jenisGula = "{{ $identitas->jenis_gula }}";
+
+        // Konversi ke objek
+        let data = {};
+        formData.forEach(item => {
+            data[item.name] = item.value;
         });
 
+        // Tambahkan field yang tidak dikirim di form (isi default '-')
+        if (jenisGula === 'Garam') {
+            data['lain-lain'] = '-';
+            if (!data['rusak']) data['rusak'] = 'no';
+            if (!data['sesuai_std']) data['sesuai_std'] = 'no';
+        } else {
+            data['berair'] = '-';
+            data['basah'] = '-';
+            data['campuran'] = '-';
+            if (!data['lain-lain'] || data['lain-lain'].trim() === '') {
+                data['lain-lain'] = '-';
+            }
+        }
 
-        const formContent = $('#form-analisa-content');
-        const jenisGula = $('#jenis_gula').val();
-        let currentStep = 0;
-        let steps = [];
+        // Kirim lewat AJAX
+        $.ajax({
+            url: "{{ route('sampling.fisik_kemasan.store') }}",
+            method: "POST",
+            data: {
+                ...data,
+                _token: $('input[name="_token"]').val()
+            },
+            success: function(response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: response.message,
+                    showConfirmButton: true
+                }).then(() => {
+                    location.reload(); // reload setelah klik "OK"
+                });
+                form.trigger('reset');
+            },
+            error: function(xhr) {
+                const handlers = {
+                    422: function() {
+                        let errors = xhr.responseJSON.errors;
+                        let list = '';
+                        $.each(errors, function(key, value) {
+                            list += `<li>${value[0]}</li>`;
+                        });
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Validasi Gagal',
+                            html: `<ul style="text-align:left;">${list}</ul>`
+                        });
+                    },
+                    409: function() {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Data Sudah Ada',
+                            text: xhr.responseJSON.message
+                        });
+                    },
+                    500: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Server Error',
+                            text: 'Terjadi kesalahan pada server. Silakan coba lagi nanti.'
+                        });
+                    },
+                    default: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: 'Terjadi kesalahan saat menyimpan data.'
+                        });
+                    }
+                };
 
-        // const renderGroupInput = (label, name) => {
-        //     let html = `<div class="form-step" data-step="${name}" style="display:none;">
-        //             <h6 class="mb-3">${label}</h6>`;
-        //     for (let i = 1; i <= 30; i++) {
-        //         html += `<input type="text" class="form-control mb-2" name="${name}[]" placeholder="${label} ke-${i}">`;
-        //     }
-        //     html += `</div>`;
-        //     return html;
-        // };
-        const renderGroupInput = (label, name) => {
-            let html = `<div class="form-step" data-step="${name}" style="display:none;">
+                (handlers[xhr.status] || handlers.default)();
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).text('Simpan Sampling');
+            }
+        });
+    });
+
+
+    $('#form-raw').on('submit', function(e) {
+        e.preventDefault();
+
+        let form = $(this);
+        let submitBtn = $('#submitBtnRaw');
+        submitBtn.prop('disabled', true).text('Menyimpan...');
+
+        $.ajax({
+            url: "{{ route('sampling.fisik_raw.store') }}",
+            method: "POST",
+            data: form.serialize(),
+            success: function(response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: response.message,
+                    showConfirmButton: true
+                }).then(() => {
+                    location.reload(); // reload setelah klik "OK"
+                });
+                form.trigger('reset');
+            },
+            error: function(xhr) {
+                const handlers = {
+                    422: function() {
+                        let errors = xhr.responseJSON.errors;
+                        let list = '';
+                        $.each(errors, function(key, value) {
+                            list += `<li>${value[0]}</li>`;
+                        });
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Validasi Gagal',
+                            html: `<ul style="text-align:left;">${list}</ul>`
+                        });
+                    },
+                    409: function() {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Data Sudah Ada',
+                            text: xhr.responseJSON.message
+                        });
+                    },
+                    500: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Server Error',
+                            text: 'Terjadi kesalahan pada server. Silakan coba lagi nanti.'
+                        });
+                    },
+                    default: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: 'Terjadi kesalahan saat menyimpan data.'
+                        });
+                    }
+                };
+
+                (handlers[xhr.status] || handlers.default)(); // panggil handler sesuai status
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).text('Simpan Sampling');
+            }
+        });
+    });
+
+
+    const formContent = $('#form-analisa-content');
+    const jenisGula = $('#jenis_gula').val();
+    let currentStep = 0;
+    let steps = [];
+
+    const renderGroupInput = (label, name) => {
+        let html = `<div class="form-step" data-step="${name}" style="display:none;">
         <h6 class="mb-3">${label}</h6>`;
 
-            for (let i = 1; i <= 30; i++) {
-                if (name === 'disposisi') {
-                    html += `
+        for (let i = 1; i <= 30; i++) {
+            if (name === 'disposisi') {
+                html += `
                     <label for="">${i}</label>
                 <select class="form-control mb-2" name="${name}[]">
                     <option value="">Pilih Disposisi ke-${i}</option>
                     <option value="Release">Release</option>
                     <option value="Reject">Reject</option>
                 </select>`;
-                } else {
-                    html += `
+            } else {
+                html += `
                      <label for="">${i}</label>
                     <input type="text" class="form-control mb-2" name="${name}[]" placeholder="${label} ke-${i}">`;
-                }
             }
-
-            html += `</div>`;
-            return html;
-        };
-
-
-        function showStep(index) {
-            $('.form-step').hide();
-            $('.form-step').eq(index).show();
-            $('#prevBtn').toggle(index > 0);
-            $('#nextBtn').text(index === steps.length - 1 ? 'Simpan Analisa' : 'Berikutnya');
         }
 
-        $('#modalAnalisa').on('show.bs.modal', function() {
-            formContent.html('');
-            steps = [];
+        html += `</div>`;
+        return html;
+    };
 
-            if (jenisGula === 'Gula Kelapa' || jenisGula === 'Gula Tebu') {
-                // Tampilkan pilihan analisa (Short-Term / Long-Term)
-                $('#analisa-type-select').show();
-            } else if (jenisGula === 'Gula' || jenisGula === 'Garam') {
-                const fields = ['fisik', '%ka', 'kotoran', 'organo', 'warna', 'aroma', '%nacl', 'gross_weight', 'disposisi'];
+
+    function showStep(index) {
+        $('.form-step').hide();
+        $('.form-step').eq(index).show();
+        $('#prevBtn').toggle(index > 0);
+        $('#nextBtn').text(index === steps.length - 1 ? 'Simpan Analisa' : 'Berikutnya');
+    }
+
+    $('#modalAnalisa').on('show.bs.modal', function() {
+        formContent.html('');
+        steps = [];
+
+        if (jenisGula === 'Gula Kelapa' || jenisGula === 'Gula Tebu') {
+            // Tampilkan pilihan analisa (Short-Term / Long-Term)
+            $('#analisa-type-select').show();
+        } else if (jenisGula === 'Gula' || jenisGula === 'Garam') {
+            const fields = ['fisik', '%ka', 'kotoran', 'organo', 'warna', 'aroma', '%nacl', 'gross_weight', 'disposisi'];
+            steps = fields;
+
+            fields.forEach(field => {
+                formContent.append(renderGroupInput(field.toUpperCase(), field));
+            });
+            $('#analisa-type-select').hide(); // Sembunyikan pilihan analisa jika jenis gula bukan Gula Kelapa atau Gula Tebu
+        } else {
+            formContent.html(`<div class="alert alert-warning">Jenis gula tidak dikenali: ${jenisGula}</div>`);
+            $('#prevBtn').hide();
+            $('#nextBtn').hide();
+            return;
+        }
+
+        currentStep = 0;
+        showStep(currentStep);
+        $('#prevBtn').show();
+        $('#nextBtn').show();
+    });
+
+    $('#nextBtn').click(function() {
+        if ($('#analisa-type-select').is(':visible')) {
+            const analisaType = $('input[name="analisa_type"]:checked').val();
+            if (!analisaType) {
+                alert('Silakan pilih jenis analisa (Short-Term / Long-Term)');
+                return;
+            }
+
+            // Sembunyikan pilihan analisa dan tampilkan form sesuai pilihan
+            $('#analisa-type-select').hide();
+
+            if (analisaType === 'short-term') {
+                // Untuk short-term, tampilkan semua form
+                url = '/analisa/short-term';
+                const fields = ['brix', 'ph', 'kotoran', 'ka', 'organo', 'warna', 'aroma', 'disposisi'];
                 steps = fields;
-
                 fields.forEach(field => {
                     formContent.append(renderGroupInput(field.toUpperCase(), field));
                 });
-                $('#analisa-type-select').hide(); // Sembunyikan pilihan analisa jika jenis gula bukan Gula Kelapa atau Gula Tebu
-            } else {
-                formContent.html(`<div class="alert alert-warning">Jenis gula tidak dikenali: ${jenisGula}</div>`);
-                $('#prevBtn').hide();
-                $('#nextBtn').hide();
-                return;
+            } else if (analisaType === 'long-term') {
+                // Untuk long-term, hanya tampilkan Uji Kristal dan Disposisi
+                url = '/analisa/long-term';
+                const fields = ['uji_kristal', 'disposisi'];
+                steps = fields;
+                fields.forEach(field => {
+                    formContent.append(renderGroupInput(field.toUpperCase(), field));
+                });
             }
-
             currentStep = 0;
             showStep(currentStep);
-            $('#prevBtn').show();
-            $('#nextBtn').show();
-        });
-
-        $('#nextBtn').click(function() {
-            if ($('#analisa-type-select').is(':visible')) {
-                const analisaType = $('input[name="analisa_type"]:checked').val();
-                if (!analisaType) {
-                    alert('Silakan pilih jenis analisa (Short-Term / Long-Term)');
-                    return;
-                }
-
-                // Sembunyikan pilihan analisa dan tampilkan form sesuai pilihan
-                $('#analisa-type-select').hide();
-
-                if (analisaType === 'short-term') {
-                    // Untuk short-term, tampilkan semua form
-                    url = '/analisa/short-term';
-                    const fields = ['brix', 'ph', 'kotoran', 'ka', 'organo', 'warna', 'aroma', 'disposisi'];
-                    steps = fields;
-                    fields.forEach(field => {
-                        formContent.append(renderGroupInput(field.toUpperCase(), field));
-                    });
-                } else if (analisaType === 'long-term') {
-                    // Untuk long-term, hanya tampilkan Uji Kristal dan Disposisi
-                    url = '/analisa/long-term';
-                    const fields = ['uji_kristal', 'disposisi'];
-                    steps = fields;
-                    fields.forEach(field => {
-                        formContent.append(renderGroupInput(field.toUpperCase(), field));
-                    });
-                }
-                currentStep = 0;
+        } else {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
                 showStep(currentStep);
             } else {
-                if (currentStep < steps.length - 1) {
-                    currentStep++;
-                    showStep(currentStep);
-                } else {
-                    $('#formAnalisa').submit(); // terakhir submit
-                }
+                $('#formAnalisa').submit(); // terakhir submit
             }
-        });
+        }
+    });
 
-        $('#prevBtn').click(function() {
-            if (currentStep > 0) {
-                currentStep--;
-                showStep(currentStep);
-            }
-        });
+    $('#prevBtn').click(function() {
+        if (currentStep > 0) {
+            currentStep--;
+            showStep(currentStep);
+        }
+    });
 
-        $('#formAnalisa').off('submit').on('submit', function(e) {
-            e.preventDefault();
+    $('#formAnalisa').off('submit').on('submit', function(e) {
+        e.preventDefault();
 
-            const jenis = $('#jenis_gula').val();
-            let url = '';
+        const jenis = $('#jenis_gula').val();
+        let url = '';
 
-            // Cek apakah jenis gula adalah Gula Kelapa atau Gula Tebu
-            if (jenis === 'Gula Kelapa' || jenis === 'Gula Tebu') {
-                // Cek jenis analisa yang dipilih
-                const analisaType = $('input[name="analisa_type"]:checked').val(); // Dapatkan pilihan jenis analisa
+        // Cek apakah jenis gula adalah Gula Kelapa atau Gula Tebu
+        if (jenis === 'Gula Kelapa' || jenis === 'Gula Tebu') {
+            // Cek jenis analisa yang dipilih
+            const analisaType = $('input[name="analisa_type"]:checked').val(); // Dapatkan pilihan jenis analisa
 
-                if (!analisaType) {
-                    alert('Silakan pilih jenis analisa (Short-Term / Long-Term)');
-                    return;
-                }
-
-                // Tentukan URL berdasarkan pilihan jenis analisa
-                if (analisaType === 'short-term') {
-                    url = '/analisa/short-term'; // URL untuk Short-Term
-                } else if (analisaType === 'long-term') {
-                    url = '/analisa/long-term'; // URL untuk Long-Term
-                } else {
-                    alert('Jenis analisa tidak dikenali!');
-                    return;
-                }
-            } else if (jenis === 'Gula' || jenis === 'Garam') {
-                url = '/analisa/garam-gula'; // URL untuk Gula atau Garam
-            } else {
-                alert('Jenis gula tidak dikenali!');
+            if (!analisaType) {
+                alert('Silakan pilih jenis analisa (Short-Term / Long-Term)');
                 return;
             }
 
-            // Ambil token dari meta tag
-            const token = $('meta[name="csrf-token"]').attr('content');
+            // Tentukan URL berdasarkan pilihan jenis analisa
+            if (analisaType === 'short-term') {
+                url = '/analisa/short-term'; // URL untuk Short-Term
+            } else if (analisaType === 'long-term') {
+                url = '/analisa/long-term'; // URL untuk Long-Term
+            } else {
+                alert('Jenis analisa tidak dikenali!');
+                return;
+            }
+        } else if (jenis === 'Gula' || jenis === 'Garam') {
+            url = '/analisa/garam-gula'; // URL untuk Gula atau Garam
+        } else {
+            alert('Jenis gula tidak dikenali!');
+            return;
+        }
 
-            // Ambil data form, lalu tambahkan token di awal
-            let formData = $(this).serialize();
-            formData = `_token=${encodeURIComponent(token)}&` + formData;
+        // Ambil token dari meta tag
+        const token = $('meta[name="csrf-token"]').attr('content');
 
-            // Kirim data ke server dengan metode POST
-            $.post(url, formData)
-                .done(function(response) {
-                    alert('Data berhasil disimpan!');
-                    $('#modalAnalisa').modal('hide');
-                    $('#formAnalisa')[0].reset();
-                })
-                .fail(function(xhr) {
-                    const errMsg = xhr.responseJSON?.message || 'Gagal menyimpan data!';
-                    alert(errMsg);
-                });
-        });
-    </script>
+        // Ambil data form, lalu tambahkan token di awal
+        let formData = $(this).serialize();
+        formData = `_token=${encodeURIComponent(token)}&` + formData;
+
+        // Kirim data ke server dengan metode POST
+        $.post(url, formData)
+            .done(function(response) {
+                alert('Data berhasil disimpan!');
+                $('#modalAnalisa').modal('hide');
+                $('#formAnalisa')[0].reset();
+            })
+            .fail(function(xhr) {
+                const errMsg = xhr.responseJSON?.message || 'Gagal menyimpan data!';
+                alert(errMsg);
+            });
+    });
+</script>
 
 
 
-    @endsection
+@endsection
