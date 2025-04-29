@@ -3,8 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Middleware\RoleMiddleware;
-use App\Http\Controllers\RMPMController;
-use App\Http\Controllers\SamplingController;
+use App\Http\Controllers\Analis\RMPMController;
+use App\Http\Controllers\Analis\SamplingController;
 use App\Http\Controllers\ProductionBatchController;
 
 
@@ -49,6 +49,8 @@ Route::prefix('rmpm')->group(function () {
     Route::get('/list/{jenis}', [RMPMController::class, 'listIdentitas'])->name('rmpm.listIdentitas');
 
     Route::get('/detail-identitas/{id}', [RMPMController::class, 'detailIdentitas'])->name('rmpm.detailIdentitas');
+    Route::get('/konfirmasi/{id}', [RMPMController::class, 'getDataKedatangan']);
+    Route::post('/simpan/konfirmasi/{id}', [RMPMController::class, 'updateJam']);
 });
 
 

@@ -20,7 +20,7 @@ class IdentitasRM extends Model
         'jumlah_kedatangan',
         'lot_batch',
         'jenis_gula',
-       
+
     ];
 
     public function samplingMobil()
@@ -45,11 +45,22 @@ class IdentitasRM extends Model
 
     public function analisaShortTerm()
     {
-        return $this->hasOne(AnalisaShortTermGKT::class, 'id_identitas');
+        return $this->hasMany(AnalisaShortTermGKT::class, 'id_identitas');
     }
+
 
     public function analisaLongTerm()
     {
-        return $this->hasOne(AnalisaLongTermGKT::class, 'id_identitas');
+        return $this->hasMany(AnalisaLongTermGKT::class, 'id_identitas');
+    }
+
+    public function analisaGaramGula()
+    {
+        return $this->hasMany(AnalisaGaramGula::class, 'id_identitas');
+    }
+
+    public function konfirmasi()
+    {
+        return $this->hasOne(KonfirmasiKedatangan::class, 'id_identitas');
     }
 }

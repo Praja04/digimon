@@ -1,448 +1,233 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+
+    <meta charset="utf-8" />
+    <title>Sign In | BAS</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="pragma" content="no-cache">
-    <meta http-equiv="expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+    <meta content="Themesbrand" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="{{ asset('assets/images/icon-utility/kecap.png') }}">
 
+    <!-- Layout config Js -->
+    <link href="{{ asset('material/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
+
+    <script src="{{ asset('material/assets/js/layout.js') }}"></script>
+    <!-- Bootstrap Css -->
+    <link href="{{ asset('material/assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
+    <!-- Icons Css -->
+    <link href="{{ asset('material/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href="{{ asset('material/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
+    <!-- custom Css-->
+    <link href="{{ asset('material/assets/css/custom.min.css') }}" rel="stylesheet" type="text/css" />
+    <!-- Sweet Alerts js -->
+    <script src="{{ asset('material/assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
+
+    <!-- Sweet alert init js-->
+    <script src="{{ asset('material/assets/js/pages/sweetalerts.init.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .auth-one-bg-position {
+            background-image: url("{{ asset('assetswebbased/img/signin.jpg') }}");
+            background-size: cover;
+            /* Menyesuaikan gambar dengan seluruh area */
+            background-position: center;
+            /* Memusatkan gambar */
+            background-repeat: no-repeat;
+        }
+    </style>
 </head>
-<style>
-    body {
-        background-color: white !important;
-        font-family: 'Inter UI', sans-serif;
-        margin: 0;
-        padding: 20px;
-        overflow: hidden;
-        /* Mencegah animasi keluar batas */
-    }
-
-    @import url('https://rsms.me/inter/inter-ui.css');
-
-    ::selection {
-        background: #2D2F36;
-    }
-
-    ::-webkit-selection {
-        background: #2D2F36;
-    }
-
-    ::-moz-selection {
-        background: #2D2F36;
-    }
-
-
-
-    .page {
-        background: rgb(100, 100, 100);
-        display: flex;
-        flex-direction: column;
-        height: calc(100% - 40px);
-        position: absolute;
-        place-content: center;
-        width: calc(100% - 40px);
-    }
-
-    @media (max-width: 767px) {
-        .page {
-            height: auto;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-        }
-    }
-
-    .container {
-        display: flex;
-        height: 320px;
-        margin: 0 auto;
-        width: 640px;
-    }
-
-    @media (max-width: 767px) {
-        .container {
-            flex-direction: column;
-            height: 630px;
-            width: 320px;
-        }
-    }
-
-    .left {
-        background: white;
-        height: calc(100% - 40px);
-        top: 20px;
-        position: relative;
-        width: 50%;
-    }
-
-    @media (max-width: 767px) {
-        .left {
-            height: 100%;
-            left: 20px;
-            width: calc(100% - 40px);
-            max-height: 270px;
-        }
-    }
-
-    .login {
-        font-size: 50px;
-        font-weight: 900;
-        margin: 50px 40px 40px;
-    }
-
-    .eula {
-        color: #999;
-        font-size: 14px;
-        line-height: 1.5;
-        margin: 40px;
-    }
-
-    .right {
-        background: #474A59;
-        box-shadow: 0px 0px 40px 16px rgba(0, 0, 0, 0.22);
-        color: #F1F1F2;
-        position: relative;
-        width: 50%;
-    }
-
-    @media (max-width: 767px) {
-        .right {
-            flex-shrink: 0;
-            height: 100%;
-            width: 100%;
-            max-height: 350px;
-        }
-    }
-
-    svg {
-        position: absolute;
-        width: 320px;
-    }
-
-    path {
-        fill: none;
-        stroke: url(#linearGradient);
-        ;
-        stroke-width: 4;
-        stroke-dasharray: 240 1386;
-    }
-
-    .form {
-        margin: 40px;
-        position: absolute;
-    }
-
-    label {
-        color: #c2c2c5;
-        display: block;
-        font-size: 14px;
-        height: 16px;
-        margin-top: 20px;
-        margin-bottom: 5px;
-    }
-
-    input {
-        background: transparent;
-        border: 0;
-        color: #f2f2f2;
-        font-size: 20px;
-        height: 30px;
-        line-height: 30px;
-        outline: none !important;
-        width: 100%;
-    }
-
-    input::-moz-focus-inner {
-        border: 0;
-    }
-
-    #submit {
-        color: #707075;
-        margin-top: 40px;
-        transition: color 300ms;
-    }
-
-    #submit:focus {
-        color: #f2f2f2;
-    }
-
-    #submit:active {
-        color: #d0d0d2;
-    }
-</style>
 
 <body>
-    <div id="loading-animation" style="display: none; position: fixed; width: 100%; height: 100vh; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center;">
-        <div id="lottie-animation" style="width: 200px; height: 200px;"></div>
-    </div>
-    <div class="page">
-        <div class="container">
-            <div class="left">
-                <div class="login">Login</div>
-                <div class="eula">Digitalisasi Monitoring QC pada Proses Produksi Kecap</div>
+
+    <!-- auth-page wrapper -->
+    <div class="auth-page-wrapper auth-bg-cover py-5 d-flex justify-content-center align-items-center min-vh-100">
+        <div class="bg-overlay"></div>
+        <!-- auth-page content -->
+        <div class="auth-page-content overflow-hidden pt-lg-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card overflow-hidden">
+                            <div class="row g-0">
+                                <div class="col-lg-6">
+                                    <div class="p-lg-5 p-4 auth-one-bg h-100">
+                                        <div class="bg-overlay"></div>
+                                        <div class="position-relative h-100 d-flex flex-column">
+                                            <div class="mb-4">
+                                                <a href="{{ url('/login') }}" class="d-block">
+                                                    <img src="{{ asset('assets/images/icon-utility/kecap.png') }}" alt="PT.Bumi Alam Segar" style="width: 150px;">
+                                                </a>
+                                            </div>
+                                            <div class="mt-auto">
+                                                <div class="mb-3">
+                                                    <i class="ri-double-quotes-l display-4 text-success"></i>
+                                                </div>
+
+                                                <div id="qoutescarouselIndicators" class="carousel slide" data-bs-ride="carousel">
+                                                    <div class="carousel-indicators">
+                                                        <button type="button" data-bs-target="#qoutescarouselIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                                                        <button type="button" data-bs-target="#qoutescarouselIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                                                        <button type="button" data-bs-target="#qoutescarouselIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                                                    </div>
+                                                    <div class="carousel-inner text-center text-white pb-5">
+                                                        <div class="carousel-item active">
+                                                            <p class="fs-15 fst-italic">" Great! Clean code, clean design, easy for customization. Thanks very much! "</p>
+                                                        </div>
+                                                        <div class="carousel-item">
+                                                            <p class="fs-15 fst-italic">" The theme is really great with an amazing customer support."</p>
+                                                        </div>
+                                                        <div class="carousel-item">
+                                                            <p class="fs-15 fst-italic">" Great! Clean code, clean design, easy for customization. Thanks very much! "</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- end carousel -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end col -->
+
+                                <div class="col-lg-6">
+                                    <div class="p-lg-5 p-4">
+                                        <div>
+                                            <h5 class="text-primary">Welcome Back !</h5>
+                                            <p class="text-muted">Sign in to continue to Bas Digimon QC.</p>
+                                        </div>
+
+                                        <div class="mt-4">
+                                            <form id="login-form" method="POST">
+
+                                                <div class="mb-3">
+                                                    <label for="email" class="form-label">Email</label>
+                                                    <input type="email" class="form-control" id="email" placeholder="Enter email">
+                                                </div>
+
+                                                <div class="mb-3">
+
+                                                    <label class="form-label" for="password">Password</label>
+                                                    <div class="position-relative auth-pass-inputgroup mb-3">
+                                                        <input type="password" class="form-control pe-5 password" placeholder="Enter password" id="password">
+                                                        <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none shadow-none text-muted password-addon" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="mt-4">
+                                                    <button class="btn btn-success w-100" type="submit">Sign In</button>
+                                                </div>
+
+
+                                            </form>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                                <!-- end col -->
+                            </div>
+                            <!-- end row -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+
+                </div>
+                <!-- end row -->
             </div>
-            <div class="right">
-                <svg viewBox="0 0 320 300">
-                    <defs>
-                        <linearGradient inkscape:collect="always" id="linearGradient" x1="13" y1="193.49992" x2="307" y2="193.49992" gradientUnits="userSpaceOnUse">
-                            <stop style="stop-color:#ff00ff;" offset="0" id="stop876" />
-                            <stop style="stop-color:#ff0000;" offset="1" id="stop878" />
-                        </linearGradient>
-                    </defs>
-                    <path d="m 40,120.00016 239.99984,-3.2e-4 c 0,0 24.99263,0.79932 25.00016,35.00016 0.008,34.20084 -25.00016,35 -25.00016,35 h -239.99984 c 0,-0.0205 -25,4.01348 -25,38.5 0,34.48652 25,38.5 25,38.5 h 215 c 0,0 20,-0.99604 20,-25 0,-24.00396 -20,-25 -20,-25 h -190 c 0,0 -20,1.71033 -20,25 0,24.00396 20,25 20,25 h 168.57143" />
-                </svg>
-                <div class="form">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" autocomplete="off">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" autocomplete="off">
-                    <input type="submit" id="submit" value="Submit">
+            <!-- end container -->
+        </div>
+        <!-- end auth page content -->
+
+        <!-- footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="text-center">
+                            <p class="mb-0">&copy;
+                                <script>
+                                    document.write(new Date().getFullYear())
+                                </script> Bas Management. Crafted with <i class="mdi mdi-heart text-danger"></i> by ITE BAS
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </footer>
+        <!-- end Footer -->
     </div>
+    <!-- end auth-page-wrapper -->
+
+    <!-- JAVASCRIPT -->
+    <script src="{{ asset('material/assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('material/assets/libs/simplebar/simplebar.min.js') }}"></script>
+    <script src="{{ asset('material/assets/libs/node-waves/waves.min.js') }}"></script>
+    <script src="{{ asset('material/assets/libs/feather-icons/feather.min.js') }}"></script>
+    <script src="{{ asset('material/assets/js/pages/plugins/lord-icon-2.1.0.js') }}"></script>
+    <script src="{{ asset('material/assets/js/plugins.js') }}"></script>
+
+    <!-- particles js -->
+    <script src="{{ asset('material/assets/libs/particles.js/particles.js') }}"></script>
+    <!-- particles app js -->
+    <script src="{{ asset('material/assets/js/pages/particles.app.js') }}"></script>
+    <!-- password-addon init -->
+    <script src="{{ asset('material/assets/js/pages/password-addon.init.js') }}"></script>
+
+
+    <script>
+        $(document).ready(function() {
+            $('#login-form').on('submit', function(e) {
+                e.preventDefault(); // mencegah reload
+                Swal.fire({
+                    title: 'Memproses...',
+                    text: 'Mohon tunggu sebentar',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading(); // Menampilkan animasi loading
+                    }
+                });
+                
+                let email = $('#email').val();
+                let password = $('#password').val();
+
+                $.ajax({
+                    url: "{{ route('login.submit') }}",
+                    type: 'POST',
+                    data: {
+                        email: email,
+                        password: password,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        Swal.close(); // Tutup loading
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Login Berhasil!',
+                            text: response.message,
+                            timer: 2000,
+                            showConfirmButton: true
+                        }).then(() => {
+                            window.location.href = response.redirect; // Redirect sesuai jabatan
+                        });
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Login Gagal',
+                            text: xhr.responseJSON.message || 'Email atau password salah'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
 </body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Sweet Alerts js -->
-<script src="{{ asset('material/assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
-
-<!-- Sweet alert init js-->
-<script src="{{ asset('material/assets/js/pages/sweetalerts.init.js') }}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js"></script>
-<!-- <script>
-    var current = null;
-    document.querySelector('#email').addEventListener('focus', function(e) {
-        if (current) current.pause();
-        current = anime({
-            targets: 'path',
-            strokeDashoffset: {
-                value: 0,
-                duration: 700,
-                easing: 'easeOutQuart'
-            },
-            strokeDasharray: {
-                value: '240 1386',
-                duration: 700,
-                easing: 'easeOutQuart'
-            }
-        });
-    });
-    document.querySelector('#password').addEventListener('focus', function(e) {
-        if (current) current.pause();
-        current = anime({
-            targets: 'path',
-            strokeDashoffset: {
-                value: -336,
-                duration: 700,
-                easing: 'easeOutQuart'
-            },
-            strokeDasharray: {
-                value: '240 1386',
-                duration: 700,
-                easing: 'easeOutQuart'
-            }
-        });
-    });
-    document.querySelector('#submit').addEventListener('focus', function(e) {
-        if (current) current.pause();
-        current = anime({
-            targets: 'path',
-            strokeDashoffset: {
-                value: -730,
-                duration: 700,
-                easing: 'easeOutQuart'
-            },
-            strokeDasharray: {
-                value: '530 1386',
-                duration: 700,
-                easing: 'easeOutQuart'
-            }
-        });
-    });
-
-
-    $(document).ready(function() {
-        $('#submit').click(function(e) {
-            e.preventDefault();
-
-            var email = $('#email').val();
-            var password = $('#password').val();
-
-            if (email === "" || password === "") {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Oops...',
-                    text: 'Email dan password harus diisi!',
-                    confirmButtonColor: '#d33'
-                });
-                return;
-            }
-
-            // Show loading SweetAlert
-            Swal.fire({
-                title: 'Sedang masuk...',
-                text: 'Mohon tunggu sebentar',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-
-            $.ajax({
-                url: "{{ route('login.submit') }}",
-                type: "POST",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    email: email,
-                    password: password
-                },
-                success: function(response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil masuk!',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.href = response.redirect;
-                    });
-                },
-                error: function(xhr) {
-                    let message = 'Terjadi kesalahan. Coba lagi.';
-                    if (xhr.status === 401) {
-                        message = 'Email atau password salah.';
-                    }
-
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Login gagal',
-                        text: message,
-                        confirmButtonColor: '#d33'
-                    });
-                }
-            });
-        });
-
-    });
-</script> -->
-
-<script>
-    $(document).ready(function() {
-        var current = null;
-
-        $('#email').focus(function() {
-            if (current) current.pause();
-            current = anime({
-                targets: 'path',
-                strokeDashoffset: {
-                    value: 0,
-                    duration: 700,
-                    easing: 'easeOutQuart'
-                },
-                strokeDasharray: {
-                    value: '240 1386',
-                    duration: 700,
-                    easing: 'easeOutQuart'
-                }
-            });
-        });
-
-        $('#password').focus(function() {
-            if (current) current.pause();
-            current = anime({
-                targets: 'path',
-                strokeDashoffset: {
-                    value: -336,
-                    duration: 700,
-                    easing: 'easeOutQuart'
-                },
-                strokeDasharray: {
-                    value: '240 1386',
-                    duration: 700,
-                    easing: 'easeOutQuart'
-                }
-            });
-        });
-
-        $('#submit').focus(function() {
-            if (current) current.pause();
-            current = anime({
-                targets: 'path',
-                strokeDashoffset: {
-                    value: -730,
-                    duration: 700,
-                    easing: 'easeOutQuart'
-                },
-                strokeDasharray: {
-                    value: '530 1386',
-                    duration: 700,
-                    easing: 'easeOutQuart'
-                }
-            });
-        });
-
-        $('#submit').click(function(e) {
-            e.preventDefault();
-
-            var email = $('#email').val();
-            var password = $('#password').val();
-
-            if (email === "" || password === "") {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Oops...',
-                    text: 'Email dan password harus diisi!',
-                    confirmButtonColor: '#d33'
-                });
-                return;
-            }
-
-            Swal.fire({
-                title: 'Sedang masuk...',
-                text: 'Mohon tunggu sebentar',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-
-            $.ajax({
-                url: "{{ route('login.submit') }}",
-                type: "POST",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    email: email,
-                    password: password
-                },
-                success: function(response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil masuk!',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.href = response.redirect;
-                    });
-                },
-                error: function(xhr) {
-                    let message = 'Terjadi kesalahan. Coba lagi.';
-                    if (xhr.status === 401) {
-                        message = 'Email atau password salah.';
-                    }
-
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Login gagal',
-                        text: message,
-                        confirmButtonColor: '#d33'
-                    });
-                }
-            });
-        });
-    });
-</script>
 
 </html>

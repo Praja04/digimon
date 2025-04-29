@@ -69,6 +69,9 @@
                             <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" data-bs-target="#samplingModal">
                                 <i class="ri-add-line align-bottom me-1"></i> Sampling
                             </button>
+                            <button type="button" class="btn btn-warning" id="btnBukaModalKonfirmasi">
+                                Konfirmasi
+                            </button>
 
                         </div>
                     </div>
@@ -90,21 +93,8 @@
                     <div class="card-header border-bottom-dashed p-4">
                         <div class="d-flex">
                             <div class="flex-grow-1">
-                                <img src="{{ asset('assets/images/icon-utility/kecap.png') }}" class="card-logo card-logo-dark" alt="logo dark" height="80">
-                                <img src="{{ asset('assets/images/icon-utility/kecap.png') }}" class="card-logo card-logo-light" alt="logo light" height="80">
-                                <div class="mt-sm-5 mt-4">
-                                    <h6 class="text-muted text-uppercase fw-semibold">Asal Bahan</h6>
-                                    <p class="text-muted mb-1">{{ $identitas->asal_bahan }}</p>
-                                    <p class="text-muted mb-0"><span>No SPB:</span> {{ $identitas->no_spb }}</p>
-                                </div>
-                            </div>
-                            <div class="flex-shrink-0 mt-sm-0 mt-3">
-                                <h6><span class="text-muted fw-normal">Supplier / Manufactur:</span> {{ $identitas->suplier_manufactur }}</h6>
-                                <h6><span class="text-muted fw-normal">No Mobil:</span> {{ $identitas->no_mobil }}</h6>
-                                <h6><span class="text-muted fw-normal">Tanggal Kedatangan:</span> {{ \Carbon\Carbon::parse($identitas->tanggal_kedatangan)->format('d M Y') }}</h6>
-                                <h6><span class="text-muted fw-normal">Jam Kedatangan:</span> {{ \Carbon\Carbon::parse($identitas->tanggal_kedatangan)->format('H:i') }}</h6>
-
-                                <h6 class="mb-0"><span class="text-muted fw-normal">Jenis Gula: </span> {{ $identitas->jenis_gula }}</h6>
+                                <img src="{{ asset('assets/images/icon-utility/kecap.png') }}" class="card-logo card-logo-dark" alt="logo dark" height="150">
+                                <img src="{{ asset('assets/images/icon-utility/kecap.png') }}" class="card-logo card-logo-light" alt="logo light" height="150">
                             </div>
                         </div>
                     </div>
@@ -113,177 +103,466 @@
                 <div class="col-lg-12">
                     <div class="card-body p-4">
                         <div class="row g-3">
-                            <div class="col-lg-4 col-6">
+                            <div class="col-lg-3 col-6">
+                                <h6 class="text-muted text-uppercase fw-semibold">Asal Bahan</h6>
+                                <h3 class="fs-14 mb-0">{{ $identitas->asal_bahan }}</h3>
+                            </div>
+                            <div class="col-lg-3 col-6">
+                                <h6 class="text-muted text-uppercase fw-semibold">Nomor SPB</h6>
+                                <h3 class="fs-14 mb-0">{{ $identitas->no_spb }}</h3>
+                            </div>
+                            <div class="col-lg-3 col-6">
+                                <h6 class="text-muted text-uppercase fw-semibold">Suplier/Manufacture</h6>
+                                <h3 class="fs-14 mb-0"> {{ $identitas->suplier_manufactur }}</h3>
+                            </div>
+                            <div class="col-lg-3 col-6">
+                                <h6 class="text-muted text-uppercase fw-semibold">Nomor Mobil</h6>
+                                <h3 class="fs-14 mb-0"> {{ $identitas->no_mobil }}</h3>
+                            </div>
+                            <div class="col-lg-3 col-6">
+                                <h6 class="text-muted text-uppercase fw-semibold">Tanggal Kedatangan</h6>
+                                <h3 class="fs-14 mb-0">{{ \Carbon\Carbon::parse($identitas->tanggal_kedatangan)->format('d M Y') }}</h3>
+                            </div>
+                            <div class="col-lg-3 col-6">
+                                <h6 class="text-muted text-uppercase fw-semibold">Jam Kedatangan</h6>
+                                <h3 class="fs-14 mb-0">{{ \Carbon\Carbon::parse($identitas->tanggal_kedatangan)->format('H:i') }}</h3>
+                            </div>
+                            <div class="col-lg-3 col-6">
+                                <h6 class="text-muted text-uppercase fw-semibold">Jenis Gula</h6>
+                                <h3 class="fs-14 mb-0">{{ $identitas->jenis_gula }}</h3>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                @php
+                function getBadgeClass($disposisi) {
+                if ($disposisi === 'reject') {
+                return 'badge-soft-danger';
+                } elseif ($disposisi === 'release') {
+                return 'badge-soft-success';
+                } else {
+                return 'badge-soft-warning';
+                }
+                }
+                @endphp
+
+                <div class="col-lg-12">
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            <div class="col-lg-3 col-6">
                                 <p class="text-muted mb-2 text-uppercase fw-semibold">Nama Bahan</p>
                                 <h5 class="fs-14 mb-0">{{ $identitas->nama_bahan }}</h5>
                             </div>
-                            <div class="col-lg-4 col-6">
+                            <div class="col-lg-3 col-6">
                                 <p class="text-muted mb-2 text-uppercase fw-semibold">Jumlah Kedatangan</p>
                                 <h5 class="fs-14 mb-0">{{ $identitas->jumlah_kedatangan }} kg</h5>
                             </div>
-                            <div class="col-lg-4 col-6">
+                            <div class="col-lg-3 col-6">
                                 <p class="text-muted mb-2 text-uppercase fw-semibold">Lot / Batch</p>
                                 <h5 class="fs-14 mb-0">{{ $identitas->lot_batch }}</h5>
                             </div>
-                        </div>
-                    </div>
-                </div>
+                            <div class="col-lg-3 col-6">
+                                <p class="text-muted mb-2 text-uppercase fw-semibold">Disposisi</p>
 
-                <div class="col-lg-12">
-                    <div class="card-body p-4">
-                        <div class="row g-3">
-                            <div class="col-lg-6 col-6 ">
-                                <table class="table table-borderless text-center table-nowrap align-middle mb-0 small">
-                                    <h5>Sampling Dokumen</h5>
-                                    <tr>
-                                        <th class="table-active">CoA</th>
-                                        <th>{{ $data_dokumen->coa ?? 'belum input'}}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Surat Jalan</th>
-                                        <th>{{ $data_dokumen->surat_jalan_vendor ?? 'belum input'}}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Packing List</th>
-                                        <th>{{ $data_dokumen->packing_list ?? 'belum input'}}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Identitas Kemasan</th>
-                                        <th>{{ $data_dokumen->identitas_kemasan ?? 'belum input'}}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Logo Halal</th>
-                                        <th>{{ $data_dokumen->logo_halal ?? 'belum input'}}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Kesesuaian Matriks Bahan Baku</th>
-                                        <th>{{ $data_dokumen->kesesuaian_matriks_bahan ?? 'belum input'}}</th>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div class="col-lg-6 col-6">
-                                <table class="table table-borderless text-center table-nowrap align-middle mb-0 small">
-                                    <h5>Sampling Kondisi Mobil</h5>
-                                    <tr>
-                                        <th class="table-active">Bersih</th>
-                                        <th>{{ $data_mobil->bersih ?? 'belum input'}}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Kering</th>
-                                        <th>{{ $data_mobil->kering ?? 'belum input'}}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Tidak Ada Benda Asing</th>
-                                        <th>{{ $data_mobil->benda_asing ?? 'belum input'}}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Tidak Cacat</th>
-                                        <th>{{ $data_mobil->cacat ?? 'belum input'}}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Segel</th>
-                                        <th>{{ $data_mobil->segel ?? 'belum input'}}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Berbau</th>
-                                        <th>{{ $data_mobil->berbau ?? 'belum input'}}</th>
-                                    </tr>
+                                @if ($identitas->jenis_gula == 'Gula Tebu' || $identitas->jenis_gula == 'Gula Kelapa' )
+                                @php
+                                $disposisi_short_term = $disposisi->disposisi ?? null;
+                                $disposisi_long_term = $analisa_long_term->first()->disposisi ?? null;
+                                $attachment_analisa = $analisa_long_term->first()->attachment ?? null;
+                                @endphp
 
-                                </table>
-                            </div>
-                            <div class="col-lg-6 col-6">
-                                <table class="table table-borderless text-center table-nowrap align-middle mb-0 small">
-                                    <h5>Sampling Fisik Kemasan</h5>
-                                    <tr>
-                                        <th class="table-active">Kotor</th>
-                                        <th>{{ $data_kemasan->kotor ?? 'belum input'}}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Rusak/Sobek</th>
-                                        <th>{{ $data_kemasan->rusak ?? 'belum input'}}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Sesuai STD</th>
-                                        <th>{{ $data_kemasan->sesuai_std ?? 'belum input'}}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Lain-lain</th>
-                                        <th>{{ $data_kemasan->{'lain-lain'} ?? 'belum input'}}</th>
+                                <h6><span class="badge {{ getBadgeClass($disposisi_short_term) }} badge-border">
+                                        Short Term : {{ $disposisi_short_term ?? 'belum input' }}
+                                    </span></h6> <br>
 
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Berair</th>
-                                        <th>{{ $data_kemasan->berair ?? 'belum input'}}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Basah</th>
-                                        <th>{{ $data_kemasan->basah ?? 'belum input'}}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Campuran</th>
-                                        <th>{{ $data_kemasan->campuran ?? 'belum input'}}</th>
-                                    </tr>
+                                <h6><span class="badge {{ getBadgeClass($disposisi_long_term) }} badge-border">
+                                        Long Term : {{ $disposisi_long_term ?? 'belum input' }}
+                                    </span></h6>
 
-                                </table>
-                            </div>
-                            <div class="col-lg-6 col-6">
-                                <table class="table table-borderless text-center table-nowrap align-middle mb-0 small">
-                                    <h5>Sampling Fisik Kemasan</h5>
-                                    <tr>
-                                        <th class="table-active">Leleh</th>
-                                        <th>{{ $data_raw->leleh ?? 'belum input' }}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Warna sesuai STD</th>
-                                        <th>{{ $data_raw->warna_std ?? 'belum input'}}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Campuran</th>
-                                        <th>{{ $data_raw->campuran ?? 'belum input'}}</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Aroma sesuai STD</th>
-                                        <th>{{ $data_raw->aroma_std ?? 'belum input'}}</th>
 
-                                    </tr>
-                                    <tr>
-                                        <th class="table-active">Sesuai STD</th>
-                                        <th>{{ $data_raw->sesuai_std ?? 'belum input'}}</th>
-                                    </tr>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal">
+                                    <i class="mdi mdi-panorama-outline text-primary" style="font-size: 36px;"></i> <!-- icon gambar -->
+                                    <p>Attachment Kristal</p>
+                                </a>
 
-                                </table>
+                                <!-- Modal untuk menampilkan gambar -->
+                                <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="imageModalLabel">Lampiran Gambar</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="{{ asset('storage/uploads/attachment_analisa/' . $attachment_analisa) }}" alt="Lampiran Analisa" class="img-fluid rounded">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @else
+                                @php
+                                $disposisi_gula_garam = $disposisi->disposisi ?? null;
+                                @endphp
+
+                                <h6><span class="badge {{ getBadgeClass($disposisi_gula_garam) }} badge-border">
+                                        {{ $disposisi_gula_garam ?? 'belum input' }}
+                                    </span></h6>
+                                @endif
                             </div>
                         </div>
                     </div>
                 </div>
 
+
+                <div class="col-lg-12">
+                    <div class="card-body" id="tasksList">
+                        <div class="card-header border-0">
+                            <div class="d-flex align-items-center">
+                                <h5>Sample Dokumen</h5>
+
+                            </div>
+                        </div>
+
+                        <!--end card-body-->
+                        <div class="card-body">
+                            <div class="table-responsive table-card mb-4">
+                                <table class="table align-middle table-nowrap mb-0" id="tasksTable">
+                                    <thead class="table-light text-muted">
+                                        <tr>
+
+                                            <th>COA</th>
+                                            <th>Surat Jalan</th>
+                                            <th>Packing List</th>
+                                            <th>Identitas Kemasan</th>
+                                            <th>Logo Halal</th>
+                                            <th>Kesuaian Matriks Bahan Baku</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="list form-check-all">
+                                        @if ($data_dokumen)
+                                        <tr>
+                                            <td>{{ $data_dokumen->coa ?? 'belum input'}}</td>
+                                            <td>{{ $data_dokumen->surat_jalan_vendor ?? 'belum input'}}</td>
+                                            <td>{{ $data_dokumen->packing_list ?? 'belum input'}}</td>
+                                            <td>{{ $data_dokumen->identitas_kemasan ?? 'belum input'}}</td>
+                                            <td>{{ $data_dokumen->logo_halal ?? 'belum input'}}</td>
+                                            <td>{{ $data_dokumen->kesesuaian_matriks_bahan ?? 'belum input'}}</td>
+                                        </tr>
+                                        @else
+                                        <tr>
+                                            <td colspan="12" class="text-center">Belum ada data</td>
+                                        </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                                <!--end table-->
+                            </div>
+
+                        </div>
+                        <!--end card-body-->
+                    </div>
+                    <!--end card-->
+                </div>
+                <hr>
+                <div class="col-lg-12">
+                    <div class="card-body" id="tasksList">
+                        <div class="card-header border-0">
+                            <div class="d-flex align-items-center">
+                                <h5>Sample Kondisi Mobil</h5>
+
+                            </div>
+                        </div>
+                        <!--end card-body-->
+                        <div class="card-body">
+                            <div class="table-responsive table-card mb-4">
+                                <table class="table align-middle table-nowrap mb-0" id="tasksTable">
+                                    <thead class="table-light text-muted">
+                                        <tr>
+                                            <th>Bersih</th>
+                                            <th>Kering</th>
+                                            <th>Tidak ada Benda Asing</th>
+                                            <th>Tidak Cacat</th>
+                                            <th>Segel</th>
+                                            <th>Berbau</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="list form-check-all">
+                                        @if ($data_mobil)
+                                        <tr>
+                                            <td>{{ $data_mobil->bersih ?? 'belum input'}}</td>
+                                            <td>{{ $data_mobil->kering ?? 'belum input'}}</td>
+                                            <td>{{ $data_mobil->benda_asing ?? 'belum input'}}</td>
+                                            <td>{{ $data_mobil->cacat ?? 'belum input'}}</td>
+                                            <td>{{ $data_mobil->segel ?? 'belum input'}}</td>
+                                            <td>{{ $data_mobil->berbau ?? 'belum input'}}</td>
+                                        </tr>
+                                        @else
+                                        <tr>
+                                            <td colspan="12" class="text-center">Belum ada data</td>
+                                        </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                                <!--end table-->
+                            </div>
+
+                        </div>
+                        <!--end card-body-->
+                    </div>
+                    <!--end card-->
+                </div>
+                <hr>
+                <div class="col-lg-12">
+                    <div class="card-body" id="tasksList">
+                        <div class="card-header border-0">
+                            <div class="d-flex align-items-center">
+                                <h5>Sample Fisik Kemasan</h5>
+
+                            </div>
+                        </div>
+                        <!--end card-body-->
+                        <div class="card-body">
+                            <div class="table-responsive table-card mb-4">
+                                <table class="table align-middle table-nowrap mb-0" id="tasksTable">
+                                    <thead class="table-light text-muted">
+                                        <tr>
+
+                                            <th>Kotor</th>
+                                            <th>Rusak/Sobek</th>
+                                            <th>Sesuai STD</th>
+                                            <th>Lain-lain</th>
+                                            <th>berair</th>
+                                            <th>Basah</th>
+                                            <th>Campuran</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="list form-check-all">
+                                        @if ($data_kemasan)
+                                        <tr>
+                                            <td>{{ $data_kemasan->kotor ?? 'belum input'}}</td>
+                                            <td>{{ $data_kemasan->rusak ?? 'belum input'}}</td>
+                                            <td>{{ $data_kemasan->sesuai_std ?? 'belum input'}}</td>
+                                            <td>{{ $data_kemasan->{'lain-lain'} ?? 'belum input'}}</td>
+                                            <td>{{ $data_kemasan->berair ?? 'belum input'}}</td>
+                                            <td>{{ $data_kemasan->basah ?? 'belum input'}}</td>
+                                            <td>{{ $data_kemasan->campuran ?? 'belum input'}}</td>
+                                        </tr>
+                                        @else
+                                        <tr>
+                                            <td colspan="12" class="text-center">Belum ada data</td>
+                                        </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                                <!--end table-->
+                            </div>
+
+                        </div>
+                        <!--end card-body-->
+                    </div>
+                    <!--end card-->
+                </div>
+                <hr>
+
+                <div class="col-lg-12">
+                    <div class="card-body" id="tasksList">
+                        <div class="card-header border-0">
+                            <div class="d-flex align-items-center">
+                                <h5>Sample Fisik Raw</h5>
+
+                            </div>
+                        </div>
+                        <!--end card-body-->
+                        <div class="card-body">
+                            <div class="table-responsive table-card mb-4">
+                                <table class="table align-middle table-nowrap mb-0" id="tasksTable">
+                                    <thead class="table-light text-muted">
+                                        <tr>
+                                            <th>Leleh</th>
+                                            <th>Warna Sesuai Std</th>
+                                            <th>Campuran</th>
+                                            <th>Aroma Sesuai Std</th>
+                                            <th>Sesuai Std</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody class="list form-check-all">
+                                        @if ($data_raw)
+                                        <tr>
+                                            <td>{{ $data_raw->leleh ?? 'belum input' }}</td>
+                                            <td>{{ $data_raw->warna_std ?? 'belum input' }}</td>
+                                            <td>{{ $data_raw->campuran ?? 'belum input' }}</td>
+                                            <td>{{ $data_raw->aroma_std ?? 'belum input' }}</td>
+                                            <td>{{ $data_raw->sesuai_std ?? 'belum input' }}</td>
+                                        </tr>
+                                        @else
+                                        <tr>
+                                            <td colspan="12" class="text-center">Belum ada data</td>
+                                        </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                                <!--end table-->
+                            </div>
+
+                        </div>
+                        <!--end card-body-->
+                    </div>
+                    <!--end card-->
+                </div>
+                <hr>
+                @if ($identitas->jenis_gula == 'Gula Tebu' || $identitas->jenis_gula == 'Gula Kelapa' )
                 <div class="col-lg-12">
                     <div class="card-body p-4">
+                        <div class="card-header border-0">
+                            <div class="d-flex align-items-center">
+                                <h5>Short Term Analisa</h5>
+
+                            </div>
+                        </div>
                         <div class="table-responsive">
-                            <table class="table table-borderless text-center table-nowrap align-middle mb-0">
+                            <table class="table align-middle table-nowrap mb-0">
                                 <thead>
-                                    <!-- pakein if identitas.jenis_gula -->
-                                    @if ($identitas->jenis_gula == 'Gula Tebu' || $identitas->jenis_gula == 'Gula Kelapa' )
-                                    <!-- kode jika identitas.jenis_gula true -->
-                                    @else
-                                    <!-- kode jika identitas.jenis_gula false -->
-                                    @endif
-                                    <tr class="table-active">
-                                        <th scope="col" style="width: 50px;">#</th>
-                                        <th scope="col">Product Details</th>
-                                        <th scope="col">Rate</th>
-                                        <th scope="col">Quantity</th>
-                                        <th scope="col" class="text-end">Amount</th>
+                                    <tr class="table-light text-muted">
+                                        <th scope="col">No</th>
+                                        <th scope="col">Brix</th>
+                                        <th scope="col">pH</th>
+                                        <th scope="col">Kotoran</th>
+                                        <th scope="col">ka</th>
+                                        <th scope="col">organo</th>
+                                        <th scope="col">warna</th>
+                                        <th scope="col">aroma</th>
+                                        <!-- <th scope="col">disposisi</th> -->
                                     </tr>
                                 </thead>
-                                <tbody id="list-detail">
-
+                                <tbody id="list-detail-short">
+                                    @forelse ($analisa_short_term as $index => $short)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $short->brix ?? 'belum input'}}</td>
+                                        <td>{{ $short->ph ?? 'belum input'}}</td>
+                                        <td>{{ $short->kotoran ?? 'belum input'}}</td>
+                                        <td>{{ $short->ka ?? 'belum input'}}</td>
+                                        <td>{{ $short->organo ?? 'belum input'}}</td>
+                                        <td>{{ $short->warna ?? 'belum input'}}</td>
+                                        <td>{{ $short->aroma ?? 'belum input'}}</td>
+                                        <!-- <td>{{ $short->disposisi ?? 'belum input'}}</td> -->
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="9" class="text-center">Belum ada data short term</td>
+                                    </tr>
+                                    @endforelse
                                 </tbody>
                             </table><!--end table-->
                         </div>
                     </div>
                     <!--end card-body-->
                 </div>
+
+                <div class="col-lg-12">
+                    <div class="card-body p-4">
+                        <div class="card-header border-0">
+                            <div class="d-flex align-items-center">
+                                <h5>Long Term Analisa</h5>
+
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table align-middle table-nowrap mb-0">
+                                <thead>
+                                    <tr class="table-light text-muted">
+                                        <th scope="col">No</th>
+                                        <th scope="col">Uji Kristal</th>
+                                        <th scope="col">disposisi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="list-detail-long">
+                                    @forelse ($analisa_long_term as $index => $long)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $long->uji_kristal ?? 'belum input'}}</td>
+                                        <td>
+                                            <span class="badge 
+                                                    @if($long->disposisi === 'reject')
+                                                        badge-soft-danger
+                                                    @elseif($long->disposisi === 'release')
+                                                        badge-soft-success
+                                                    @else
+                                                        badge-soft-warning
+                                                    @endif
+                                                ">
+                                                {{ $long->disposisi ?? 'belum input' }}
+                                            </span>
+                                        </td>
+
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="12" class="text-center">Belum ada data long term</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table><!--end table-->
+                        </div>
+                    </div>
+                    <!--end card-body-->
+                </div>
+                @else
+                <!-- kode jika identitas.jenis_gula false -->
+                <div class="col-lg-12">
+                    <div class="card-body p-4">
+                        <div class="card-header border-0">
+                            <div class="d-flex align-items-center">
+                                <h5>Hasil Analisa</h5>
+
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table align-middle table-nowrap mb-0">
+                                <thead>
+                                    <tr class="table-light text-muted">
+                                        <th scope="col">No</th>
+                                        <th scope="col">Fisik</th>
+                                        <th scope="col">%ka</th>
+                                        <th scope="col">Kotoran</th>
+                                        <th scope="col">organo</th>
+                                        <th scope="col">warna</th>
+                                        <th scope="col">aroma</th>
+                                        <th scope="col">%nacl</th>
+                                        <th scope="col">grosweight</th>
+                                        <th scope="col">disposisi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="list-detail-analisa">
+                                    @forelse ($analisa_garam_gula as $index => $garamgula)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $garamgula->fisik ?? 'belum input'}}</td>
+                                        <td>{{ $garamgula->{'%ka'} ?? 'belum input'}}</td>
+                                        <td>{{ $garamgula->kotoran ?? 'belum input'}}</td>
+                                        <td>{{ $garamgula->organo ?? 'belum input'}}</td>
+                                        <td>{{ $garamgula->warna ?? 'belum input'}}</td>
+                                        <td>{{ $garamgula->aroma ?? 'belum input'}}</td>
+                                        <td>{{ $garamgula->{'%nacl'} ?? 'belum input'}}</td>
+                                        <td>{{ $garamgula->gross_weight?? 'belum input'}}</td>
+                                        <td>{{ $garamgula->id_disposisi?? 'belum input'}}</td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="12" class="text-center">Belum ada data analisa</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table><!--end table-->
+                        </div>
+                    </div>
+                    <!--end card-body-->
+                </div>
+                @endif
+
 
 
                 <!-- Menu Sampling & Analisa -->
@@ -640,8 +919,8 @@
 
                     <div class="mb-3">
                         <label class="form-label">d. Aroma tidak STD</label><br>
-                        <label><input type="radio" name="aroma" value="yes"> Iya</label>
-                        <label><input type="radio" name="aroma" value="no"> Tidak</label>
+                        <label><input type="radio" name="aroma_std" value="yes"> Iya</label>
+                        <label><input type="radio" name="aroma_std" value="no"> Tidak</label>
                     </div>
 
                     <div class="mb-3">
@@ -694,9 +973,114 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="modalKonfirmasi" tabindex="-1" aria-labelledby="modalKonfirmasiLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalKonfirmasiLabel">Konfirmasi Jam</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body">
+                <div id="formKonfirmasi">
+                    <div class="mb-3">
+                        <label for="jamInput" class="form-label" id="labelJam">Jam Kedatangan</label>
+                        <input type="datetime-local" class="form-control" id="jamInput">
+                    </div>
+                </div>
+                <div id="statusMessage" class="text-success" style="display:none;">
+                    Data berhasil disimpan.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnSimpanJam" class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer">
 </script>
+<script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
+
 <script>
+    $(document).ready(function() {
+        var tipeInput = 'kedatangan';
+
+        $('#btnBukaModalKonfirmasi').click(function() {
+            $('#modalKonfirmasi').modal('show');
+        });
+
+        function Konfirmasi() {
+
+            $.ajax({
+                url: "{{ url('rmpm/konfirmasi/' . $identitas->id) }}",
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    console.log('Data:', response);
+                    if (!response.jam_kedatangan_exists) {
+                        tipeInput = 'kedatangan';
+                        $('#modalKonfirmasi').modal('show');
+                        $('#labelJam').text('Jam Kedatangan');
+                    } else if (!response.jam_analisa_exists) {
+                        tipeInput = 'analisa';
+                        $('#modalKonfirmasi').modal('show');
+                        $('#labelJam').text('Jam Analisa');
+                    } else if (response.jam_analisa_exists) {
+                        $('#labelJam').text('sudah dikonfirmasi semua');
+                        $('#jamInput').hide(); 
+                        $('#btnSimpanJam').hide();
+                    }
+
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+
+
+            $('#btnSimpanJam').click(function() {
+                var jam = $('#jamInput').val();
+
+                $.ajax({
+                    url: "{{ url('rmpm/simpan/konfirmasi/' . $identitas->id) }}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        tipe: tipeInput,
+                        jam: jam,
+                        _token: '{{ csrf_token() }}' // jangan lupa CSRF token
+                    },
+                    success: function(response) {
+                        console.log('Response simpan:', response);
+                        $('#statusMessage').show().text(response.message);
+
+                        // Kalau baru input kedatangan, sekarang lanjut analisa
+                        if (tipeInput === 'kedatangan') {
+                            tipeInput = 'analisa';
+                            $('#labelJam').text('Jam Analisa');
+                            $('#jamInput').val(''); // kosongkan input
+                        } else {
+                            // Kalau sudah analisa, close modal
+                            $('#modalKonfirmasi').modal('hide');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+        }
+
+        // Update setiap detik
+        Konfirmasi();
+    });
+
     document.getElementById('downloadBtn').addEventListener('click', function() {
         var element = document.getElementById('demo');
 
@@ -889,71 +1273,7 @@
         });
     });
 
-    // $('#form-kemasan').on('submit', function(e) {
-    //     e.preventDefault();
 
-    //     let form = $(this);
-    //     let submitBtn = $('#submitBtnKemasan');
-    //     submitBtn.prop('disabled', true).text('Menyimpan...');
-
-    //     $.ajax({
-    //         url: "{{ route('sampling.fisik_kemasan.store') }}",
-    //         method: "POST",
-    //         data: form.serialize(),
-    //         success: function(response) {
-    //             Swal.fire({
-    //                 icon: 'success',
-    //                 title: 'Berhasil',
-    //                 text: response.message,
-    //                 timer: 2000,
-    //                 showConfirmButton: false
-    //             });
-    //             form.trigger('reset');
-    //         },
-    //         error: function(xhr) {
-    //             const handlers = {
-    //                 422: function() {
-    //                     let errors = xhr.responseJSON.errors;
-    //                     let list = '';
-    //                     $.each(errors, function(key, value) {
-    //                         list += `<li>${value[0]}</li>`;
-    //                     });
-    //                     Swal.fire({
-    //                         icon: 'error',
-    //                         title: 'Validasi Gagal',
-    //                         html: `<ul style="text-align:left;">${list}</ul>`
-    //                     });
-    //                 },
-    //                 409: function() {
-    //                     Swal.fire({
-    //                         icon: 'warning',
-    //                         title: 'Data Sudah Ada',
-    //                         text: xhr.responseJSON.message
-    //                     });
-    //                 },
-    //                 500: function() {
-    //                     Swal.fire({
-    //                         icon: 'error',
-    //                         title: 'Server Error',
-    //                         text: 'Terjadi kesalahan pada server. Silakan coba lagi nanti.'
-    //                     });
-    //                 },
-    //                 default: function() {
-    //                     Swal.fire({
-    //                         icon: 'error',
-    //                         title: 'Gagal',
-    //                         text: 'Terjadi kesalahan saat menyimpan data.'
-    //                     });
-    //                 }
-    //             };
-
-    //             (handlers[xhr.status] || handlers.default)(); // panggil handler sesuai status
-    //         },
-    //         complete: function() {
-    //             submitBtn.prop('disabled', false).text('Simpan Sampling');
-    //         }
-    //     });
-    // });
 
     $('#form-kemasan').on('submit', function(e) {
         e.preventDefault();
@@ -1124,29 +1444,70 @@
     let currentStep = 0;
     let steps = [];
 
+    // Handle compression sebelum submit
+    $(document).on('change', 'input[name="attachment"]', async function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Cek ukuran file, kalau sudah kecil, tidak perlu compress
+        if (file.size <= 2 * 1024 * 1024) return;
+
+        const options = {
+            maxSizeMB: 2,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true
+        };
+
+        try {
+            const compressedFile = await imageCompression(file, options);
+
+            // Ganti file input dengan file hasil compress
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(compressedFile);
+            event.target.files = dataTransfer.files;
+
+            console.log('Gambar berhasil dikompres:', compressedFile.size / 1024, 'KB');
+        } catch (error) {
+            console.error('Error saat kompres gambar:', error);
+        }
+    });
+
     const renderGroupInput = (label, name) => {
         let html = `<div class="form-step" data-step="${name}" style="display:none;">
-        <h6 class="mb-3">${label}</h6>`;
+    <h6 class="mb-3">${label}</h6>`;
 
-        for (let i = 1; i <= 30; i++) {
-            if (name === 'disposisi') {
+        if (name === 'disposisi') {
+            html += `
+            <label for="">Disposisi</label>
+            <select class="form-control mb-2" name="${name}">
+                <option value="">Pilih Disposisi</option>
+                <option value="Release">Release</option>
+                <option value="Reject">Reject</option>
+            </select>`;
+        } else if (name === 'uji_kristal') {
+            html += `
+            <label for="">Uji Kristal</label>
+            <select class="form-control mb-2" name="${name}">
+                <option value="">Pilih Hasil Uji</option>
+                <option value="Negatif">Negatif</option>
+                <option value="Positif">Positif</option>
+            </select>`;
+        } else if (name === 'attachment') {
+            html += `
+             <label for="">Lampirkan Gambar (opsional)</label>
+              <input type="file" class="form-control mb-2" name="attachment" accept="image/*" capture="environment">`;
+        } else {
+            for (let i = 1; i <= 30; i++) {
                 html += `
-                    <label for="">${i}</label>
-                <select class="form-control mb-2" name="${name}[]">
-                    <option value="">Pilih Disposisi ke-${i}</option>
-                    <option value="Release">Release</option>
-                    <option value="Reject">Reject</option>
-                </select>`;
-            } else {
-                html += `
-                     <label for="">${i}</label>
-                    <input type="text" class="form-control mb-2" name="${name}[]" placeholder="${label} ke-${i}">`;
+                <label for="">${i}</label>
+                <input type="text" class="form-control mb-2" name="${name}[]" placeholder="${label} ke-${i}">`;
             }
         }
 
         html += `</div>`;
         return html;
     };
+
 
 
     function showStep(index) {
@@ -1206,7 +1567,7 @@
             } else if (analisaType === 'long-term') {
                 // Untuk long-term, hanya tampilkan Uji Kristal dan Disposisi
                 url = '/analisa/long-term';
-                const fields = ['uji_kristal', 'disposisi'];
+                const fields = ['uji_kristal', 'disposisi', 'attachment'];
                 steps = fields;
                 fields.forEach(field => {
                     formContent.append(renderGroupInput(field.toUpperCase(), field));
@@ -1266,21 +1627,27 @@
         // Ambil token dari meta tag
         const token = $('meta[name="csrf-token"]').attr('content');
 
-        // Ambil data form, lalu tambahkan token di awal
-        let formData = $(this).serialize();
-        formData = `_token=${encodeURIComponent(token)}&` + formData;
+        // Ambil data form dan buat FormData untuk menangani file upload
+        let formData = new FormData(this); // Menggunakan FormData untuk menangani file
+        formData.append('_token', token); // Menambahkan CSRF token ke formData
 
-        // Kirim data ke server dengan metode POST
-        $.post(url, formData)
-            .done(function(response) {
+        // Kirim data ke server dengan metode POST menggunakan AJAX
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            processData: false, // Jangan ubah data form
+            contentType: false, // Jangan set content-type
+            success: function(response) {
                 alert('Data berhasil disimpan!');
                 $('#modalAnalisa').modal('hide');
                 $('#formAnalisa')[0].reset();
-            })
-            .fail(function(xhr) {
+            },
+            error: function(xhr) {
                 const errMsg = xhr.responseJSON?.message || 'Gagal menyimpan data!';
                 alert(errMsg);
-            });
+            }
+        });
     });
 </script>
 

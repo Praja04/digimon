@@ -13,7 +13,7 @@
                         <a href="javascript: void(0);">Identitas</a>
                     </li>
                     <li class="breadcrumb-item active">
-                    {{ $jenis }}
+                        {{ $jenis }}
                     </li>
                 </ol>
             </div>
@@ -75,9 +75,10 @@
                                     <th>Nama Bahan</th>
                                     <th>Suplier</th>
                                     <th class="sort" data-sort="tanggal_kedatangan">Tanggal Kedatangan</th>
-
                                     <th>Asal Bahan</th>
                                     <th>Jumlah Kedatangan</th>
+                                    <th>Kedatangan di Lab</th>
+                                    <th>Selesai Analisa</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -92,6 +93,8 @@
                                     <td class="tanggal_kedatangan">{{ $identitas->tanggal_kedatangan }}</td>
                                     <td class="asal_bahan">{{ $identitas->asal_bahan }}</td>
                                     <td class="jumlah_kedatangan">{{ $identitas->jumlah_kedatangan }}</td>
+                                    <td class="kedatangan_lab">{{  $identitas->konfirmasi->jam_kedatangan ?? '-'  }}</td>
+                                    <td class="selesai_analisa">{{ $identitas->konfirmasi->jam_analisa ?? '-' }}</td>
 
                                     <td>
                                         <a href="{{ route('rmpm.detailIdentitas', ['id' => $identitas->id]) }}" class="btn btn-sm btn-info">
@@ -180,7 +183,7 @@
                     <div class="mb-3">
                         <label for="tanggal_kedatangan" class="form-label">Tanggal & Jam Kedatangan</label>
                         <input type="datetime-local" class="form-control" id="tanggal_kedatangan" name="tanggal_kedatangan" required>
-                   
+
                     </div>
 
                     <div class="mb-3">
