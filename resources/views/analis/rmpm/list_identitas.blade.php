@@ -39,12 +39,8 @@
                     </div>
                     <div class="col-sm-auto ms-auto">
                         <div class="hstack gap-2">
-                            <button
-                                class="btn btn-soft-danger"
-                                id="remove-actions"
-                                onClick="deleteMultiple()">
-                                <i
-                                    class="ri-delete-bin-2-line"></i>
+                            <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#manualScanModal">
+                                <i class="ri-qr-scan-line"></i> Scan via Alat
                             </button>
                             <button
                                 type="button"
@@ -80,6 +76,7 @@
                                     <th>Kedatangan di Lab</th>
                                     <th>Selesai Analisa</th>
                                     <th>Aksi</th>
+                                    <th>barcode</th>
                                 </tr>
                             </thead>
                             <tbody
@@ -93,7 +90,7 @@
                                     <td class="tanggal_kedatangan">{{ $identitas->tanggal_kedatangan }}</td>
                                     <td class="asal_bahan">{{ $identitas->asal_bahan }}</td>
                                     <td class="jumlah_kedatangan">{{ $identitas->jumlah_kedatangan }}</td>
-                                    <td class="kedatangan_lab">{{  $identitas->konfirmasi->jam_kedatangan ?? '-'  }}</td>
+                                    <td class="kedatangan_lab">{{ $identitas->konfirmasi->jam_kedatangan ?? '-'  }}</td>
                                     <td class="selesai_analisa">{{ $identitas->konfirmasi->jam_analisa ?? '-' }}</td>
 
                                     <td>
@@ -101,6 +98,37 @@
                                             <i class="ri-eye-line"></i> View
                                         </a>
                                     </td>
+                                    <td>
+                                        <!-- Tombol untuk buka modal -->
+                                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#qrModal{{ $identitas->id }}">
+                                            QR Code
+                                        </button>
+
+                                        <!-- Modal Besar -->
+                                        <div class="modal fade" id="qrModal{{ $identitas->id }}" tabindex="-1" aria-labelledby="qrModalLabel{{ $identitas->id }}" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header py-2">
+                                                        <h5 class="modal-title" id="qrModalLabel{{ $identitas->id }}">QR Code - ID {{ $identitas->id }}</h5>
+                                                        <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body text-center" id="qrPrintArea{{ $identitas->id }}">
+                                                        <div style="font-size: 5px; display: inline-block;">
+                                                            {!! DNS2D::getBarcodeHTML(route('rmpm.detailIdentitas', ['id' => $identitas->id]), 'QRCODE') !!}
+                                                        </div>
+                                                        <p class="mt-2 small">
+                                                            {{ $identitas->no_spb }}_{{ $identitas->nama_bahan }}
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-center py-2">
+                                                        <button onclick="printQR('qrPrintArea{{ $identitas->id }}')" class="btn btn-sm btn-success">Print</button>
+                                                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+
                                 </tr>
                                 @empty
                                 <tr>
@@ -225,5 +253,79 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="manualScanModal" tabindex="-1" aria-labelledby="manualScanModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Scan QR Code</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body text-center">
+                <input type="text" id="scannedUrl" class="form-control text-center" placeholder="Scan QR Code di sini..." autofocus>
+                <!-- Spinner Loading -->
+                <div id="loadingSpinner" class="mt-3 d-none">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Mengarahkan ke halaman...</p>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- modal end -->
+<script>
+    const inputField = document.getElementById('scannedUrl');
+    const spinner = document.getElementById('loadingSpinner');
+
+    // Fokus otomatis saat modal terbuka
+    document.getElementById('manualScanModal').addEventListener('shown.bs.modal', function() {
+        inputField.value = '';
+        spinner.classList.add('d-none');
+        inputField.focus();
+    });
+
+    // Jika input berubah (scanner isi URL)
+    inputField.addEventListener('input', function() {
+        const url = inputField.value.trim();
+        if (url.length > 5 && url.startsWith("http")) {
+            // Tampilkan spinner
+            spinner.classList.remove('d-none');
+
+            // Nonaktifkan input sementara
+            inputField.disabled = true;
+
+            // Tunggu 1.5 detik, lalu redirect
+            setTimeout(() => {
+                window.location.href = url;
+            }, 1500);
+        }
+    });
+</script>
+
+
+
+
+<script>
+    function printQR(id) {
+        const content = document.getElementById(id).innerHTML;
+        const win = window.open('', '', 'height=600,width=600');
+        win.document.write('<html><head><title>Print QR</title>');
+        win.document.write('<style>body{text-align:center;font-size:5px;}</style>');
+        win.document.write('</head><body>');
+        win.document.write(content);
+        win.document.write('</body></html>');
+        win.document.close();
+        win.focus();
+        win.print();
+        win.close();
+    }
+</script>
+
+
 @endsection
