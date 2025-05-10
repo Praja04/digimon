@@ -113,8 +113,8 @@
                                                         <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body text-center" id="qrPrintArea{{ $identitas->id }}">
-                                                        <div style="font-size: 5px; display: inline-block;">
-                                                            {!! DNS2D::getBarcodeHTML(route('rmpm.detailIdentitas', ['id' => $identitas->id]), 'QRCODE') !!}
+                                                        <div style="display: inline-block;">
+                                                            <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(route('rmpm.detailIdentitas', ['id' => $identitas->id]), 'QRCODE') }}" alt="QR Code">
                                                         </div>
                                                         <p class="mt-2 small">
                                                             {{ $identitas->no_spb }}_{{ $identitas->nama_bahan }}
@@ -312,20 +312,21 @@
 
 
 <script>
-    function printQR(id) {
-        const content = document.getElementById(id).innerHTML;
-        const win = window.open('', '', 'height=600,width=600');
-        win.document.write('<html><head><title>Print QR</title>');
-        win.document.write('<style>body{text-align:center;font-size:5px;}</style>');
-        win.document.write('</head><body>');
-        win.document.write(content);
-        win.document.write('</body></html>');
-        win.document.close();
-        win.focus();
-        win.print();
-        win.close();
-    }
+function printQR(id) {
+    const content = document.getElementById(id).innerHTML;
+    const win = window.open('', '', 'height=600,width=600');
+    win.document.write('<html><head><title>Print QR</title>');
+    win.document.write('<style>body{text-align:center; font-size:12px;}</style>');
+    win.document.write('</head><body>');
+    win.document.write(content);
+    win.document.write('</body></html>');
+    win.document.close();
+    win.focus();
+    win.print();
+    win.close();
+}
 </script>
+
 
 
 @endsection
