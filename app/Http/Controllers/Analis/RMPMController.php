@@ -115,42 +115,42 @@ class RMPMController extends Controller
 
 
 
-    public function storeLongTerm(Request $request)
-    {
-        // Validasi
-        $request->validate([
-            'id_identitas' => 'required|exists:identitas_rm_master,id',
-            'uji_kristal' => 'required',
-            'disposisi' => 'required',
-            'attachment' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5000',
-        ]);
+    // public function storeLongTerm(Request $request)
+    // {
+    //     // Validasi
+    //     $request->validate([
+    //         'id_identitas' => 'required|exists:identitas_rm_master,id',
+    //         'uji_kristal' => 'required',
+    //         'disposisi' => 'required',
+    //         'attachment' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5000',
+    //     ]);
 
-        // Cek apakah ada file attachment
-        $attachmentPath = null;
-        if ($request->hasFile('attachment')) {
-            // Generate unique file name
-            $filename = 'attachment_' . time() . '_' . uniqid() . '.' . $request->attachment->extension();
+    //     // Cek apakah ada file attachment
+    //     $attachmentPath = null;
+    //     if ($request->hasFile('attachment')) {
+    //         // Generate unique file name
+    //         $filename = 'attachment_' . time() . '_' . uniqid() . '.' . $request->attachment->extension();
 
-            // Simpan file di folder public/uploads/attachment_analisa
-            $request->file('attachment')->storeAs('uploads/attachment_analisa', $filename, 'public');
+    //         // Simpan file di folder public/uploads/attachment_analisa
+    //         $request->file('attachment')->storeAs('uploads/attachment_analisa', $filename, 'public');
 
-            // Ambil nama file saja untuk disimpan di database
-            $attachmentName = basename($filename);
-        }
+    //         // Ambil nama file saja untuk disimpan di database
+    //         $attachmentName = basename($filename);
+    //     }
 
-        // Simpan data analisa long term ke database
-        AnalisaLongTermGKT::create([
-            'id_identitas'    => $request->id_identitas,
-            'uji_kristal'     => $request->uji_kristal,
-            'disposisi'       => $request->disposisi,
-            'attachment'      => $attachmentName,
-            'created_by_user' => session('username'),
-            'created_at'      => now(),
-            'updated_at'      => now(),
-        ]);
+    //     // Simpan data analisa long term ke database
+    //     AnalisaLongTermGKT::create([
+    //         'id_identitas'    => $request->id_identitas,
+    //         'uji_kristal'     => $request->uji_kristal,
+    //         'disposisi'       => $request->disposisi,
+    //         'attachment'      => $attachmentName,
+    //         'created_by_user' => session('username'),
+    //         'created_at'      => now(),
+    //         'updated_at'      => now(),
+    //     ]);
 
-        return response()->json(['message' => 'Berhasil menyimpan data long term'], 201);
-    }
+    //     return response()->json(['message' => 'Berhasil menyimpan data long term'], 201);
+    // }
 
 
 
@@ -389,4 +389,51 @@ class RMPMController extends Controller
             'message' => 'Jam kedatangan dan analisa berhasil disimpan.'
         ]);
     }
+
+
+    ///test 
+    public function storeLongTerm(Request $request)
+    {
+        // Validasi awal yang selalu dicek
+        $request->validate([
+            'id_identitas' => 'required|exists:identitas_rm_master,id',
+            'uji_kristal'  => 'required|in:positif,negatif',
+        ]);
+
+        $ujiKristal = $request->uji_kristal;
+        $attachmentName = null;
+        $disposisi = null;
+
+        if ($ujiKristal === 'negatif') {
+            // Jika negatif: tidak perlu attachment, disposisi otomatis release
+            $attachmentName = '-';
+            $disposisi = 'release';
+        } else {
+            // Jika positif: attachment wajib
+            $request->validate([
+                'attachment' => 'required|image|mimes:jpg,jpeg,png,gif|max:5000',
+            ]);
+
+            // Simpan attachment
+            if ($request->hasFile('attachment')) {
+                $filename = 'attachment_' . time() . '_' . uniqid() . '.' . $request->attachment->extension();
+                $request->file('attachment')->storeAs('uploads/attachment_analisa', $filename, 'public');
+                $attachmentName = basename($filename);
+            }
+        }
+
+        // Simpan ke database
+        AnalisaLongTermGKT::create([
+            'id_identitas'    => $request->id_identitas,
+            'uji_kristal'     => $ujiKristal,
+            'disposisi'       => $disposisi,
+            'attachment'      => $attachmentName,
+            'created_by_user' => session('username'),
+            'created_at'      => now(),
+            'updated_at'      => now(),
+        ]);
+
+        return response()->json(['message' => 'Berhasil menyimpan data long term'], 201);
+    }
+
 }

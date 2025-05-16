@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Analis\GgaGgasController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Middleware\RoleMiddleware;
@@ -93,17 +94,52 @@ Route::prefix('analisa')->group(function () {
 });
 
 
+//Persiapan masak
+Route::prefix('productionbatch')->group(function () {
+    Route::get('/menu', [ProductionBatchController::class, 'menu'])->name('productionbatch.menu');
+    Route::get('/data_po', [ProductionBatchController::class, 'data_po'])->name('productionbatch.data_po');
+    Route::resource('/po_masak', ProductionBatchController::class)->names([
+        'index' => 'productionbatch.index',
+        'create' => 'productionbatch.create',
+        'store' => 'productionbatch.store',
+        'show' => 'productionbatch.show',
+        'edit' => 'productionbatch.edit',
+        'update' => 'productionbatch.update',
+        'destroy' => 'productionbatch.destroy',
+    ]);
+    Route::get('/processgga/get-last-revisi', [ProductionBatchController::class, 'getLastRevisiGGA']);
+    Route::post('/processgga/generate-revisi', [ProductionBatchController::class, 'generateRevisiGGA']);
+    Route::get('/processggas/get-last-revisi', [ProductionBatchController::class, 'getLastRevisiGGAS']);
+    Route::post('/processggas/generate-revisi', [ProductionBatchController::class, 'generateRevisiGGAS']);
+});
+
 //gga ggas
+Route::prefix('ggaggas')->group(function () {
+    Route::get('/menu', [GgaGgasController::class, 'menu']);
+    Route::post('/process/store', [GgaGgasController::class, 'store'])->name('process.store');
+
+    Route::post('/check-batch-range', [GgaGgasController::class, 'checkBatchRangeGGA'])->name('process.checkBatchRange');
+    Route::get('/gga', [GgaGgasController::class, 'GGA_data']);
+    Route::get('/gga/{id}', [GgaGgasController::class, 'GGA_detail']);
+    Route::get('/gga/id/{id}', [GgaGgasController::class, 'showInputFormGGA']);
+    Route::post('/gga/update-ajax/{id}', [GgaGgasController::class, 'updateAjaxGGA']);
+    
+    
+    Route::get('/ggas', [GgaGgasController::class, 'GGAS_data']);
+    Route::get('/ggas/{id}', [GgaGgasController::class, 'GGAS_detail']);
+    Route::get('/ggas/id/{id}', [GgaGgasController::class, 'showInputFormGGAS']);
+    Route::post('/ggas/update-ajax/{id}', [GgaGgasController::class, 'updateAjaxGGAS']);
+    
+});
 
 
-Route::resource('productionbatch', ProductionBatchController::class);
-Route::post('productionbatch/{id}/storeGgaGgas', [ProductionBatchController::class, 'storeGgaGgas'])->name('productionbatch.storeGgaGgas');
-Route::post('ggaggas/{id}/storeAnalysis', [ProductionBatchController::class, 'storeAnalysis'])->name('ggaggas.storeAnalysis');
+// Route::post('productionbatch/{id}/storeGgaGgas', [ProductionBatchController::class, 'storeGgaGgas'])->name('productionbatch.storeGgaGgas');
+// Route::post('ggaggas/{id}/storeAnalysis', [ProductionBatchController::class, 'storeAnalysis'])->name('ggaggas.storeAnalysis');
 
-// Jika Anda belum memiliki rute 'createGgaGgas', tambahkan seperti ini:
-Route::get('productionbatch/{id}/createGgaGgas', [ProductionBatchController::class, 'createGgaGgas'])->name('productionbatch.createGgaGgas');
+// // Jika Anda belum memiliki rute 'createGgaGgas', tambahkan seperti ini:
+// Route::get('productionbatch/{id}/createGgaGgas', [ProductionBatchController::class, 'createGgaGgas'])->name('productionbatch.createGgaGgas');
 
-Route::get('ggaggas/select', [ProductionBatchController::class, 'selectGgaGgas'])->name('productionbatch.selectGgaGgas');
+// Route::get('ggaggas/select', [ProductionBatchController::class, 'selectGgaGgas'])->name('productionbatch.selectGgaGgas');
 
-// Rute untuk menampilkan detail data GGA/GGAS berdasarkan ID
-Route::get('ggaggas/{id}', [ProductionBatchController::class, 'show'])->name('ggaggas.show');
+// // Rute untuk menampilkan detail data GGA/GGAS berdasarkan ID
+// Route::get('ggaggas/{id}', [ProductionBatchController::class, 'show'])->name('ggaggas.show');

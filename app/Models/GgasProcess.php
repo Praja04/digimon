@@ -5,19 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GgaGgasProcess extends Model
+class GgasProcess extends Model
 {
+    //
+    
     use HasFactory;
-
+    protected $table = 'ggas_processes';
     protected $fillable = [
         'production_batch_id',
-        'sample_type',
+        'batch_range',
         'dissolver_number',
-        'barcode',
-        'result_analysis',
+       'revisi',
+        'brix',
+        'nacl',
+        'warna',
         'disposition',
         'disposition_remarks',
     ];
+    public $timestamps = false;
 
     // Relasi dengan tabel ProductionBatch
     public function productionBatch()

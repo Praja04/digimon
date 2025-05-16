@@ -1,0 +1,150 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0">Input GGAS</h4>
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="#">QC</a></li>
+                    <li class="breadcrumb-item active">GGAS</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if ($ggas)
+<div class="row">
+    <div class="col-lg-3"></div>
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Form Input GGAS - Batch {{ $ggas->batch_range }}</h5>
+            </div>
+            <div class="card-body">
+                <form class="ajax-ggas-form" data-id="{{ $ggas->id }}">
+                    @csrf
+                    <input type="hidden" name="url" id="url" value="{{ $ggas->production_batch_id }}">
+                    <div class="alert alert-danger d-none error-alert"></div>
+
+                    <div class="mb-3">
+                        <label for="brix" class="form-label">BRIX</label>
+                        <input type="number" step="0.01" max="100" min="0" name="brix" id="brix" class="form-control" required value="{{ old('brix', $ggas->brix) }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="nacl" class="form-label">NACL</label>
+                        <input type="number" step="0.01" max="100" min="0" name="nacl" id="nacl" class="form-control" required value="{{ old('nacl', $ggas->nacl) }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="warna" class="form-label">Warna</label>
+                        <input type="text" name="warna" id="warna" class="form-control" required value="{{ old('warna', $ggas->warna) }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Disposition</label>
+                        <select name="disposition" class="form-select disposition-select" required>
+                            <option value="">-- Pilih Disposition --</option>
+                            <option value="Release">Release</option>
+                            <option value="Release Bersyarat">Release Bersyarat</option>
+                            <option value="Resampling">Resampling</option>
+                            <option value="Reject">Reject</option>
+                            <option value="Repro">Repro</option>
+                            <option value="Adjustment">Adjustment</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Remarks</label>
+                        <textarea name="disposition_remarks" class="form-control" rows="2" placeholder="Isi remarks jika diperlukan..."></textarea>
+                    </div>
+
+                    <div class="mb-3 d-none adjustment-qty-wrapper">
+                        <label class="form-label">Adjustment Qty</label>
+                        <input type="number" name="adjustment_qty" class="form-control adjustment-qty">
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url()->previous() }}" class="btn btn-secondary">Kembali</a>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@else
+<div class="alert alert-danger">
+    Data GGAS tidak ditemukan.
+</div>
+@endif
+
+<script>
+    $(document).ready(function() {
+        let selectedId = null;
+
+        // Ketika tombol diklik, simpan ID dan buka modal
+        $('.open-ggas-modal').on('click', function() {
+            selectedId = $(this).data('id');
+            $('#inputGgasModal').modal('show');
+        });
+
+        // Show/hide adjustment qty saat ganti disposition
+        $('.disposition-select').on('change', function() {
+            const selected = $(this).val();
+            const qtyWrapper = $('.adjustment-qty-wrapper');
+            const qtyInput = $('.adjustment-qty');
+
+            if (selected === 'Adjustment') {
+                qtyWrapper.removeClass('d-none');
+                qtyInput.prop('required', true);
+            } else {
+                qtyWrapper.addClass('d-none');
+                qtyInput.prop('required', false).val('');
+            }
+        });
+
+        // Reset form saat modal dibuka
+        $('#inputGgasModal').on('shown.bs.modal', function() {
+            $('#ggasForm')[0].reset();
+            $('.disposition-select').trigger('change');
+            $('.error-alert').addClass('d-none').html('');
+        });
+
+        $('.ajax-ggas-form').on('submit', function(e) {
+            e.preventDefault();
+
+            var form = $(this);
+            var url = $('#url').val();
+            var id = form.data('id');
+            var alertBox = form.find('.error-alert');
+            var submitBtn = form.find('button[type="submit"]');
+
+            alertBox.addClass('d-none').empty();
+            submitBtn.prop('disabled', true).text('Menyimpan...');
+
+            $.ajax({
+                url: "{{ url('ggaggas/ggas/update-ajax') }}/" + id,
+                method: 'POST',
+                data: form.serialize(),
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: response.message || 'Data berhasil disimpan.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = "{{ url('ggaggas/ggas') }}/" + url;
+                    });
+                },
+                error: function(xhr) {
+                    var errors = xhr.responseJSON?.errors || ['Terjadi kesalahan.'];
+                    alertBox.removeClass('d-none').html(errors.join('<br>'));
+                    submitBtn.prop('disabled', false).text('Simpan');
+                }
+            });
+        });
+    });
+</script>
+@endsection

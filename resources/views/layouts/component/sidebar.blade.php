@@ -55,47 +55,19 @@
                 @elseif(Session::get('role') === 'foreman')
                 @elseif(Session::get('role') === 'analis')
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
-
-                <!-- <li class="nav-item">
-    <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarDashboards">
-        <i class="mdi mdi-tools"></i> <span data-key="t-dashboards">Dashboard Eng</span>
-    </a>
-    <div class="collapse menu-dropdown" id="sidebarDashboards">
-        <ul class="nav nav-sm flex-column">
-            <li class="nav-item">
-                <a href="{{ url('dept_head') }}" class="nav-link" data-key="t-analytics"> Analytics Boiler</a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url('dept_head') }}" class="nav-link" data-key="t-analytics"> Todo List ENG </a>
-            </li>
-
-        </ul>
-    </div>
-</li> -->
-
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ url('rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">RMPM</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ url('rmpm')}}">
-                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Gula Tebu</span>
+                    <a class="nav-link menu-link" href="{{url('productionbatch/menu')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Persiapan Masak</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ url('rmpm')}}">
-                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Gula Kelapa</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ url('rmpm')}}">
-                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Gula</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ url('rmpm')}}">
-                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Garam</span>
+                    <a class="nav-link menu-link" href="{{url('ggaggas/menu')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">GGA & GGAS</span>
                     </a>
                 </li>
                 @endif

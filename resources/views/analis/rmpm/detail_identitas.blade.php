@@ -23,8 +23,7 @@
 </style>
 <div class="row">
     <div class="col-12">
-        <div
-            class="page-title-box d-sm-flex align-items-center justify-content-between">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
             <h4 class="mb-sm-0">Identitas RM - Detail</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
@@ -47,25 +46,16 @@
                 <div class="row g-4 align-items-center">
                     <div class="col-sm-3">
                         <div class="search-box">
-                            <input
-                                type="text"
-                                class="form-control "
-                                placeholder="{{ $identitas->nama_bahan }}" disabled />
-                            <i
-                                class="ri-search-line search-icon"></i>
+                            <input type="text" class="form-control " placeholder="{{ $identitas->nama_bahan }}" disabled />
+                            <i class="ri-search-line search-icon"></i>
                         </div>
                     </div>
                     <div class="col-sm-auto ms-auto">
                         <div class="hstack gap-2">
-                            <button
-                                class="btn btn-soft-danger"
-                                id="remove-actions"
-                                onClick="deleteMultiple()">
-                                <i
-                                    class="ri-delete-bin-2-line"></i>
+                            <button class="btn btn-soft-danger" id="remove-actions" onClick="deleteMultiple()">
+                                <i class="ri-delete-bin-2-line"></i>
                             </button>
-                            <button type="button" class="btn btn-info"
-                                data-bs-toggle="modal" data-bs-target="#modalAnalisa"> <i class="ri-filter-3-line align-bottom me-1"></i> Analisa </button>
+                            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalAnalisa"> <i class="ri-filter-3-line align-bottom me-1"></i> Analisa </button>
                             <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" data-bs-target="#samplingModal">
                                 <i class="ri-add-line align-bottom me-1"></i> Sampling
                             </button>
@@ -548,7 +538,7 @@
                                         <td>{{ $garamgula->aroma ?? 'belum input'}}</td>
                                         <td>{{ $garamgula->{'%nacl'} ?? 'belum input'}}</td>
                                         <td>{{ $garamgula->gross_weight?? 'belum input'}}</td>
-                                        <td>{{ $garamgula->id_disposisi?? 'belum input'}}</td>
+                                        <td>{{ $garamgula->disposisi->disposisi ?? 'belum input'}}</td>
                                     </tr>
                                     @empty
                                     <tr>
@@ -602,23 +592,17 @@
                         class="list-group-item list-group-item-action {{ $identitas->sampling_kondisi_mobil ? 'disabled' : '' }}">
                         <i class="ri-truck-line me-2"></i> Sampling Kondisi Mobil
                     </a> -->
-                    <button type="button"
-                        class="list-group-item list-group-item-action sampling-option {{ $identitas->sampling_kondisi_mobil ? 'disabled' : '' }}"
-                        data-sampling="kondisi_mobil"
-                        data-title="Sampling Kondisi Mobil"
-                        {{ $identitas->sampling_kondisi_mobil ? 'disabled' : '' }}>
+                    <button type="button" class="list-group-item list-group-item-action sampling-option {{ $identitas->sampling_kondisi_mobil ? 'disabled' : '' }}" data-sampling="kondisi_mobil" data-title="Sampling Kondisi Mobil" {{ $identitas->sampling_kondisi_mobil ? 'disabled' : '' }}>
                         <i class="ri-truck-line me-2"></i> Sampling Kondisi Mobil
                     </button>
 
                     <!-- Sampling Dokumen -->
-                    <a href="{{ route('sampling.dokumen', ['id' => $identitas->id]) }}"
-                        class="list-group-item list-group-item-action {{ $identitas->sampling_dokumen ? 'disabled' : '' }}">
+                    <a href="{{ route('sampling.dokumen', ['id' => $identitas->id]) }}" class="list-group-item list-group-item-action {{ $identitas->sampling_dokumen ? 'disabled' : '' }}">
                         <i class="ri-file-text-line me-2"></i> Sampling Dokumen
                     </a>
 
                     <!-- Sampling Fisik Kemasan -->
-                    <a href="{{ route('sampling.fisik_kemasan', ['id' => $identitas->id]) }}"
-                        class="list-group-item list-group-item-action {{ $identitas->sampling_fisik_kemasan ? 'disabled' : '' }}">
+                    <a href="{{ route('sampling.fisik_kemasan', ['id' => $identitas->id]) }}" class="list-group-item list-group-item-action {{ $identitas->sampling_fisik_kemasan ? 'disabled' : '' }}">
                         <i class="ri-inbox-line me-2"></i> Sampling Fisik Kemasan
                     </a>
 
@@ -642,40 +626,20 @@
                 <p>Silakan pilih kategori sampling yang ingin Anda isi.</p>
                 <div class="list-group">
                     <!-- sampling kondisi mobil -->
-                    <button type="button"
-                        class="list-group-item list-group-item-action sampling-option {{ $identitas->sampling_kondisi_mobil ? 'disabled' : '' }}"
-                        data-sampling="kondisi_mobil"
-                        data-title="Sampling Kondisi Mobil"
-                        {{ $identitas->sampling_kondisi_mobil ? 'disabled' : '' }}
-                        data-bs-dismiss="modal">
+                    <button type="button" class="list-group-item list-group-item-action sampling-option {{ $identitas->sampling_kondisi_mobil ? 'disabled' : '' }}" data-sampling="kondisi_mobil" data-title="Sampling Kondisi Mobil" {{ $identitas->sampling_kondisi_mobil ? 'disabled' : '' }} data-bs-dismiss="modal">
                         <i class="ri-truck-line me-2"></i> Sampling Kondisi Mobil
                     </button>
                     <!-- sampling  dokumen -->
-                    <button type="button"
-                        class="list-group-item list-group-item-action sampling-option {{ $identitas->sampling_dokumen ? 'disabled' : '' }}"
-                        data-sampling="kondisi_dokumen"
-                        data-title="Sampling Dokumen"
-                        {{ $identitas->sampling_dokumen ? 'disabled' : '' }}
-                        data-bs-dismiss="modal">
+                    <button type="button" class="list-group-item list-group-item-action sampling-option {{ $identitas->sampling_dokumen ? 'disabled' : '' }}" data-sampling="kondisi_dokumen" data-title="Sampling Dokumen" {{ $identitas->sampling_dokumen ? 'disabled' : '' }} data-bs-dismiss="modal">
                         <i class="ri-file-text-line me-2"></i> Sampling Dokumen
                     </button>
                     <!-- sampling  fisik kemasan -->
-                    <button type="button"
-                        class="list-group-item list-group-item-action sampling-option {{ $identitas->sampling_kemasan ? 'disabled' : '' }}"
-                        data-sampling="kondisi_kemasan"
-                        data-title="Sampling Kemasan"
-                        {{ $identitas->sampling_kemasan ? 'disabled' : '' }}
-                        data-bs-dismiss="modal">
+                    <button type="button" class="list-group-item list-group-item-action sampling-option {{ $identitas->sampling_kemasan ? 'disabled' : '' }}" data-sampling="kondisi_kemasan" data-title="Sampling Kemasan" {{ $identitas->sampling_kemasan ? 'disabled' : '' }} data-bs-dismiss="modal">
                         <i class="ri-inbox-line me-2"></i> Sampling Kemasan
                     </button>
                     @if($identitas->jenis_gula !== 'Garam')
                     <!-- sampling  fisik raw -->
-                    <button type="button"
-                        class="list-group-item list-group-item-action sampling-option {{ $identitas->sampling_raw ? 'disabled' : '' }}"
-                        data-sampling="kondisi_raw"
-                        data-title="Sampling Raw"
-                        {{ $identitas->sampling_raw ? 'disabled' : '' }}
-                        data-bs-dismiss="modal">
+                    <button type="button" class="list-group-item list-group-item-action sampling-option {{ $identitas->sampling_raw ? 'disabled' : '' }}" data-sampling="kondisi_raw" data-title="Sampling Raw" {{ $identitas->sampling_raw ? 'disabled' : '' }} data-bs-dismiss="modal">
                         <i class="ri-flask-line me-2"></i> Sampling raw
                     </button>
                     @endif
@@ -962,6 +926,14 @@
                             <label><input type="radio" name="analisa_type" value="long-term"> Long-Term</label>
                         </div>
                     </div>
+                    <div id="analisa-jumlah" style="display: none;">
+                        <h6 class="mb-3">Input Jumlah Data</h6>
+                        <div>
+                            <label>Jumlah Data</label>
+                            <input class="form-control" type="number" name="jumlah_data" id="jumlah_data">
+                        </div>
+
+                    </div>
                 </div>
                 <div class="d-flex justify-content-between mt-3">
                     <button type="button" id="prevBtn" class="btn btn-secondary" style="display: none;">Sebelumnya</button>
@@ -1033,7 +1005,7 @@
                         $('#labelJam').text('Jam Analisa');
                     } else if (response.jam_analisa_exists) {
                         $('#labelJam').text('sudah dikonfirmasi semua');
-                        $('#jamInput').hide(); 
+                        $('#jamInput').hide();
                         $('#btnSimpanJam').hide();
                     }
 
@@ -1437,8 +1409,9 @@
             }
         });
     });
+</script>
 
-
+<script>
     const formContent = $('#form-analisa-content');
     const jenisGula = $('#jenis_gula').val();
     let currentStep = 0;
@@ -1472,34 +1445,84 @@
         }
     });
 
-    const renderGroupInput = (label, name) => {
+    // const renderGroupInput = (label, name, jumlahData) => {
+    //     let html = `<div class="form-step" data-step="${name}" style="display:none;">
+    //  <h6 class="mb-3">${label}</h6>`;
+
+    //     if (name === 'disposisi') {
+    //         html += ` <label for="">Disposisi</label>
+    //         <select class="form-control mb-2" name="${name}">
+    //             <option value="">Pilih Disposisi</option>
+    //             <option value="Release">Release</option>
+    //             <option value="Reject">Reject</option>
+    //         </select>`;
+    //     } else if (name === 'uji_kristal') {
+    //         html += ` <label for="">Uji Kristal</label>
+    //         <select class="form-control mb-2" name="${name}">
+    //             <option value="">Pilih Hasil Uji</option>
+    //             <option value="Negatif">Negatif</option>
+    //             <option value="Positif">Positif</option>
+    //         </select>`;
+    //     } else if (name === 'attachment') {
+    //         html += ` <label for="">Lampirkan Gambar (opsional)</label>
+    //           <input type="file" class="form-control mb-2" name="attachment" accept="image/*" capture="environment">`;
+    //     } else {
+    //         for (let i = 1; i <= jumlahData; i++) {
+    //             html += `
+    //             <label for="">${i}</label>
+    //             <input type="text" class="form-control mb-2" name="${name}[]" placeholder="${label} ke-${i}">`;
+    //         }
+    //     }
+
+    //     html += `</div>`;
+    //     return html;
+    // };
+
+    const renderGroupInput = (label, name, jumlahData) => {
         let html = `<div class="form-step" data-step="${name}" style="display:none;">
-    <h6 class="mb-3">${label}</h6>`;
+        <h6 class="mb-3">${label}</h6>`;
 
         if (name === 'disposisi') {
-            html += `
-            <label for="">Disposisi</label>
-            <select class="form-control mb-2" name="${name}">
+            html += `<div class="disposisi-wrapper" style="display: none;">
+            <label>Disposisi</label>
+            <select class="form-control mb-2" name="disposisi">
                 <option value="">Pilih Disposisi</option>
                 <option value="Release">Release</option>
                 <option value="Reject">Reject</option>
-            </select>`;
+            </select>
+        </div>
+        <div class="disposisi-wrapper-negatif" style="display: none;">
+            <label>Disposisi</label>
+            <select class="form-control mb-2" name="disposisi">
+                <option value="">Pilih Disposisi</option>
+                <option value="Release">Release</option>
+               
+            </select>
+        </div>
+        <div class="disposisi">
+            <label>Disposisi</label>
+            <select class="form-control mb-2" name="disposisi">
+                <option value="">Pilih Disposisi</option>
+                <option value="Release">Release</option>
+                <option value="Reject">Reject</option>
+            </select>
+        </div>
+        `;
         } else if (name === 'uji_kristal') {
-            html += `
-            <label for="">Uji Kristal</label>
-            <select class="form-control mb-2" name="${name}">
+            html += `<label for="">Uji Kristal</label>
+            <select class="form-control mb-2" name="uji_kristal" id="select-uji-kristal">
                 <option value="">Pilih Hasil Uji</option>
-                <option value="Negatif">Negatif</option>
-                <option value="Positif">Positif</option>
+                <option value="negatif">Negatif</option>
+                <option value="positif">Positif</option>
             </select>`;
         } else if (name === 'attachment') {
-            html += `
-             <label for="">Lampirkan Gambar (opsional)</label>
-              <input type="file" class="form-control mb-2" name="attachment" accept="image/*" capture="environment">`;
+            html += `<div class="attachment-wrapper">
+            <label>Lampirkan Gambar</label>
+            <input type="file" class="form-control mb-2" name="attachment" accept="image/*">
+        </div>`;
         } else {
-            for (let i = 1; i <= 30; i++) {
-                html += `
-                <label for="">${i}</label>
+            for (let i = 1; i <= jumlahData; i++) {
+                html += `<label for="">${i}</label>
                 <input type="text" class="form-control mb-2" name="${name}[]" placeholder="${label} ke-${i}">`;
             }
         }
@@ -1508,6 +1531,25 @@
         return html;
     };
 
+    // Event listener dinamis: tampilkan / sembunyikan attachment & disposisi
+    $(document).on('change', '#select-uji-kristal', function() {
+        const value = $(this).val();
+        if (value === 'negatif') {
+            $('.attachment-wrapper').hide();
+            $('.disposisi-wrapper-negatif').show();
+            $('.disposisi').hide();
+            $('select[name="disposisi"]').val('release');
+        } else if (value === 'positif') {
+            $('.disposisi').hide();
+            $('.attachment-wrapper').show();
+            $('.disposisi-wrapper').hide();
+            $('.disposisi-wrapper-negatif').hide();
+            $('select[name="disposisi"]').val('');
+        } else {
+            $('.attachment-wrapper').hide();
+            $('.disposisi').show();
+        }
+    });
 
 
     function showStep(index) {
@@ -1520,29 +1562,23 @@
     $('#modalAnalisa').on('show.bs.modal', function() {
         formContent.html('');
         steps = [];
+        currentStep = 0;
+
+        $('#analisa-type-select').hide();
+        $('#analisa-jumlah').hide();
+        $('#prevBtn').hide();
+        $('#nextBtn').text('Berikutnya');
 
         if (jenisGula === 'Gula Kelapa' || jenisGula === 'Gula Tebu') {
-            // Tampilkan pilihan analisa (Short-Term / Long-Term)
             $('#analisa-type-select').show();
         } else if (jenisGula === 'Gula' || jenisGula === 'Garam') {
-            const fields = ['fisik', '%ka', 'kotoran', 'organo', 'warna', 'aroma', '%nacl', 'gross_weight', 'disposisi'];
-            steps = fields;
-
-            fields.forEach(field => {
-                formContent.append(renderGroupInput(field.toUpperCase(), field));
-            });
-            $('#analisa-type-select').hide(); // Sembunyikan pilihan analisa jika jenis gula bukan Gula Kelapa atau Gula Tebu
+            steps = ['analisa-jumlah'];
+            $('#analisa-jumlah').show(); // Sudah ada di HTML
         } else {
             formContent.html(`<div class="alert alert-warning">Jenis gula tidak dikenali: ${jenisGula}</div>`);
             $('#prevBtn').hide();
             $('#nextBtn').hide();
-            return;
         }
-
-        currentStep = 0;
-        showStep(currentStep);
-        $('#prevBtn').show();
-        $('#nextBtn').show();
     });
 
     $('#nextBtn').click(function() {
@@ -1553,37 +1589,73 @@
                 return;
             }
 
-            // Sembunyikan pilihan analisa dan tampilkan form sesuai pilihan
             $('#analisa-type-select').hide();
+            $('#analisa-jumlah').show(); // Tampilkan input jumlah data
+            return;
+        }
 
-            if (analisaType === 'short-term') {
-                // Untuk short-term, tampilkan semua form
-                url = '/analisa/short-term';
-                const fields = ['brix', 'ph', 'kotoran', 'ka', 'organo', 'warna', 'aroma', 'disposisi'];
-                steps = fields;
-                fields.forEach(field => {
-                    formContent.append(renderGroupInput(field.toUpperCase(), field));
-                });
-            } else if (analisaType === 'long-term') {
-                // Untuk long-term, hanya tampilkan Uji Kristal dan Disposisi
-                url = '/analisa/long-term';
-                const fields = ['uji_kristal', 'disposisi', 'attachment'];
-                steps = fields;
-                fields.forEach(field => {
-                    formContent.append(renderGroupInput(field.toUpperCase(), field));
-                });
+        if ($('#analisa-jumlah').is(':visible')) {
+            const jumlahData = parseInt($('#jumlah_data').val());
+            if (isNaN(jumlahData) || jumlahData <= 0) {
+                alert('Masukkan jumlah data yang valid!');
+                return;
             }
+
+            $('#analisa-jumlah').hide();
+
+            const jenisGula = $('#jenis_gula').val(); // Pastikan ini tersedia
+
+            // Jika jenis Gula/Garam, baru render field berdasarkan jumlah
+            if (jenisGula === 'Gula' || jenisGula === 'Garam') {
+                const fields = ['fisik', '%ka', 'kotoran', 'organo', 'warna', 'aroma', '%nacl', 'gross_weight', 'disposisi'];
+
+                // Isi steps baru
+                steps = fields;
+
+                // Kosongkan form dan isi ulang
+                formContent.html('');
+                fields.forEach(field => {
+                    formContent.append(renderGroupInput(field.toUpperCase(), field, jumlahData));
+                });
+
+                currentStep = 0;
+                showStep(currentStep);
+                return;
+            }
+
+            // Untuk jenis lain seperti short-term/long-term
+            const analisaType = $('input[name="analisa_type"]:checked').val();
+
+            let fields = [];
+            if (analisaType === 'short-term') {
+                fields = ['brix', 'ph', 'kotoran', 'ka', 'organo', 'warna', 'aroma'];
+            } else if (analisaType === 'long-term') {
+                fields = ['uji_kristal', 'attachment'];
+            }
+
+            fields.push('disposisi');
+
+            steps = fields;
+            formContent.html('');
+            fields.forEach(field => {
+                formContent.append(renderGroupInput(field.toUpperCase(), field, jumlahData));
+            });
+
             currentStep = 0;
             showStep(currentStep);
+            return;
+        }
+
+
+        // Step input biasa
+        if (currentStep < steps.length - 1) {
+            currentStep++;
+            showStep(currentStep);
         } else {
-            if (currentStep < steps.length - 1) {
-                currentStep++;
-                showStep(currentStep);
-            } else {
-                $('#formAnalisa').submit(); // terakhir submit
-            }
+            $('#formAnalisa').submit();
         }
     });
+
 
     $('#prevBtn').click(function() {
         if (currentStep > 0) {
@@ -1592,65 +1664,149 @@
         }
     });
 
+    // $('#formAnalisa').off('submit').on('submit', function(e) {
+    //     e.preventDefault();
+
+    //     const jenis = $('#jenis_gula').val();
+    //     let url = '';
+
+    //     // Cek apakah jenis gula adalah Gula Kelapa atau Gula Tebu
+    //     if (jenis === 'Gula Kelapa' || jenis === 'Gula Tebu') {
+    //         const analisaType = $('input[name="analisa_type"]:checked').val(); // Dapatkan pilihan jenis analisa
+
+    //         if (!analisaType) {
+    //             alert('Silakan pilih jenis analisa (Short-Term / Long-Term)');
+    //             return;
+    //         }
+
+    //         if (analisaType === 'short-term') {
+    //             url = '/analisa/short-term';
+    //         } else if (analisaType === 'long-term') {
+    //             url = '/analisa/long-term';
+    //         } else {
+    //             alert('Jenis analisa tidak dikenali!');
+    //             return;
+    //         }
+    //     } else if (jenis === 'Gula' || jenis === 'Garam') {
+    //         url = '/analisa/garam-gula';
+    //     } else {
+    //         alert('Jenis gula tidak dikenali!');
+    //         return;
+    //     }
+
+    //     const token = $('meta[name="csrf-token"]').attr('content');
+
+    //     let formData = new FormData(this);
+    //     formData.append('_token', token);
+
+    //     $.ajax({
+    //         url: url,
+    //         type: 'POST',
+    //         data: formData,
+    //         processData: false,
+    //         contentType: false,
+    //         success: function(response) {
+    //             alert('Data berhasil disimpan!');
+    //             $('#modalAnalisa').modal('hide');
+    //             $('#formAnalisa')[0].reset();
+    //         },
+    //         error: function(xhr) {
+    //             const errMsg = xhr.responseJSON?.message || 'Gagal menyimpan data!';
+    //             alert(errMsg);
+    //         }
+    //     });
+    // });
+
     $('#formAnalisa').off('submit').on('submit', function(e) {
         e.preventDefault();
 
         const jenis = $('#jenis_gula').val();
         let url = '';
 
-        // Cek apakah jenis gula adalah Gula Kelapa atau Gula Tebu
+        // Tentukan URL berdasarkan jenis dan tipe analisa
         if (jenis === 'Gula Kelapa' || jenis === 'Gula Tebu') {
-            // Cek jenis analisa yang dipilih
-            const analisaType = $('input[name="analisa_type"]:checked').val(); // Dapatkan pilihan jenis analisa
+            const analisaType = $('input[name="analisa_type"]:checked').val();
 
             if (!analisaType) {
                 alert('Silakan pilih jenis analisa (Short-Term / Long-Term)');
                 return;
             }
 
-            // Tentukan URL berdasarkan pilihan jenis analisa
             if (analisaType === 'short-term') {
-                url = '/analisa/short-term'; // URL untuk Short-Term
+                url = '/analisa/short-term';
             } else if (analisaType === 'long-term') {
-                url = '/analisa/long-term'; // URL untuk Long-Term
+                url = '/analisa/long-term';
             } else {
                 alert('Jenis analisa tidak dikenali!');
                 return;
             }
         } else if (jenis === 'Gula' || jenis === 'Garam') {
-            url = '/analisa/garam-gula'; // URL untuk Gula atau Garam
+            url = '/analisa/garam-gula';
         } else {
             alert('Jenis gula tidak dikenali!');
             return;
         }
 
-        // Ambil token dari meta tag
         const token = $('meta[name="csrf-token"]').attr('content');
+        let formData = new FormData(this);
+        formData.append('_token', token);
 
-        // Ambil data form dan buat FormData untuk menangani file upload
-        let formData = new FormData(this); // Menggunakan FormData untuk menangani file
-        formData.append('_token', token); // Menambahkan CSRF token ke formData
+        // === Penanganan khusus Long-Term ===
+        const analisaType = $('input[name="analisa_type"]:checked').val();
+        const kristalVal = $('select[name="uji_kristal"]').val();
 
-        // Kirim data ke server dengan metode POST menggunakan AJAX
+        if (analisaType === 'long-term') {
+            if (!kristalVal) {
+                alert('Silakan pilih hasil uji kristal.');
+                return;
+            }
+
+            if (kristalVal === 'negatif') {
+                formData.set('disposisi', 'release');
+                formData.delete('attachment'); // Tidak perlu file
+            }
+
+            if (kristalVal === 'positif') {
+                const attachment = $('input[name="attachment"]')[0].files[0];
+                if (!attachment) {
+                    alert('Silakan lampirkan gambar karena hasil uji kristal positif.');
+                    return;
+                }
+                // Disposisi tidak diisi user di tahap ini
+                formData.delete('disposisi');
+            }
+        }
+
+        // === AJAX Submit ===
         $.ajax({
             url: url,
             type: 'POST',
             data: formData,
-            processData: false, // Jangan ubah data form
-            contentType: false, // Jangan set content-type
+            processData: false,
+            contentType: false,
             success: function(response) {
-                alert('Data berhasil disimpan!');
-                $('#modalAnalisa').modal('hide');
-                $('#formAnalisa')[0].reset();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: 'Data berhasil disimpan!',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    $('#modalAnalisa').modal('hide');
+                    $('#formAnalisa')[0].reset();
+                });
             },
             error: function(xhr) {
                 const errMsg = xhr.responseJSON?.message || 'Gagal menyimpan data!';
-                alert(errMsg);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: errMsg,
+                    confirmButtonText: 'Tutup'
+                });
             }
         });
     });
 </script>
-
 
 
 @endsection
