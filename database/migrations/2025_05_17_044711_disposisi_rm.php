@@ -4,20 +4,29 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDisposisiRmTable extends Migration
+return new class extends Migration
 {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
+        //
         Schema::create('disposisi_rm', function (Blueprint $table) {
             $table->id();
             $table->string('disposisi');
             $table->text('keterangan')->nullable();
             $table->timestamps();
         });
+        
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
+        //
         Schema::dropIfExists('disposisi_rm');
     }
-}
+};

@@ -11,33 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ggas_processes', function (Blueprint $table) {
+        //
+        Schema::create('gga_processes', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('production_batch_id')
-            ->constrained('production_batches')
-            ->onDelete('cascade');
-
-           
-            $table->string('batch_range');
+            $table->foreignId('production_batch_id')->constrained('production_batches')->onDelete('cascade');
+            $table->string('batch_range', 50)->nullable();
             $table->string('dissolver_number');
-            $table->string('barcode')->unique();
-
+            $table->string('barcode')->unique()->nullable();
             $table->decimal('brix', 5, 2)->nullable();
             $table->decimal('nacl', 5, 2)->nullable();
             $table->decimal('warna', 5, 2)->nullable();
-
-            $table->enum('disposition', [
-                'Release',
-                'Release Bersyarat',
-                'Resampling',
-                'Reject',
-                'Adjustment'
-            ])->nullable();
-
+            $table->enum('disposition', ['Release', 'Release Bersyarat', 'Resampling', 'Reject', 'Repro', 'Adjustment'])->nullable();
+            $table->integer('adjusment_qty')->nullable();
             $table->text('disposition_remarks')->nullable();
+            $table->string('revisi')->nullable();
+            $table->boolean('is_adjustment')->default(false);
             $table->timestamps();
         });
+        
     }
 
     /**
@@ -45,6 +36,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ggas_processes');
+        //
+        Schema::dropIfExists('gga_processes');
     }
 };

@@ -19,8 +19,8 @@ return new class extends Migration
             $table->dateTime('jam_analisa');
             $table->string('diterima_by_user');
             $table->string('dianalisa_by_user');
-
         });
+        
     }
 
     /**
