@@ -228,7 +228,7 @@
             submitBtn.prop('disabled', true).text('Menyimpan...');
 
             $.ajax({
-                url: "{{url('/ggaggas/gga/update-ajax/')}}" + selectedId,
+                url: "{{url('/ggaggas/gga/update-ajax')}}/" + selectedId,
                 method: 'POST',
                 data: form.serialize(),
                 success: function(response) {
