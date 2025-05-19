@@ -1779,7 +1779,7 @@
 
         // === AJAX Submit ===
         $.ajax({
-            url: url,
+            url: "{{url('/')}}" + url,
             type: 'POST',
             data: formData,
             processData: false,
