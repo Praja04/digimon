@@ -133,13 +133,13 @@ class ProductionBatchController extends Controller
             'production_batch_id' => 'required|integer|exists:production_batches,id',
             'batch_range' => 'required|string',
             'dissolver_number' => 'required|string',
-            'revisi' => 'required|integer|min:1',
+            'revisi_gga' => 'required|integer|min:1',
         ]);
 
         // Pastikan tidak duplikasi revisi sama
         $exists = GgaProcess::where('production_batch_id', $validated['production_batch_id'])
             ->where('batch_range', $validated['batch_range'])
-            ->where('revisi', $validated['revisi'])
+            ->where('revisi', $validated['revisi_gga'])
             ->exists();
 
         if ($exists) {
@@ -161,7 +161,7 @@ class ProductionBatchController extends Controller
             'disposition' => null,
             'disposition_remarks' => null,
             'is_adjustment' => false,
-            'revisi' => $validated['revisi']
+            'revisi' => $validated['revisi_gga']
         ]);
 
         return response()->json(['message' => 'Revisi berhasil dibuat']);
@@ -217,7 +217,7 @@ class ProductionBatchController extends Controller
             'disposition' => null,
             'disposition_remarks' => null,
             'is_adjustment' => false,
-            'revisi' => $validated['revisi_ggas'] + 1
+            'revisi' => $validated['revisi_ggas'] 
         ]);
 
         return response()->json(['message' => 'Revisi berhasil dibuat']);
