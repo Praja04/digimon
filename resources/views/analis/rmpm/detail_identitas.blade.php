@@ -1523,7 +1523,7 @@
         } else {
             for (let i = 1; i <= jumlahData; i++) {
                 html += `<label for="">${i}</label>
-                <input type="text" class="form-control mb-2 numeric-input" name="${name}[]" placeholder="${label} ke-${i}">`;
+                <input type="text" class="form-control mb-2 " name="${name}[]" placeholder="${label} ke-${i}">`;
             }
         }
 
