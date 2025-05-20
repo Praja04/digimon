@@ -169,6 +169,12 @@ class RMPMController extends Controller
             'keterangan' => 'nullable|string',
         ]);
 
+        $brix = array_map(fn ($val) => str_replace(',', '.', $val), $request->brix);
+        $ph = array_map(fn ($val) => str_replace(',', '.', $val), $request->ph);
+       
+        $ka = array_map(fn ($val) => str_replace(',', '.', $val), $request->ka);
+        
+
         $username = session('username');
 
         DB::beginTransaction();
@@ -190,10 +196,10 @@ class RMPMController extends Controller
             for ($i = 0; $i < $jumlah; $i++) {
                 $dataAnalisa[] = [
                     'id_identitas'    => $request->id_identitas,
-                    'brix'            => $request->brix[$i] ?? null,
-                    'ph'              => $request->ph[$i] ?? null,
+                    'brix'            => $brix[$i] ?? null,
+                    'ph'              => $ph[$i] ?? null,
                     'kotoran'         => $request->kotoran[$i] ?? null,
-                    'ka'              => $request->ka[$i] ?? null,
+                    'ka'              => $ka[$i] ?? null,
                     'organo'          => $request->organo[$i] ?? null,
                     'warna'           => $request->warna[$i] ?? null,
                     'aroma'           => $request->aroma[$i] ?? null,

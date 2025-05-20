@@ -1523,7 +1523,7 @@
         } else {
             for (let i = 1; i <= jumlahData; i++) {
                 html += `<label for="">${i}</label>
-                <input type="text" class="form-control mb-2" name="${name}[]" placeholder="${label} ke-${i}">`;
+                <input type="text" class="form-control mb-2 numeric-input" name="${name}[]" placeholder="${label} ke-${i}">`;
             }
         }
 
@@ -1550,6 +1550,29 @@
             $('.disposisi').show();
         }
     });
+
+    // Ubah titik ke koma saat blur pada input angka
+    $(document).on('blur', '.numeric-input', function() {
+        let val = $(this).val();
+        if (val.includes('.')) {
+            val = val.replace('.', ',');
+            $(this).val(val);
+        }
+    });
+
+    $(document).on('input', '.numeric-input', function() {
+        // Hanya angka, koma, dan satu koma saja
+        let val = $(this).val().replace(/[^0-9,]/g, '');
+
+        // Batasi hanya satu koma
+        const parts = val.split(',');
+        if (parts.length > 2) {
+            val = parts[0] + ',' + parts[1]; // buang kelebihan koma
+        }
+
+        $(this).val(val);
+    });
+
 
 
     function showStep(index) {
