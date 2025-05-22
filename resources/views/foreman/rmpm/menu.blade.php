@@ -70,7 +70,7 @@
                 </div>
 
                 <div class="mt-4">
-                    <a href="{{ route('rmpm.listIdentitas', ['jenis' => $gula['nama']]) }}" class="btn btn-light w-100">Lihat Detail</a>
+                    <a href="{{ route('rmpm_foreman.list_data', ['jenis' => $gula['nama']]) }}" class="btn btn-light w-100">Lihat Detail</a>
                 </div>
             </div>
         </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BlendingAwalModel;
 use App\Models\ProductionBatch;
 use App\Models\GgaGgasProcess;
 use App\Models\GgaProcess;
@@ -30,6 +31,33 @@ class ProductionBatchController extends Controller
         return view('productionbatch.data_po', compact('productionBatches', 'revisiData'));
     }
 
+    public function data_po_blending_awal()
+    {
+        $productionBatches = ProductionBatch::orderBy('created_at', 'desc')->get();
+        // Ambil semua revisi > 0 dan buat key gabungan batch_id|batch_range
+        $revisiData = BlendingAwalModel::where('revisi', '>', 0)
+        ->get()
+            ->mapWithKeys(function ($item) {
+                $key = $item->production_batch_id . '|' . $item->batch_range;
+                return [$key => true];
+            });
+
+        return view('productionbatch.data_po_blending_awal', compact('productionBatches', 'revisiData'));
+    }
+
+    public function data_po_blending_after_adjust()
+    {
+        $productionBatches = ProductionBatch::orderBy('created_at', 'desc')->get();
+        // Ambil semua revisi > 0 dan buat key gabungan batch_id|batch_range
+        $revisiData = BlendingAwalModel::where('revisi', '>', 0)
+        ->get()
+            ->mapWithKeys(function ($item) {
+                $key = $item->production_batch_id . '|' . $item->batch_range;
+                return [$key => true];
+            });
+
+        return view('productionbatch.data_po_blending_after_adjust', compact('productionBatches', 'revisiData'));
+    }
 
     public function menu()
     {
@@ -38,6 +66,24 @@ class ProductionBatchController extends Controller
     }
 
     // Menyimpan data master (ProductionBatch)
+    // public function store(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'po_number' => 'required|string|max:255',
+    //         'variant' => 'required|string|max:255',
+    //         'production_date' => 'required|date',
+    //         'batch_range' => 'required|string|max:255',
+    //         'storage' => 'required|string|max:255',
+    //         'description' => 'nullable|string|max:255',
+    //     ]);
+
+    //     ProductionBatch::create($validatedData);
+    //     return response()->json([
+    //         'status' => 'success',
+    //         'message' => 'Data berhasil disimpan.'
+    //     ], 201);
+    // }
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -45,16 +91,42 @@ class ProductionBatchController extends Controller
             'variant' => 'required|string|max:255',
             'production_date' => 'required|date',
             'batch_range' => 'required|string|max:255',
-            'storage' => 'required|string|max:255',
+            'storage' => 'required|array', // ubah ke array
+            'storage.*' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
         ]);
 
-        ProductionBatch::create($validatedData);
+        // Ambil range batch dari inputan
+        if (preg_match('/(\d+)\s*-\s*(\d+)/', $validatedData['batch_range'], $matches)) {
+            $start = (int) $matches[1];
+            $end = (int) $matches[2];
+        } else {
+            $start = $end = (int) $validatedData['batch_range'];
+        }
+
+        $allBatches = range($start, $end);
+        $chunks = array_chunk($allBatches, 10); // bagi setiap 10 batch
+
+        foreach ($chunks as $index => $batchGroup) {
+            $batchMin = min($batchGroup);
+            $batchMax = max($batchGroup);
+
+            ProductionBatch::create([
+                'po_number' => $validatedData['po_number'],
+                'variant' => $validatedData['variant'],
+                'production_date' => $validatedData['production_date'],
+                'batch_range' => $batchMin . '-' . $batchMax,
+                'storage' => $validatedData['storage'][$index] ?? 'STORAGE ' . ($index + 1),
+                'description' => $validatedData['description'] ?? null,
+            ]);
+        }
+
         return response()->json([
             'status' => 'success',
             'message' => 'Data berhasil disimpan.'
         ], 201);
     }
+
 
     public function update(Request $request, $id)
     {
@@ -226,5 +298,22 @@ class ProductionBatchController extends Controller
         ]);
 
         return response()->json(['message' => 'Revisi berhasil dibuat']);
+    }
+
+    //blending awal
+    public function show_blending_awal($id)
+    {
+        $productionBatch = ProductionBatch::findOrFail($id);
+        $batches = $productionBatch->batch_range_array; // Misalnya [1,2,3,4,...]
+
+        // Ambil semua batch_number yang sudah digunakan di GGA
+        $usedBatches = $productionBatch->BlendingAwal->pluck('batch_range')->map(function ($batch) {
+            return (int) $batch; // Ubah ke integer agar bisa dibandingkan dengan batch_range_array
+        })->toArray();
+
+        // Bandingkan apakah semua batch sudah ter-cover
+        $allCovered = empty(array_diff($batches, $usedBatches));
+
+        return view('productionbatch.detail_blending_awal', compact('productionBatch', 'batches', 'allCovered'));
     }
 }

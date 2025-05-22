@@ -4,45 +4,69 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0">Input GGAS</h4>
+            <h4 class="mb-sm-0">Input Blending Awal</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="#">QC</a></li>
-                    <li class="breadcrumb-item active">GGAS</li>
+                    <li class="breadcrumb-item active">Blenidng</li>
                 </ol>
             </div>
         </div>
     </div>
 </div>
 
-@if ($ggas)
+@if ($blending)
 <div class="row">
     <div class="col-lg-3"></div>
     <div class="col-lg-6">
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title mb-0">Form Input GGAS - Batch {{ $ggas->batch_range }}</h5>
+                <h5 class="card-title mb-0">Form Input Blending - Batch {{ $blending->batch_range }}</h5>
             </div>
             <div class="card-body">
-                <form class="ajax-ggas-form" data-id="{{ $ggas->id }}">
+                <form class="ajax-blending-form" data-id="{{ $blending->id }}">
                     @csrf
-                    <input type="hidden" name="url" id="url" value="{{ $ggas->production_batch_id }}">
+                    <input type="hidden" name="url" id="url" value="{{ $blending->production_batch_id }}">
                     <div class="alert alert-danger d-none error-alert"></div>
 
                     <div class="mb-3">
                         <label for="brix" class="form-label">BRIX</label>
-                        <input type="number" step="0.01" max="100" min="0" name="brix" id="brix" class="form-control" required value="{{ old('brix', $ggas->brix) }}">
+                        <input type="number" step="0.01" max="100" min="0" name="brix" id="brix" class="form-control" required value="{{ old('brix', $blending->brix) }}">
                     </div>
 
                     <div class="mb-3">
                         <label for="nacl" class="form-label">NACL</label>
-                        <input type="number" step="0.01" max="100" min="0" name="nacl" id="nacl" class="form-control" required value="{{ old('nacl', $ggas->nacl) }}">
+                        <input type="number" step="0.01" max="100" min="0" name="nacl" id="nacl" class="form-control" required value="{{ old('nacl', $blending->nacl) }}">
                     </div>
-
+                    <div class="mb-3">
+                        <label class="form-label">Bj</label>
+                        <input type="text" name="bj" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Visco</label>
+                        <input type="text" name="visco" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Aw</label>
+                        <input type="text" name="aw" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Buih</label>
+                        <input type="text" name="buih" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Organo</label>
+                        <input type="text" name="organo" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Endapan</label>
+                        <input type="text" name="endapan" class="form-control" required>
+                    </div>
                     <div class="mb-3">
                         <label for="warna" class="form-label">Warna</label>
-                        <input type="text" name="warna" id="warna" class="form-control" required value="{{ old('warna', $ggas->warna) }}">
+                        <input type="text" name="warna" id="warna" class="form-control" required value="{{ old('warna', $blending->warna) }}">
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Disposition</label>
                         <select name="disposition" class="form-select disposition-select" required>
@@ -76,25 +100,19 @@
 </div>
 @else
 <div class="alert alert-danger">
-    Data GGAS tidak ditemukan.
+    Data Blending tidak ditemukan.
 </div>
 @endif
 
 <script>
     $(document).ready(function() {
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
 
-        let selectedId = null;
-
-        // Ketika tombol diklik, simpan ID dan buka modal
-        $('.open-ggas-modal').on('click', function() {
-            selectedId = $(this).data('id');
-            $('#inputGgasModal').modal('show');
-        });
 
         // Show/hide adjustment qty saat ganti disposition
         $('.disposition-select').on('change', function() {
@@ -111,14 +129,9 @@
             }
         });
 
-        // Reset form saat modal dibuka
-        $('#inputGgasModal').on('shown.bs.modal', function() {
-            $('#ggasForm')[0].reset();
-            $('.disposition-select').trigger('change');
-            $('.error-alert').addClass('d-none').html('');
-        });
 
-        $('.ajax-ggas-form').on('submit', function(e) {
+
+        $('.ajax-blending-form').on('submit', function(e) {
             e.preventDefault();
 
             var form = $(this);
@@ -131,7 +144,7 @@
             submitBtn.prop('disabled', true).text('Menyimpan...');
 
             $.ajax({
-                url: "{{ url('analis/ggaggas/ggas/update-ajax') }}/" + id,
+                url: "{{url('/analis/blending/update')}}/" + id,
                 method: 'POST',
                 data: form.serialize(),
                 success: function(response) {
@@ -141,7 +154,7 @@
                         icon: 'success',
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        window.location.href = "{{ url('analis/ggaggas/ggas') }}/" + url;
+                        window.location.href = "{{ url('/analis/blending/awal/detail') }}/" + url;
                     });
                 },
                 error: function(xhr) {

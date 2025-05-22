@@ -9,7 +9,7 @@
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">GGA & GGAS</a></li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Blending Awal</a></li>
                     <li class="breadcrumb-item active">Product Details</li>
                 </ol>
             </div>
@@ -36,7 +36,7 @@
                                         <div class="text-muted">Tanggal Produksi : <span class="text-body fw-medium">{{ $productionBatch->production_date }}</span></div>
                                         <div class="text-end">
                                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inputModal">
-                                                Input GGA / GGAS
+                                                Input Blending Awal
                                             </button>
                                         </div>
 
@@ -113,57 +113,51 @@
                                 <nav>
                                     <ul class="nav nav-tabs nav-tabs-custom nav-success" id="nav-tab" role="tablist">
                                         <li class="nav-item">
-                                            <a class="nav-link active" id="nav-speci-tab" data-bs-toggle="tab" href="#nav-speci" role="tab" aria-controls="nav-speci" aria-selected="true">GGA</a>
+                                            <a class="nav-link active" id="nav-speci-tab" data-bs-toggle="tab" href="#nav-speci" role="tab" aria-controls="nav-speci" aria-selected="true">Blending</a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="nav-detail-tab" data-bs-toggle="tab" href="#nav-detail" role="tab" aria-controls="nav-detail" aria-selected="false">GGAS</a>
-                                        </li>
+
                                     </ul>
                                 </nav>
                                 <div class="tab-content border border-top-0 p-4" id="nav-tabContent">
                                     <div class="tab-pane fade show active" id="nav-speci" role="tabpanel" aria-labelledby="nav-speci-tab">
                                         <div class="table-responsive">
 
-                                            @if($productionBatch->GgaProcesses->count() > 0)
+                                            @if($productionBatch->BlendingAwal->count() > 0)
                                             <table class="table mb-0">
                                                 <thead>
                                                     <tr>
-                                                        <th>Batch Number</th>
-                                                        <th>Dissolver</th>
-
+                                                        <th>Batch Range</th>
                                                         <th>QR Code (URL)</th>
                                                         <th>Disposisi</th>
                                                         <th>Keterangan</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($productionBatch->GgaProcesses as $gga)
+                                                    @foreach ($productionBatch->BlendingAwal as $blending)
                                                     <tr>
-                                                        <td>{{ $gga->batch_number }}</td>
-                                                        <td>{{ $gga->dissolver_number }}</td>
-
+                                                        <td>{{ $blending->batch_range }}</td>
                                                         <td>
                                                             <!-- Tombol untuk buka modal -->
-                                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#qrModal{{ $gga->id }}">
-                                                                QR Code {{ $gga->id }}
+                                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#qrModal{{ $blending->id }}">
+                                                                QR Code {{ $blending->id }}
                                                             </button>
 
                                                             <!-- Modal Besar -->
-                                                            <div class="modal fade" id="qrModal{{ $gga->id }}" tabindex="-1" aria-labelledby="qrModalLabel{{ $gga->id }}" aria-hidden="true">
+                                                            <div class="modal fade" id="qrModal{{ $blending->id }}" tabindex="-1" aria-labelledby="qrModalLabel{{ $blending->id }}" aria-hidden="true">
                                                                 <div class="modal-dialog modal-dialog-centered modal-lg">
                                                                     <div class="modal-content">
                                                                         <div class="modal-header py-2">
-                                                                            <h5 class="modal-title" id="qrModalLabel{{ $gga->id }}">QR Code - ID {{ $gga->id }}</h5>
+                                                                            <h5 class="modal-title" id="qrModalLabel{{ $blending->id }}">QR Code - ID {{ $blending->id }}</h5>
                                                                             <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                         </div>
-                                                                        <div class="modal-body text-center" id="qrPrintArea{{ $gga->id }}">
+                                                                        <div class="modal-body text-center" id="qrPrintArea{{ $blending->id }}">
                                                                             <div style="display: inline-block;">
-                                                                                <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('/analis/ggaggas/gga/id/' . $gga->id), 'QRCODE') }}" alt="QR Code">
+                                                                                <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('analis/blending/awal/detail/form/' . $blending->id), 'QRCODE') }}" alt="QR Code">
                                                                             </div>
-                                                                            <p>GGA/{{ $productionBatch->po_number }}/{{ $productionBatch->production_date }}/{{ $gga->batch_number }}</p>
+                                                                            <p>Blending/{{ $productionBatch->po_number }}/{{ $productionBatch->production_date }}/{{ $blending->batch_range }}</p>
                                                                         </div>
                                                                         <div class="modal-footer justify-content-center py-2">
-                                                                            <button onclick="printQR('qrPrintArea{{ $gga->id }}')" class="btn btn-sm btn-success">Print</button>
+                                                                            <button onclick="printQR('qrPrintArea{{ $blending->id }}')" class="btn btn-sm btn-success">Print</button>
                                                                             <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
                                                                         </div>
                                                                     </div>
@@ -171,18 +165,20 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            {{ $gga->disposition }}
-                                                            @if(in_array($gga->disposition, ['Adjustment', 'Resampling']) && $gga->revisi == null && $gga->not_standar == true )
-                                                            <button class="btn btn-sm btn-warning generate-revisi-btn" data-id="{{ $gga->id }}" data-batch="{{ $gga->batch_number }}" data-po="{{ $gga->production_batch_id }}" data-dissolver="{{ $gga->dissolver_number }}">
+                                                            {{ $blending->disposition }}
+                                                            @if(in_array($blending->disposition, ['Adjustment', 'Resampling']) && $blending->revisi == null )
+                                                            <button class="btn btn-sm btn-warning generate-revisi-btn" data-id="{{ $blending->id }}" data-batch="{{ $blending->batch_range }}" data-po="{{ $blending->production_batch_id }}" data-dissolver="{{ $blending->dissolver_number }}">
                                                                 ❗
                                                             </button>
 
+                                                            @else
+                                                            -
                                                             @endif
                                                         </td>
                                                         <td>
 
-                                                            @if($gga->revisi != null)
-                                                             Revisi Ke-{{ $gga->revisi }}
+                                                            @if($blending->revisi != null)
+                                                            Adjusment Revisi Ke-{{ $blending->revisi }}
                                                             @else
                                                             -
                                                             @endif
@@ -192,87 +188,14 @@
                                                 </tbody>
                                             </table>
                                             @else
-                                            <p class="text-muted">Belum ada data GGA.</p>
+                                            <p class="text-muted">Belum ada data Blending.</p>
                                             @endif
 
 
 
                                         </div>
                                     </div>
-                                    <div class="tab-pane fade" id="nav-detail" role="tabpanel" aria-labelledby="nav-detail-tab">
-                                        <div class="table-responsive">
-                                            @if($productionBatch->GgasProcesses->count() > 0)
-                                            <table class="table table-bordered text-center">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Batch Number</th>
-                                                        <th>Dissolver</th>
 
-                                                        <th>QR Code (URL)</th>
-                                                        <th>Disposisi</th>
-                                                        <th>Keterangan</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($productionBatch->GgasProcesses as $ggas)
-                                                    <tr>
-                                                        <td>{{ $ggas->batch_number }}</td>
-                                                        <td>{{ $ggas->dissolver_number }}</td>
-
-                                                        <td>
-                                                            <!-- Tombol untuk buka modal -->
-                                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#qrModalGGAS{{ $ggas->id }}">
-                                                                QR Code {{ $ggas->id }}
-                                                            </button>
-
-                                                            <!-- Modal Besar -->
-                                                            <div class="modal fade" id="qrModalGGAS{{ $ggas->id }}" tabindex="-1" aria-labelledby="qrModalLabel{{ $ggas->id }}" aria-hidden="true">
-                                                                <div class="modal-dialog modal-dialog-centered modal-lg">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header py-2">
-                                                                            <h5 class="modal-title" id="qrModalLabel{{ $ggas->id }}">QR Code - ID {{ $ggas->id }}</h5>
-                                                                            <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                        </div>
-                                                                        <div class="modal-body text-center" id="qrPrintArea{{ $ggas->id }}">
-                                                                            <div style="display: inline-block;">
-                                                                                <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('/analis/ggaggas/gga/id/' . $ggas->id), 'QRCODE') }}" alt="QR Code">
-                                                                            </div>
-                                                                            <p>GGAS/{{ $productionBatch->po_number }}/{{ $productionBatch->production_date }}/{{ $ggas->batch_number }}</p>
-                                                                        </div>
-                                                                        <div class="modal-footer justify-content-center py-2">
-                                                                            <button onclick="printQR('qrPrintArea{{ $ggas->id }}')" class="btn btn-sm btn-success">Print</button>
-                                                                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            {{ $ggas->disposition }}
-                                                            @if(in_array($ggas->disposition, ['Adjustment', 'Resampling']) && $ggas->revisi == null )
-                                                            <button class="btn btn-sm btn-warning generate-revisi-btn-ggas" data-id="{{ $ggas->id }}" data-batch="{{ $ggas->batch_number }}" data-po="{{ $ggas->production_batch_id }}" data-dissolver="{{ $ggas->dissolver_number }}">
-                                                                ❗
-                                                            </button>
-
-                                                            @endif
-                                                        </td>
-                                                        <td>
-
-                                                            @if($ggas->revisi != null)
-                                                             Revisi Ke-{{ $ggas->revisi }}
-                                                            @else
-                                                            -
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                            @else
-                                            <p class="text-muted">Belum ada data GGAS.</p>
-                                            @endif
-                                        </div>
-                                    </div>
                                 </div>
 
 
@@ -301,42 +224,45 @@
             @csrf
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Input GGA / GGAS</h5>
+                    <h5 class="modal-title">Input Blending</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="production_batch_id" value="{{ $productionBatch->id }}">
-                    
+
                     <div class="mb-3">
-                        <label for="batch_number" class="form-label">Batch Number</label>
-                        <select name="batch_number" class="form-select" required>
+                        <label for="batch_start" class="form-label">Batch Pertama</label>
+                        <select name="batch_start" class="form-select" required>
                             @foreach($batches as $batch)
                             <option value="{{ $batch }}">{{ $batch }}</option>
                             @endforeach
                         </select>
                     </div>
 
-
-
                     <div class="mb-3">
-                        <label for="dissolver_number" class="form-label">Dissolver Number</label>
-                        <input type="text" name="dissolver_number" class="form-control" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="type" class="form-label">Jenis Sample</label>
-                        <select name="type" class="form-select" required>
-                            <option value="GGA">GGA</option>
-                            @if ($allCovered)
-                            <option value="GGAS">GGAS</option>
-                            @endif
+                        <label for="batch_end" class="form-label">Batch Kedua</label>
+                        <select name="batch_end" class="form-select" required>
+                            @foreach($batches as $batch)
+                            <option value="{{ $batch }}">{{ $batch }}</option>
+                            @endforeach
                         </select>
-                        @if (!$allCovered)
-                        <small class="text-danger">* GGAS hanya bisa diinput setelah semua batch sudah masuk GGA</small>
-                        @endif
                     </div>
 
-                    
+                    <div class="mb-3">
+                        <label for="storage" class="form-label">Storage</label>
+                        <input type="text" name="storage" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="no_blending" class="form-label">Nomor Blending</label>
+                        <input type="number" name="no_blending" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="volume" class="form-label">Volume</label>
+                        <input type="string" name="volume" class="form-control">
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success">Simpan</button>
@@ -356,13 +282,12 @@
                     <h5 class="modal-title">Generate Revisi Batch</h5>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="id_old_gga" id="id_old_gga">
                     <input type="hidden" name="production_batch_id" id="modal_po_id">
                     <input type="hidden" name="dissolver_number" id="modal_dissolver_number">
                     <!-- <input type="hidden" name="revisi" id="modal_revisi" readonly> -->
                     <div class="mb-3">
                         <label>Batch</label>
-                        <input type="text" class="form-control" id="modal_batch" name="batch_number" readonly>
+                        <input type="text" class="form-control" id="modal_batch" name="batch_range" readonly>
                     </div>
                     <div class="mb-3">
                         <label>Revisi Ke-</label>
@@ -371,36 +296,6 @@
                 </div>
                 <div class="modal-footer">
                     <button id="submit_generate" type="submit" class="btn btn-primary">Generate Ulang</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="modal fade" id="generateRevisiModalGGAS" tabindex="-1">
-    <div class="modal-dialog">
-        <form id="generateRevisiFormGGAS">
-            @csrf
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Generate Revisi Batch</h5>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="id_old_ggas" id="id_old_ggas">
-                    <input type="hidden" name="production_batch_id_ggas" id="modal_po_id_ggas">
-                    <input type="hidden" name="dissolver_number_ggas" id="modal_dissolver_number_ggas">
-                    <!-- <input type="hidden" name="revisi_ggas" id="modal_revisi_ggas" readonly> -->
-                    <div class="mb-3">
-                        <label>Batch</label>
-                        <input type="text" class="form-control" id="modal_batch_ggas" name="batch_number_ggas" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label>Revisi Ke-</label>
-                        <input type="text" class="form-control" id="modal_revisi_display_ggas" name="revisi_ggas" readonly>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button id="submit_generate_ggas" type="submit" class="btn btn-primary">Generate Ulang</button>
                 </div>
             </div>
         </form>
@@ -421,6 +316,7 @@
         win.print();
         win.close();
     }
+
     $('form').on('submit', function(e) {
         e.preventDefault();
 
@@ -428,7 +324,7 @@
         let formData = form.serialize();
 
         $.ajax({
-            url: "{{ route('process.store') }}",
+            url: "{{ route('blending.store') }}",
             method: "POST",
             data: formData,
             success: function(res) {
@@ -472,20 +368,18 @@
     });
 
     $(document).on('click', '.generate-revisi-btn', function() {
-        let Id = $(this).data('id');
         let poId = $(this).data('po');
         let batch = $(this).data('batch');
         let dissolver = $(this).data('dissolver');
 
         $('#modal_po_id').val(poId);
-        $('#id_old_gga').val(Id);
         $('#modal_batch').val(batch);
         $('#modal_dissolver_number').val(dissolver);
 
         // Ambil revisi terakhir via AJAX
-        $.get('{{ url("/analis/productionbatch/processgga/get-last-revisi") }}', {
+        $.get('{{ url("/productionbatch/processgga/get-last-revisi") }}', {
             production_batch_id: poId,
-            batch_number: batch
+            batch_range: batch
         }, function(res) {
             $('#modal_revisi').val(res.revisi);
             $('#modal_revisi_display').val(res.revisi);
@@ -501,7 +395,7 @@
         let form = $('#generateRevisiForm');
         let formData = form.serialize();
 
-        $.post('{{ url("/analis/productionbatch/processgga/generate-revisi") }}', formData, function(res) {
+        $.post('{{ url("/productionbatch/processgga/generate-revisi") }}', formData, function(res) {
             alert('Revisi berhasil dibuat!');
             location.reload();
         }).fail(function(err) {
@@ -510,20 +404,18 @@
     });
 
     $(document).on('click', '.generate-revisi-btn-ggas', function() {
-        let Id = $(this).data('id');
         let poId = $(this).data('po');
         let batch = $(this).data('batch');
         let dissolver = $(this).data('dissolver');
 
-        $('#id_old_ggas').val(Id);
         $('#modal_po_id_ggas').val(poId);
         $('#modal_batch_ggas').val(batch);
         $('#modal_dissolver_number_ggas').val(dissolver);
 
         // Ambil revisi terakhir via AJAX
-        $.get('{{ url("/analis/productionbatch/processggas/get-last-revisi") }}', {
+        $.get('{{ url("/productionbatch/processggas/get-last-revisi") }}', {
             production_batch_id: poId,
-            batch_number: batch
+            batch_range: batch
         }, function(res) {
             $('#modal_revisi_ggas').val(res.revisi);
             $('#modal_revisi_display_ggas').val(res.revisi);
@@ -539,7 +431,7 @@
         let form = $('#generateRevisiFormGGAS');
         let formData = form.serialize();
 
-        $.post('{{ url("/analis/productionbatch/processggas/generate-revisi") }}', formData, function(res) {
+        $.post('{{ url("/productionbatch/processggas/generate-revisi") }}', formData, function(res) {
             alert('Revisi berhasil dibuat!');
             location.reload();
         }).fail(function(err) {

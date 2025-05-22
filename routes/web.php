@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\Analis\RMPMController;
 use App\Http\Controllers\Analis\SamplingController;
+use App\Http\Controllers\Analis\BlendingAwalController;
 use App\Http\Controllers\ProductionBatchController;
 use App\Http\Controllers\Foreman\RMPMControllerForeman;
 
@@ -25,7 +26,7 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.su
 Route::prefix('analis')->group(function () {
     Route::prefix('rmpm')->group(function () {
         Route::get('/', [RMPMController::class, 'pilihJenisGula'])->name('rmpm.pilihJenisGula');
-        Route::get('/identitas/{jenis}', [RMPMController::class, 'formIdentitas'])->name('rmpm.formIdentitas');
+       // Route::get('/identitas/{jenis}', [RMPMController::class, 'formIdentitas'])->name('rmpm.formIdentitas');
         Route::post('/identitas/simpan', [RMPMController::class, 'simpanIdentitas'])->name('rmpm.simpanIdentitas');
         Route::get('/list/{jenis}', [RMPMController::class, 'listIdentitas'])->name('rmpm.listIdentitas');
         Route::get('/detail-identitas/{id}', [RMPMController::class, 'detailIdentitas'])->name('rmpm.detailIdentitas');
@@ -77,6 +78,9 @@ Route::prefix('analis')->group(function () {
     Route::prefix('productionbatch')->group(function () {
         Route::get('/menu', [ProductionBatchController::class, 'menu'])->name('productionbatch.menu');
         Route::get('/data_po', [ProductionBatchController::class, 'data_po'])->name('productionbatch.data_po');
+        Route::get('/data_po/blending/awal', [ProductionBatchController::class, 'data_po_blending_awal'])->name('productionbatch.data_po_blending_awal');
+        Route::get('/data_po/blending/adjust', [ProductionBatchController::class, 'data_po_blending_after_adjust'])->name('productionbatch.data_po_blending_adjust');
+        Route::get('/po_masak/blending/awal/{id}', [ProductionBatchController::class, 'show_blending_awal'])->name('productionbatch.show_blending_awal');
         Route::resource('/po_masak', ProductionBatchController::class)->names([
             'index' => 'productionbatch.index',
             'create' => 'productionbatch.create',
@@ -109,10 +113,26 @@ Route::prefix('analis')->group(function () {
         Route::get('/ggas/id/{id}', [GgaGgasController::class, 'showInputFormGGAS']);
         Route::post('/ggas/update-ajax/{id}', [GgaGgasController::class, 'updateAjaxGGAS']);
     });
+
+    Route::prefix('blending')->group(function(){
+        Route::get('/menu', [BlendingAwalController::class, 'menu']);
+        Route::get('/awal/detail/{id}', [BlendingAwalController::class, 'Blending_detail']);
+        Route::get('/awal/detail/form/{id}', [BlendingAwalController::class, 'showInputFormBlendingAwal']);
+        Route::post('/store', [BlendingAwalController::class, 'store'])->name('blending.store');
+        Route::post('/update/{id}', [BlendingAwalController::class, 'updateAjaxBlending'])->name('blending.update');
+        Route::get('/awal', [BlendingAwalController::class, 'Blending_data'])->name('blending.awal_data');
+
+    });
 });
 
 Route::prefix('foreman')->group(function () {
     Route::prefix('rmpm')->group(function () {
-        Route::get('/', [RMPMControllerForeman::class, 'web'])->name('rmpm.menu');
+        Route::get('/', [RMPMControllerForeman::class, 'menu'])->name('rmpm_foreman.menu');
+        Route::get('/dashboard', [RMPMControllerForeman::class, 'dashboard'])->name('rmpm_foreman.dashboard');
+        Route::get('/list/data/{jenis}', [RMPMControllerForeman::class, 'list_data'])->name('rmpm_foreman.list_data');
+        Route::get('/detail/data/{id}', [RMPMControllerForeman::class, 'detail_data'])->name('rmpm_foreman.detail_data');
+        Route::post('/update/{id}', [RMPMControllerForeman::class, 'updateDisposisiLong'])->name('rmpm_foreman.updateDisposisiLong');
     });
+
+    
 });

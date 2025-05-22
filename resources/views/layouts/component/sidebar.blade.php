@@ -53,6 +53,17 @@
                 </li>
                 @elseif(Session::get('role') === 'supervisor')
                 @elseif(Session::get('role') === 'foreman')
+                <li class="menu-title"><span data-key="t-menu">Menu</span></li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('foreman/rmpm')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('foreman/rmpm')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">RMPM</span>
+                    </a>
+                </li>
                 @elseif(Session::get('role') === 'analis')
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                 <li class="nav-item">
@@ -68,6 +79,11 @@
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{url('analis/ggaggas/menu')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">GGA & GGAS</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{url('analis/blending/menu')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Blending</span>
                     </a>
                 </li>
                 @endif

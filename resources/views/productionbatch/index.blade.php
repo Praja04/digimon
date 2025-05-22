@@ -27,7 +27,7 @@
                     <div class="col-sm">
                         <h5 class="card-title mb-0">Data PO</h5>
                     </div>
-                   
+
                 </div>
             </div>
 
@@ -49,12 +49,13 @@
                         </div>
                         <div class="mb-3">
                             <label for="batch_range" class="form-label">Rentang Batch Masak</label>
-                            <input type="text" name="batch_range" class="form-control" required placeholder="misal 1-2..." />
+                            <input type="text" name="batch_range" class="form-control" required placeholder="misal 1-12" id="batch_range_input" />
                         </div>
-                        <div class="mb-3">
-                            <label for="storage" class="form-label">Storage</label>
-                            <input type="text" name="storage" class="form-control" required />
+
+                        <div class="mb-3" id="storage_fields">
+                            <!-- Storage fields akan ditambahkan di sini -->
                         </div>
+
                         <div class="mb-3">
                             <label for="description" class="form-label">Keterangan</label>
                             <input type="text" name="description" class="form-control" required />
@@ -75,8 +76,44 @@
     <!--end col-->
 </div>
 <!--end row-->
-
 <script>
+    function createStorageFields(count) {
+        const container = $('#storage_fields');
+        container.empty();
+        for (let i = 0; i < count; i++) {
+            container.append(`
+                <div class="mb-2">
+                    <label for="storage_${i}" class="form-label">Storage ${i + 1}</label>
+                    <input type="text" name="storage[]" class="form-control" id="storage_${i}" required />
+                </div>
+            `);
+        }
+    }
+
+    $('#batch_range_input').on('change keyup', function() {
+        const value = $(this).val();
+        const match = value.match(/(\d+)\s*-\s*(\d+)/);
+
+        if (match) {
+            const start = parseInt(match[1]);
+            const end = parseInt(match[2]);
+            const totalBatches = end - start + 1;
+
+            if (totalBatches > 0) {
+                const groupCount = Math.ceil(totalBatches / 10);
+                createStorageFields(groupCount);
+            }
+        } else if (!isNaN(value)) {
+            createStorageFields(1);
+        }
+    });
+
+    // Trigger saat halaman load jika sudah diisi sebelumnya
+    $(document).ready(function() {
+        $('#batch_range_input').trigger('change');
+    });
+
+
     $(document).ready(function() {
         $('#form_input_po').on('submit', function(e) {
             e.preventDefault();

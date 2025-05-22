@@ -83,6 +83,11 @@
 
 <script>
     $(document).ready(function() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
 
         let selectedId = null;
 
@@ -113,7 +118,7 @@
             $('.disposition-select').trigger('change');
             $('.error-alert').addClass('d-none').html('');
         });
-        
+
         $('.ajax-gga-form').on('submit', function(e) {
             e.preventDefault();
 

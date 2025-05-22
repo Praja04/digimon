@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('production_batch_id')->constrained('production_batches')->onDelete('cascade');
             $table->string('batch_range', 50)->nullable();
+            $table->integer('nomor_blending')->nullable();
+            $table->decimalr('volume_blending', 5, 2)->nullable();
             $table->decimal('brix', 5, 2)->nullable();
             $table->decimal('nacl', 5, 2)->nullable();
             $table->decimal('bj', 5, 2)->nullable();
@@ -47,6 +49,5 @@ return new class extends Migration
         Schema::table('blending_awal', function (Blueprint $table) {
             $table->dropForeign(['production_batch_id']);
         });
-
     }
 };

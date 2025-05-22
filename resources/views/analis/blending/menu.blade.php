@@ -5,7 +5,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0">Persiapan Masak</h4>
+            <h4 class="mb-sm-0">Blending Awal</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
@@ -52,88 +52,42 @@
 
 <div class="row mt-4">
 
-    <div class="col-xl-3 col-lg-6">
+    <div class="col-xl-6 col-lg-6">
         <div class="card ribbon-box right overflow-hidden">
             <div class="card-body text-center p-4">
                 <div class="ribbon ribbon-success ribbon-shape trending-ribbon">
                     <i class="ri-hand-heart-fill text-white align-bottom"></i>
-                    <span class="trending-ribbon-text">Input PO</span>
+                    <span class="trending-ribbon-text">Blending Awal</span>
                 </div>
-                <img src="{{ asset('assets/images/masak.jpg' ) }}" alt="gambar" height="100" style="border-radius: 20px;">
-                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Input PO Masak</a></h5>
-                <p class="text-muted mb-4">Produksi Masak</p>
+                <img src="{{ asset('assets/images/blending_awal.png' ) }}" alt="gambar" height="100">
+                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Data Blending Awal</a></h5>
+                <p class="text-muted mb-4">Analisis Blending Awal</p>
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
-                        <div id="chart-input-po" data-colors='["--vz-danger"]'></div>
+                        <div id="chart-gga" data-colors='["--vz-danger"]'></div>
                     </div>
                 </div>
 
                 <div class="mt-4">
-                    <a href="{{url('analis/productionbatch/po_masak')}}" class="btn btn-light w-100">Lihat Detail</a>
+                    <a href="{{url('analis/blending/awal')}}" class="btn btn-light w-100">Lihat Detail</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-xl-3 col-lg-6">
+    <div class="col-xl-6 col-lg-6">
         <div class="card ribbon-box right overflow-hidden">
             <div class="card-body text-center p-4">
                 <div class="ribbon ribbon-success ribbon-shape trending-ribbon">
                     <i class="ri-hand-heart-fill text-white align-bottom"></i>
-                    <span class="trending-ribbon-text">Pilih Batch</span>
+                    <span class="trending-ribbon-text">Blending After Adjust</span>
                 </div>
-                <img src="{{ asset('assets/images/nomor_po.jpg' ) }}" alt="gambar" height="100" style="border-radius: 20px;">
-                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Batch GGA & GGAS</a></h5>
-                <p class="text-muted mb-4">Produksi Masak</p>
+                <img src="{{ asset('assets/images/blending_adjust.png' ) }}" alt="gambar" height="100">
+                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Data Blending After Adjustment</a></h5>
+                <p class="text-muted mb-4">Analisis Blending After Adjust</p>
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
-                        <div id="chart-input-po" data-colors='["--vz-danger"]'></div>
-                    </div>
-                </div>
-
-                <div class="mt-4">
-                    <a href="{{url('analis/productionbatch/data_po')}}" class="btn btn-light w-100">Lihat Detail</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-lg-6">
-        <div class="card ribbon-box right overflow-hidden">
-            <div class="card-body text-center p-4">
-                <div class="ribbon ribbon-success ribbon-shape trending-ribbon">
-                    <i class="ri-hand-heart-fill text-white align-bottom"></i>
-                    <span class="trending-ribbon-text">Pilih Batch</span>
-                </div>
-                <img src="{{ asset('assets/images/blending_awal.png' ) }}" alt="gambar" height="100" style="border-radius: 20px;">
-                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Batch Blending Awal</a></h5>
-                <p class="text-muted mb-4">Produksi Masak</p>
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <div id="chart-input-po" data-colors='["--vz-danger"]'></div>
-                    </div>
-                </div>
-
-                <div class="mt-4">
-                    <a href="{{url('analis/productionbatch/data_po/blending/awal')}}" class="btn btn-light w-100">Lihat Detail</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-lg-6">
-        <div class="card ribbon-box right overflow-hidden">
-            <div class="card-body text-center p-4">
-                <div class="ribbon ribbon-success ribbon-shape trending-ribbon">
-                    <i class="ri-hand-heart-fill text-white align-bottom"></i>
-                    <span class="trending-ribbon-text">Pilih Batch</span>
-                </div>
-                <img src="{{ asset('assets/images/blending_adjust.png' ) }}" alt="gambar" height="100" style="border-radius: 20px;">
-                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Batch Blending After Adjust</a></h5>
-                <p class="text-muted mb-4">Produksi Masak</p>
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <div id="chart-input-po" data-colors='["--vz-danger"]'></div>
+                        <div id="chart-ggas" data-colors='["--vz-danger"]'></div>
                     </div>
                 </div>
 
@@ -141,11 +95,13 @@
                     <button type="button" class="btn btn-light w-100" data-bs-toggle="modal" data-bs-target="#comingSoonModal">
                         Lihat Detail
                     </button>
-                    <!-- <a href="{{url('analis/productionbatch/data_po/blending/adjust')}}" class="btn btn-light w-100">Lihat Detail</a> -->
+
+                    <!-- <a href="{{url('analis/ggaggas/ggas')}}" class="btn btn-light w-100">Lihat Detail</a> -->
                 </div>
             </div>
         </div>
     </div>
+
 
 </div>
 <div class="modal fade" id="comingSoonModal" tabindex="-1" aria-labelledby="comingSoonModalLabel" aria-hidden="true">

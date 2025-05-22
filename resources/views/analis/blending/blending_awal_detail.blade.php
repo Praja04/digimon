@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0">GGAS</h4>
+            <h4 class="mb-sm-0">Blending Awal</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
@@ -65,9 +65,17 @@
                         <thead class="table-light text-muted">
                             <tr>
                                 <th>Batch Range</th>
-                                <th>Dissolver</th>
+                                <th>No Blending</th>
+                                <th>Volume</th>
                                 <th>BRIX</th>
                                 <th>NACL</th>
+                                <th>Bj</th>
+                                <th>Visco</th>
+                                <th>Aw</th>
+                                <th>Buih</th>
+                                <th>Organo</th>
+                                <th>pH</th>
+                                <th>Endapan</th>
                                 <th>Warna</th>
                                 <th>Disposisi</th>
                                 <th>Keterangan</th>
@@ -75,24 +83,32 @@
                             </tr>
                         </thead>
                         <tbody class="list form-check-all">
-                            @forelse ($productionBatch->GgasProcesses as $ggas)
+                            @forelse ($productionBatch->BlendingAwal as $blending)
                             <tr>
                                 <td>
-                                    @if($ggas->revisi != null)
-                                    {{ $ggas->batch_range }} ❗
+                                    @if($blending->revisi != null)
+                                    {{ $blending->batch_range }} ❗
                                     @else
-                                    {{ $ggas->batch_range }}
+                                    {{ $blending->batch_range }}
                                     @endif
                                 </td>
-                                <td>{{ $ggas->dissolver_number }}</td>
-                                <td>{{ $ggas->brix ?? '-' }}</td>
-                                <td>{{ $ggas->nacl ?? '-' }}</td>
-                                <td>{{ $ggas->warna ?? '-' }}</td>
-                                <td>{{ $ggas->disposition ?? '-' }}</td>
-                                <td>{{ $ggas->disposition_remarks ?? '-' }}</td>
+                                <td>{{ $blending->nomor_blending }}</td>
+                                <td>{{ $blending->volume }}</td>
+                                <td>{{ $blending->brix ?? '-' }}</td>
+                                <td>{{ $blending->nacl ?? '-' }}</td>
+                                <td>{{ $blending->bj ?? '-' }}</td>
+                                <td>{{ $blending->visco ?? '-' }}</td>
+                                <td>{{ $blending->aw ?? '-' }}</td>
+                                <td>{{ $blending->buih ?? '-' }}</td>
+                                <td>{{ $blending->organo ?? '-' }}</td>
+                                <td>{{ $blending->ph ?? '-' }}</td>
+                                <td>{{ $blending->endapan ?? '-' }}</td>
+                                <td>{{ $blending->warna ?? '-' }}</td>
+                                <td>{{ $blending->disposition ?? '-' }}</td>
+                                <td>{{ $blending->disposition_remarks ?? '-' }}</td>
                                 <td>
-                                    @if (is_null($ggas->disposition))
-                                    <button class="btn btn-sm btn-primary open-ggas-modal" data-id="{{ $ggas->id }}">Input GGAS</button>
+                                    @if (is_null($blending->disposition))
+                                    <button class="btn btn-sm btn-primary open-blending-modal" data-id="{{ $blending->id }}">Input Analisa Blending Awal</button>
                                     @else
                                     <span class="text-muted">✓ Lengkap</span>
                                     @endif
@@ -100,18 +116,18 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="8" class="text-center text-muted">Semua data GGA sudah lengkap.</td>
+                                <td colspan="8" class="text-center text-muted">Semua data Blending Awal sudah lengkap.</td>
                             </tr>
                             @endforelse
 
                             <!-- Modal input GGA tunggal -->
-                            <div class="modal fade" id="inputGgasModal" tabindex="-1" aria-labelledby="inputGgasModalLabel" aria-hidden="true">
+                            <div class="modal fade" id="inputBlendingModal" tabindex="-1" aria-labelledby="inputBlendingModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
-                                    <form id="ggasForm" class="ajax-gga-form">
+                                    <form id="blendingForm" class="ajax-gga-form">
                                         @csrf
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title">Input Data GGAS</h5>
+                                                <h5 class="modal-title">Input Data Blending Awal</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                                             </div>
                                             <div class="modal-body">
@@ -124,6 +140,30 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">NACL</label>
                                                     <input type="number" step="0.01" max="100" min="0" name="nacl" class="form-control" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Bj</label>
+                                                    <input type="text" name="bj" class="form-control" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Visco</label>
+                                                    <input type="text" name="visco" class="form-control" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Aw</label>
+                                                    <input type="text" name="aw" class="form-control" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Buih</label>
+                                                    <input type="text" name="buih" class="form-control" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Organo</label>
+                                                    <input type="text" name="organo" class="form-control" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Endapan</label>
+                                                    <input type="text" name="endapan" class="form-control" required>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Warna</label>
@@ -195,9 +235,9 @@
         let selectedId = null;
 
         // Ketika tombol diklik, simpan ID dan buka modal
-        $('.open-ggas-modal').on('click', function() {
+        $('.open-blending-modal').on('click', function() {
             selectedId = $(this).data('id');
-            $('#inputGgasModal').modal('show');
+            $('#inputBlendingModal').modal('show');
         });
 
         // Show/hide adjustment qty saat ganti disposition
@@ -216,14 +256,14 @@
         });
 
         // Reset form saat modal dibuka
-        $('#inputGgasModal').on('shown.bs.modal', function() {
-            $('#ggasForm')[0].reset();
+        $('#inputBlendingModal').on('shown.bs.modal', function() {
+            $('#blendingForm')[0].reset();
             $('.disposition-select').trigger('change');
             $('.error-alert').addClass('d-none').html('');
         });
 
         // Submit form
-        $('#ggasForm').on('submit', function(e) {
+        $('#blendingForm').on('submit', function(e) {
             e.preventDefault();
 
             const form = $(this);
@@ -234,11 +274,11 @@
             submitBtn.prop('disabled', true).text('Menyimpan...');
 
             $.ajax({
-                url: "{{url('/analis/ggaggas/ggas/update-ajax')}}/" + selectedId,
+                url: "{{url('/analis/blending/update')}}/" + selectedId,
                 method: 'POST',
                 data: form.serialize(),
                 success: function(response) {
-                    $('#inputGgasModal').modal('hide');
+                    $('#inputBlendingModal').modal('hide');
                     Swal.fire({
                         icon: 'success',
                         title: 'Berhasil!',

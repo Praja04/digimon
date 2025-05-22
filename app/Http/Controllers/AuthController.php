@@ -73,7 +73,7 @@ class AuthController extends Controller
     {
         return match ($role) {
             'analis' => 'rmpm.pilihJenisGula',
-            'foreman' => 'foreman.menu',
+            'foreman' => 'rmpm_foreman.menu',
             'supervisor' => 'supervisor.dashboard',
             'dept_head' => 'dept_head.dashboard',
             default => 'dashboard',
