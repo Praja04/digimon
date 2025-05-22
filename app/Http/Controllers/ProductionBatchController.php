@@ -90,18 +90,12 @@ class ProductionBatchController extends Controller
     public function show($id)
     {
         $productionBatch = ProductionBatch::findOrFail($id);
-        $batches = $productionBatch->batch_range_array; // ini array hasil accessor di atas
-        // Ambil semua batch yang sudah digunakan di GGA
-        $usedBatches = [];
-        foreach ($productionBatch->GgaProcesses as $gga) {
-            // Asumsikan batch_range disimpan format seperti "1-2"
-            if (preg_match('/(\d+)\s*-\s*(\d+)/', $gga->batch_range, $match)) {
-                $range = range((int)$match[1], (int)$match[2]);
-                $usedBatches = array_merge($usedBatches, $range);
-            } else {
-                $usedBatches[] = (int) $gga->batch_range;
-            }
-        }
+        $batches = $productionBatch->batch_range_array; // Misalnya [1,2,3,4,...]
+
+        // Ambil semua batch_number yang sudah digunakan di GGA
+        $usedBatches = $productionBatch->GgaProcesses->pluck('batch_number')->map(function ($batch) {
+            return (int) $batch; // Ubah ke integer agar bisa dibandingkan dengan batch_range_array
+        })->toArray();
 
         // Bandingkan apakah semua batch sudah ter-cover
         $allCovered = empty(array_diff($batches, $usedBatches));
@@ -114,11 +108,11 @@ class ProductionBatchController extends Controller
     {
         $request->validate([
             'production_batch_id' => 'required|integer|exists:production_batches,id',
-            'batch_range' => 'required|string',
+            'batch_number' => 'required|string',
         ]);
 
         $lastRevisi = GgaProcess::where('production_batch_id', $request->production_batch_id)
-            ->where('batch_range', $request->batch_range)
+            ->where('batch_number', $request->batch_number)
             ->max('revisi');
 
         // Jika belum ada, revisi dimulai dari 1
@@ -130,15 +124,16 @@ class ProductionBatchController extends Controller
     public function generateRevisiGGA(Request $request)
     {
         $validated = $request->validate([
+            'id_old_gga' => 'required|integer',
             'production_batch_id' => 'required|integer|exists:production_batches,id',
-            'batch_range' => 'required|string',
+            'batch_number' => 'required|string',
             'dissolver_number' => 'required|string',
             'revisi_gga' => 'required|integer|min:1',
         ]);
 
         // Pastikan tidak duplikasi revisi sama
         $exists = GgaProcess::where('production_batch_id', $validated['production_batch_id'])
-            ->where('batch_range', $validated['batch_range'])
+            ->where('batch_number', $validated['batch_number'])
             ->where('revisi', $validated['revisi_gga'])
             ->exists();
 
@@ -147,11 +142,15 @@ class ProductionBatchController extends Controller
                 'message' => 'Data revisi sudah ada, coba generate ulang.'
             ], 422);
         }
+        $productionBatch = GgaProcess::findOrFail($validated['id_old_gga']);
+        $productionBatch->update([
+            'not_standar' => false,
+        ]);
 
         // Buat data baru revisi
         GgaProcess::create([
             'production_batch_id' => $validated['production_batch_id'],
-            'batch_range' => $validated['batch_range'],
+            'batch_number' => $validated['batch_number'],
             'dissolver_number' => $validated['dissolver_number'],
             'barcode' => null,
             'adjusment_qty' => null,
@@ -171,11 +170,11 @@ class ProductionBatchController extends Controller
     {
         $request->validate([
             'production_batch_id' => 'required|integer|exists:production_batches,id',
-            'batch_range' => 'required|string',
+            'batch_number' => 'required|string',
         ]);
 
         $lastRevisi = GgasProcess::where('production_batch_id', $request->production_batch_id)
-            ->where('batch_range', $request->batch_range)
+            ->where('batch_number', $request->batch_number)
             ->max('revisi');
 
         // Jika belum ada, revisi dimulai dari 1
@@ -187,14 +186,15 @@ class ProductionBatchController extends Controller
     public function generateRevisiGGAS(Request $request)
     {
         $validated = $request->validate([
+            'id_old_ggas' => 'required|integer',
             'production_batch_id_ggas' => 'required|integer|exists:production_batches,id',
-            'batch_range_ggas' => 'required|string',
+            'batch_number_ggas' => 'required|string',
             'dissolver_number_ggas' => 'required|string',
             'revisi_ggas' => 'required|integer|min:1',
         ]);
         // Pastikan tidak duplikasi revisi sama
         $exists = GgasProcess::where('production_batch_id', $validated['production_batch_id_ggas'])
-            ->where('batch_range', $validated['batch_range_ggas'])
+            ->where('batch_number', $validated['batch_number_ggas'])
             ->where('revisi', $validated['revisi_ggas'])
             ->exists();
 
@@ -203,11 +203,16 @@ class ProductionBatchController extends Controller
                 'message' => 'Data revisi sudah ada, coba generate ulang.'
             ], 422);
         }
+        // buat update dahulu untuk id dari model ProductionBatch yang sama dengan production_batch_id
+        $productionBatch = ProductionBatch::findOrFail($validated['id_old_ggas']);
+        $productionBatch->update([
+            'not_standar' =>false,
+        ]);
 
         // Buat data baru revisi
         GgasProcess::create([
             'production_batch_id' => $validated['production_batch_id_ggas'],
-            'batch_range' => $validated['batch_range_ggas'],
+            'batch_number' => $validated['batch_number_ggas'],
             'dissolver_number' => $validated['dissolver_number_ggas'],
             'barcode' => null,
             'adjusment_qty' => null,

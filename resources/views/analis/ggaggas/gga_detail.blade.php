@@ -64,7 +64,7 @@
                     <table class="table align-middle table-nowrap mb-0" id="tasksTable">
                         <thead class="table-light text-muted">
                             <tr>
-                                <th>Batch Range</th>
+                                <th>Batch Number</th>
                                 <th>Dissolver</th>
                                 <th>BRIX</th>
                                 <th>NACL</th>
@@ -79,9 +79,9 @@
                             <tr>
                                 <td>
                                     @if($gga->revisi != null)
-                                    {{ $gga->batch_range }} ❗
+                                    {{ $gga->batch_number }} ❗
                                     @else
-                                    {{ $gga->batch_range }}
+                                    {{ $gga->batch_number }}
                                     @endif
                                 </td>
                                 <td>{{ $gga->dissolver_number }}</td>
@@ -228,7 +228,7 @@
             submitBtn.prop('disabled', true).text('Menyimpan...');
 
             $.ajax({
-                url: "{{url('/ggaggas/gga/update-ajax')}}/" + selectedId,
+                url: "{{url('analis/ggaggas/gga/update-ajax')}}/" + selectedId,
                 method: 'POST',
                 data: form.serialize(),
                 success: function(response) {

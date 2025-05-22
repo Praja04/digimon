@@ -84,7 +84,7 @@
                                     <td>{{ $batch->production_date }}</td>
                                     <td>{{ $batch->GgasProcesses->count() }}</td>
                                     <td>
-                                        <a href="{{ url('ggaggas/ggas/' . $batch->id) }}" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ url('analis/ggaggas/ggas/' . $batch->id) }}" class="btn btn-sm btn-primary">View</a>
                                     </td>
                                 </tr>
                                 @empty

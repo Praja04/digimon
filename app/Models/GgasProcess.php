@@ -13,7 +13,7 @@ class GgasProcess extends Model
     protected $table = 'ggas_processes';
     protected $fillable = [
         'production_batch_id',
-        'batch_range',
+        'batch_number',
         'dissolver_number',
        'revisi',
         'brix',

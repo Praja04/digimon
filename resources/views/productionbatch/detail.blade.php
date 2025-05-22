@@ -128,7 +128,7 @@
                                             <table class="table mb-0">
                                                 <thead>
                                                     <tr>
-                                                        <th>Batch Range</th>
+                                                        <th>Batch Number</th>
                                                         <th>Dissolver</th>
 
                                                         <th>QR Code (URL)</th>
@@ -139,7 +139,7 @@
                                                 <tbody>
                                                     @foreach ($productionBatch->GgaProcesses as $gga)
                                                     <tr>
-                                                        <td>{{ $gga->batch_range }}</td>
+                                                        <td>{{ $gga->batch_number }}</td>
                                                         <td>{{ $gga->dissolver_number }}</td>
 
                                                         <td>
@@ -158,9 +158,9 @@
                                                                         </div>
                                                                         <div class="modal-body text-center" id="qrPrintArea{{ $gga->id }}">
                                                                             <div style="display: inline-block;">
-                                                                                <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('/ggaggas/gga/id/' . $gga->id), 'QRCODE') }}" alt="QR Code">
+                                                                                <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('/analis/ggaggas/gga/id/' . $gga->id), 'QRCODE') }}" alt="QR Code">
                                                                             </div>
-                                                                            <p>GGA/{{ $productionBatch->po_number }}/{{ $productionBatch->production_date }}/{{ $gga->batch_range }}</p>
+                                                                            <p>GGA/{{ $productionBatch->po_number }}/{{ $productionBatch->production_date }}/{{ $gga->batch_number }}</p>
                                                                         </div>
                                                                         <div class="modal-footer justify-content-center py-2">
                                                                             <button onclick="printQR('qrPrintArea{{ $gga->id }}')" class="btn btn-sm btn-success">Print</button>
@@ -172,8 +172,8 @@
                                                         </td>
                                                         <td>
                                                             {{ $gga->disposition }}
-                                                            @if(in_array($gga->disposition, ['Adjustment', 'Resampling']) && $gga->revisi == null )
-                                                            <button class="btn btn-sm btn-warning generate-revisi-btn" data-id="{{ $gga->id }}" data-batch="{{ $gga->batch_range }}" data-po="{{ $gga->production_batch_id }}" data-dissolver="{{ $gga->dissolver_number }}">
+                                                            @if(in_array($gga->disposition, ['Adjustment', 'Resampling']) && $gga->revisi == null && $gga->not_standar == true )
+                                                            <button class="btn btn-sm btn-warning generate-revisi-btn" data-id="{{ $gga->id }}" data-batch="{{ $gga->batch_number }}" data-po="{{ $gga->production_batch_id }}" data-dissolver="{{ $gga->dissolver_number }}">
                                                                 ❗
                                                             </button>
 
@@ -182,7 +182,7 @@
                                                         <td>
 
                                                             @if($gga->revisi != null)
-                                                            Adjusment Revisi Ke-{{ $gga->revisi }}
+                                                             Revisi Ke-{{ $gga->revisi }}
                                                             @else
                                                             -
                                                             @endif
@@ -205,7 +205,7 @@
                                             <table class="table table-bordered text-center">
                                                 <thead>
                                                     <tr>
-                                                        <th>Batch Range</th>
+                                                        <th>Batch Number</th>
                                                         <th>Dissolver</th>
 
                                                         <th>QR Code (URL)</th>
@@ -216,7 +216,7 @@
                                                 <tbody>
                                                     @foreach ($productionBatch->GgasProcesses as $ggas)
                                                     <tr>
-                                                        <td>{{ $ggas->batch_range }}</td>
+                                                        <td>{{ $ggas->batch_number }}</td>
                                                         <td>{{ $ggas->dissolver_number }}</td>
 
                                                         <td>
@@ -235,9 +235,9 @@
                                                                         </div>
                                                                         <div class="modal-body text-center" id="qrPrintArea{{ $ggas->id }}">
                                                                             <div style="display: inline-block;">
-                                                                                <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('/ggaggas/gga/id/' . $ggas->id), 'QRCODE') }}" alt="QR Code">
+                                                                                <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('/analis/ggaggas/gga/id/' . $ggas->id), 'QRCODE') }}" alt="QR Code">
                                                                             </div>
-                                                                            <p>GGAS/{{ $productionBatch->po_number }}/{{ $productionBatch->production_date }}/{{ $ggas->batch_range }}</p>
+                                                                            <p>GGAS/{{ $productionBatch->po_number }}/{{ $productionBatch->production_date }}/{{ $ggas->batch_number }}</p>
                                                                         </div>
                                                                         <div class="modal-footer justify-content-center py-2">
                                                                             <button onclick="printQR('qrPrintArea{{ $ggas->id }}')" class="btn btn-sm btn-success">Print</button>
@@ -250,7 +250,7 @@
                                                         <td>
                                                             {{ $ggas->disposition }}
                                                             @if(in_array($ggas->disposition, ['Adjustment', 'Resampling']) && $ggas->revisi == null )
-                                                            <button class="btn btn-sm btn-warning generate-revisi-btn-ggas" data-id="{{ $ggas->id }}" data-batch="{{ $ggas->batch_range }}" data-po="{{ $ggas->production_batch_id }}" data-dissolver="{{ $ggas->dissolver_number }}">
+                                                            <button class="btn btn-sm btn-warning generate-revisi-btn-ggas" data-id="{{ $ggas->id }}" data-batch="{{ $ggas->batch_number }}" data-po="{{ $ggas->production_batch_id }}" data-dissolver="{{ $ggas->dissolver_number }}">
                                                                 ❗
                                                             </button>
 
@@ -259,7 +259,7 @@
                                                         <td>
 
                                                             @if($ggas->revisi != null)
-                                                            Adjusment Revisi Ke-{{ $ggas->revisi }}
+                                                             Revisi Ke-{{ $ggas->revisi }}
                                                             @else
                                                             -
                                                             @endif
@@ -306,30 +306,23 @@
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="production_batch_id" value="{{ $productionBatch->id }}">
-
+                    
                     <div class="mb-3">
-                        <label for="batch_start" class="form-label">Batch Pertama</label>
-                        <select name="batch_start" class="form-select" required>
+                        <label for="batch_number" class="form-label">Batch Number</label>
+                        <select name="batch_number" class="form-select" required>
                             @foreach($batches as $batch)
                             <option value="{{ $batch }}">{{ $batch }}</option>
                             @endforeach
                         </select>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="batch_end" class="form-label">Batch Kedua</label>
-                        <select name="batch_end" class="form-select" required>
-                            @foreach($batches as $batch)
-                            <option value="{{ $batch }}">{{ $batch }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+
 
                     <div class="mb-3">
                         <label for="dissolver_number" class="form-label">Dissolver Number</label>
                         <input type="text" name="dissolver_number" class="form-control" required>
                     </div>
-
+                    
                     <div class="mb-3">
                         <label for="type" class="form-label">Jenis Sample</label>
                         <select name="type" class="form-select" required>
@@ -343,7 +336,7 @@
                         @endif
                     </div>
 
-
+                    
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success">Simpan</button>
@@ -363,12 +356,13 @@
                     <h5 class="modal-title">Generate Revisi Batch</h5>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" name="id_old_gga" id="id_old_gga">
                     <input type="hidden" name="production_batch_id" id="modal_po_id">
                     <input type="hidden" name="dissolver_number" id="modal_dissolver_number">
                     <!-- <input type="hidden" name="revisi" id="modal_revisi" readonly> -->
                     <div class="mb-3">
                         <label>Batch</label>
-                        <input type="text" class="form-control" id="modal_batch" name="batch_range" readonly>
+                        <input type="text" class="form-control" id="modal_batch" name="batch_number" readonly>
                     </div>
                     <div class="mb-3">
                         <label>Revisi Ke-</label>
@@ -392,12 +386,13 @@
                     <h5 class="modal-title">Generate Revisi Batch</h5>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" name="id_old_ggas" id="id_old_ggas">
                     <input type="hidden" name="production_batch_id_ggas" id="modal_po_id_ggas">
                     <input type="hidden" name="dissolver_number_ggas" id="modal_dissolver_number_ggas">
                     <!-- <input type="hidden" name="revisi_ggas" id="modal_revisi_ggas" readonly> -->
                     <div class="mb-3">
                         <label>Batch</label>
-                        <input type="text" class="form-control" id="modal_batch_ggas" name="batch_range_ggas" readonly>
+                        <input type="text" class="form-control" id="modal_batch_ggas" name="batch_number_ggas" readonly>
                     </div>
                     <div class="mb-3">
                         <label>Revisi Ke-</label>
@@ -477,18 +472,20 @@
     });
 
     $(document).on('click', '.generate-revisi-btn', function() {
+        let Id = $(this).data('id');
         let poId = $(this).data('po');
         let batch = $(this).data('batch');
         let dissolver = $(this).data('dissolver');
 
         $('#modal_po_id').val(poId);
+        $('#id_old_gga').val(Id);
         $('#modal_batch').val(batch);
         $('#modal_dissolver_number').val(dissolver);
 
         // Ambil revisi terakhir via AJAX
-        $.get('{{ url("/productionbatch/processgga/get-last-revisi") }}', {
+        $.get('{{ url("/analis/productionbatch/processgga/get-last-revisi") }}', {
             production_batch_id: poId,
-            batch_range: batch
+            batch_number: batch
         }, function(res) {
             $('#modal_revisi').val(res.revisi);
             $('#modal_revisi_display').val(res.revisi);
@@ -504,7 +501,7 @@
         let form = $('#generateRevisiForm');
         let formData = form.serialize();
 
-        $.post('{{ url("/productionbatch/processgga/generate-revisi") }}', formData, function(res) {
+        $.post('{{ url("/analis/productionbatch/processgga/generate-revisi") }}', formData, function(res) {
             alert('Revisi berhasil dibuat!');
             location.reload();
         }).fail(function(err) {
@@ -513,18 +510,20 @@
     });
 
     $(document).on('click', '.generate-revisi-btn-ggas', function() {
+        let Id = $(this).data('id');
         let poId = $(this).data('po');
         let batch = $(this).data('batch');
         let dissolver = $(this).data('dissolver');
 
+        $('#id_old_ggas').val(Id);
         $('#modal_po_id_ggas').val(poId);
         $('#modal_batch_ggas').val(batch);
         $('#modal_dissolver_number_ggas').val(dissolver);
 
         // Ambil revisi terakhir via AJAX
-        $.get('{{ url("/productionbatch/processggas/get-last-revisi") }}', {
+        $.get('{{ url("/analis/productionbatch/processggas/get-last-revisi") }}', {
             production_batch_id: poId,
-            batch_range: batch
+            batch_number: batch
         }, function(res) {
             $('#modal_revisi_ggas').val(res.revisi);
             $('#modal_revisi_display_ggas').val(res.revisi);
@@ -540,7 +539,7 @@
         let form = $('#generateRevisiFormGGAS');
         let formData = form.serialize();
 
-        $.post('{{ url("/productionbatch/processggas/generate-revisi") }}', formData, function(res) {
+        $.post('{{ url("/analis/productionbatch/processggas/generate-revisi") }}', formData, function(res) {
             alert('Revisi berhasil dibuat!');
             location.reload();
         }).fail(function(err) {

@@ -25,7 +25,11 @@ class ProductionBatch extends Model
         return [$this->batch_range]; // fallback kalau cuma satu angka
     }
     
-    // Relasi dengan tabel GGA/GGAS Process
+    
+    public function BlendingAwal()
+    {
+        return $this->hasMany(BlendingAwalModel::class);
+    }
     public function GgaProcesses()
     {
         return $this->hasMany(GgaProcess::class);

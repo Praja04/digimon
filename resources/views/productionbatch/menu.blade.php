@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="mt-4">
-                    <a href="{{url('productionbatch/po_masak')}}" class="btn btn-light w-100">Lihat Detail</a>
+                    <a href="{{url('analis/productionbatch/po_masak')}}" class="btn btn-light w-100">Lihat Detail</a>
                 </div>
             </div>
         </div>
@@ -92,7 +92,7 @@
                 </div>
 
                 <div class="mt-4">
-                    <a href="{{url('productionbatch/data_po')}}" class="btn btn-light w-100">Lihat Detail</a>
+                    <a href="{{url('analis/productionbatch/data_po')}}" class="btn btn-light w-100">Lihat Detail</a>
                 </div>
             </div>
         </div>

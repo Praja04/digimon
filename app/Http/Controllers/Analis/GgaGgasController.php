@@ -23,8 +23,7 @@ class GgaGgasController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'production_batch_id' => 'required|exists:production_batches,id',
-            'batch_start' => 'required|integer|different:batch_end',
-            'batch_end' => 'required|integer',
+            'batch_number' => 'required|integer',
             'dissolver_number' => 'required',
             'type' => 'required|in:GGA,GGAS',
         ]);
@@ -37,57 +36,43 @@ class GgaGgasController extends Controller
             ], 422);
         }
 
-        $start = (int) $request->batch_start;
-        $end = (int) $request->batch_end;
-
-        if ($start > $end) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Batch start tidak boleh lebih besar dari batch end.'
-            ], 422);
-        }
-
+        $batchNumber = (int) $request->batch_number;
         $type = strtoupper($request->type);
-        $existingBatches = collect();
+
+        $exists = false;
 
         if ($type === 'GGA') {
-            $ggaBatches = GgaProcess::where('production_batch_id', $request->production_batch_id)->get();
-            foreach ($ggaBatches as $record) {
-                [$existStart, $existEnd] = explode('-', $record->batch_range);
-                if ($start <= (int)$existEnd && $end >= (int)$existStart) {
-                    $existingBatches->push("GGA ($existStart - $existEnd)");
-                }
-            }
-            if ($existingBatches->isNotEmpty()) {
+            $exists = GgaProcess::where('production_batch_id', $request->production_batch_id)
+                ->where('batch_number', $batchNumber)
+                ->exists();
+
+            if ($exists) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Batch range tumpang tindih dengan: ' . $existingBatches->implode(', ')
+                    'message' => "Batch $batchNumber sudah diinput untuk GGA."
                 ], 422);
             }
 
             GgaProcess::create([
                 'production_batch_id' => $request->production_batch_id,
-                'batch_range' => "$start-$end",
+                'batch_number' => $batchNumber,
                 'dissolver_number' => $request->dissolver_number,
             ]);
         } elseif ($type === 'GGAS') {
-            $ggasBatches = GgasProcess::where('production_batch_id', $request->production_batch_id)->get();
-            foreach ($ggasBatches as $record) {
-                [$existStart, $existEnd] = explode('-', $record->batch_range);
-                if ($start <= (int)$existEnd && $end >= (int)$existStart) {
-                    $existingBatches->push("GGAS ($existStart - $existEnd)");
-                }
-            }
-            if ($existingBatches->isNotEmpty()) {
+            $exists = GgasProcess::where('production_batch_id', $request->production_batch_id)
+                ->where('batch_number', $batchNumber)
+                ->exists();
+
+            if ($exists) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Batch range tumpang tindih dengan: ' . $existingBatches->implode(', ')
+                    'message' => "Batch $batchNumber sudah diinput untuk GGAS."
                 ], 422);
             }
 
             GgasProcess::create([
                 'production_batch_id' => $request->production_batch_id,
-                'batch_range' => "$start-$end",
+                'batch_number' => $batchNumber,
                 'dissolver_number' => $request->dissolver_number,
             ]);
         }
@@ -97,6 +82,7 @@ class GgaGgasController extends Controller
             'message' => 'Data berhasil disimpan.'
         ]);
     }
+
 
 
 
@@ -133,39 +119,31 @@ class GgaGgasController extends Controller
         return view('analis.ggaggas.ggas_detail', compact('productionBatch'));
     }
 
-    public function checkBatchRangeGGA(Request $request)
+    public function checkBatchNumberGGA(Request $request)
     {
-        $start = (int) $request->batch_start;
-        $end = (int) $request->batch_end;
+        $batchNumber = (int) $request->batch_number;
         $type = $request->type;
         $productionBatchId = $request->production_batch_id;
 
-        if ($start > $end) {
-            [$start, $end] = [$end, $start]; // urutkan jika terbalik
-        }
-
-        $existingRanges = collect();
-
         if ($type === 'GGA') {
-            $existingRanges = \App\Models\GgaProcess::where('production_batch_id', $productionBatchId)->pluck('batch_range');
+            $exists = GgaProcess::where('production_batch_id', $productionBatchId)
+                ->where('batch_number', $batchNumber)
+                ->exists();
         } elseif ($type === 'GGAS') {
-            $existingRanges = \App\Models\GgasProcess::where('production_batch_id', $productionBatchId)->pluck('batch_range');
+            $exists = GgasProcess::where('production_batch_id', $productionBatchId)
+                ->where('batch_number', $batchNumber)
+                ->exists();
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Jenis tidak valid']);
         }
 
-        $requestedRange = range($start, $end);
-        foreach ($existingRanges as $range) {
-            [$existingStart, $existingEnd] = explode('-', $range);
-            $existingRangeArray = range((int) $existingStart, (int) $existingEnd);
-            if (array_intersect($requestedRange, $existingRangeArray)) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => "Batch range $start-$end sudah dipakai dalam $range"
-                ]);
-            }
+        if ($exists) {
+            return response()->json(['status' => 'error', 'message' => "Batch $batchNumber sudah diinput."]);
         }
 
         return response()->json(['status' => 'ok']);
     }
+    
     public function updateAjaxGGA(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -223,6 +201,7 @@ class GgaGgasController extends Controller
                 'disposition' => $disposition,
                 'disposition_remarks' => $remarks,
                 'adjusment_qty' => $adjustmentQty,
+                'not_standar' => true,
             ]);
         }
 
@@ -234,6 +213,7 @@ class GgaGgasController extends Controller
                 'warna' => $request->warna,
                 'disposition' => $disposition,
                 'disposition_remarks' => $remarks ? $remarks . ' (Resampling)' : 'Resampling',
+                'not_standar' => true,
             ]);
         }
 

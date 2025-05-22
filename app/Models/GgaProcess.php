@@ -11,7 +11,7 @@ class GgaProcess extends Model
     protected $table = 'gga_processes';
     protected $fillable = [
         'production_batch_id',
-        'batch_range',
+        'batch_number',
         'dissolver_number',
         'barcode',
         'adjusment_qty',
@@ -20,7 +20,7 @@ class GgaProcess extends Model
         'warna',
         'disposition',
         'disposition_remarks',
-        'is_adjustment',
+        'not_standar',
         'revisi',
     ];
 

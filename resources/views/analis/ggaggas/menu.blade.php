@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="mt-4">
-                    <a href="{{url('ggaggas/gga')}}" class="btn btn-light w-100">Lihat Detail</a>
+                    <a href="{{url('analis/ggaggas/gga')}}" class="btn btn-light w-100">Lihat Detail</a>
                 </div>
             </div>
         </div>
@@ -92,7 +92,7 @@
                 </div>
 
                 <div class="mt-4">
-                    <a href="{{url('ggaggas/ggas')}}" class="btn btn-light w-100">Lihat Detail</a>
+                    <a href="{{url('analis/ggaggas/ggas')}}" class="btn btn-light w-100">Lihat Detail</a>
                 </div>
             </div>
         </div>

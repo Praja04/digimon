@@ -7,6 +7,7 @@ use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\Analis\RMPMController;
 use App\Http\Controllers\Analis\SamplingController;
 use App\Http\Controllers\ProductionBatchController;
+use App\Http\Controllers\Foreman\RMPMControllerForeman;
 
 
 // Login & Logout
@@ -19,127 +20,99 @@ Route::get('/register', function () {
 })->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
 
-// Dashboard umum
-Route::middleware('auth')->get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
-
-// Dashboard per-role
-Route::middleware(['auth', RoleMiddleware::class . ':analis'])->get('/analis', function () {
-    return view('analis.rmpm.pilih_jenis_gula');
-})->name('analis.dashboard');
-
-Route::middleware(['auth', RoleMiddleware::class . ':foreman'])->get('/foreman', function () {
-    return view('roles.foreman');
-})->name('foreman.dashboard');
-
-Route::middleware(['auth', RoleMiddleware::class . ':supervisor'])->get('/supervisor', function () {
-    return view('roles.supervisor');
-})->name('supervisor.dashboard');
-
-Route::middleware(['auth', RoleMiddleware::class . ':dept_head'])->get('/dept_head', function () {
-    return view('roles.dept_head');
-})->name('dept_head.dashboard');
 
 
-//RMPM
-Route::prefix('rmpm')->group(function () {
-    Route::get('/', [RMPMController::class, 'pilihJenisGula'])->name('rmpm.pilihJenisGula');
-    Route::get('/identitas/{jenis}', [RMPMController::class, 'formIdentitas'])->name('rmpm.formIdentitas');
-    Route::post('/identitas/simpan', [RMPMController::class, 'simpanIdentitas'])->name('rmpm.simpanIdentitas');
-    Route::get('/list/{jenis}', [RMPMController::class, 'listIdentitas'])->name('rmpm.listIdentitas');
+Route::prefix('analis')->group(function () {
+    Route::prefix('rmpm')->group(function () {
+        Route::get('/', [RMPMController::class, 'pilihJenisGula'])->name('rmpm.pilihJenisGula');
+        Route::get('/identitas/{jenis}', [RMPMController::class, 'formIdentitas'])->name('rmpm.formIdentitas');
+        Route::post('/identitas/simpan', [RMPMController::class, 'simpanIdentitas'])->name('rmpm.simpanIdentitas');
+        Route::get('/list/{jenis}', [RMPMController::class, 'listIdentitas'])->name('rmpm.listIdentitas');
+        Route::get('/detail-identitas/{id}', [RMPMController::class, 'detailIdentitas'])->name('rmpm.detailIdentitas');
+        Route::get('/konfirmasi/{id}', [RMPMController::class, 'getDataKedatangan']);
+        Route::post('/simpan/konfirmasi/{id}', [RMPMController::class, 'updateJam']);
+    });
 
-    Route::get('/detail-identitas/{id}', [RMPMController::class, 'detailIdentitas'])->name('rmpm.detailIdentitas');
-    Route::get('/konfirmasi/{id}', [RMPMController::class, 'getDataKedatangan']);
-    Route::post('/simpan/konfirmasi/{id}', [RMPMController::class, 'updateJam']);
+
+    Route::prefix('sampling')->group(function () {
+        // Sampling Kondisi Mobil
+        Route::get('/kondisi-mobil/{id}', [SamplingController::class, 'showKondisiMobil'])->name('sampling.kondisi_mobil');
+        Route::post('/kondisi-mobil', [SamplingController::class, 'storeKondisiMobil'])->name('sampling.kondisi_mobil.store');
+
+
+        // Sampling Dokumen
+        Route::get('/dokumen/{id}', [SamplingController::class, 'showDokumen'])->name('sampling.dokumen');
+        Route::post('/dokumen', [SamplingController::class, 'storeDokumen'])->name('sampling.dokumen.store');
+
+        // Sampling Fisik Kemasan
+        Route::get('/fisik-kemasan/{id}', [SamplingController::class, 'showFisikKemasan'])->name('sampling.fisik_kemasan');
+        Route::post('/fisik-kemasan', [SamplingController::class, 'storeFisikKemasan'])->name('sampling.fisik_kemasan.store');
+
+        // Sampling Fisik Raw (Hanya untuk Gula, Tidak untuk Garam)
+        Route::get('/fisik-raw/{id}', [SamplingController::class, 'showFisikRaw'])->name('sampling.fisik_raw');
+        Route::post('/fisik-raw', [SamplingController::class, 'storeFisikRaw'])->name('sampling.fisik_raw.store');
+    });
+
+    Route::prefix('analisa')->group(function () {
+        Route::post('/garam-gula', [RMPMController::class, 'storeGaramGula']);
+        Route::post('/long-term', [RMPMController::class, 'storeLongTerm']);
+        Route::post('/short-term', [RMPMController::class, 'storeShortTerm']);
+
+        Route::get('/garam-gula/{id_identitas}', [RMPMController::class, 'showGaramGula']);
+        Route::get('/long-term/{id_identitas}', [RMPMController::class, 'showLongTerm']);
+        Route::get('/short-term/{id_identitas}', [RMPMController::class, 'showShortTerm']);
+
+
+        Route::put('/garam-gula/{id}', [RMPMController::class, 'updateGaramGula']);
+        Route::put('/long-term/{id}', [RMPMController::class, 'updateLongTerm']);
+        Route::put('/short-term/{id}', [RMPMController::class, 'updateShortTerm']);
+
+        Route::delete('/garam-gula/{id}', [RMPMController::class, 'destroyGaramGula']);
+        Route::delete('/long-term/{id}', [RMPMController::class, 'destroyLongTerm']);
+        Route::delete('/short-term/{id}', [RMPMController::class, 'destroyShortTerm']);
+    });
+
+
+    //Persiapan masak
+    Route::prefix('productionbatch')->group(function () {
+        Route::get('/menu', [ProductionBatchController::class, 'menu'])->name('productionbatch.menu');
+        Route::get('/data_po', [ProductionBatchController::class, 'data_po'])->name('productionbatch.data_po');
+        Route::resource('/po_masak', ProductionBatchController::class)->names([
+            'index' => 'productionbatch.index',
+            'create' => 'productionbatch.create',
+            'store' => 'productionbatch.store',
+            'show' => 'productionbatch.show',
+            'edit' => 'productionbatch.edit',
+            'update' => 'productionbatch.update',
+            'destroy' => 'productionbatch.destroy',
+        ]);
+        Route::get('/processgga/get-last-revisi', [ProductionBatchController::class, 'getLastRevisiGGA']);
+        Route::post('/processgga/generate-revisi', [ProductionBatchController::class, 'generateRevisiGGA']);
+        Route::get('/processggas/get-last-revisi', [ProductionBatchController::class, 'getLastRevisiGGAS']);
+        Route::post('/processggas/generate-revisi', [ProductionBatchController::class, 'generateRevisiGGAS']);
+    });
+
+    //gga ggas
+    Route::prefix('ggaggas')->group(function () {
+        Route::get('/menu', [GgaGgasController::class, 'menu']);
+        Route::post('/process/store', [GgaGgasController::class, 'store'])->name('process.store');
+
+        Route::post('/check-batch-range', [GgaGgasController::class, 'checkBatchRangeGGA'])->name('process.checkBatchRange');
+        Route::get('/gga', [GgaGgasController::class, 'GGA_data']);
+        Route::get('/gga/{id}', [GgaGgasController::class, 'GGA_detail']);
+        Route::get('/gga/id/{id}', [GgaGgasController::class, 'showInputFormGGA']);
+        Route::post('/gga/update-ajax/{id}', [GgaGgasController::class, 'updateAjaxGGA']);
+
+
+        Route::get('/ggas', [GgaGgasController::class, 'GGAS_data']);
+        Route::get('/ggas/{id}', [GgaGgasController::class, 'GGAS_detail']);
+        Route::get('/ggas/id/{id}', [GgaGgasController::class, 'showInputFormGGAS']);
+        Route::post('/ggas/update-ajax/{id}', [GgaGgasController::class, 'updateAjaxGGAS']);
+    });
 });
 
-
-Route::prefix('sampling')->group(function () {
-    // Sampling Kondisi Mobil
-    Route::get('/kondisi-mobil/{id}', [SamplingController::class, 'showKondisiMobil'])->name('sampling.kondisi_mobil');
-    Route::post('/kondisi-mobil', [SamplingController::class, 'storeKondisiMobil'])->name('sampling.kondisi_mobil.store');
-
-
-    // Sampling Dokumen
-    Route::get('/dokumen/{id}', [SamplingController::class, 'showDokumen'])->name('sampling.dokumen');
-    Route::post('/dokumen', [SamplingController::class, 'storeDokumen'])->name('sampling.dokumen.store');
-
-    // Sampling Fisik Kemasan
-    Route::get('/fisik-kemasan/{id}', [SamplingController::class, 'showFisikKemasan'])->name('sampling.fisik_kemasan');
-    Route::post('/fisik-kemasan', [SamplingController::class, 'storeFisikKemasan'])->name('sampling.fisik_kemasan.store');
-
-    // Sampling Fisik Raw (Hanya untuk Gula, Tidak untuk Garam)
-    Route::get('/fisik-raw/{id}', [SamplingController::class, 'showFisikRaw'])->name('sampling.fisik_raw');
-    Route::post('/fisik-raw', [SamplingController::class, 'storeFisikRaw'])->name('sampling.fisik_raw.store');
+Route::prefix('foreman')->group(function () {
+    Route::prefix('rmpm')->group(function () {
+        Route::get('/', [RMPMControllerForeman::class, 'web'])->name('rmpm.menu');
+    });
 });
-
-Route::prefix('analisa')->group(function () {
-    Route::post('/garam-gula', [RMPMController::class, 'storeGaramGula']);
-    Route::post('/long-term', [RMPMController::class, 'storeLongTerm']);
-    Route::post('/short-term', [RMPMController::class, 'storeShortTerm']);
-
-    Route::get('/garam-gula/{id_identitas}', [RMPMController::class, 'showGaramGula']);
-    Route::get('/long-term/{id_identitas}', [RMPMController::class, 'showLongTerm']);
-    Route::get('/short-term/{id_identitas}', [RMPMController::class, 'showShortTerm']);
-
-
-    Route::put('/garam-gula/{id}', [RMPMController::class, 'updateGaramGula']);
-    Route::put('/long-term/{id}', [RMPMController::class, 'updateLongTerm']);
-    Route::put('/short-term/{id}', [RMPMController::class, 'updateShortTerm']);
-
-    Route::delete('/garam-gula/{id}', [RMPMController::class, 'destroyGaramGula']);
-    Route::delete('/long-term/{id}', [RMPMController::class, 'destroyLongTerm']);
-    Route::delete('/short-term/{id}', [RMPMController::class, 'destroyShortTerm']);
-});
-
-
-//Persiapan masak
-Route::prefix('productionbatch')->group(function () {
-    Route::get('/menu', [ProductionBatchController::class, 'menu'])->name('productionbatch.menu');
-    Route::get('/data_po', [ProductionBatchController::class, 'data_po'])->name('productionbatch.data_po');
-    Route::resource('/po_masak', ProductionBatchController::class)->names([
-        'index' => 'productionbatch.index',
-        'create' => 'productionbatch.create',
-        'store' => 'productionbatch.store',
-        'show' => 'productionbatch.show',
-        'edit' => 'productionbatch.edit',
-        'update' => 'productionbatch.update',
-        'destroy' => 'productionbatch.destroy',
-    ]);
-    Route::get('/processgga/get-last-revisi', [ProductionBatchController::class, 'getLastRevisiGGA']);
-    Route::post('/processgga/generate-revisi', [ProductionBatchController::class, 'generateRevisiGGA']);
-    Route::get('/processggas/get-last-revisi', [ProductionBatchController::class, 'getLastRevisiGGAS']);
-    Route::post('/processggas/generate-revisi', [ProductionBatchController::class, 'generateRevisiGGAS']);
-});
-
-//gga ggas
-Route::prefix('ggaggas')->group(function () {
-    Route::get('/menu', [GgaGgasController::class, 'menu']);
-    Route::post('/process/store', [GgaGgasController::class, 'store'])->name('process.store');
-
-    Route::post('/check-batch-range', [GgaGgasController::class, 'checkBatchRangeGGA'])->name('process.checkBatchRange');
-    Route::get('/gga', [GgaGgasController::class, 'GGA_data']);
-    Route::get('/gga/{id}', [GgaGgasController::class, 'GGA_detail']);
-    Route::get('/gga/id/{id}', [GgaGgasController::class, 'showInputFormGGA']);
-    Route::post('/gga/update-ajax/{id}', [GgaGgasController::class, 'updateAjaxGGA']);
-    
-    
-    Route::get('/ggas', [GgaGgasController::class, 'GGAS_data']);
-    Route::get('/ggas/{id}', [GgaGgasController::class, 'GGAS_detail']);
-    Route::get('/ggas/id/{id}', [GgaGgasController::class, 'showInputFormGGAS']);
-    Route::post('/ggas/update-ajax/{id}', [GgaGgasController::class, 'updateAjaxGGAS']);
-    
-});
-
-
-// Route::post('productionbatch/{id}/storeGgaGgas', [ProductionBatchController::class, 'storeGgaGgas'])->name('productionbatch.storeGgaGgas');
-// Route::post('ggaggas/{id}/storeAnalysis', [ProductionBatchController::class, 'storeAnalysis'])->name('ggaggas.storeAnalysis');
-
-// // Jika Anda belum memiliki rute 'createGgaGgas', tambahkan seperti ini:
-// Route::get('productionbatch/{id}/createGgaGgas', [ProductionBatchController::class, 'createGgaGgas'])->name('productionbatch.createGgaGgas');
-
-// Route::get('ggaggas/select', [ProductionBatchController::class, 'selectGgaGgas'])->name('productionbatch.selectGgaGgas');
-
-// // Rute untuk menampilkan detail data GGA/GGAS berdasarkan ID
-// Route::get('ggaggas/{id}', [ProductionBatchController::class, 'show'])->name('ggaggas.show');

@@ -2,7 +2,7 @@
     <!-- LOGO -->
     <div class="navbar-brand-box">
         <!-- Light Logo-->
-        <a href="{{ url('rmpm') }}" class="logo logo-light">
+        <a href="#" class="logo logo-light">
             <span class="logo-sm">
                 <img src="{{ asset('assets/images/icon-utility/kecap.png') }}" alt="" height="25">
             </span>
@@ -42,12 +42,12 @@
                 </li> -->
 
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{url('rmpm')}}">
+                    <a class="nav-link menu-link" href="{{url('analis/rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">RMPM</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{url('productionbatch')}}">
+                    <a class="nav-link menu-link" href="{{url('analis/productionbatch')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Persiapan Masak</span>
                     </a>
                 </li>
@@ -56,17 +56,17 @@
                 @elseif(Session::get('role') === 'analis')
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ url('rmpm')}}">
+                    <a class="nav-link menu-link" href="{{ url('analis/rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">RMPM</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{url('productionbatch/menu')}}">
+                    <a class="nav-link menu-link" href="{{url('analis/productionbatch/menu')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Persiapan Masak</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{url('ggaggas/menu')}}">
+                    <a class="nav-link menu-link" href="{{url('analis/ggaggas/menu')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">GGA & GGAS</span>
                     </a>
                 </li>

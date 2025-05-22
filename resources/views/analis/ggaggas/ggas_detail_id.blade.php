@@ -125,7 +125,7 @@
             submitBtn.prop('disabled', true).text('Menyimpan...');
 
             $.ajax({
-                url: "{{ url('ggaggas/ggas/update-ajax') }}/" + id,
+                url: "{{ url('analis/ggaggas/ggas/update-ajax') }}/" + id,
                 method: 'POST',
                 data: form.serialize(),
                 success: function(response) {
@@ -135,7 +135,7 @@
                         icon: 'success',
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        window.location.href = "{{ url('ggaggas/ggas') }}/" + url;
+                        window.location.href = "{{ url('analis/ggaggas/ggas') }}/" + url;
                     });
                 },
                 error: function(xhr) {

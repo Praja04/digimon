@@ -990,7 +990,7 @@
         function Konfirmasi() {
 
             $.ajax({
-                url: "{{ url('rmpm/konfirmasi/' . $identitas->id) }}",
+                url: "{{ url('analis/rmpm/konfirmasi/' . $identitas->id) }}",
                 type: 'GET',
                 dataType: 'json',
                 success: function(response) {
@@ -1020,7 +1020,7 @@
                 var jam = $('#jamInput').val();
 
                 $.ajax({
-                    url: "{{ url('rmpm/simpan/konfirmasi/' . $identitas->id) }}",
+                    url: "{{ url('analis/rmpm/simpan/konfirmasi/' . $identitas->id) }}",
                     type: 'POST',
                     dataType: 'json',
                     data: {
@@ -1687,59 +1687,7 @@
         }
     });
 
-    // $('#formAnalisa').off('submit').on('submit', function(e) {
-    //     e.preventDefault();
-
-    //     const jenis = $('#jenis_gula').val();
-    //     let url = '';
-
-    //     // Cek apakah jenis gula adalah Gula Kelapa atau Gula Tebu
-    //     if (jenis === 'Gula Kelapa' || jenis === 'Gula Tebu') {
-    //         const analisaType = $('input[name="analisa_type"]:checked').val(); // Dapatkan pilihan jenis analisa
-
-    //         if (!analisaType) {
-    //             alert('Silakan pilih jenis analisa (Short-Term / Long-Term)');
-    //             return;
-    //         }
-
-    //         if (analisaType === 'short-term') {
-    //             url = '/analisa/short-term';
-    //         } else if (analisaType === 'long-term') {
-    //             url = '/analisa/long-term';
-    //         } else {
-    //             alert('Jenis analisa tidak dikenali!');
-    //             return;
-    //         }
-    //     } else if (jenis === 'Gula' || jenis === 'Garam') {
-    //         url = '/analisa/garam-gula';
-    //     } else {
-    //         alert('Jenis gula tidak dikenali!');
-    //         return;
-    //     }
-
-    //     const token = $('meta[name="csrf-token"]').attr('content');
-
-    //     let formData = new FormData(this);
-    //     formData.append('_token', token);
-
-    //     $.ajax({
-    //         url: url,
-    //         type: 'POST',
-    //         data: formData,
-    //         processData: false,
-    //         contentType: false,
-    //         success: function(response) {
-    //             alert('Data berhasil disimpan!');
-    //             $('#modalAnalisa').modal('hide');
-    //             $('#formAnalisa')[0].reset();
-    //         },
-    //         error: function(xhr) {
-    //             const errMsg = xhr.responseJSON?.message || 'Gagal menyimpan data!';
-    //             alert(errMsg);
-    //         }
-    //     });
-    // });
-
+   
     $('#formAnalisa').off('submit').on('submit', function(e) {
         e.preventDefault();
 
@@ -1756,15 +1704,15 @@
             }
 
             if (analisaType === 'short-term') {
-                url = '/analisa/short-term';
+                url = '/analis/analisa/short-term';
             } else if (analisaType === 'long-term') {
-                url = '/analisa/long-term';
+                url = '/analis/analisa/long-term';
             } else {
                 alert('Jenis analisa tidak dikenali!');
                 return;
             }
         } else if (jenis === 'Gula' || jenis === 'Garam') {
-            url = '/analisa/garam-gula';
+            url = 'analis/analisa/garam-gula';
         } else {
             alert('Jenis gula tidak dikenali!');
             return;

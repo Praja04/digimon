@@ -198,8 +198,8 @@
             let form = $(this);
             let method = editId ? 'PUT' : 'POST';
             let url = editId ?
-                `/productionbatch/po_masak/${editId}` :
-                `{{ route('productionbatch.store') }}`;
+                "{{url('analis/productionbatch/po_masak')}}/"+editId:
+            `{{ route('productionbatch.store') }}`;
 
             $('#submitBtn').prop('disabled', true).text(editId ? 'Updating...' : 'Saving...');
 
@@ -248,7 +248,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `/productionbatch/po_masak/${id}`,
+                        url: "{{url('analis/productionbatch/po_masak')}}/" + id,
                         type: 'POST',
                         data: {
                             _method: 'DELETE',
