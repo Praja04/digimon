@@ -12,25 +12,25 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $users = [
+            // [
+            //     'name' => 'Analis QC',
+            //     'email' => 'analis@example.com',
+            //     'role' => 'analis',
+            // ],
+            // [
+            //     'name' => 'Foreman QC',
+            //     'email' => 'foreman@example.com',
+            //     'role' => 'foreman',
+            // ],
+            // [
+            //     'name' => 'Supervisor QC',
+            //     'email' => 'supervisor@example.com',
+            //     'role' => 'supervisor',
+            // ],
             [
-                'name' => 'Analis QC',
-                'email' => 'analis@example.com',
-                'role' => 'analis',
-            ],
-            [
-                'name' => 'Foreman QC',
-                'email' => 'foreman@example.com',
-                'role' => 'foreman',
-            ],
-            [
-                'name' => 'Supervisor QC',
-                'email' => 'supervisor@example.com',
-                'role' => 'supervisor',
-            ],
-            [
-                'name' => 'Dept Head QC',
-                'email' => 'depthead@example.com',
-                'role' => 'dept_head',
+                'name' => 'Produksi',
+                'email' => 'produksi@example.com',
+                'role' => 'produksi',
             ],
         ];
 

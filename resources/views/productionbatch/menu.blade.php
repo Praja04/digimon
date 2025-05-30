@@ -138,10 +138,10 @@
                 </div>
 
                 <div class="mt-4">
-                    <button type="button" class="btn btn-light w-100" data-bs-toggle="modal" data-bs-target="#comingSoonModal">
+                    <!-- <button type="button" class="btn btn-light w-100" data-bs-toggle="modal" data-bs-target="#comingSoonModal">
                         Lihat Detail
-                    </button>
-                    <!-- <a href="{{url('analis/productionbatch/data_po/blending/adjust')}}" class="btn btn-light w-100">Lihat Detail</a> -->
+                    </button> -->
+                    <a href="{{url('analis/productionbatch/data_po/blending/adjust')}}" class="btn btn-light w-100">Lihat Detail</a>
                 </div>
             </div>
         </div>

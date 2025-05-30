@@ -1,28 +1,68 @@
 <?php
 
-namespace App\Http\Controllers\Analis;
+namespace App\Http\Controllers\analis;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use App\Models\BlendingAwalModel;
+use App\Models\BlendingAfterAdjustModel;
 use App\Models\ProductionBatch;
+use Illuminate\Support\Facades\Validator;
 
-class BlendingAwalController extends Controller
+class BlendingAdjustController extends Controller
 {
     //
-    public function menu()
+    public function Blending_adjust_data()
     {
-        // Menampilkan view 'productionbatch.index' dengan data
-        return view('analis.blending.menu');
+
+        $productionBatches = ProductionBatch::with('blendingAfterAdjust')->has('blendingAfterAdjust')->get();
+
+        return view('analis.blending.blending_adjust', compact('productionBatches'));
     }
-    //
+
+    public function Blending_detail($id)
+    {
+        $productionBatch = ProductionBatch::with([
+            'BlendingAwal.additionalBatches'
+        ])->findOrFail($id);
+
+        // Kelompokkan berdasarkan batch_range
+        $grouped = $productionBatch->blendingAfterAdjust->groupBy('batch_range');
+
+        $filteredblendingAfterAdjust = collect();
+
+        foreach ($grouped as $batchRange => $items) {
+            // Prioritaskan yang disposition-nya 'Release' atau 'Release Bersyarat'
+            $preferred = $items->first(function ($item) {
+                return in_array($item->disposition, ['Release', 'Release Bersyarat']);
+            });
+
+            // Jika tidak ada, ambil yang pertama saja sebagai fallback
+            $selected = $preferred ?: $items->first();
+
+            // Tambahkan additional_batch_info dan po_number
+            $selected->additional_batch_info = $selected->additionalBatches->isNotEmpty()
+                ? $selected->additionalBatches
+                : null;
+            $selected->po_number = $productionBatch->po_number;
+
+            $filteredblendingAfterAdjust->push($selected);
+        }
+
+       // return response()->json($filteredblendingAfterAdjust->values());
+        return view('analis.blending.blending_adjust_detail', [
+            'productionBatch' => $productionBatch,
+            'filteredBlendingAwal' => $filteredblendingAfterAdjust->values()
+        ]);
+    }
+
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'production_batch_id' => 'required|exists:production_batches,id',
-            'batch_start' => 'required|integer|different:batch_end',
-            'batch_end' => 'required|integer',
+            'batch' => 'required',
+            // 'batch_end' => 'required',
             'storage' => 'nullable|string', // ← ubah jadi nullable
             'no_blending' => 'required',
             //required colume harus decimal
@@ -37,39 +77,23 @@ class BlendingAwalController extends Controller
             ], 422);
         }
 
-        $start = (int) $request->batch_start;
-        $end = (int) $request->batch_end;
-
-        if ($start > $end) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Batch start tidak boleh lebih besar dari batch end.'
-            ], 422);
-        }
-
-     
-
-       $batchRange = $start . '-' . $end;
-
-        // Cek apakah batch_range persis sama sudah ada
-        $exists = BlendingAwalModel::where('production_batch_id', $request->production_batch_id)
-            ->where('batch_range', $batchRange)
-            ->exists();
+        $exists = BlendingAfterAdjustModel::where('production_batch_id', $request->production_batch_id)
+        ->where('batch_range', $request->batch)
+        ->exists();
 
         if ($exists) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Batch range tersebut sudah pernah digunakan.'
-            ], 422);
+                'message' => 'Batch range ini sudah digunakan untuk Production Batch yang sama.',
+            ], 409);
         }
-        
 
         // Simpan data Blending Awal
-        BlendingAwalModel::create([
+        BlendingAfterAdjustModel::create([
             'production_batch_id' => $request->production_batch_id,
-            'batch_range' => "$start-$end",
+            'batch_range' => $request->batch,
             'nomor_blending' => $request->no_blending,
-            'volume' => $request->volume
+            'volume_blending' => $request->volume
         ]);
 
         // Jika ada input 'storage', update di tabel ProductionBatch
@@ -85,48 +109,7 @@ class BlendingAwalController extends Controller
         ]);
     }
 
-    public function Blending_data()
-    {
-        // Ambil semua PO yang memiliki data GGA
-        $productionBatches = ProductionBatch::has('BlendingAwal')->with('BlendingAwal')->get();
 
-        return view('analis.blending.blending_awal', compact('productionBatches'));
-    }
-
-
-    public function Blending_detail($id)
-    {
-        // // Ambil PO dengan GGA yang belum lengkap
-        // $productionBatch = ProductionBatch::with('BlendingAwal')->findOrFail($id);
-
-
-        // return view('analis.blending.blending_awal_detail', compact('productionBatch'));
-
-        // Ambil data ProductionBatch beserta BlendingAwal dan BlendingBatchRelation
-        $productionBatch = ProductionBatch::with([
-            'BlendingAwal.additionalBatches' // nested eager loading
-        ])->findOrFail($id);
-
-        // Loop setiap blending_awal untuk cek apakah ada additional batch
-        foreach ($productionBatch->BlendingAwal as $blending) {
-            // Tambahkan properti custom 'additional_batch_info' ke setiap data
-            $blending->additional_batch_info = $blending->additionalBatches->isNotEmpty()
-                ? $blending->additionalBatches
-                : null;
-
-            $blending->po_number = $productionBatch->po_number;
-        }
-        // return json response untuk debugging
-        //return response()->json($productionBatch->BlendingAwal);
-
-        return view('analis.blending.blending_awal_detail', compact('productionBatch'));
-    }
-
-    public function showInputFormBlendingAwal($id)
-    {
-        $blending = BlendingAwalModel::find($id);
-        return view('analis.blending.blending_awal_detail_id', compact('blending'));
-    }
     public function updateAjaxBlending(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -155,18 +138,18 @@ class BlendingAwalController extends Controller
             ], 422);
         }
 
-        $blending = BlendingAwalModel::findOrFail($id);
+        $blending = BlendingAfterAdjustModel::findOrFail($id);
 
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
         // Validasi remark wajib isi untuk kondisi tertentu
-        if (in_array($disposition, ['Release Bersyarat', 'Resampling', 'Reject', 'Repro', 'Adjustment', 'Jalan Bareng', 'Leveling']) && empty($remarks)) {
+        if (!in_array($disposition, ['Release']) && empty(trim($remarks))) {
             return response()->json([
                 'errors' => ['Kolom keterangan (remarks) wajib diisi untuk disposition ini.']
             ], 422);
         }
-
+        
         if ($disposition === 'Release') {
             $remarks = '-';
         }
@@ -191,17 +174,17 @@ class BlendingAwalController extends Controller
             $dataUpdate['not_standar'] = true;
         }
         if ($disposition === 'Jalan Bareng') {
-           
+
             $dataUpdate['not_standar'] = true;
         }
         if ($disposition === 'Leveling') {
-          
+
             $dataUpdate['not_standar'] = true;
         }
 
         // Jika resampling
-        if ($disposition === 'Resampling' ) {
-            $dataUpdate['disposition_remarks'] = $disposition;
+        if ($disposition === 'Resampling') {
+           // $dataUpdate['disposition_remarks'] = $disposition;
             $dataUpdate['not_standar'] = true;
         }
 

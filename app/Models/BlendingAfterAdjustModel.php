@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class BlendingAwalModel extends Model
+class BlendingAfterAdjustModel extends Model
 {
     //
     use HasFactory;
-    protected $table = 'blending_awal';
+    protected $table = 'blending_adjust';
     protected $fillable = [
         'production_batch_id',
         'batch_range',
@@ -40,8 +40,6 @@ class BlendingAwalModel extends Model
 
     public function additionalBatches()
     {
-        return $this->hasMany(BlendingBatchRelation::class, 'blending_awal_id');
+        return $this->hasMany(BlendingAfterAdjustBatchRelation::class, 'blending_after_adjust_id');
     }
-    
-
 }

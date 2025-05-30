@@ -182,7 +182,7 @@
                                                         <td>
 
                                                             @if($gga->revisi != null)
-                                                             Revisi Ke-{{ $gga->revisi }}
+                                                            Revisi Ke-{{ $gga->revisi }}
                                                             @else
                                                             -
                                                             @endif
@@ -249,7 +249,7 @@
                                                         </td>
                                                         <td>
                                                             {{ $ggas->disposition }}
-                                                            @if(in_array($ggas->disposition, ['Adjustment', 'Resampling']) && $ggas->revisi == null )
+                                                            @if(in_array($ggas->disposition, ['Adjustment', 'Resampling']) && $ggas->revisi == null && $ggas->not_standar == true )
                                                             <button class="btn btn-sm btn-warning generate-revisi-btn-ggas" data-id="{{ $ggas->id }}" data-batch="{{ $ggas->batch_number }}" data-po="{{ $ggas->production_batch_id }}" data-dissolver="{{ $ggas->dissolver_number }}">
                                                                 ❗
                                                             </button>
@@ -259,7 +259,7 @@
                                                         <td>
 
                                                             @if($ggas->revisi != null)
-                                                             Revisi Ke-{{ $ggas->revisi }}
+                                                            Revisi Ke-{{ $ggas->revisi }}
                                                             @else
                                                             -
                                                             @endif
@@ -295,9 +295,11 @@
 
 
 <!-- Modal -->
+
+
 <div class="modal fade" id="inputModal" tabindex="-1" aria-labelledby="inputModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form>
+        <form id="inputForm">
             @csrf
             <div class="modal-content">
                 <div class="modal-header">
@@ -306,38 +308,32 @@
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="production_batch_id" value="{{ $productionBatch->id }}">
-                    
+
                     <div class="mb-3">
-                        <label for="batch_number" class="form-label">Batch Number</label>
+                        <label class="form-label">Batch Number</label>
                         <select name="batch_number" class="form-select" required>
-                            @foreach($batches as $batch)
-                            <option value="{{ $batch }}">{{ $batch }}</option>
-                            @endforeach
+                            <option selected disabled>Pilih Jenis Sample terlebih dahulu</option>
                         </select>
                     </div>
 
-
-
                     <div class="mb-3">
-                        <label for="dissolver_number" class="form-label">Dissolver Number</label>
+                        <label class="form-label">Dissolver Number</label>
                         <input type="text" name="dissolver_number" class="form-control" required>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="type" class="form-label">Jenis Sample</label>
-                        <select name="type" class="form-select" required>
-                            <option value="GGA">GGA</option>
-                            @if ($allCovered)
-                            <option value="GGAS">GGAS</option>
-                            @endif
-                        </select>
-                        @if (!$allCovered)
-                        <small class="text-danger">* GGAS hanya bisa diinput setelah semua batch sudah masuk GGA</small>
-                        @endif
-                    </div>
 
-                    
+                    <div class="mb-3">
+                        <label class="form-label">Jenis Sample</label>
+                        <select name="type" class="form-select" required>
+                            <option value="" selected disabled>pilih jenis sample</option>
+                            <option value="GGA">GGA</option>
+
+                            <option value="GGAS">GGAS</option>
+
+                        </select>
+
+                    </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success">Simpan</button>
                 </div>
@@ -408,6 +404,9 @@
 </div>
 
 <script>
+    const allBatches = JSON.parse('{!! addslashes(json_encode($batches)) !!}');
+    const releasedGgaBatches = JSON.parse('{!! addslashes(json_encode($validGgaBatches)) !!}');
+
     function printQR(id) {
         const content = document.getElementById(id).innerHTML;
         const win = window.open('', '', 'height=600,width=600');
@@ -421,6 +420,30 @@
         win.print();
         win.close();
     }
+
+
+
+    $('select[name="type"]').on('change', function() {
+        const type = $(this).val();
+        const $batchSelect = $('select[name="batch_number"]');
+
+        $batchSelect.empty();
+
+        if (type === 'GGA') {
+            allBatches.forEach(batch => {
+                $batchSelect.append(`<option value="${batch}">${batch}</option>`);
+            });
+        } else if (type === 'GGAS') {
+            if (releasedGgaBatches.length === 0) {
+                $batchSelect.append(`<option disabled>Semua batch belum lolos GGA</option>`);
+            } else {
+                releasedGgaBatches.forEach(batch => {
+                    $batchSelect.append(`<option value="${batch}">${batch}</option>`);
+                });
+            }
+        }
+    });
+
     $('form').on('submit', function(e) {
         e.preventDefault();
 
@@ -487,6 +510,7 @@
             production_batch_id: poId,
             batch_number: batch
         }, function(res) {
+            console.log(res);
             $('#modal_revisi').val(res.revisi);
             $('#modal_revisi_display').val(res.revisi);
             $('#generateRevisiModal').modal('show');
@@ -514,7 +538,7 @@
         let poId = $(this).data('po');
         let batch = $(this).data('batch');
         let dissolver = $(this).data('dissolver');
-
+        console.log(Id);
         $('#id_old_ggas').val(Id);
         $('#modal_po_id_ggas').val(poId);
         $('#modal_batch_ggas').val(batch);

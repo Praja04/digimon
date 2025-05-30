@@ -55,19 +55,12 @@
                 @elseif(Session::get('role') === 'foreman')
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ url('foreman/rmpm')}}">
-                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Dashboard</span>
+                    <a class="nav-link menu-link" href="{{ url('foreman/rmpm/dashboard')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Dashboard RMPM</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ url('foreman/rmpm')}}">
-                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">RMPM</span>
-                    </a>
-                </li>
-                @elseif(Session::get('role') === 'analis')
-                <li class="menu-title"><span data-key="t-menu">Menu</span></li>
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ url('analis/rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">RMPM</span>
                     </a>
                 </li>
@@ -76,6 +69,32 @@
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Persiapan Masak</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{url('analis/ggaggas/menu')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">GGA & GGAS</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{url('analis/blending/menu')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Blending</span>
+                    </a>
+                </li>
+                @elseif(Session::get('role') === 'produksi')
+                <li class="menu-title"><span data-key="t-menu">Menu</span></li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{url('analis/productionbatch/menu')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Persiapan Masak</span>
+                    </a>
+                </li>
+                @elseif(Session::get('role') === 'analis' && Session::get('role_group') === 'rmpm')
+                <li class="menu-title"><span data-key="t-menu">Menu</span></li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('foreman/rmpm')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">RMPM</span>
+                    </a>
+                </li>
+                @elseif(Session::get('role') === 'analis' && Session::get('role_group') === 'mikro' || Session::get('role_group') === 'makro')
+                <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{url('analis/ggaggas/menu')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">GGA & GGAS</span>

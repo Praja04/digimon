@@ -175,11 +175,11 @@
 
 
         let editId = null;
-
+        let baseEditUrl = "{{ url('analis/productionbatch/po_masak') }}";
         // Edit button clicked
         $('.edit-btn').on('click', function() {
             editId = $(this).data('id');
-            $.get(`/productionbatch/po_masak/${editId}`, function(data) {
+            $.get(`${baseEditUrl}/${editId}/edit`, function(data) {
                 $('#orderId').val(data.po_number);
                 $('#variant').val(data.variant);
                 $('#production_date').val(data.production_date);
@@ -198,8 +198,8 @@
             let form = $(this);
             let method = editId ? 'PUT' : 'POST';
             let url = editId ?
-                "{{url('analis/productionbatch/po_masak')}}/"+editId:
-            `{{ route('productionbatch.store') }}`;
+                "{{url('analis/productionbatch/po_masak')}}/" + editId :
+                `{{ route('productionbatch.store') }}`;
 
             $('#submitBtn').prop('disabled', true).text(editId ? 'Updating...' : 'Saving...');
 

@@ -48,7 +48,6 @@
     </div>
     <!--end col-->
 </div>
-
 <div class="row">
     <div class="col-lg-12">
         <div class="card" id="tasksList">
@@ -64,7 +63,7 @@
                     <table class="table align-middle table-nowrap mb-0" id="tasksTable">
                         <thead class="table-light text-muted">
                             <tr>
-                                <th>Batch Range</th>
+                                <th>Batch</th>
                                 <th>Dissolver</th>
                                 <th>BRIX</th>
                                 <th>NACL</th>
@@ -79,9 +78,9 @@
                             <tr>
                                 <td>
                                     @if($ggas->revisi != null)
-                                    {{ $ggas->batch_range }} ❗
+                                    {{ $ggas->batch_number }} ❗
                                     @else
-                                    {{ $ggas->batch_range }}
+                                    {{ $ggas->batch_number }}
                                     @endif
                                 </td>
                                 <td>{{ $ggas->dissolver_number }}</td>
@@ -247,7 +246,12 @@
                 },
                 error: function(xhr) {
                     const errors = xhr.responseJSON?.errors || ['Terjadi kesalahan.'];
-                    alertBox.removeClass('d-none').html(errors.join('<br>'));
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal menyimpan!',
+                        html: errors.join('<br>'),
+                    });
+
                     submitBtn.prop('disabled', false).text('Simpan');
                 }
             });

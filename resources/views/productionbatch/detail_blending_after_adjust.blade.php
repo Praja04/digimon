@@ -36,7 +36,7 @@
                                         <div class="text-muted">Tanggal Produksi : <span class="text-body fw-medium">{{ $productionBatch->production_date }}</span></div>
                                         <div class="text-end">
                                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inputModal">
-                                                Input Blending Awal
+                                                Input Blending After Adjusment
                                             </button>
                                         </div>
 
@@ -122,7 +122,7 @@
                                     <div class="tab-pane fade show active" id="nav-speci" role="tabpanel" aria-labelledby="nav-speci-tab">
                                         <div class="table-responsive">
 
-                                            @if($productionBatch->BlendingAwal->count() > 0)
+                                            @if($productionBatch->blendingAfterAdjust->count() > 0)
                                             <table class="table mb-0">
                                                 <thead>
                                                     <tr>
@@ -133,16 +133,9 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($productionBatch->BlendingAwal as $blending)
+                                                    @foreach ($productionBatch->blendingAfterAdjust as $blending)
                                                     <tr>
-                                                        <td>{{ $blending->batch_range }}
-                                                            @if($blending->has_relation == true)
-                                                            <span class="badge bg-info text-dark ms-2">
-                                                                Merge {{ $blending->related_batches }} {{$blending->additional_batches}}
-
-                                                            </span>
-                                                            @endif
-                                                        </td>
+                                                        <td>{{ $blending->batch_range }}</td>
                                                         <td>
                                                             <!-- Tombol untuk buka modal -->
                                                             <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#qrModal{{ $blending->id }}">
@@ -161,9 +154,7 @@
                                                                             <div style="display: inline-block;">
                                                                                 <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('analis/blending/awal/detail/form/' . $blending->id), 'QRCODE') }}" alt="QR Code">
                                                                             </div>
-                                                                            <p>Blending/{{ $productionBatch->po_number }}/{{ $productionBatch->production_date }}/{{ $blending->batch_range }}-@if($blending->has_relation){{ $blending->related_batches }}
-                                                                                @endif
-                                                                            </p>
+                                                                            <p>Blending/{{ $productionBatch->po_number }}/{{ $productionBatch->production_date }}/{{ $blending->batch_range }}</p>
                                                                         </div>
                                                                         <div class="modal-footer justify-content-center py-2">
                                                                             <button onclick="printQR('qrPrintArea{{ $blending->id }}')" class="btn btn-sm btn-success">Print</button>
@@ -183,13 +174,11 @@
                                                             @else
 
                                                             @endif
-
-
                                                         </td>
                                                         <td>
 
                                                             @if($blending->revisi != null)
-                                                            Revisi Ke-{{ $blending->revisi }}
+                                                            Adjusment Revisi Ke-{{ $blending->revisi }}
                                                             @else
                                                             -
                                                             @endif
@@ -242,14 +231,14 @@
                     <input type="hidden" name="production_batch_id" value="{{ $productionBatch->id }}">
 
                     <div class="mb-3">
-                        <label for="batch_start" class="form-label">Batch Pertama</label>
-                        <select name="batch_start" class="form-select" id="batch_start" required></select>
+                        <label for="batch" class="form-label">Batch</label>
+                        <select name="batch" class="form-select" id="batch_start" required></select>
                     </div>
 
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                         <label for="batch_end" class="form-label">Batch Kedua</label>
                         <select name="batch_end" class="form-select" id="batch_end" required></select>
-                    </div>
+                    </div> -->
 
                     <div class="mb-3">
                         <label for="storage" class="form-label">Storage</label>
@@ -307,7 +296,6 @@
                         <label>Volume</label>
                         <input type="text" class="form-control" name="volume">
                     </div>
-
                     <div class="mb-3 d-none" id="additional_batch_group">
                         <label for="additional_batch">Pilih Batch Tambahan (Jalan Bareng / Leveling)</label>
                         <select name="additional_batch" id="additional_batch" class="form-control">
@@ -327,26 +315,26 @@
 
 
 <script>
-    const allBatches = JSON.parse('{!! addslashes(json_encode($batches)) !!}');
-    const validGgasBatches = JSON.parse('{!! addslashes(json_encode($availableBatches)) !!}');
+    const allBatches = JSON.parse('{!! addslashes(json_encode($batchGroups)) !!}');
+    const validGgasBatches = JSON.parse('{!! addslashes(json_encode($batchGroups)) !!}');
 
     // Isi select option hanya dengan batch yang valid
     function populateBatchOptions() {
         const $start = $('#batch_start');
-        const $end = $('#batch_end');
+        // const $end = $('#batch_end');
 
         $start.empty();
-        $end.empty();
+        //    $end.empty();
 
         if (validGgasBatches.length === 0) {
             $start.append('<option disabled>Semua batch belum lolos GGAS</option>');
-            $end.append('<option disabled>Semua batch belum lolos GGAS</option>');
+            //$end.append('<option disabled>Semua batch belum lolos GGAS</option>');
             return;
         }
 
         validGgasBatches.forEach(batch => {
             $start.append(`<option value="${batch}">${batch}</option>`);
-            $end.append(`<option value="${batch}">${batch}</option>`);
+            // $end.append(`<option value="${batch}">${batch}</option>`);
         });
     }
 
@@ -373,7 +361,7 @@
         let formData = form.serialize();
 
         $.ajax({
-            url: "{{ route('blending.store') }}",
+            url: "{{ route('blending_adjust.store') }}",
             method: "POST",
             data: formData,
             success: function(res) {
@@ -406,10 +394,20 @@
                         text: errorMessages
                     });
                 } else {
+                    const res = xhr.responseJSON;
+
+                    let errors = res.errors;
+                    let msg = res.message;
+
+                    let errorMessages = msg;
+                    if (errors) {
+                        errorMessages = Object.values(errors).map(e => e.join(', ')).join('\n');
+                    }
+
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error',
-                        text: 'Terjadi kesalahan saat menyimpan data.'
+                        title: 'Validasi Gagal',
+                        text: errorMessages
                     });
                 }
             }
@@ -427,7 +425,7 @@
         $('#modal_batch').val(batch);
         $('#modal_additional_batch_po_id').val(''); // reset PO ID tambahan
 
-        $.get('{{ url("/analis/productionbatch/processblending/get-last-revisi") }}', {
+        $.get('{{ url("/analis/productionbatch/processblending/adjust/get-last-revisi") }}', {
             production_batch_id: poId,
             batch_range: batch
         }, function(res) {
@@ -437,7 +435,7 @@
                 $('#additional_batch_group').removeClass('d-none');
                 $('#additional_batch').empty().append('<option value="">-- Pilih Batch --</option>');
 
-                $.get('{{ url("/analis/productionbatch/processblending/get-available-additional-batch") }}', {
+                $.get('{{ url("/analis/productionbatch/processblending/adjust/get-available-additional-batch") }}', {
                     production_batch_id: poId,
                     exclude_batch: batch
                 }, function(batchRes) {
@@ -452,7 +450,7 @@
                 $('#additional_batch_group').removeClass('d-none');
                 $('#additional_batch').empty().append('<option value="">-- Pilih Batch --</option>');
 
-                $.get('{{ url("/analis/productionbatch/processblending/get-jalan-bareng") }}', {
+                $.get('{{ url("/analis/productionbatch/processblending/adjust/get-jalan-bareng") }}', {
 
                 }, function(batchRes) {
                     console.log(batchRes);
@@ -492,7 +490,7 @@
         let form = $('#generateRevisiForm');
         let formData = form.serialize();
 
-        $.post('{{ url("/analis/productionbatch/processblending/generate-revisi") }}', formData, function(res) {
+        $.post('{{ url("/analis/productionbatch/processblending/adjust/generate-revisi") }}', formData, function(res) {
             alert('Revisi berhasil dibuat!');
             location.reload();
         }).fail(function(err) {

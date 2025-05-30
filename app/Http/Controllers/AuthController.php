@@ -26,19 +26,22 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            // Ambil role user
             $user = Auth::user();
-            // Simpan informasi user ke dalam session
+
             Session::put('username', $user->name);
             Session::put('role', $user->role);
+            Session::put('role_group', $user->role_group);
             Cookie::queue('username', $user->name, 60);
-            $redirectRoute = $this->redirectByRole($user->role);
+
+            // Kirim role group sebagai parameter
+            $redirectRoute = $this->redirectByRole($user->role, $user->role_group);
 
             return response()->json(['redirect' => route($redirectRoute)]);
         }
 
         return response()->json(['error' => 'Unauthorized'], 401);
     }
+
 
     public function logout(Request $request)
     {
@@ -69,14 +72,20 @@ class AuthController extends Controller
         return redirect()->route($this->redirectByRole($user->role));
     }
 
-    private function redirectByRole($role)
+    private function redirectByRole($role, $roleGroup = null)
     {
         return match ($role) {
-            'analis' => 'rmpm.pilihJenisGula',
+            'analis' => match ($roleGroup) {
+                'makro', 'mikro' => 'ggaggas.menu',
+                'rmpm' => 'rmpm.pilihJenisGula',
+                default => 'dashboard', // fallback kalau role_group tidak dikenali
+            },
+            'produksi' => 'productionbatch.menu',
             'foreman' => 'rmpm_foreman.menu',
             'supervisor' => 'supervisor.dashboard',
             'dept_head' => 'dept_head.dashboard',
             default => 'dashboard',
         };
     }
+
 }

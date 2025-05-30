@@ -92,9 +92,12 @@
                 </div>
 
                 <div class="mt-4">
-                    <button type="button" class="btn btn-light w-100" data-bs-toggle="modal" data-bs-target="#comingSoonModal">
+                    <!-- <button type="button" class="btn btn-light w-100" data-bs-toggle="modal" data-bs-target="#comingSoonModal">
                         Lihat Detail
-                    </button>
+                    </button> -->
+                    <div class="mt-4">
+                        <a href="{{url('analis/blending/adjust/data')}}" class="btn btn-light w-100">Lihat Detail</a>
+                    </div>
 
                     <!-- <a href="{{url('analis/ggaggas/ggas')}}" class="btn btn-light w-100">Lihat Detail</a> -->
                 </div>

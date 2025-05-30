@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0">Blending Awal</h4>
+            <h4 class="mb-sm-0">Blending After Adjustment</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
@@ -61,7 +61,7 @@
             <!--end card-body-->
             <div class="card-body">
                 <div class="table-responsive table-card mb-4">
-                    <table class="table align-middle table-nowrap mb-0" id="tasksTable">
+                    <table class="table align-middle table-nowrap mb-0 text-center" id="tasksTable">
                         <thead class="table-light text-muted">
                             <tr>
                                 <th>Nomor PO</th>
@@ -84,54 +84,33 @@
                             </tr>
                         </thead>
                         <tbody class="list form-check-all">
-                            @forelse ($productionBatch->BlendingAwal as $blending)
+                            @foreach ($filteredBlendingAwal as $item)
                             <tr>
+                                <td>{{ $item->po_number }}</td>
+                                <td>{{ $item->batch_range }}</td>
+                                <td>{{ $item->nomor_blending }}</td>
+                                <td>{{ $item->volume }}</td>
+                                <td>{{ $item->brix ?? '-'}}</td>
+                                <td>{{ $item->nacl ?? '-'}}</td>
+                                <td>{{ $item->bj ?? '-'}}</td>
+                                <td>{{ $item->visco ?? '-'}}</td>
+                                <td>{{ $item->aw ?? '-'}}</td>
+                                <td>{{ $item->buih ?? '-'}}</td>
+                                <td>{{ $item->organo ?? '-'}}</td>
+                                <td>{{ $item->ph ?? '-'}}</td>
+                                <td>{{ $item->endapan ?? '-'}}</td>
+                                <td>{{ $item->warna ?? '-'}}</td>
+                                <td>{{ $item->disposition ?? '-'}}</td>
+                                <td>{{ $item->disposition_remarks ?? '-'}}</td>
                                 <td>
-                                    {{ $blending->po_number }}
-                                </td>
-                                <td>
-                                    @if($blending->revisi != null)
-                                    {{ $blending->batch_range }} ❗
-                                    @else
-                                    {{ $blending->batch_range }}
-                                    @endif
-
-                                    @if($blending->additional_batch_info)
-
-                                    @foreach($blending->additional_batch_info as $relasi)
-                                    <span class="badge bg-info">{{ $relasi->batch }}</span>
-                                    @endforeach
-                                    @else
-
-                                    @endif
-                                </td>
-                                <td>{{ $blending->nomor_blending }}</td>
-                                <td>{{ $blending->volume }}</td>
-                                <td>{{ $blending->brix ?? '-' }}</td>
-                                <td>{{ $blending->nacl ?? '-' }}</td>
-                                <td>{{ $blending->bj ?? '-' }}</td>
-                                <td>{{ $blending->visco ?? '-' }}</td>
-                                <td>{{ $blending->aw ?? '-' }}</td>
-                                <td>{{ $blending->buih ?? '-' }}</td>
-                                <td>{{ $blending->organo ?? '-' }}</td>
-                                <td>{{ $blending->ph ?? '-' }}</td>
-                                <td>{{ $blending->endapan ?? '-' }}</td>
-                                <td>{{ $blending->warna ?? '-' }}</td>
-                                <td>{{ $blending->disposition ?? '-' }}</td>
-                                <td>{{ $blending->disposition_remarks ?? '-' }}</td>
-                                <td>
-                                    @if (is_null($blending->disposition))
-                                    <button class="btn btn-sm btn-primary open-blending-modal" data-id="{{ $blending->id }}">Input Analisa Blending Awal</button>
+                                    @if (is_null($item->disposition))
+                                    <button class="btn btn-sm btn-primary open-blending-modal" data-id="{{ $item->id }}">Input Analisa Blending Awal</button>
                                     @else
                                     <span class="text-muted">✓ Lengkap</span>
                                     @endif
                                 </td>
                             </tr>
-                            @empty
-                            <tr>
-                                <td colspan="8" class="text-center text-muted">Semua data Blending Awal sudah lengkap.</td>
-                            </tr>
-                            @endforelse
+                            @endforeach
 
                             <!-- Modal input GGA tunggal -->
                             <div class="modal fade" id="inputBlendingModal" tabindex="-1" aria-labelledby="inputBlendingModalLabel" aria-hidden="true">
@@ -140,7 +119,7 @@
                                         @csrf
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title">Input Data Blending Awal</h5>
+                                                <h5 class="modal-title">Input Data Blending After Adjustment</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                                             </div>
                                             <div class="modal-body">
@@ -289,7 +268,7 @@
             submitBtn.prop('disabled', true).text('Menyimpan...');
 
             $.ajax({
-                url: "{{url('/analis/blending/update')}}/" + selectedId,
+                url: "{{url('/analis/blending/adjust/update')}}/" + selectedId,
                 method: 'POST',
                 data: form.serialize(),
                 success: function(response) {

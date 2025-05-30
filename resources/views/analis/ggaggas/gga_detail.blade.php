@@ -247,7 +247,12 @@
                 },
                 error: function(xhr) {
                     const errors = xhr.responseJSON?.errors || ['Terjadi kesalahan.'];
-                    alertBox.removeClass('d-none').html(errors.join('<br>'));
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal menyimpan!',
+                        html: errors.join('<br>'),
+                    });
+
                     submitBtn.prop('disabled', false).text('Simpan');
                 }
             });

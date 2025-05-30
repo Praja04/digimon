@@ -77,9 +77,9 @@
                                         <a href="{{ route('productionbatch.show_blending_awal', $productionBatch->id) }}" class="btn btn-sm btn-info"><i class="ri-eye-line"></i></a>
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-warning edit-btn" data-id="{{ $productionBatch->id }}">
+                                        <!-- <button class="btn btn-sm btn-warning edit-btn" data-id="{{ $productionBatch->id }}">
                                             <i class="ri-pencil-line"></i> edit
-                                        </button>
+                                        </button> -->
                                         <button class="btn btn-sm btn-danger delete-btn" data-id="{{ $productionBatch->id }}">
                                             <i class="ri-delete-bin-line"></i> delete
                                         </button>

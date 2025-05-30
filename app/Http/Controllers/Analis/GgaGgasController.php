@@ -172,7 +172,7 @@ class GgaGgasController extends Controller
         $remarks = $request->disposition_remarks ?? null;
 
         // Validasi disposition_remarks sesuai ketentuan
-        if (in_array($disposition, ['Release Bersyarat', 'Reject', 'Repro']) && empty($remarks)) {
+        if (in_array($disposition, ['Release Bersyarat', 'Resampling', 'Reject', 'Repro', 'Adjustment']) && empty($remarks)) {
             return response()->json([
                 'errors' => ['Kolom keterangan (remarks) wajib diisi untuk disposition ini.']
             ], 422);
@@ -266,7 +266,7 @@ class GgaGgasController extends Controller
         $remarks = $request->disposition_remarks ?? null;
 
         // Validasi disposition_remarks sesuai ketentuan
-        if (in_array($disposition, ['Release Bersyarat', 'Reject', 'Repro']) && empty($remarks)) {
+        if (in_array($disposition, ['Release Bersyarat', 'Resampling', 'Reject', 'Repro', 'Adjustment']) && empty($remarks)) {
             return response()->json([
                 'errors' => ['Kolom keterangan (remarks) wajib diisi untuk disposition ini.']
             ], 422);
@@ -295,6 +295,7 @@ class GgaGgasController extends Controller
                 'disposition' => $disposition,
                 'disposition_remarks' => $remarks,
                 'adjusment_qty' => $adjustmentQty,
+                'not_standar' => true,
             ]);
         }
 
@@ -306,8 +307,10 @@ class GgaGgasController extends Controller
                 'warna' => $request->warna,
                 'disposition' => $disposition,
                 'disposition_remarks' => $remarks ? $remarks . ' (Resampling)' : 'Resampling',
+                'not_standar' => true,
             ]);
         }
+
 
         return response()->json([
             'success' => true,

@@ -30,6 +30,10 @@ class ProductionBatch extends Model
     {
         return $this->hasMany(BlendingAwalModel::class);
     }
+    public function blendingAfterAdjust()
+    {
+        return $this->hasMany(BlendingAfterAdjustModel::class);
+    }
     public function GgaProcesses()
     {
         return $this->hasMany(GgaProcess::class);

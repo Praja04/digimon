@@ -5,7 +5,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0">Blending Awal</h4>
+            <h4 class="mb-sm-0">Blending After Adjustment</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
@@ -74,7 +74,7 @@
                                     <td>{{ $productionBatch->storage }}</td>
                                     <td>{{ $productionBatch->description }}</td>
                                     <td>
-                                        <a href="{{ route('productionbatch.show', $productionBatch->id) }}" class="btn btn-sm btn-info"><i class="ri-eye-line"></i></a>
+                                        <a href="{{ route('productionbatch.show_blending_adjust', $productionBatch->id) }}" class="btn btn-sm btn-info"><i class="ri-eye-line"></i></a>
                                     </td>
                                     <td>
                                         <button class="btn btn-sm btn-warning edit-btn" data-id="{{ $productionBatch->id }}">

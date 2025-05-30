@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\analis\BlendingAdjustController;
 use App\Http\Controllers\Analis\GgaGgasController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -81,6 +82,7 @@ Route::prefix('analis')->group(function () {
         Route::get('/data_po/blending/awal', [ProductionBatchController::class, 'data_po_blending_awal'])->name('productionbatch.data_po_blending_awal');
         Route::get('/data_po/blending/adjust', [ProductionBatchController::class, 'data_po_blending_after_adjust'])->name('productionbatch.data_po_blending_adjust');
         Route::get('/po_masak/blending/awal/{id}', [ProductionBatchController::class, 'show_blending_awal'])->name('productionbatch.show_blending_awal');
+        Route::get('/po_masak/blending/adjust/{id}', [ProductionBatchController::class, 'show_blending_after_adjust'])->name('productionbatch.show_blending_adjust');
         Route::resource('/po_masak', ProductionBatchController::class)->names([
             'index' => 'productionbatch.index',
             'create' => 'productionbatch.create',
@@ -94,11 +96,20 @@ Route::prefix('analis')->group(function () {
         Route::post('/processgga/generate-revisi', [ProductionBatchController::class, 'generateRevisiGGA']);
         Route::get('/processggas/get-last-revisi', [ProductionBatchController::class, 'getLastRevisiGGAS']);
         Route::post('/processggas/generate-revisi', [ProductionBatchController::class, 'generateRevisiGGAS']);
+        Route::get('/processblending/get-last-revisi', [ProductionBatchController::class, 'getLastRevisiBlendingAwal']);
+        Route::post('processblending/generate-revisi', [ProductionBatchController::class, 'generateRevisiBlendingAwal']);
+        Route::get('/processblending/get-available-additional-batch', [ProductionBatchController::class, 'getAvailableAdditionalBatch']);
+        Route::get('/processblending/get-jalan-bareng', [ProductionBatchController::class, 'getMainBlendingAwalJalanBareng']);
+        
+        Route::post('processblending/adjust/generate-revisi', [ProductionBatchController::class, 'generateRevisiBlendingAdjust']);
+        Route::get('/processblending/adjust/get-last-revisi', [ProductionBatchController::class, 'getLastRevisiBlendingAdjust']);
+        Route::get('/processblending/adjust/get-available-additional-batch', [ProductionBatchController::class, 'getAvailableAdditionalBatchAfterAdjust']);
+        Route::get('/processblending/adjust/get-jalan-bareng', [ProductionBatchController::class, 'getMainBlendingAdjustJalanBareng']);
     });
 
     //gga ggas
     Route::prefix('ggaggas')->group(function () {
-        Route::get('/menu', [GgaGgasController::class, 'menu']);
+        Route::get('/menu', [GgaGgasController::class, 'menu'])->name('ggaggas.menu');
         Route::post('/process/store', [GgaGgasController::class, 'store'])->name('process.store');
 
         Route::post('/check-batch-range', [GgaGgasController::class, 'checkBatchRangeGGA'])->name('process.checkBatchRange');
@@ -121,8 +132,17 @@ Route::prefix('analis')->group(function () {
         Route::post('/store', [BlendingAwalController::class, 'store'])->name('blending.store');
         Route::post('/update/{id}', [BlendingAwalController::class, 'updateAjaxBlending'])->name('blending.update');
         Route::get('/awal', [BlendingAwalController::class, 'Blending_data'])->name('blending.awal_data');
-
+        
     });
+    
+    Route::prefix('blending/adjust')->group(function () {
+        Route::get('/detail/{id}', [BlendingAdjustController::class, 'Blending_detail']);
+        Route::post('/store', [BlendingAdjustController::class, 'store'])->name('blending_adjust.store');
+        Route::post('/update/{id}', [BlendingAdjustController::class, 'updateAjaxBlending'])->name('blending_adjust.update');
+        Route::get('/data', [BlendingAdjustController::class, 'Blending_adjust_data']);
+    });
+
+    
 });
 
 Route::prefix('foreman')->group(function () {
