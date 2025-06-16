@@ -1,46 +1,39 @@
 <?php
 
-namespace App\Http\Controllers\analis;
+namespace App\Http\Controllers\Analis;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\BlendingAwalModel;
-use App\Models\BlendingAfterAdjustModel;
-use App\Models\BlendingAfterAdjustMikroModel;
-use App\Models\KonfirmasiBlendingAdjustMikroModel;
+use App\Models\MonitoringStorageModel;
+use App\Models\MonitoringStorageMikroModel;
+use App\Models\KonfirmasiMonitoringStorageMikroModel;
 use App\Models\ProductionBatch;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class BlendingAdjustController extends Controller
+class MonitoringStorageController extends Controller
 {
     //
-    public function Blending_adjust_data()
+    public function Monitoring_Storage_data()
     {
 
-        $productionBatches = ProductionBatch::with('blendingAfterAdjust')->has('blendingAfterAdjust')->get();
+        $productionBatches = ProductionBatch::with('MonitoringStorage')->has('MonitoringStorage')->get();
 
-        return view('analis.blending.blending_adjust', compact('productionBatches'));
+        // return response()->json($productionBatches);
+        return view('analis.monitoring.monitoring_storage.monitoring_storage', compact('productionBatches'));
     }
 
-    //
-    public function Blending_adjust_data_mikro()
+
+    public function Monitoring_Storage_detail($id)
     {
-
-        $productionBatches = ProductionBatch::with('blendingAfterAdjust')->has('blendingAfterAdjust')->get();
-
-        return view('analis.blending.blending_adjust_mikro', compact('productionBatches'));
-    }
-
-    public function Blending_detail($id)
-    {
-        $productionBatch = ProductionBatch::with([
-            'BlendingAwal.additionalBatches'
-        ])->findOrFail($id);
+        // $productionBatch = ProductionBatch::with([
+        //     'BlendingAwal.additionalBatches'
+        // ])->findOrFail($id);
+        $productionBatch = ProductionBatch::findOrFail($id);
 
         // Kelompokkan berdasarkan batch_range
-        $grouped = $productionBatch->blendingAfterAdjust->groupBy('batch_range');
+        $grouped = $productionBatch->MonitoringStorage->groupBy('batch_range');
 
-        $filteredblendingAfterAdjust = collect();
+        $filtered = collect();
 
         foreach ($grouped as $batchRange => $items) {
             // Prioritaskan yang disposition-nya 'Release' atau 'Release Bersyarat'
@@ -52,29 +45,29 @@ class BlendingAdjustController extends Controller
             $selected = $preferred ?: $items->first();
 
             // Tambahkan additional_batch_info dan po_number
-            $selected->additional_batch_info = $selected->additionalBatches->isNotEmpty()
-                ? $selected->additionalBatches
-                : null;
+            // $selected->additional_batch_info = $selected->additionalBatches->isNotEmpty()
+            //     ? $selected->additionalBatches
+            //     : null;
             $selected->po_number = $productionBatch->po_number;
 
-            $filteredblendingAfterAdjust->push($selected);
+            $filtered->push($selected);
         }
 
-       // return response()->json($filteredblendingAfterAdjust->values());
-        return view('analis.blending.blending_adjust_detail', [
+       // return response()->json($filtered->values());
+        return view('analis.monitoring.monitoring_storage.detail_data', [
             'productionBatch' => $productionBatch,
-            'filteredBlendingAwal' => $filteredblendingAfterAdjust->values()
+            'filteredMonitoringStorage' => $filtered->values()
         ]);
     }
 
-    public function Blending_detail_mikro($id)
+    public function Monitoring_detail_mikro($id)
     {
-        $productionBatch = ProductionBatch::with('blendingAfterAdjustMikro')->findOrFail($id);
+        $productionBatch = ProductionBatch::with('MonitoringStorageMikro')->findOrFail($id);
 
-        //return response()->json($productionBatch);
-        return view('analis.blending.blending_adjust_detail_mikro', [
-            'productionBatch' => $productionBatch,
-        ]);
+        return response()->json($productionBatch);
+        // return view('analis.blending.blending_adjust_detail_mikro', [
+        //     'productionBatch' => $productionBatch,
+        // ]);
     }
 
     public function store(Request $request)
@@ -82,10 +75,8 @@ class BlendingAdjustController extends Controller
         $validator = Validator::make($request->all(), [
             'production_batch_id' => 'required|exists:production_batches,id',
             'batch' => 'required',
-            // 'batch_end' => 'required',
             'storage' => 'nullable|string', // ← ubah jadi nullable
             'no_blending' => 'required',
-            //required colume harus decimal
             'volume' => 'required|numeric',
         ]);
 
@@ -97,9 +88,9 @@ class BlendingAdjustController extends Controller
             ], 422);
         }
 
-        $exists = BlendingAfterAdjustModel::where('production_batch_id', $request->production_batch_id)
-        ->where('batch_range', $request->batch)
-        ->exists();
+        $exists = MonitoringStorageModel::where('production_batch_id', $request->production_batch_id)
+            ->where('batch_range', $request->batch)
+            ->exists();
 
         if ($exists) {
             return response()->json([
@@ -109,13 +100,13 @@ class BlendingAdjustController extends Controller
         }
 
         // Simpan data Blending After Adjust
-        BlendingAfterAdjustModel::create([
+        MonitoringStorageModel::create([
             'production_batch_id' => $request->production_batch_id,
             'batch_range' => $request->batch,
             'nomor_blending' => $request->no_blending,
             'volume_blending' => $request->volume
         ]);
-        BlendingAfterAdjustMikroModel::create([
+        MonitoringStorageMikroModel::create([
             'production_batch_id' => $request->production_batch_id,
             'batch_range' => $request->batch,
             'nomor_blending' => $request->no_blending,
@@ -135,8 +126,7 @@ class BlendingAdjustController extends Controller
         ]);
     }
 
-
-    public function updateAjaxBlending(Request $request, $id)
+    public function update_monitoring_storage_makro(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
             'brix' => 'required|numeric|min:0|max:100',
@@ -164,7 +154,7 @@ class BlendingAdjustController extends Controller
             ], 422);
         }
 
-        $blending = BlendingAfterAdjustModel::findOrFail($id);
+        $data = MonitoringStorageModel::findOrFail($id);
 
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
@@ -175,7 +165,7 @@ class BlendingAdjustController extends Controller
                 'errors' => ['Kolom keterangan (remarks) wajib diisi untuk disposition ini.']
             ], 422);
         }
-        
+
         if ($disposition === 'Release') {
             $remarks = '-';
         }
@@ -210,11 +200,11 @@ class BlendingAdjustController extends Controller
 
         // Jika resampling
         if ($disposition === 'Resampling') {
-           // $dataUpdate['disposition_remarks'] = $disposition;
+            // $dataUpdate['disposition_remarks'] = $disposition;
             $dataUpdate['not_standar'] = true;
         }
 
-        $blending->update($dataUpdate);
+        $data->update($dataUpdate);
 
         return response()->json([
             'success' => true,
@@ -222,27 +212,26 @@ class BlendingAdjustController extends Controller
         ]);
     }
 
-
-    public function showInputFormBlendingAdjust($id)
+    public function showInputFormMonitoringStorage($id)
     {
-        $blending = BlendingAfterAdjustModel::find($id);
-        return view('analis.blending.blending_adjust_detail_id', compact('blending'));
+        $monitoring_storage = MonitoringStorageModel::find($id);
+        return view('analis.monitoring_storage.monitoring_storage_detail_id', compact('monitoring_storage'));
     }
 
-    public function showInputFormBlendingAdjustMikro($id)
+    public function showInputFormMonitoringStorageMikro($id)
     {
-        $blending = BlendingAfterAdjustMikroModel::find($id);
-        return view('analis.blending.blending_adjust_detail_mikro_id', compact('blending'));
+        $monitoring_storage =MonitoringStorageMikroModel::find($id);
+        return view('analis.monitoring_storage.monitoring_storage_detail_mikro_id', compact('monitoring_storage'));
     }
 
-    public function updateAjaxBlendingMikro(Request $request, $id)
+    public function update_monitoring_storage_mikro(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
             'eb' => 'nullable|numeric|min:0|max:100',
             'tpc' => 'nullable|numeric|min:0|max:100',
-            'ym' => 'nullable |string|max:20', 
-            'nama_analis' => 'string', 
-            'shift' => 'string', 
+            'ym' => 'nullable |string|max:20',
+            'nama_analis' => 'string',
+            'shift' => 'string',
         ]);
 
         if ($validator->fails()) {
@@ -251,20 +240,20 @@ class BlendingAdjustController extends Controller
             ], 422);
         }
 
-        $blending = BlendingAfterAdjustMikroModel::findOrFail($id);
-        KonfirmasiBlendingAdjustMikroModel::create([
+        $blending = MonitoringStorageMikroModel::findOrFail($id);
+        KonfirmasiMonitoringStorageMikroModel::create([
             'blending_after_adjust_mikro_id' => $blending->id, // Ambil ID dari blending yang baru diupdate
             'nama_analis' => $request->nama_analis,
             'shift' => $request->shift,
         ]);
-        
+
         $dataUpdate = [
             'eb' => $request->eb,
             'tpc' => $request->tpc,
-            'ym' => $request->ym,       
+            'ym' => $request->ym,
         ];
 
-       
+
         $blending->update($dataUpdate);
 
         return response()->json([

@@ -13,5 +13,13 @@ Route::prefix('foreman')->group(function () {
         Route::get('/disposisi-pie', 'disposisiPie'); // pie chart disposisi
         Route::get('/kristal-positif', 'kristalPositif'); // daftar hasil uji kristal positif
         Route::get('/progress-sampling', 'progressSampling'); // status per identitas
+
+        Route::get('/total-kedatangan', [RMPMControllerForeman::class, 'getTotalKedatangan']);
+        Route::get('/sampling-lengkap', [RMPMControllerForeman::class, 'getSamplingLengkap']);
+        Route::get('/sudah-analisa', [RMPMControllerForeman::class, 'getSudahAnalisa']);
+        Route::get('/disposisi-summary', [RMPMControllerForeman::class, 'getDisposisiCount']);
+        Route::get('/list-identitas', [RMPMControllerForeman::class, 'getListIdentitas']);
     });
+
+    
 });

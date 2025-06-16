@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\analis\BlendingAdjustController;
+use App\Http\Controllers\analis\MonitoringTurunBlendingController;
+use App\Http\Controllers\analis\MonitoringStorageController;
 use App\Http\Controllers\Analis\GgaGgasController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -10,7 +12,8 @@ use App\Http\Controllers\Analis\SamplingController;
 use App\Http\Controllers\Analis\BlendingAwalController;
 use App\Http\Controllers\ProductionBatchController;
 use App\Http\Controllers\Foreman\RMPMControllerForeman;
-
+use App\Models\MonitoringStorageModel;
+use App\Models\MonitoringTurunBlending;
 
 // Login & Logout
 Route::get('/', [AuthController::class, 'loginForm']);
@@ -27,7 +30,7 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.su
 Route::prefix('analis')->group(function () {
     Route::prefix('rmpm')->group(function () {
         Route::get('/', [RMPMController::class, 'pilihJenisGula'])->name('rmpm.pilihJenisGula');
-       // Route::get('/identitas/{jenis}', [RMPMController::class, 'formIdentitas'])->name('rmpm.formIdentitas');
+        // Route::get('/identitas/{jenis}', [RMPMController::class, 'formIdentitas'])->name('rmpm.formIdentitas');
         Route::post('/identitas/simpan', [RMPMController::class, 'simpanIdentitas'])->name('rmpm.simpanIdentitas');
         Route::get('/list/{jenis}', [RMPMController::class, 'listIdentitas'])->name('rmpm.listIdentitas');
         Route::get('/detail-identitas/{id}', [RMPMController::class, 'detailIdentitas'])->name('rmpm.detailIdentitas');
@@ -81,8 +84,12 @@ Route::prefix('analis')->group(function () {
         Route::get('/data_po', [ProductionBatchController::class, 'data_po'])->name('productionbatch.data_po');
         Route::get('/data_po/blending/awal', [ProductionBatchController::class, 'data_po_blending_awal'])->name('productionbatch.data_po_blending_awal');
         Route::get('/data_po/blending/adjust', [ProductionBatchController::class, 'data_po_blending_after_adjust'])->name('productionbatch.data_po_blending_adjust');
+        Route::get('/data_po/monitoring/blending', [ProductionBatchController::class, 'data_po_monitoring'])->name('productionbatch.data_po_monitoring');
+        Route::get('/data_po/monitoring/storage', [ProductionBatchController::class, 'data_po_monitoring_storage'])->name('productionbatch.data_po_monitoring_storage');
         Route::get('/po_masak/blending/awal/{id}', [ProductionBatchController::class, 'show_blending_awal'])->name('productionbatch.show_blending_awal');
         Route::get('/po_masak/blending/adjust/{id}', [ProductionBatchController::class, 'show_blending_after_adjust'])->name('productionbatch.show_blending_adjust');
+        Route::get('/po_masak/monitoring/blending/{id}', [ProductionBatchController::class, 'show_monitoring_blending'])->name('productionbatch.show_monitoring_blending');
+        Route::get('/po_masak/monitoring/storage/{id}', [ProductionBatchController::class, 'show_monitoring_storage'])->name('productionbatch.show_monitoring_storage');
         Route::resource('/po_masak', ProductionBatchController::class)->names([
             'index' => 'productionbatch.index',
             'create' => 'productionbatch.create',
@@ -96,15 +103,26 @@ Route::prefix('analis')->group(function () {
         Route::post('/processgga/generate-revisi', [ProductionBatchController::class, 'generateRevisiGGA']);
         Route::get('/processggas/get-last-revisi', [ProductionBatchController::class, 'getLastRevisiGGAS']);
         Route::post('/processggas/generate-revisi', [ProductionBatchController::class, 'generateRevisiGGAS']);
+
         Route::get('/processblending/get-last-revisi', [ProductionBatchController::class, 'getLastRevisiBlendingAwal']);
         Route::post('processblending/generate-revisi', [ProductionBatchController::class, 'generateRevisiBlendingAwal']);
         Route::get('/processblending/get-available-additional-batch', [ProductionBatchController::class, 'getAvailableAdditionalBatch']);
         Route::get('/processblending/get-jalan-bareng', [ProductionBatchController::class, 'getMainBlendingAwalJalanBareng']);
-        
+
         Route::post('processblending/adjust/generate-revisi', [ProductionBatchController::class, 'generateRevisiBlendingAdjust']);
         Route::get('/processblending/adjust/get-last-revisi', [ProductionBatchController::class, 'getLastRevisiBlendingAdjust']);
         Route::get('/processblending/adjust/get-available-additional-batch', [ProductionBatchController::class, 'getAvailableAdditionalBatchAfterAdjust']);
         Route::get('/processblending/adjust/get-jalan-bareng', [ProductionBatchController::class, 'getMainBlendingAdjustJalanBareng']);
+
+        Route::post('processmonitoring/generate-revisi', [ProductionBatchController::class, 'generateRevisiMonitoring']);
+        Route::get('/processmonitoring/get-last-revisi', [ProductionBatchController::class, 'getLastRevisiMonitoring']);
+        Route::get('/processmonitoring/get-available-additional-batch', [ProductionBatchController::class, 'getAvailableAdditionalBatchMonitoring']);
+        Route::get('/processmonitoring/get-jalan-bareng', [ProductionBatchController::class, 'getMainMonitoringJalanBareng']);
+
+        Route::post('processmonitoringstorage/generate-revisi', [ProductionBatchController::class, 'generateRevisiMonitoringStorage']);
+        Route::get('/processmonitoringstorage/get-last-revisi', [ProductionBatchController::class, 'getLastRevisiMonitoringStorage']);
+        Route::get('/processmonitoringstorage/get-available-additional-batch', [ProductionBatchController::class, 'getAvailableAdditionalMonitoringStorage']);
+        Route::get('/processmonitoringstorage/get-jalan-bareng', [ProductionBatchController::class, 'getMainMonitoringStorageJalanBareng']);
     });
 
     //gga ggas
@@ -125,24 +143,48 @@ Route::prefix('analis')->group(function () {
         Route::post('/ggas/update-ajax/{id}', [GgaGgasController::class, 'updateAjaxGGAS']);
     });
 
-    Route::prefix('blending')->group(function(){
+    Route::prefix('blending')->group(function () {
         Route::get('/menu', [BlendingAwalController::class, 'menu']);
         Route::get('/awal/detail/{id}', [BlendingAwalController::class, 'Blending_detail']);
         Route::get('/awal/detail/form/{id}', [BlendingAwalController::class, 'showInputFormBlendingAwal']);
         Route::post('/store', [BlendingAwalController::class, 'store'])->name('blending.store');
         Route::post('/update/{id}', [BlendingAwalController::class, 'updateAjaxBlending'])->name('blending.update');
         Route::get('/awal', [BlendingAwalController::class, 'Blending_data'])->name('blending.awal_data');
-        
     });
-    
+
     Route::prefix('blending/adjust')->group(function () {
+        Route::get('/detail/form/{id}', [BlendingAdjustController::class, 'showInputFormBlendingAdjust']);
         Route::get('/detail/{id}', [BlendingAdjustController::class, 'Blending_detail']);
         Route::post('/store', [BlendingAdjustController::class, 'store'])->name('blending_adjust.store');
         Route::post('/update/{id}', [BlendingAdjustController::class, 'updateAjaxBlending'])->name('blending_adjust.update');
         Route::get('/data', [BlendingAdjustController::class, 'Blending_adjust_data']);
     });
-
     
+    Route::prefix('blending/mikro')->group(function () {
+        Route::get('/detail/form/{id}', [BlendingAdjustController::class, 'showInputFormBlendingAdjustMikro']);
+        Route::get('/data', [BlendingAdjustController::class, 'Blending_adjust_data_mikro']);
+        Route::get('/detail/{id}', [BlendingAdjustController::class, 'Blending_detail_mikro']);
+        Route::post('/update/{id}', [BlendingAdjustController::class, 'updateAjaxBlendingMikro'])->name('blending_adjust_mikro.update');
+    });
+    
+    Route::prefix('monitoring/blending')->group(function () {
+        Route::get('/menu', [MonitoringTurunBlendingController::class, 'menu']);
+        Route::post('/store', [MonitoringTurunBlendingController::class, 'store'])->name('monitoring_blending.store');
+        Route::post('/update/data', [MonitoringTurunBlendingController::class, 'updateMonitoringBlending']);
+        Route::post('/detail/data', [MonitoringTurunBlendingController::class, 'store_data_analisa']);
+        Route::get('/detail/data/{id}', [MonitoringTurunBlendingController::class, 'showDataDetail']);
+        Route::get('/detail/data/id/{id}', [MonitoringTurunBlendingController::class, 'showInputFormMonitoringTurunBlending']);
+        Route::get('/data', [MonitoringTurunBlendingController::class, 'Monitoring_Blending_data']);
+        Route::get('/detail/{id}', [MonitoringTurunBlendingController::class, 'Monitoring_Blending_detail']);
+    });
+    Route::prefix('monitoring/storage')->group(function () {
+        Route::post('/store', [MonitoringStorageController::class, 'store'])->name('monitoring_storage.store');
+        Route::get('/data', [MonitoringStorageController::class, 'Monitoring_Storage_data']);
+        Route::get('/detail/{id}', [MonitoringStorageController::class, 'Monitoring_Storage_detail']);
+        Route::post('/update/data/{id}', [MonitoringStorageController::class, 'update_monitoring_storage_makro']);
+        Route::get('/detail/mikro/{id}', [MonitoringStorageController::class, 'Monitoring_detail_mikro']);
+       
+    });
 });
 
 Route::prefix('foreman')->group(function () {
@@ -153,6 +195,11 @@ Route::prefix('foreman')->group(function () {
         Route::get('/detail/data/{id}', [RMPMControllerForeman::class, 'detail_data'])->name('rmpm_foreman.detail_data');
         Route::post('/update/{id}', [RMPMControllerForeman::class, 'updateDisposisiLong'])->name('rmpm_foreman.updateDisposisiLong');
     });
-
-    
+    Route::prefix('dashboard-rmpm')->group(function () {
+        Route::get('/total-kedatangan', [RMPMControllerForeman::class, 'getTotalKedatangan']);
+        Route::get('/sampling-lengkap', [RMPMControllerForeman::class, 'getSamplingLengkap']);
+        Route::get('/sudah-analisa', [RMPMControllerForeman::class, 'getSudahAnalisa']);
+        Route::get('/disposisi-summary', [RMPMControllerForeman::class, 'getDisposisiCount']);
+        Route::get('/list-identitas', [RMPMControllerForeman::class, 'getListIdentitas']);
+    });
 });

@@ -5,7 +5,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0">Blending Awal</h4>
+            <h4 class="mb-sm-0">Blending Monitoring</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
@@ -52,16 +52,16 @@
 
 <div class="row mt-4">
 
-    <div class="col-xl-4 col-lg-4">
+    <div class="col-xl-6 col-lg-6">
         <div class="card ribbon-box right overflow-hidden">
             <div class="card-body text-center p-4">
                 <div class="ribbon ribbon-success ribbon-shape trending-ribbon">
                     <i class="ri-hand-heart-fill text-white align-bottom"></i>
-                    <span class="trending-ribbon-text">Makro</span>
+                    <span class="trending-ribbon-text">Turun Blending</span>
                 </div>
                 <img src="{{ asset('assets/images/blending_awal.png' ) }}" alt="gambar" height="100">
-                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Data Blending Awal</a></h5>
-                <p class="text-muted mb-4">Analisis Blending Awal - Makro</p>
+                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Data Monitoring Turun Bleding</a></h5>
+                <p class="text-muted mb-4">Analisis Monitoring Turun Blending</p>
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
                         <div id="chart-gga" data-colors='["--vz-danger"]'></div>
@@ -69,22 +69,22 @@
                 </div>
 
                 <div class="mt-4">
-                    <a href="{{url('analis/blending/awal')}}" class="btn btn-light w-100">Lihat Detail</a>
+                    <a href="{{url('analis/monitoring/blending/data')}}" class="btn btn-light w-100">Lihat Detail</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-xl-4 col-lg-4">
+    <div class="col-xl-6 col-lg-6">
         <div class="card ribbon-box right overflow-hidden">
             <div class="card-body text-center p-4">
                 <div class="ribbon ribbon-success ribbon-shape trending-ribbon">
                     <i class="ri-hand-heart-fill text-white align-bottom"></i>
-                    <span class="trending-ribbon-text">Makro</span>
+                    <span class="trending-ribbon-text">Storage</span>
                 </div>
                 <img src="{{ asset('assets/images/blending_adjust.png' ) }}" alt="gambar" height="100">
-                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Data Blending After Adjustment</a></h5>
-                <p class="text-muted mb-4">Analisis Blending After Adjust - Makro</p>
+                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Data Monitoring Storage</a></h5>
+                <p class="text-muted mb-4">Analisis Monitoring Storage</p>
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
                         <div id="chart-ggas" data-colors='["--vz-danger"]'></div>
@@ -92,48 +92,13 @@
                 </div>
 
                 <div class="mt-4">
-                    <!-- <button type="button" class="btn btn-light w-100" data-bs-toggle="modal" data-bs-target="#comingSoonModal">
-                        Lihat Detail
-                    </button> -->
                     <div class="mt-4">
-                        <a href="{{url('analis/blending/adjust/data')}}" class="btn btn-light w-100">Lihat Detail</a>
-                    </div>
-
-                    <!-- <a href="{{url('analis/ggaggas/ggas')}}" class="btn btn-light w-100">Lihat Detail</a> -->
-                </div>
+                        <a href="{{url('analis/monitoring/storage/data')}}" class="btn btn-light w-100">Lihat Detail</a>
+                    </div> </div>
             </div>
         </div>
     </div>
 
-    <div class="col-xl-4 col-lg-4">
-        <div class="card ribbon-box right overflow-hidden">
-            <div class="card-body text-center p-4">
-                <div class="ribbon ribbon-warning ribbon-shape trending-ribbon">
-                    <i class="ri-hand-heart-fill text-white align-bottom"></i>
-                    <span class="trending-ribbon-text">Mikro</span>
-                </div>
-                <img src="{{ asset('assets/images/blending_adjust.png' ) }}" alt="gambar" height="100">
-                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Data Blending After Adjustment</a></h5>
-                <p class="text-muted mb-4">Analisis Blending After Adjust - Mikro</p>
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <div id="chart-ggas" data-colors='["--vz-danger"]'></div>
-                    </div>
-                </div>
-
-                <div class="mt-4">
-                    <!-- <button type="button" class="btn btn-light w-100" data-bs-toggle="modal" data-bs-target="#comingSoonModal">
-                        Lihat Detail
-                    </button> -->
-                    <div class="mt-4">
-                        <a href="{{url('analis/blending/mikro/data')}}" class="btn btn-light w-100">Lihat Detail</a>
-                    </div>
-
-                    <!-- <a href="{{url('analis/ggaggas/ggas')}}" class="btn btn-light w-100">Lihat Detail</a> -->
-                </div>
-            </div>
-        </div>
-    </div>
 
 
 </div>

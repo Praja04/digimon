@@ -40,35 +40,130 @@ class RMPMControllerForeman extends Controller
         return view('foreman.rmpm.menu', compact('jenis_gula'));
     }
 
+    // public function list_data($jenis)
+    // {
+    //     $identitasList = IdentitasRM::where('jenis_gula', $jenis)->with('disposisi')->get();
+
+    //     // Buat ringkasan disposisi
+    //     $dataSummary = [
+    //         'Release' => $identitasList->filter(fn ($i) => $i->disposisi?->disposisi === 'Release')->count(),
+    //         'Reject' => $identitasList->filter(fn ($i) => $i->disposisi?->disposisi === 'Reject')->count(),
+    //         'Release Bersyarat' => $identitasList->filter(fn ($i) => $i->disposisi?->disposisi === 'Release Bersyarat')->count(),
+    //         'Resampling' => $identitasList->filter(fn ($i) => $i->disposisi?->disposisi === 'Resampling')->count(),
+    //     ];
+
+    //     if (in_array($jenis, ['Gula Tebu', 'Gula Kelapa'])) {
+    //         $data_detail2 = AnalisaLongTermGKT::whereIn('id_identitas', $identitasList->pluck('id'))->get()->keyBy('id_identitas');
+    //         $data_detail3 = AnalisaShortTermGKT::whereIn('id_identitas', $identitasList->pluck('id'))->get()->keyBy('id_identitas');
+
+    //         return view('foreman.rmpm.list_data', [
+    //             'identitasList' => $identitasList,
+    //             'jenis' => $jenis,
+    //             'data_detail2' => $data_detail2,
+    //             'data_detail3' => $data_detail3,
+    //             'dataSummary' => $dataSummary, // tambahkan ini
+    //         ]);
+    //     }
+
+    //     if (in_array($jenis, ['Gula', 'Garam'])) {
+    //         $data_detail = AnalisaGaramGula::whereIn('id_identitas', $identitasList->pluck('id'))->get()->keyBy('id_identitas');
+
+    //         return view('foreman.rmpm.list_data', [
+    //             'identitasList' => $identitasList,
+    //             'jenis' => $jenis,
+    //             'data_detail' => $data_detail,
+    //             'dataSummary' => $dataSummary, // tambahkan ini
+    //         ]);
+    //     }
+
+    //     abort(404, 'Jenis tidak valid');
+    // }
+
     public function list_data($jenis)
     {
         $identitasList = IdentitasRM::where('jenis_gula', $jenis)->get();
+        $identitasIds = $identitasList->pluck('id');
+        $dataSummary = [];
 
-        if (in_array($jenis, ['Gula Tebu', 'Gula Kelapa'])) {
-            $data_detail2 = AnalisaLongTermGKT::whereIn('id_identitas', $identitasList->pluck('id'))->get()->keyBy('id_identitas');
-            $data_detail3 = AnalisaShortTermGKT::whereIn('id_identitas', $identitasList->pluck('id'))->get()->keyBy('id_identitas');
+        if ($jenis === 'Gula Tebu') {
+            $analisaLT = AnalisaLongTermGKT::whereIn('id_identitas', $identitasIds)->whereNotNull('disposisi')->get();
+            $analisaST = AnalisaShortTermGKT::with('disposisi')->whereIn('id_identitas', $identitasIds)->get();
+
+            $summaryST = $analisaST->groupBy(fn ($item) => optional($item->disposisi)->disposisi ?? 'Undefined')
+                ->map(fn ($group) => $group->count());
+
+            $summaryLT = $analisaLT->groupBy('disposisi')
+                ->map(fn ($group) => $group->count());
+
+            $dataSummary = $summaryST->mergeRecursive($summaryLT)->map(function ($item) {
+                return is_array($item) ? array_sum($item) : $item;
+            });
 
             return view('foreman.rmpm.list_data', [
                 'identitasList' => $identitasList,
                 'jenis' => $jenis,
-                'data_detail2' => $data_detail2,
-                'data_detail3' => $data_detail3,
+                'data_detail2' => $analisaLT->keyBy('id_identitas'),
+                'data_detail3' => $analisaST->keyBy('id_identitas'),
+                'dataSummary' => $dataSummary,
             ]);
         }
 
-        if (in_array($jenis, ['Gula', 'Garam'])) {
-            $data_detail = AnalisaGaramGula::whereIn('id_identitas', $identitasList->pluck('id'))->get()->keyBy('id_identitas');
+        if ($jenis === 'Gula Kelapa') {
+            $analisaLT = AnalisaLongTermGKT::whereIn('id_identitas', $identitasIds)->whereNotNull('disposisi')->get();
+            $analisaST = AnalisaShortTermGKT::with('disposisi')->whereIn('id_identitas', $identitasIds)->get();
+
+            $summaryST = $analisaST->groupBy(fn ($item) => optional($item->disposisi)->disposisi ?? 'Undefined')
+                ->map(fn ($group) => $group->count());
+
+            $summaryLT = $analisaLT->groupBy('disposisi')
+                ->map(fn ($group) => $group->count());
+
+            $dataSummary = $summaryST->mergeRecursive($summaryLT)->map(function ($item) {
+                return is_array($item) ? array_sum($item) : $item;
+            });
 
             return view('foreman.rmpm.list_data', [
                 'identitasList' => $identitasList,
                 'jenis' => $jenis,
-                'data_detail' => $data_detail,
+                'data_detail2' => $analisaLT->keyBy('id_identitas'),
+                'data_detail3' => $analisaST->keyBy('id_identitas'),
+                'dataSummary' => $dataSummary,
             ]);
         }
 
-        // fallback jika jenis tidak dikenali
+        if ($jenis === 'Gula') {
+            $analisaGG = AnalisaGaramGula::with('disposisi')->whereIn('id_identitas', $identitasIds)->get();
+
+            $dataSummary = $analisaGG->groupBy(fn ($item) => optional($item->disposisi)->disposisi ?? 'Undefined')
+                ->map(fn ($group) => $group->count());
+
+            return view('foreman.rmpm.list_data', [
+                'identitasList' => $identitasList,
+                'jenis' => $jenis,
+                'data_detail' => $analisaGG->keyBy('id_identitas'),
+                'dataSummary' => $dataSummary,
+            ]);
+        }
+
+        if ($jenis === 'Garam') {
+            $analisaGG = AnalisaGaramGula::with('disposisi')->whereIn('id_identitas', $identitasIds)->get();
+
+            $dataSummary = $analisaGG->groupBy(fn ($item) => optional($item->disposisi)->disposisi ?? 'Undefined')
+                ->map(fn ($group) => $group->count());
+
+            return view('foreman.rmpm.list_data', [
+                'identitasList' => $identitasList,
+                'jenis' => $jenis,
+                'data_detail' => $analisaGG->keyBy('id_identitas'),
+                'dataSummary' => $dataSummary,
+            ]);
+        }
+
         abort(404, 'Jenis tidak valid');
     }
+    
+
+    
 
     //4.detail identitas
     public function detail_data($id)
@@ -201,5 +296,157 @@ class RMPMControllerForeman extends Controller
         });
 
         return response()->json($result);
+    }
+
+
+    //api
+
+    public function getTotalKedatangan(Request $request)
+    {
+        $query = IdentitasRM::query();
+
+        if ($request->has('tanggal_awal')) {
+            $query->whereDate('tanggal_kedatangan', '>=', $request->tanggal_awal);
+        }
+
+        if ($request->has('tanggal_akhir')) {
+            $query->whereDate('tanggal_kedatangan', '<=', $request->tanggal_akhir);
+        }
+
+        if ($request->has('jenis_gula')) {
+            $query->where('jenis_gula', $request->jenis_gula);
+        }
+
+        return response()->json([
+            'total_kedatangan' => $query->count()
+        ]);
+    }
+
+    public function getSamplingLengkap(Request $request)
+    {
+        $data = IdentitasRM::with(['samplingMobil', 'samplingDokumen', 'samplingFisikKemasan', 'samplingFisikRaw']);
+
+        if ($request->has('tanggal_awal')) {
+            $data->whereDate('tanggal_kedatangan', '>=', $request->tanggal_awal);
+        }
+
+        if ($request->has('tanggal_akhir')) {
+            $data->whereDate('tanggal_kedatangan', '<=', $request->tanggal_akhir);
+        }
+
+        if ($request->has('jenis_gula')) {
+            $data->where('jenis_gula', $request->jenis_gula);
+        }
+
+        $records = $data->get();
+
+        $lengkap = $records->filter(function ($item) {
+            return $item->samplingMobil && $item->samplingDokumen && $item->samplingFisikKemasan && $item->samplingFisikRaw;
+        })->count();
+
+        return response()->json([
+            'sampling_lengkap' => $lengkap
+        ]);
+    }
+
+    public function getSudahAnalisa(Request $request)
+    {
+        $data = IdentitasRM::with(['analisaShortTerm', 'analisaLongTerm', 'analisaGaramGula']);
+
+        if ($request->has('tanggal_awal')) {
+            $data->whereDate('tanggal_kedatangan', '>=', $request->tanggal_awal);
+        }
+
+        if ($request->has('tanggal_akhir')) {
+            $data->whereDate('tanggal_kedatangan', '<=', $request->tanggal_akhir);
+        }
+
+        if ($request->has('jenis_gula')) {
+            $data->where('jenis_gula', $request->jenis_gula);
+        }
+
+        $records = $data->get();
+
+        $analisa = $records->filter(function ($item) {
+            return $item->analisaShortTerm->isNotEmpty() ||
+                $item->analisaLongTerm->isNotEmpty() ||
+                $item->analisaGaramGula->isNotEmpty();
+        })->count();
+
+        return response()->json([
+            'sudah_analisa' => $analisa
+        ]);
+    }
+
+    public function getDisposisiCount(Request $request)
+    {
+        $data = IdentitasRM::with([
+            'analisaShortTerm.disposisi',
+            'analisaGaramGula.disposisi'
+        ]);
+
+        if ($request->has('tanggal_awal')) {
+            $data->whereDate('tanggal_kedatangan', '>=', $request->tanggal_awal);
+        }
+
+        if ($request->has('tanggal_akhir')) {
+            $data->whereDate('tanggal_kedatangan', '<=', $request->tanggal_akhir);
+        }
+
+        if ($request->has('jenis_gula')) {
+            $data->where('jenis_gula', $request->jenis_gula);
+        }
+
+        $records = $data->get();
+
+        $disposisiCount = [];
+
+        foreach ($records as $item) {
+            foreach ($item->analisaShortTerm as $a) {
+                if ($a->disposisi) {
+                    $label = $a->disposisi->disposisi;
+                    $disposisiCount[$label] = ($disposisiCount[$label] ?? 0) + 1;
+                }
+            }
+
+            foreach ($item->analisaGaramGula as $a) {
+                if ($a->disposisi) {
+                    $label = $a->disposisi->disposisi;
+                    $disposisiCount[$label] = ($disposisiCount[$label] ?? 0) + 1;
+                }
+            }
+        }
+
+        return response()->json([
+            'disposisi_summary' => $disposisiCount
+        ]);
+    }
+
+    // Optional: data detail list
+    public function getListIdentitas(Request $request)
+    {
+        $data = IdentitasRM::with([
+            'samplingMobil',
+            'samplingDokumen',
+            'samplingFisikKemasan',
+            'samplingFisikRaw',
+            'analisaShortTerm.disposisi',
+            'analisaGaramGula.disposisi',
+            'analisaLongTerm'
+        ]);
+
+        if ($request->has('tanggal_awal')) {
+            $data->whereDate('tanggal_kedatangan', '>=', $request->tanggal_awal);
+        }
+
+        if ($request->has('tanggal_akhir')) {
+            $data->whereDate('tanggal_kedatangan', '<=', $request->tanggal_akhir);
+        }
+
+        if ($request->has('jenis_gula')) {
+            $data->where('jenis_gula', $request->jenis_gula);
+        }
+
+        return response()->json($data->get());
     }
 }

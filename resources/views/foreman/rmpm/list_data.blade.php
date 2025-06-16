@@ -21,6 +21,16 @@
 </div>
 <!-- end page title -->
 
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="card-title">Ringkasan Disposisi</h5>
+    </div>
+    <div class="card-body">
+        <canvas id="disposisiChart" height="100"></canvas>
+    </div>
+</div>
+
 <div class="row">
     <div class="col-lg-12">
         <div class="card" id="leadsList">
@@ -107,7 +117,7 @@
                                         $long = $data_detail2[$identitas->id]->disposisi ?? null;
                                         $kristal = $data_detail2[$identitas->id]->uji_kristal ?? null;
                                         @endphp
-                                        @if ($kristal === 'positif')
+                                        @if ($kristal === 'positif' && $long === 'reject')
                                         <span class="badge bg-danger">
                                             <i class="ri-error-warning-line me-1"></i> Kristal {{ $kristal }}
                                         </span>
@@ -215,7 +225,7 @@
     </div>
     <!--end col-->
 </div>
-
+{{$dataSummary}}
 <!-- Modal Update Disposisi -->
 
 
@@ -308,6 +318,61 @@
 </div>
 
 <!-- modal end -->
+<!-- Tambahkan ini di <head> atau sebelum </body> -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const ctx = document.getElementById('disposisiChart').getContext('2d');
+
+    const disposisiData = @json($dataSummary);
+    const labels = Object.keys(disposisiData);
+    const values = Object.values(disposisiData);
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Jumlah Disposisi',
+                data: values,
+                backgroundColor: [
+                    '#4e73df',
+                    '#1cc88a',
+                    '#36b9cc',
+                    '#f6c23e',
+                    '#e74a3b',
+                    '#858796'
+                ],
+                borderColor: '#4e73df',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `Jumlah: ${context.raw}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+</script>
+
 <script>
     $(document).ready(function() {
         // Saat tombol edit diklik

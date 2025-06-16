@@ -24,8 +24,18 @@ class ProductionBatch extends Model
         }
         return [$this->batch_range]; // fallback kalau cuma satu angka
     }
-    
-    
+    public function MonitoringStorageMikro()
+    {
+        return $this->hasMany(MonitoringStorageMikroModel::class);
+    } 
+    public function MonitoringStorage()
+    {
+        return $this->hasMany(MonitoringStorageModel::class);
+    } 
+    public function MonitoringTurunBlending()
+    {
+        return $this->hasMany(MonitoringTurunBlending::class);
+    } 
     public function BlendingAwal()
     {
         return $this->hasMany(BlendingAwalModel::class);
@@ -33,6 +43,10 @@ class ProductionBatch extends Model
     public function blendingAfterAdjust()
     {
         return $this->hasMany(BlendingAfterAdjustModel::class);
+    }
+    public function blendingAfterAdjustMikro()
+    {
+        return $this->hasMany(BlendingAfterAdjustMikroModel::class);
     }
     public function GgaProcesses()
     {

@@ -146,6 +146,50 @@
             </div>
         </div>
     </div>
+    <div class="col-xl-3 col-lg-6">
+        <div class="card ribbon-box right overflow-hidden">
+            <div class="card-body text-center p-4">
+                <div class="ribbon ribbon-success ribbon-shape trending-ribbon">
+                    <i class="ri-hand-heart-fill text-white align-bottom"></i>
+                    <span class="trending-ribbon-text">Pilih Batch</span>
+                </div>
+                <img src="{{ asset('assets/images/blending_adjust.png' ) }}" alt="gambar" height="100" style="border-radius: 20px;">
+                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Batch Monitoring Blending</a></h5>
+                <p class="text-muted mb-4">Produksi Masak</p>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div id="chart-input-po" data-colors='["--vz-danger"]'></div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a href="{{url('analis/productionbatch/data_po/monitoring/blending')}}" class="btn btn-light w-100">Lihat Detail</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-lg-6">
+        <div class="card ribbon-box right overflow-hidden">
+            <div class="card-body text-center p-4">
+                <div class="ribbon ribbon-success ribbon-shape trending-ribbon">
+                    <i class="ri-hand-heart-fill text-white align-bottom"></i>
+                    <span class="trending-ribbon-text">Pilih Batch</span>
+                </div>
+                <img src="{{ asset('assets/images/blending_adjust.png' ) }}" alt="gambar" height="100" style="border-radius: 20px;">
+                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Batch Monitoring Storage</a></h5>
+                <p class="text-muted mb-4">Produksi Masak</p>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div id="chart-input-po" data-colors='["--vz-danger"]'></div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a href="{{url('analis/productionbatch/data_po/monitoring/storage')}}" class="btn btn-light w-100">Lihat Detail</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 <div class="modal fade" id="comingSoonModal" tabindex="-1" aria-labelledby="comingSoonModalLabel" aria-hidden="true">

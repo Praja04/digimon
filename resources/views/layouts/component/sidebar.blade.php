@@ -105,6 +105,11 @@
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Blending</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{url('analis/monitoring/blending/menu')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Monitoring Turun Blending</span>
+                    </a>
+                </li>
                 @endif
 
             </ul>
