@@ -150,6 +150,10 @@
                                                     <input type="text" name="buih" class="form-control" required>
                                                 </div>
                                                 <div class="mb-3">
+                                                    <label class="form-label">PH</label>
+                                                    <input type="text" name="ph" class="form-control" required>
+                                                </div>
+                                                <div class="mb-3">
                                                     <label class="form-label">Organo</label>
                                                     <input type="text" name="organo" class="form-control" required>
                                                 </div>

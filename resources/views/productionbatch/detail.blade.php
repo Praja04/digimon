@@ -308,14 +308,6 @@
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="production_batch_id" value="{{ $productionBatch->id }}">
-
-                    <div class="mb-3">
-                        <label class="form-label">Batch Number</label>
-                        <select name="batch_number" class="form-select" required>
-                            <option selected disabled>Pilih Jenis Sample terlebih dahulu</option>
-                        </select>
-                    </div>
-
                     <div class="mb-3">
                         <label class="form-label">Dissolver Number</label>
                         <input type="text" name="dissolver_number" class="form-control" required>
@@ -331,6 +323,12 @@
 
                         </select>
 
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Batch Number</label>
+                        <select name="batch_number" class="form-select" required>
+                            <option selected disabled>Pilih Jenis Sample terlebih dahulu</option>
+                        </select>
                     </div>
                 </div>
 

@@ -287,6 +287,7 @@
                 <div class="modal-body">
                     <input type="hidden" name="id_old_blending" id="modal_id_blending">
                     <input type="hidden" name="production_batch_id" id="modal_po_id">
+                    <input type="hidden" name="production_batch_id_leveling" id="id_leveling">
                     <input type="hidden" name="disposition" id="modal_disposition">
                     <input type="hidden" id="modal_additional_batch_po_id" name="additional_batch_po_id">
 
@@ -422,7 +423,7 @@
         let batch = $(this).data('batch');
         let disposition = $(this).data('disposition');
 
-        $('#modal_po_id').val(poId);
+        //$('#modal_po_id').val(poId);
         $('#modal_id_blending').val(id_blending);
         $('#modal_batch').val(batch);
         $('#modal_additional_batch_po_id').val(''); // reset PO ID tambahan
@@ -436,7 +437,7 @@
             if (disposition === 'Leveling') {
                 $('#additional_batch_group').removeClass('d-none');
                 $('#additional_batch').empty().append('<option value="">-- Pilih Batch --</option>');
-
+                $('#modal_po_id').val(poId);
                 $.get('{{ url("/analis/productionbatch/processblending/get-available-additional-batch") }}', {
                     production_batch_id: poId,
                     exclude_batch: batch
@@ -444,26 +445,28 @@
                     console.log(batchRes);
                     batchRes.data.forEach(function(batchItem) {
                         let value = `${batchItem.batch_number}`;
-                        $('#additional_batch').append(`<option value="${value}">Batch ${batchItem.batch_number} (PO ${batchItem.po_number})</option>`);
+                        $('#additional_batch').append(`<option  data-id_additional_po="${batchItem.po_id}" value="${value}">Batch ${batchItem.batch_number} (PO ${batchItem.po_number})</option>`);
                     });
                 });
 
             } else if (disposition === 'Jalan Bareng') {
                 $('#additional_batch_group').removeClass('d-none');
                 $('#additional_batch').empty().append('<option value="">-- Pilih Batch --</option>');
-
+                $('#modal_po_id').val(poId);
                 $.get('{{ url("/analis/productionbatch/processblending/get-jalan-bareng") }}', {
-                    production_batch_id: poId 
+                    production_batch_id: poId
                 }, function(batchRes) {
                     console.log(batchRes);
                     batchRes.data.forEach(function(batchItem) {
                         let value = `${batchItem.batch_range}`;
-                        $('#additional_batch').append(`<option value="${value}">Batch ${batchItem.batch_range} (PO ${batchItem.po_number})</option>`);
+
+                        $('#additional_batch').append(`<option  data-id_additional_po="${batchItem.id}" value="${value}">Batch ${batchItem.batch_range} (PO ${batchItem.po_number})</option>`);
                     });
                 });
             } else {
                 $('#additional_batch_group').addClass('d-none');
                 $('#additional_batch').empty();
+                $('#modal_po_id').val(poId);
             }
 
             $('#generateRevisiModal').modal('show');
@@ -474,11 +477,14 @@
 
     // Saat user memilih additional_batch, simpan PO ID-nya di hidden input
     $('#additional_batch').on('change', function() {
+        const selectedOption = $(this).find('option:selected');
         const selected = $(this).val(); // contoh: "4|3"
+        const poId = selectedOption.data('id_additional_po');
         if (selected) {
             const [batch_number, po_id] = selected.split('|');
             $('#modal_additional_batch').val(batch_number);
             $('#modal_additional_batch_po_id').val(po_id);
+            $('#id_leveling').val(poId);
         } else {
             $('#modal_additional_batch').val('');
             $('#modal_additional_batch_po_id').val('');

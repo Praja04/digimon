@@ -167,7 +167,12 @@ class GgaGgasController extends Controller
         }
 
         $gga = GgaProcess::findOrFail($id);
-
+        if ($gga->disposition) {
+            return response()->json([
+                'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
+            ], 422);
+        }
+    
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -261,7 +266,12 @@ class GgaGgasController extends Controller
         }
 
         $ggas = GgasProcess::findOrFail($id);
-
+        if ($ggas->disposition) {
+            return response()->json([
+                'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
+            ], 422);
+        }
+    
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 

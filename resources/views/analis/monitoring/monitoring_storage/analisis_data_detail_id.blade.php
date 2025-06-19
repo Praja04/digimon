@@ -4,39 +4,38 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0">Input Blending Awal</h4>
+            <h4 class="mb-sm-0">Input Monitoring Storage</h4>
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="#">QC</a></li>
-                    <li class="breadcrumb-item active">Blending</li>
+                    <li class="breadcrumb-item active">Monitoring</li>
                 </ol>
             </div>
         </div>
     </div>
 </div>
 
-@if ($blending)
+@if ($data)
 <div class="row">
     <div class="col-lg-3"></div>
     <div class="col-lg-6">
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title mb-0">Form Input Blending - Batch {{ $blending->batch_range }}</h5>
+                <h5 class="card-title mb-0">Form Input Monitoring Storage - Batch {{ $data->batch_range }}</h5>
             </div>
             <div class="card-body">
-                <form class="ajax-blending-form" data-id="{{ $blending->id }}">
+                <form class="form-data" data-id="{{ $data->id }}">
                     @csrf
-                    <input type="hidden" name="url" id="url" value="{{ $blending->production_batch_id }}">
+                    <input type="hidden" name="url" id="url" value="{{ $data->production_batch_id }}">
                     <div class="alert alert-danger d-none error-alert"></div>
 
                     <div class="mb-3">
-                        <label for="brix" class="form-label">BRIX</label>
-                        <input type="number" step="0.01" max="100" min="0" name="brix" id="brix" class="form-control" required value="{{ old('brix', $blending->brix) }}">
+                        <label class="form-label">BRIX</label>
+                        <input type="number" step="0.01" max="100" min="0" name="brix" class="form-control" required>
                     </div>
-
                     <div class="mb-3">
-                        <label for="nacl" class="form-label">NACL</label>
-                        <input type="number" step="0.01" max="100" min="0" name="nacl" id="nacl" class="form-control" required value="{{ old('nacl', $blending->nacl) }}">
+                        <label class="form-label">NACL</label>
+                        <input type="number" step="0.01" max="100" min="0" name="nacl" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Bj</label>
@@ -55,6 +54,10 @@
                         <input type="text" name="buih" class="form-control" required>
                     </div>
                     <div class="mb-3">
+                        <label class="form-label">PH</label>
+                        <input type="text" name="ph" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">Organo</label>
                         <input type="text" name="organo" class="form-control" required>
                     </div>
@@ -63,10 +66,9 @@
                         <input type="text" name="endapan" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="warna" class="form-label">Warna</label>
-                        <input type="text" name="warna" id="warna" class="form-control" required value="{{ old('warna', $blending->warna) }}">
+                        <label class="form-label">Warna</label>
+                        <input type="text" name="warna" class="form-control" required>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label">Disposition</label>
                         <select name="disposition" class="form-select disposition-select" required>
@@ -77,6 +79,8 @@
                             <option value="Reject">Reject</option>
                             <option value="Repro">Repro</option>
                             <option value="Adjustment">Adjustment</option>
+                            <option value="Jalan Bareng">Jalan Bareng</option>
+                            <option value="Leveling">Leveling</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -100,7 +104,7 @@
 </div>
 @else
 <div class="alert alert-danger">
-    Data Blending tidak ditemukan.
+    Data Monitoring Storage tidak ditemukan.
 </div>
 @endif
 
@@ -131,7 +135,7 @@
 
 
 
-        $('.ajax-blending-form').on('submit', function(e) {
+        $('.form-data').on('submit', function(e) {
             e.preventDefault();
 
             var form = $(this);
@@ -144,7 +148,7 @@
             submitBtn.prop('disabled', true).text('Menyimpan...');
 
             $.ajax({
-                url: "{{url('/analis/blending/update')}}/" + id,
+                url: "{{url('analis/monitoring/storage/update/data')}}/" + id,
                 method: 'POST',
                 data: form.serialize(),
                 success: function(response) {
@@ -154,7 +158,7 @@
                         icon: 'success',
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        window.location.href = "{{ url('/analis/blending/awal/detail') }}/" + url;
+                        window.location.href = "{{ url('/analis/monitoring/storage/detail') }}/" + url;
                     });
                 },
                 error: function(xhr) {
@@ -165,8 +169,15 @@
                         html: errors.join('<br>'),
                     });
 
+                    // Tunggu 3 detik sebelum redirect
+                    setTimeout(() => {
+                        window.location.href = "{{ url('/analis/monitoring/storage/detail') }}/" + url;
+                    }, 3000);
+
                     submitBtn.prop('disabled', false).text('Simpan');
                 }
+
+
             });
         });
     });

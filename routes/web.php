@@ -12,6 +12,7 @@ use App\Http\Controllers\Analis\SamplingController;
 use App\Http\Controllers\Analis\BlendingAwalController;
 use App\Http\Controllers\ProductionBatchController;
 use App\Http\Controllers\Foreman\RMPMControllerForeman;
+use App\Http\Controllers\Supervisor\DashboardMakro;
 use App\Models\MonitoringStorageModel;
 use App\Models\MonitoringTurunBlending;
 
@@ -80,6 +81,7 @@ Route::prefix('analis')->group(function () {
 
     //Persiapan masak
     Route::prefix('productionbatch')->group(function () {
+        Route::get('/scan', [ProductionBatchController::class, 'scan']);
         Route::get('/menu', [ProductionBatchController::class, 'menu'])->name('productionbatch.menu');
         Route::get('/data_po', [ProductionBatchController::class, 'data_po'])->name('productionbatch.data_po');
         Route::get('/data_po/blending/awal', [ProductionBatchController::class, 'data_po_blending_awal'])->name('productionbatch.data_po_blending_awal');
@@ -181,6 +183,7 @@ Route::prefix('analis')->group(function () {
         Route::post('/store', [MonitoringStorageController::class, 'store'])->name('monitoring_storage.store');
         Route::get('/data', [MonitoringStorageController::class, 'Monitoring_Storage_data']);
         Route::get('/detail/{id}', [MonitoringStorageController::class, 'Monitoring_Storage_detail']);
+        Route::get('/detail/data/{id}', [MonitoringStorageController::class, 'Monitoring_Storage_detail_id']);
         Route::post('/update/data/{id}', [MonitoringStorageController::class, 'update_monitoring_storage_makro']);
         Route::get('/detail/mikro/{id}', [MonitoringStorageController::class, 'Monitoring_detail_mikro']);
        
@@ -203,3 +206,10 @@ Route::prefix('foreman')->group(function () {
         Route::get('/list-identitas', [RMPMControllerForeman::class, 'getListIdentitas']);
     });
 });
+
+Route::prefix('supervisor')->group(function () {
+    Route::prefix('makro')->group(function () {
+        Route::get('/dashboard', [DashboardMakro::class, 'dashboard']);
+    });
+});
+

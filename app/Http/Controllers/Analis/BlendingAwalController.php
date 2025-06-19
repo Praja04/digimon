@@ -156,7 +156,12 @@ class BlendingAwalController extends Controller
         }
 
         $blending = BlendingAwalModel::findOrFail($id);
-
+        if ($blending->disposition) {
+            return response()->json([
+                'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
+            ], 422);
+        }
+    
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 

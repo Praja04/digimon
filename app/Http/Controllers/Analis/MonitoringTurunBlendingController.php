@@ -35,27 +35,18 @@ class MonitoringTurunBlendingController extends Controller
         ])->findOrFail($id);
 
         // Kelompokkan berdasarkan batch_range
-        $grouped = $productionBatch->MonitoringTurunBlending->groupBy('batch_range');
+        $grouped = $productionBatch->MonitoringTurunBlending;
 
         $filtered = collect();
 
-        foreach ($grouped as $batchRange => $items) {
-            // Prioritaskan yang disposition-nya 'Release' atau 'Release Bersyarat'
-            $preferred = $items->first(function ($item) {
-                return in_array($item->disposition, ['Release', 'Release Bersyarat']);
-            });
-
-            // Jika tidak ada, ambil yang pertama saja sebagai fallback
-            $selected = $preferred ?: $items->first();
-
-            // Tambahkan additional_batch_info dan po_number
-            $selected->additional_batch_info = $selected->additionalBatches->isNotEmpty()
-                ? $selected->additionalBatches
+        $filtered = $productionBatch->MonitoringTurunBlending->map(function ($item) use ($productionBatch) {
+            $item->additional_batch_info = $item->additionalBatches->isNotEmpty()
+                ? $item->additionalBatches
                 : null;
-            $selected->po_number = $productionBatch->po_number;
-            $selected->data_count = $selected->monitoringData->count();
-            $filtered->push($selected);
-        }
+            $item->po_number = $productionBatch->po_number;
+            $item->data_count = $item->monitoringData->count();
+            return $item;
+        });
 
         // return response()->json($filtered->values());
         return view('analis.monitoring.detail_data', [
@@ -64,6 +55,7 @@ class MonitoringTurunBlendingController extends Controller
         ]);
     }
 
+  
 
     public function store(Request $request)
     {
@@ -227,7 +219,13 @@ class MonitoringTurunBlendingController extends Controller
         }
 
         $blending = MonitoringTurunBlending::findOrFail($request->monitoring_id);
-
+        if ($blending->disposition) {
+            return response()->json([
+                'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
+            ], 422);
+        }
+    
+    
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 

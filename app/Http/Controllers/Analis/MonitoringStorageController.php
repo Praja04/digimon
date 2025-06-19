@@ -60,6 +60,13 @@ class MonitoringStorageController extends Controller
         ]);
     }
 
+    public function Monitoring_Storage_detail_id($id)
+    {
+
+        $data = MonitoringStorageModel::find($id);
+        return view('analis.monitoring.monitoring_storage.analisis_data_detail_id', compact('data'));
+    }
+
     public function Monitoring_detail_mikro($id)
     {
         $productionBatch = ProductionBatch::with('MonitoringStorageMikro')->findOrFail($id);
@@ -155,7 +162,16 @@ class MonitoringStorageController extends Controller
         }
 
         $data = MonitoringStorageModel::findOrFail($id);
-
+        if (
+            $data->disposition 
+        ) {
+            return response()->json([
+                'errors' => ['Data id sudah ada sudah ada dan tidak ada perubahan.']
+            ], 422);
+        }
+    
+    
+    
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -177,6 +193,7 @@ class MonitoringStorageController extends Controller
             'visco' => $request->visco,
             'aw' => $request->aw,
             'buih' => $request->buih,
+            'ph' => $request->ph,
             'organo' => $request->organo,
             'endapan' => $request->endapan,
             'warna' => $request->warna,

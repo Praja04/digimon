@@ -89,8 +89,13 @@
                 @elseif(Session::get('role') === 'analis' && Session::get('role_group') === 'rmpm')
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ url('foreman/rmpm')}}">
+                    <a class="nav-link menu-link" href="{{ url('analis/rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">RMPM</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('analis/productionbatch/scan')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Scan</span>
                     </a>
                 </li>
                 @elseif(Session::get('role') === 'analis' && Session::get('role_group') === 'mikro' || Session::get('role_group') === 'makro')
@@ -108,6 +113,11 @@
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{url('analis/monitoring/blending/menu')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Monitoring Turun Blending</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('analis/productionbatch/scan')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Scan</span>
                     </a>
                 </li>
                 @endif

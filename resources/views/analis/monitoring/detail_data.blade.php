@@ -80,13 +80,12 @@
                                     <button class="btn btn-sm btn-primary btn-lihat" data-id="{{ $data->id }}">
                                         <i class="fas fa-eye"></i> Lihat Data
                                     </button>
-                                    @if (($data->disposition) < 3) 
-                                    <button class="btn btn-sm btn-success btn-input" data-id="{{ $data->id }}">
+                                    @if (($data->data_count) < 3) <button class="btn btn-sm btn-success btn-input" data-id="{{ $data->id }}">
                                         <i class="fas fa-edit"></i> Input Data
                                         </button>
-                                     @else
-                                     <span class="text-muted"></span>
-                                    @endif
+                                        @else
+                                        <span class="text-muted"></span>
+                                        @endif
                                 </td>
                                 <td>
                                     @if (is_null($data->disposition))

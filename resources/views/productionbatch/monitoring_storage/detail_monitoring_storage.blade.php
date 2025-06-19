@@ -318,8 +318,8 @@
 
 
 <script>
-    const allBatches = JSON.parse('{!! addslashes(json_encode($batchGroups)) !!}');
-    const validGgasBatches = JSON.parse('{!! addslashes(json_encode($batchGroups)) !!}');
+    const allBatches = JSON.parse('{!! addslashes(json_encode($filteredBatchGroups)) !!}');
+    const validGgasBatches = JSON.parse('{!! addslashes(json_encode($filteredBatchGroups)) !!}');
 
     // Isi select option hanya dengan batch yang valid
     function populateBatchOptions() {
@@ -330,7 +330,7 @@
         //    $end.empty();
 
         if (validGgasBatches.length === 0) {
-            $start.append('<option disabled>Semua batch belum lolos GGAS</option>');
+            $start.append('<option disabled>Semua batch belum lolos monitoring turun blending</option>');
             //$end.append('<option disabled>Semua batch belum lolos GGAS</option>');
             return;
         }
@@ -455,6 +455,7 @@
 
                 $.get('{{ url("/analis/productionbatch/processmonitoringstorage/get-jalan-bareng") }}', {
                     production_batch_id: poId,
+                    exclude_batch: batch
                 }, function(batchRes) {
                     console.log(batchRes);
                     batchRes.data.forEach(function(batchItem) {

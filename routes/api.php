@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Foreman\RMPMControllerForeman;
+use App\Http\Controllers\Api\ApiGGAGGASController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('foreman')->group(function () {
@@ -22,4 +23,14 @@ Route::prefix('foreman')->group(function () {
     });
 
     
+});
+
+Route::prefix('ggas/gga')->group(function () {
+    Route::get('/summary', [ApiGGAGGASController::class, 'summarizeParameterPerBatch']);
+    Route::get('/issues', [ApiGGAGGASController::class, 'analyzeQCIssues']);
+    Route::get('/comparison', [ApiGGAGGASController::class, 'compareGgaAndGgasProcesses']);
+    Route::get('/trends', [ApiGGAGGASController::class, 'trackParameterTrendsOverTime']);
+    Route::get('/variant-dissolver', [ApiGGAGGASController::class, 'analyzeVariantAndDissolverPerformance']);
+    Route::get('/success-rate', [ApiGGAGGASController::class, 'evaluateBatchSuccessRate']);
+
 });
