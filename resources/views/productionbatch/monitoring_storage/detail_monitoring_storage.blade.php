@@ -112,7 +112,10 @@
                                 <nav>
                                     <ul class="nav nav-tabs nav-tabs-custom nav-success" id="nav-tab" role="tablist">
                                         <li class="nav-item">
-                                            <a class="nav-link active" id="nav-speci-tab" data-bs-toggle="tab" href="#nav-speci" role="tab" aria-controls="nav-speci" aria-selected="true">Blending Makro</a>
+                                            <a class="nav-link active" id="nav-speci-tab" data-bs-toggle="tab" href="#nav-speci" role="tab" aria-controls="nav-speci" aria-selected="true">Monitoring Makro</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="nav-detail-tab" data-bs-toggle="tab" href="#nav-detail" role="tab" aria-controls="nav-detail" aria-selected="false">Monitoring Mikro</a>
                                         </li>
                                     </ul>
                                 </nav>
@@ -159,7 +162,7 @@
                                                                             <div style="display: inline-block;">
                                                                                 <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('analis/monitoring/blending/detail/data/id/' . $blending->id), 'QRCODE') }}" alt="QR Code">
                                                                             </div>
-                                                                            <p>Monitoring Blending/{{ $productionBatch->po_number }}/{{ $productionBatch->production_date }}/{{ $blending->batch_range }}</p>
+                                                                            <p>Monitoring Storage Makro/{{ $productionBatch->po_number }}/{{ $productionBatch->production_date }}/{{ $blending->batch_range }}</p>
                                                                         </div>
                                                                         <div class="modal-footer justify-content-center py-2">
                                                                             <button onclick="printQR('qrPrintArea{{ $blending->id }}')" class="btn btn-sm btn-success">Print</button>
@@ -200,6 +203,93 @@
 
                                         </div>
                                     </div>
+
+                                    <div class="tab-pane fade" id="nav-detail" role="tabpanel" aria-labelledby="nav-detail-tab">
+                                        <div class="table-responsive">
+
+                                            @if($productionBatch->MonitoringStorageMikro->count() > 0)
+                                            <table class="table mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Batch Range</th>
+                                                        <th>QR Code (URL)</th>
+                                                        <th>Disposisi</th>
+                                                        <th>Keterangan</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($productionBatch->MonitoringStorage as $monitoring)
+                                                    <tr>
+                                                        <td>{{ $monitoring->batch_range }}
+                                                            @if($monitoring->has_relation == true)
+                                                            <span class="badge bg-info text-dark ms-2">
+                                                                Merge {{ $monitoring->related_batches }} {{$monitoring->additional_batches}}
+
+                                                            </span>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            <!-- Tombol untuk buka modal -->
+                                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#qrcode{{ $monitoring->id }}">
+                                                                QR Code {{ $monitoring->id }}
+                                                            </button>
+
+                                                            <!-- Modal Besar -->
+                                                            <div class="modal fade" id="qrcode{{ $monitoring->id }}" tabindex="-1" aria-labelledby="qrcodeLabel{{ $monitoring->id }}" aria-hidden="true">
+                                                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header py-2">
+                                                                            <h5 class="modal-title" id="qrcodeLabel{{ $monitoring->id }}">QR Code - Makro</h5>
+                                                                            <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                        </div>
+                                                                        <div class="modal-body text-center" id="qrPrintArea{{ $monitoring->id }}">
+                                                                            <div style="display: inline-block;">
+                                                                                <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('analis/monitoring/blending/detail/data/id/' . $monitoring->id), 'QRCODE') }}" alt="QR Code">
+                                                                            </div>
+                                                                            <p>Monitoring Storage Mikro/{{ $productionBatch->po_number }}/{{ $productionBatch->production_date }}/{{ $monitoring->batch_range }}</p>
+                                                                        </div>
+                                                                        <div class="modal-footer justify-content-center py-2">
+                                                                            <button onclick="printQR('qrPrintArea{{ $monitoring->id }}')" class="btn btn-sm btn-success">Print</button>
+                                                                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            {{ $monitoring->disposition ?? '-' }}
+                                                            @if(in_array($monitoring->disposition, ['Adjustment', 'Resampling','Leveling','Jalan Bareng']) && $monitoring->revisi == null && $monitoring->not_standar == true )
+                                                            <button class="btn btn-sm btn-warning generate-revisi-btn" data-id="{{ $monitoring->id }}" data-batch="{{ $monitoring->batch_range }}" data-po="{{ $monitoring->production_batch_id }}" data-disposition="{{ $monitoring->disposition }}">
+                                                                ❗
+                                                            </button>
+
+                                                            @else
+
+                                                            @endif
+                                                        </td>
+                                                        <td>
+
+                                                            @if($monitoring->revisi != null)
+                                                            Revisi Ke-{{ $monitoring->revisi }}
+                                                            @else
+                                                            -
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                            @else
+                                            <p class="text-muted">Belum ada data Monitoring.</p>
+                                            @endif
+
+
+
+                                        </div>
+                                    </div>
+
+
+
                                 </div>
 
 

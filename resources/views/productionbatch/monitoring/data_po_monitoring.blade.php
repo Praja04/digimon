@@ -35,7 +35,7 @@
                     <div class="row g-3">
                         <div class="col-xxl-5 col-sm-6">
                             <div class="search-box">
-                                <input type="text" class="form-control search" placeholder="Search for order ID, customer, order status or something...">
+                                <input type="text" class="form-control search" id="searchInput" placeholder="Search...">
                                 <i class="ri-search-line search-icon"></i>
                             </div>
                         </div>
@@ -98,13 +98,7 @@
                     </div>
                     <div class="d-flex justify-content-end">
                         <div class="pagination-wrap hstack gap-2">
-                            <a class="page-item pagination-prev disabled" href="#">
-                                Previous
-                            </a>
-                            <ul class="pagination listjs-pagination mb-0"></ul>
-                            <a class="page-item pagination-next" href="#">
-                                Next
-                            </a>
+                            <ul id="pagination" class="pagination listjs-pagination mb-0"></ul>
                         </div>
                     </div>
                 </div>

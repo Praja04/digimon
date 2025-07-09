@@ -87,7 +87,22 @@
                             @foreach ($filteredBlendingAwal as $item)
                             <tr>
                                 <td>{{ $item->po_number }}</td>
-                                <td>{{ $item->batch_range }}</td>
+                                <td>
+                                    @if($item->revisi != null)
+                                    {{ $item->batch_range }} ❗
+                                    @else
+                                    {{ $item->batch_range }}
+                                    @endif
+
+                                    @if($item->additional_batch_info)
+
+                                    @foreach($item->additional_batch_info as $relasi)
+                                    <span class="badge bg-info">{{ $relasi->batch }}</span>
+                                    @endforeach
+                                    @else
+
+                                    @endif
+                                </td>
                                 <td>{{ $item->nomor_blending }}</td>
                                 <td>{{ $item->volume }}</td>
                                 <td>{{ $item->brix ?? '-'}}</td>

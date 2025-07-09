@@ -22,14 +22,7 @@
 <!-- end page title -->
 
 
-<div class="card mb-4">
-    <div class="card-header">
-        <h5 class="card-title">Ringkasan Disposisi</h5>
-    </div>
-    <div class="card-body">
-        <canvas id="disposisiChart" height="100"></canvas>
-    </div>
-</div>
+
 
 <div class="row">
     <div class="col-lg-12">
@@ -38,7 +31,7 @@
                 <div class="row g-4 align-items-center">
                     <div class="col-sm-3">
                         <div class="search-box">
-                            <input type="text" class="form-control search" placeholder="Search for..." />
+                            <input type="text" class="form-control search" id="searchInput" placeholder="Search for..." />
                             <i class="ri-search-line search-icon"></i>
                         </div>
                     </div>
@@ -47,14 +40,6 @@
                             <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#manualScanModal">
                                 <i class="ri-qr-scan-line"></i> Scan via Alat
                             </button>
-                            <!-- <button type="button" class="btn btn-info" data-bs-toggle="offcanvas" href="#offcanvasExample">
-                                <i class="ri-filter-3-line align-bottom me-1"></i>
-                                Fliters
-                            </button>
-                            <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" data-bs-target="#showModal">
-                                <i class="ri-add-line align-bottom me-1"></i> Input Identitas RM
-                            </button> -->
-
                         </div>
                     </div>
                 </div>
@@ -187,6 +172,7 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        <div id="pagination" class="mt-3 d-flex justify-content-center"></div>
                         <div class="noresult" style="display: none">
                             <div class="text-center">
                                 <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="
@@ -206,17 +192,7 @@
                                 </p>
                             </div>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content-end mt-3">
-                        <div class="pagination-wrap hstack gap-2">
-                            <a class="page-item pagination-prev disabled" href="#">
-                                Previous
-                            </a>
-                            <ul class="pagination listjs-pagination mb-0"></ul>
-                            <a class="page-item pagination-next" href="#">
-                                Next
-                            </a>
-                        </div>
+
                     </div>
                 </div>
 
@@ -225,7 +201,6 @@
     </div>
     <!--end col-->
 </div>
-{{$dataSummary}}
 <!-- Modal Update Disposisi -->
 
 
@@ -321,60 +296,97 @@
 <!-- Tambahkan ini di <head> atau sebelum </body> -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script>
-    const ctx = document.getElementById('disposisiChart').getContext('2d');
 
-    const disposisiData = @json($dataSummary);
-    const labels = Object.keys(disposisiData);
-    const values = Object.values(disposisiData);
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Jumlah Disposisi',
-                data: values,
-                backgroundColor: [
-                    '#4e73df',
-                    '#1cc88a',
-                    '#36b9cc',
-                    '#f6c23e',
-                    '#e74a3b',
-                    '#858796'
-                ],
-                borderColor: '#4e73df',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `Jumlah: ${context.raw}`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0
-                    }
-                }
-            }
-        }
-    });
-</script>
 
 <script>
     $(document).ready(function() {
+        let rowsPerPage = 10;
+        let $rows = $('#customerTable tbody tr');
+        let $pagination = $('#pagination');
+        let $searchInput = $('#searchInput');
+        let $noResult = $('.noresult');
+        let currentPage = 1;
+
+        // Fungsi tampilkan halaman
+        function displayPage(page, filteredRows) {
+            let start = (page - 1) * rowsPerPage;
+            let end = start + rowsPerPage;
+            $rows.hide();
+
+            filteredRows.slice(start, end).show();
+            currentPage = page;
+            highlightPageButton(page);
+        }
+
+        // Fungsi buat tombol pagination
+        function renderPagination(filteredRows) {
+            $pagination.empty();
+            const pageCount = Math.ceil(filteredRows.length / rowsPerPage);
+
+            if (pageCount <= 1) return;
+
+            for (let i = 1; i <= pageCount; i++) {
+                const activeClass = i === currentPage ? 'active' : '';
+                $pagination.append(`
+                <button class="btn btn-sm btn-outline-primary mx-1 page-link ${activeClass}" data-page="${i}">
+                    ${i}
+                </button>
+                `);
+            }
+        }
+
+
+        // Highlight halaman aktif
+        function highlightPageButton(page) {
+            $pagination.find('.page-link').removeClass('active');
+            $pagination.find(`.page-link[data-page="${page}"]`).addClass('active');
+        }
+
+        // Fungsi filter data dan refresh pagination
+        function applyFilter() {
+            let query = $searchInput.val().toLowerCase();
+            let matchedRows = $rows.filter(function() {
+                return $(this).text().toLowerCase().includes(query);
+            });
+
+            if (matchedRows.length === 0) {
+                $noResult.show();
+                $pagination.empty();
+                $rows.hide();
+            } else {
+                $noResult.hide();
+                renderPagination(matchedRows);
+                displayPage(1, matchedRows);
+            }
+        }
+
+        // Event pencarian
+        $searchInput.on('keyup', function() {
+            applyFilter();
+        });
+
+        // Event klik pagination
+        $pagination.on('click', '.page-link', function() {
+            let page = $(this).data('page');
+            let query = $searchInput.val().toLowerCase();
+            let matchedRows = $rows.filter(function() {
+                return $(this).text().toLowerCase().includes(query);
+            });
+
+            if (page === 'prev' && currentPage > 1) {
+                displayPage(currentPage - 1, matchedRows);
+            } else if (page === 'next' && currentPage < Math.ceil(matchedRows.length / rowsPerPage)) {
+                displayPage(currentPage + 1, matchedRows);
+            } else if (!isNaN(page)) {
+                displayPage(page, matchedRows);
+            }
+        });
+
+        // Inisialisasi tampilan awal
+        applyFilter();
+
+
+
         // Saat tombol edit diklik
         $('.btn-edit-disposisi').on('click', function() {
             const id = $(this).data('id');

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Models\RMPM\IdentitasRM;
 use App\Models\RMPM\DisposisiRm;
+use App\Models\RMPM\SamplingDokumen;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -81,7 +82,7 @@ class RMPMControllerForeman extends Controller
 
     public function list_data($jenis)
     {
-        $identitasList = IdentitasRM::where('jenis_gula', $jenis)->get();
+        $identitasList = IdentitasRM::where('jenis_gula', $jenis)->orderby('tanggal_kedatangan','DESC')->get();
         $identitasIds = $identitasList->pluck('id');
         $dataSummary = [];
 
@@ -449,4 +450,6 @@ class RMPMControllerForeman extends Controller
 
         return response()->json($data->get());
     }
+
+    
 }

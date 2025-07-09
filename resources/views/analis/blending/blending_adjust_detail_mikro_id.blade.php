@@ -8,7 +8,7 @@
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="#">QC</a></li>
-                    <li class="breadcrumb-item active">Blenidng</li>
+                    <li class="breadcrumb-item active">Blending</li>
                 </ol>
             </div>
         </div>

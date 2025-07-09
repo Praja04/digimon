@@ -74,7 +74,23 @@
                             @foreach ($filteredMonitoring as $data)
                             <tr>
                                 <td>{{ $data->po_number }}</td>
-                                <td>{{ $data->batch_range }}</td>
+                                <td>
+                                    @if($data->revisi != null)
+                                    {{ $data->batch_range }} ❗
+
+                                    @else
+                                    {{ $data->batch_range }}
+                                    @endif
+
+                                    @if($data->additional_batch_info)
+
+                                    @foreach($data->additional_batch_info as $relasi)
+                                    <span class="badge bg-info">{{ $relasi->batch }}</span>
+                                    @endforeach
+                                    @else
+
+                                    @endif
+                                </td>
                                 <td>{{ $data->nomor_blending }}</td>
                                 <td>
                                     <button class="btn btn-sm btn-primary btn-lihat" data-id="{{ $data->id }}">

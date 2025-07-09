@@ -35,7 +35,7 @@
                     <div class="row g-3">
                         <div class="col-xxl-5 col-sm-6">
                             <div class="search-box">
-                                <input type="text" class="form-control search" placeholder="Search for order ID, customer, order status or something...">
+                                <input type="text" class="form-control search" id="searchInput" placeholder="Search...">
                                 <i class="ri-search-line search-icon"></i>
                             </div>
                         </div>
@@ -98,13 +98,7 @@
                     </div>
                     <div class="d-flex justify-content-end">
                         <div class="pagination-wrap hstack gap-2">
-                            <a class="page-item pagination-prev disabled" href="#">
-                                Previous
-                            </a>
-                            <ul class="pagination listjs-pagination mb-0"></ul>
-                            <a class="page-item pagination-next" href="#">
-                                Next
-                            </a>
+                            <ul id="pagination" class="pagination listjs-pagination mb-0"></ul>
                         </div>
                     </div>
                 </div>
@@ -172,6 +166,77 @@
 <!--end row-->
 <script>
     $(document).ready(function() {
+        let rowsPerPage = 10;
+        let $rows = $('#orderTable tbody tr');
+        let $pagination = $('#pagination');
+        let $searchInput = $('#searchInput');
+        let $noResult = $('.noresult');
+        let currentPage = 1;
+
+        function displayPage(page, filteredRows) {
+            let start = (page - 1) * rowsPerPage;
+            let end = start + rowsPerPage;
+            $rows.hide();
+            filteredRows.slice(start, end).show();
+            currentPage = page;
+            highlightActivePage(page);
+        }
+
+        function renderPagination(filteredRows) {
+            $pagination.empty();
+            const pageCount = Math.ceil(filteredRows.length / rowsPerPage);
+            if (pageCount <= 1) return;
+
+            for (let i = 1; i <= pageCount; i++) {
+                const isActive = i === currentPage ? 'active' : '';
+                $pagination.append(`
+          <li class="page-item">
+            <a class="page-link ${isActive}" href="#" data-page="${i}">${i}</a>
+          </li>
+        `);
+            }
+        }
+
+        function highlightActivePage(page) {
+            $pagination.find('.page-link').removeClass('active');
+            $pagination.find(`.page-link[data-page="${page}"]`).addClass('active');
+        }
+
+        function applyFilter() {
+            const query = $searchInput.val().toLowerCase();
+            const matchedRows = $rows.filter(function() {
+                return $(this).text().toLowerCase().includes(query);
+            });
+
+            if (matchedRows.length === 0) {
+                $rows.hide();
+                $noResult.show();
+                $pagination.empty();
+            } else {
+                $noResult.hide();
+                renderPagination(matchedRows);
+                displayPage(1, matchedRows);
+            }
+        }
+
+        // Event pagination click
+        $pagination.on('click', '.page-link', function(e) {
+            e.preventDefault();
+            const selectedPage = parseInt($(this).data('page'));
+            const query = $searchInput.val().toLowerCase();
+            const matchedRows = $rows.filter(function() {
+                return $(this).text().toLowerCase().includes(query);
+            });
+            displayPage(selectedPage, matchedRows);
+        });
+
+        // Event pencarian
+        $searchInput.on('keyup', function() {
+            applyFilter();
+        });
+
+        // Inisialisasi awal
+        applyFilter();
 
 
         let editId = null;

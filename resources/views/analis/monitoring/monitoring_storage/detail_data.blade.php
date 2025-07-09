@@ -64,7 +64,7 @@
                     <table class="table align-middle table-nowrap mb-0 text-center" id="tasksTable">
                         <thead class="table-light text-muted">
                             <tr>
-                                <th>Nomor PO</th>
+
                                 <th>Batch Range</th>
                                 <th>No Blending</th>
                                 <th>Volume</th>
@@ -84,10 +84,25 @@
                             </tr>
                         </thead>
                         <tbody class="list form-check-all">
-                            @foreach ($filteredMonitoringStorage as $item)
+                            @foreach ($productionBatch->MonitoringStorage as $item)
                             <tr>
-                                <td>{{ $item->po_number }}</td>
-                                <td>{{ $item->batch_range }}</td>
+                                <td>
+                                    @if($item->revisi != null)
+                                    {{ $item->batch_range }} ❗
+                                   
+                                    @else
+                                    {{ $item->batch_range }}
+                                    @endif
+
+                                    @if($item->additional_batch_info)
+
+                                    @foreach($item->additional_batch_info as $relasi)
+                                    <span class="badge bg-info">{{ $relasi->batch }}</span>
+                                    @endforeach
+                                    @else
+
+                                    @endif
+                                </td>
                                 <td>{{ $item->nomor_blending }}</td>
                                 <td>{{ $item->volume }}</td>
                                 <td>{{ $item->brix ?? '-'}}</td>
@@ -174,19 +189,14 @@
                                                         <option value="Resampling">Resampling</option>
                                                         <option value="Reject">Reject</option>
                                                         <option value="Repro">Repro</option>
-                                                        <option value="Adjustment">Adjustment</option>
+                                                        <option value="Hold">Hold</option>
                                                         <option value="Jalan Bareng">Jalan Bareng</option>
-                                                        <option value="Leveling">Leveling</option>
+                                                      
                                                     </select>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Remarks</label>
                                                     <textarea name="disposition_remarks" class="form-control" rows="2" placeholder="Isi remarks jika diperlukan..."></textarea>
-                                                </div>
-
-                                                <div class="mb-3 d-none adjustment-qty-wrapper">
-                                                    <label class="form-label">Adjustment Qty</label>
-                                                    <input type="number" name="adjustment_qty" class="form-control adjustment-qty">
                                                 </div>
                                             </div>
                                             <div class="modal-footer">

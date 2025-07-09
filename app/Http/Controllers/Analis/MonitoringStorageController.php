@@ -22,43 +22,55 @@ class MonitoringStorageController extends Controller
         return view('analis.monitoring.monitoring_storage.monitoring_storage', compact('productionBatches'));
     }
 
+    public function Monitoring_Storage_data_mikro()
+    {
+
+        $productionBatches = ProductionBatch::with('MonitoringStorageMikro')->has('MonitoringStorageMikro')->get();
+
+        return view('analis.monitoring.monitoring_storage.monitoring_storage_mikro', compact('productionBatches'));
+    }
+
 
     public function Monitoring_Storage_detail($id)
     {
-        // $productionBatch = ProductionBatch::with([
-        //     'BlendingAwal.additionalBatches'
-        // ])->findOrFail($id);
+        
+        $productionBatch = ProductionBatch::findOrFail($id);
+
+        foreach ($productionBatch->MonitoringStorage as $data) {
+            // Tambahkan properti custom 'additional_batch_info' ke setiap data
+            $data->additional_batch_info = $data->additionalBatches->isNotEmpty()
+            ? $data->additionalBatches
+                : null;
+
+            $data->po_number = $productionBatch->po_number;
+        }
+    //    return response()->json($productionBatch->MonitoringStorage);
+        return view('analis.monitoring.monitoring_storage.detail_data', [
+            'productionBatch' => $productionBatch,
+            'filteredMonitoringStorage' => $productionBatch->MonitoringStorage
+        ]);
+    }
+
+    public function Monitoring_Storage_detail_mikro($id)
+    {
+
         $productionBatch = ProductionBatch::findOrFail($id);
 
         // Kelompokkan berdasarkan batch_range
-        $grouped = $productionBatch->MonitoringStorage->groupBy('batch_range');
+        foreach ($productionBatch->MonitoringStorageMikro as $data) {
 
-        $filtered = collect();
 
-        foreach ($grouped as $batchRange => $items) {
-            // Prioritaskan yang disposition-nya 'Release' atau 'Release Bersyarat'
-            $preferred = $items->first(function ($item) {
-                return in_array($item->disposition, ['Release', 'Release Bersyarat']);
-            });
-
-            // Jika tidak ada, ambil yang pertama saja sebagai fallback
-            $selected = $preferred ?: $items->first();
-
-            // Tambahkan additional_batch_info dan po_number
-            // $selected->additional_batch_info = $selected->additionalBatches->isNotEmpty()
-            //     ? $selected->additionalBatches
-            //     : null;
-            $selected->po_number = $productionBatch->po_number;
-
-            $filtered->push($selected);
+            $data->po_number = $productionBatch->po_number;
         }
 
-       // return response()->json($filtered->values());
-        return view('analis.monitoring.monitoring_storage.detail_data', [
+
+        // return response()->json($filtered->values());
+        return view('analis.monitoring.monitoring_storage.detail_data_mikro', [
             'productionBatch' => $productionBatch,
-            'filteredMonitoringStorage' => $filtered->values()
+            'filteredMonitoringStorage' => $productionBatch
         ]);
     }
+
 
     public function Monitoring_Storage_detail_id($id)
     {
@@ -67,16 +79,14 @@ class MonitoringStorageController extends Controller
         return view('analis.monitoring.monitoring_storage.analisis_data_detail_id', compact('data'));
     }
 
-    public function Monitoring_detail_mikro($id)
+    public function Monitoring_Storage_detail_mikro_id($id)
     {
-        $productionBatch = ProductionBatch::with('MonitoringStorageMikro')->findOrFail($id);
 
-        return response()->json($productionBatch);
-        // return view('analis.blending.blending_adjust_detail_mikro', [
-        //     'productionBatch' => $productionBatch,
-        // ]);
+        $data = MonitoringStorageModel::find($id);
+        return view('analis.monitoring.monitoring_storage.analisis_data_detail_mikro_id', compact('data'));
     }
 
+ 
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -145,7 +155,7 @@ class MonitoringStorageController extends Controller
             'organo' => 'required|string|max:20',
             'endapan' => 'required|string|max:20',
             'warna' => 'required|string|max:20',
-            'disposition' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment,Jalan Bareng,Leveling',
+            'disposition' => 'required',
             'disposition_remarks' => 'nullable|string|max:255',
             'adjustment_qty' => 'nullable|integer|min:1',
         ], [
@@ -257,9 +267,9 @@ class MonitoringStorageController extends Controller
             ], 422);
         }
 
-        $blending = MonitoringStorageMikroModel::findOrFail($id);
+        $data = MonitoringStorageMikroModel::findOrFail($id);
         KonfirmasiMonitoringStorageMikroModel::create([
-            'blending_after_adjust_mikro_id' => $blending->id, // Ambil ID dari blending yang baru diupdate
+            'monitoring_storage_mikro_id' => $data->id, // Ambil ID dari blending yang baru diupdate
             'nama_analis' => $request->nama_analis,
             'shift' => $request->shift,
         ]);
@@ -271,7 +281,7 @@ class MonitoringStorageController extends Controller
         ];
 
 
-        $blending->update($dataUpdate);
+        $data->update($dataUpdate);
 
         return response()->json([
             'success' => true,

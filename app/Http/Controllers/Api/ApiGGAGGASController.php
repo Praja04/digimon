@@ -8,6 +8,7 @@ use App\Models\ProductionBatch;
 use App\Models\GgaProcess;
 use App\Models\GgasProcess;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class ApiGGAGGASController extends Controller
 {
@@ -225,4 +226,86 @@ class ApiGGAGGASController extends Controller
             ]
         ]);
     }
+
+
+    ///dipakaii
+    public function analisaGGAGGAS(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $startDate = $startDate ? Carbon::parse($startDate)->startOfDay() : Carbon::now()->startOfDay();
+        $endDate = $endDate ? Carbon::parse($endDate)->endOfDay() : Carbon::now()->endOfDay();
+
+        $ggaData = GgaProcess::with(['productionBatch:id,po_number,variant'])
+        ->select('id', 'batch_number', 'brix', 'nacl', 'production_batch_id', 'created_at')
+        ->whereNotNull('brix')
+            ->whereNotNull('nacl')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('created_at')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'batch_number' => $item->batch_number,
+                    'brix' => $item->brix,
+                    'nacl' => $item->nacl,
+                    'production_batch_id' => $item->production_batch_id,
+                    'po_number' => optional($item->productionBatch)->po_number,
+                    'variant' => optional($item->productionBatch)->variant,
+                ];
+            });
+
+        $ggasData = GgasProcess::with(['productionBatch:id,po_number,variant'])
+        ->select('id', 'batch_number', 'brix', 'nacl', 'production_batch_id', 'created_at')
+        ->whereNotNull('brix')
+            ->whereNotNull('nacl')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('created_at')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'batch_number' => $item->batch_number,
+                    'brix' => $item->brix,
+                    'nacl' => $item->nacl,
+                    'production_batch_id' => $item->production_batch_id,
+                    'po_number' => optional($item->productionBatch)->po_number,
+                    'variant' => optional($item->productionBatch)->variant,
+                ];
+            });
+
+        return response()->json([
+            'gga' => $ggaData,
+            'ggas' => $ggasData,
+        ]);
+    }
+
+    public function analisaDisposisi(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $startDate = $startDate ? Carbon::parse($startDate)->startOfDay() : Carbon::now()->startOfDay();
+        $endDate = $endDate ? Carbon::parse($endDate)->endOfDay() : Carbon::now()->endOfDay();
+
+        // GGA analysis
+        $ggaDispositions = GgaProcess::whereNotNull('disposition')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->get()
+            ->groupBy('disposition')
+            ->map(fn ($group) => $group->count());
+
+        // GGAS analysis
+        $ggasDispositions = GgasProcess::whereNotNull('disposition')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->get()
+            ->groupBy('disposition')
+            ->map(fn ($group) => $group->count());
+
+        return response()->json([
+            'gga' => $ggaDispositions,
+            'ggas' => $ggasDispositions,
+        ]);
+    }
+
+
 }

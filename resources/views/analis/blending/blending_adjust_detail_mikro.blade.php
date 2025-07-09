@@ -71,7 +71,6 @@
                                 <th>EB</th>
                                 <th>TPC</th>
                                 <th>YM</th>
-                                <th>Keterangan</th>
                                 <th>Action</th>
                                 <th>Hasil</th>
                             </tr>
@@ -87,7 +86,6 @@
                                 <td>{{ $blending->eb }}</td>
                                 <td>{{ $blending->tpc }}</td>
                                 <td>{{ $blending->ym }}</td>
-                                <td>{{ $productionBatch->description }}</td>
                                 <td>
                                     @if (is_null($blending->ym))
                                     <button class="btn btn-sm btn-primary open-blending-modal" data-id="{{ $blending->id }}">Input Analisa Blending After Adjust</button>

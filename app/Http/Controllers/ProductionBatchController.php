@@ -351,7 +351,7 @@ class ProductionBatchController extends Controller
         $productionBatch = ProductionBatch::with(['BlendingAwal' => function ($query) {
             $query->with('additionalBatches');
         }])->findOrFail($id);
-       
+
         $batches = $productionBatch->batch_range_array; // e.g. [1, 2, 3, 4, ...]
 
         // Hanya ambil disposisi tertentu dari GGAS
@@ -716,77 +716,78 @@ class ProductionBatchController extends Controller
     //Blending After Adjust
 
 
-  
+
     public function show_blending_after_adjust($id)
-{
-    $productionBatch = ProductionBatch::with([
-        'blendingAfterAdjust' => fn($query) => $query->with('additionalBatches')
-    ])->findOrFail($id);
+    {
+        $productionBatch = ProductionBatch::with([
+            'blendingAfterAdjust' => fn ($query) => $query->with('additionalBatches')
+        ])->findOrFail($id);
 
-    $validDispositions = ['Release', 'Release Bersyarat'];
+        $validDispositions = ['Release', 'Release Bersyarat'];
 
-    $all = BlendingAwalModel::where('production_batch_id', $id)
-        ->whereIn('disposition', $validDispositions)
-        ->get();
+        $all = BlendingAwalModel::where('production_batch_id', $id)
+            ->whereIn('disposition', $validDispositions)
+            ->get();
 
-    $grouped = $all->groupBy('batch_range');
-    $batchGroups = [];
+        $grouped = $all->groupBy('batch_range');
+        $batchGroups = [];
 
-    foreach ($grouped as $batchRange => $items) {
-        $chosen = $items->sortByDesc(fn($item) =>
-            is_numeric($item->revisi) ? (int) $item->revisi : 0
-        )->first();
+        foreach ($grouped as $batchRange => $items) {
+            $chosen = $items->sortByDesc(
+                fn ($item) =>
+                is_numeric($item->revisi) ? (int) $item->revisi : 0
+            )->first();
 
-        $fullRange = $chosen->batch_range;
+            $fullRange = $chosen->batch_range;
 
-        $relatedBatches = DB::table('blending_batch_relations')
-            ->where('blending_awal_id', $chosen->id)
-            ->pluck('batch'); // contoh: ['8-9', '12-13']
+            $relatedBatches = DB::table('blending_batch_relations')
+                ->where('blending_awal_id', $chosen->id)
+                ->pluck('batch'); // contoh: ['8-9', '12-13']
 
-        foreach ($relatedBatches as $relRange) {
-            $fullRange .= '-' . $relRange;
+            foreach ($relatedBatches as $relRange) {
+                $fullRange .= '-' . $relRange;
+            }
+
+            $batchGroups[] = $fullRange;
         }
 
-        $batchGroups[] = $fullRange;
-    }
-
-    // Filter supaya tidak ada range yang merupakan bagian dari yang lain
-    $filteredBatchGroups = [];
-    foreach ($batchGroups as $i => $range) {
-        $isSubset = false;
-        foreach ($batchGroups as $j => $otherRange) {
-            if ($i !== $j && strpos($otherRange, $range) !== false) {
-                $isSubset = true;
-                break;
+        // Filter supaya tidak ada range yang merupakan bagian dari yang lain
+        $filteredBatchGroups = [];
+        foreach ($batchGroups as $i => $range) {
+            $isSubset = false;
+            foreach ($batchGroups as $j => $otherRange) {
+                if ($i !== $j && strpos($otherRange, $range) !== false) {
+                    $isSubset = true;
+                    break;
+                }
+            }
+            if (!$isSubset) {
+                $filteredBatchGroups[] = $range;
             }
         }
-        if (!$isSubset) {
-            $filteredBatchGroups[] = $range;
+
+        foreach ($productionBatch->blendingAfterAdjust as $data) {
+            $data->has_relation = $data->additionalBatches && $data->additionalBatches->isNotEmpty();
+            $data->related_batches = $data->has_relation
+                ? $data->additionalBatches->pluck('batch')->implode(', ')
+                : null;
+
+            foreach ($data->additionalBatches as $addBatch) {
+                $po = ProductionBatch::find($addBatch->production_batch_id);
+                $addBatch->po_number = $po->po_number ?? null;
+            }
         }
-    }
 
-    foreach ($productionBatch->blendingAfterAdjust as $data) {
-        $data->has_relation = $data->additionalBatches && $data->additionalBatches->isNotEmpty();
-        $data->related_batches = $data->has_relation
-            ? $data->additionalBatches->pluck('batch')->implode(', ')
-            : null;
-
-        foreach ($data->additionalBatches as $addBatch) {
-            $po = ProductionBatch::find($addBatch->production_batch_id);
-            $addBatch->po_number = $po->po_number ?? null;
-        }
-    }
-
-    // return response()->json([
-    //     'productionBatch' => $productionBatch,
-    //     'batchGroups' => $filteredBatchGroups,
-    // ]);
-     return view('productionbatch.detail_blending_after_adjust', compact(
+        // return response()->json([
+        //     'productionBatch' => $productionBatch,
+        //     'batchGroups' => $filteredBatchGroups,
+        // ]);
+        return view('productionbatch.detail_blending_after_adjust', compact(
             'productionBatch',
             'filteredBatchGroups',
 
         ));
-}
+    }
 
 
     public function getLastRevisiBlendingAdjust(Request $request)
@@ -904,8 +905,8 @@ class ProductionBatchController extends Controller
             })->toArray();
 
             $usedInRelation = DB::table('blending_after_adjust_batch_relations')
-            ->join('blending_adjust', 'blending_after_adjust_batch_relations.blending_after_ adjust_id', '=', 'blending_adjust.id')
-            ->where('blending_adjust.production_batch_id', $po->id)
+                ->join('blending_adjust', 'blending_after_adjust_batch_relations.blending_after_ adjust_id', '=', 'blending_adjust.id')
+                ->where('blending_adjust.production_batch_id', $po->id)
                 ->pluck('batch')
                 ->map(fn ($b) => (int) $b)
                 ->toArray();
@@ -1150,14 +1151,14 @@ class ProductionBatchController extends Controller
 
         foreach ($grouped as $batchRange => $items) {
             $chosen = $items->sortByDesc(
-                    fn ($item) =>
-                    is_numeric($item->revisi) ? (int)$item->revisi : 0
-                )->first();
+                fn ($item) =>
+                is_numeric($item->revisi) ? (int)$item->revisi : 0
+            )->first();
 
             $fullRange = $chosen->batch_range;
 
             $relatedBatches = DB::table('blending_after_adjust_batch_relations')
-            ->where('blending_after_adjust_id', $chosen->id)
+                ->where('blending_after_adjust_id', $chosen->id)
                 ->pluck('batch');
 
             foreach ($relatedBatches as $relRange) {
@@ -1172,7 +1173,8 @@ class ProductionBatchController extends Controller
         foreach ($rawBatchGroups as $i => $range) {
             $isSubset = false;
             foreach ($rawBatchGroups as $j => $compare) {
-                if ($i !== $j && strpos($compare, $range) !== false
+                if (
+                    $i !== $j && strpos($compare, $range) !== false
                 ) {
                     $isSubset = true;
                     break;
@@ -1199,7 +1201,6 @@ class ProductionBatchController extends Controller
             'productionBatch',
             'filteredBatchGroups'
         ));
-        
     }
 
     public function getLastRevisiMonitoring(Request $request)
@@ -1469,7 +1470,8 @@ class ProductionBatchController extends Controller
             'MonitoringTurunBlending' => fn ($query) => $query->with('additionalBatches')
         ])->findOrFail($id);
 
-        $validDispositions = ['Release', 'Release Bersyarat'
+        $validDispositions = [
+            'Release', 'Release Bersyarat'
         ];
 
         $all = MonitoringTurunBlending::where('production_batch_id', $id)
@@ -1481,9 +1483,9 @@ class ProductionBatchController extends Controller
 
         foreach ($grouped as $batchRange => $items) {
             $chosen = $items->sortByDesc(
-                    fn ($item) =>
-                    is_numeric($item->revisi) ? (int)$item->revisi : 0
-                )->first();
+                fn ($item) =>
+                is_numeric($item->revisi) ? (int)$item->revisi : 0
+            )->first();
 
             $fullRange = $chosen->batch_range;
 
@@ -1725,6 +1727,16 @@ class ProductionBatchController extends Controller
             'is_adjustment' => false,
             'revisi' => $validated['revisi'],
             'not_standar' => false
+        ]);
+        $range = trim($validated['batch_range'] ?? '');
+        $additional = trim($validated['additional_batch'] ?? '');
+        $batchmikronew = $range . "-" . $additional;
+        MonitoringStorageMikroModel::create([
+            'production_batch_id' => $validated['production_batch_id'],
+            'batch_range' => $batchmikronew,
+            'nomor_blending' => $request->no_blending,
+            'volume_blending' => $request->volume,
+            'revisi' => true,
         ]);
 
         // Simpan batch tambahan hanya jika disposisi Jalan Bareng atau Leveling dan ada input tambahan_batch

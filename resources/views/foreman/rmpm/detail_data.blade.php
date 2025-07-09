@@ -221,17 +221,23 @@
                                             <th>Identitas Kemasan</th>
                                             <th>Logo Halal</th>
                                             <th>Kesuaian Matriks Bahan Baku</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody class="list form-check-all">
                                         @if ($data_dokumen)
                                         <tr>
                                             <td>{{ $data_dokumen->coa ?? 'belum input'}}</td>
-                                            <td>{{ $data_dokumen->surat_jalan_vendor ?? 'belum input'}}</td>
+                                            <td>{{ $data_dokumen->suratjalan_vendor ?? 'belum input'}}</td>
                                             <td>{{ $data_dokumen->packing_list ?? 'belum input'}}</td>
                                             <td>{{ $data_dokumen->identitas_kemasan ?? 'belum input'}}</td>
                                             <td>{{ $data_dokumen->logo_halal ?? 'belum input'}}</td>
                                             <td>{{ $data_dokumen->kesesuaian_matriks_bahan ?? 'belum input'}}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal">
+                                                    Edit
+                                                </button>
+                                            </td>
                                         </tr>
                                         @else
                                         <tr>
@@ -242,7 +248,40 @@
                                 </table>
                                 <!--end table-->
                             </div>
-
+                            <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <form id="editDokumenForm">
+                                        <meta name="csrf-token" content="{{ csrf_token() }}">
+                                        <input type="hidden" name="id" value="{{ $data_dokumen->id }}">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editModalLabel">Edit Dokumen</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                @foreach ([
+                                                'coa' => 'a. CoA',
+                                                'suratjalan_vendor' => 'b. Surat Jalan Vendor',
+                                                'packing_list' => 'c. Packing List',
+                                                'identitas_kemasan' => 'd. Identitas di Kemasan',
+                                                'logo_halal' => 'e. Logo Halal di Kemasan',
+                                                'kesesuaian_matriks_bahan' => 'f. Kesesuaian dengan Matriks Bahan Baku'
+                                                ] as $field => $label)
+                                                <div class="mb-3">
+                                                    <label class="form-label">{{ $label }}</label><br>
+                                                    <label><input type="radio" name="{{ $field }}" value="yes" {{ $data_dokumen->$field == 'yes' ? 'checked' : '' }}> Iya</label>
+                                                    <label><input type="radio" name="{{ $field }}" value="no" {{ $data_dokumen->$field == 'no' ? 'checked' : '' }}> Tidak</label>
+                                                </div>
+                                                @endforeach
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-success">Simpan</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                         <!--end card-body-->
                     </div>
@@ -269,6 +308,7 @@
                                             <th>Tidak Cacat</th>
                                             <th>Segel</th>
                                             <th>Berbau</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody class="list form-check-all">
@@ -280,6 +320,11 @@
                                             <td>{{ $data_mobil->cacat ?? 'belum input'}}</td>
                                             <td>{{ $data_mobil->segel ?? 'belum input'}}</td>
                                             <td>{{ $data_mobil->berbau ?? 'belum input'}}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModalMobil">
+                                                    Edit
+                                                </button>
+                                            </td>
                                         </tr>
                                         @else
                                         <tr>
@@ -289,6 +334,41 @@
                                     </tbody>
                                 </table>
                                 <!--end table-->
+
+                                <div class="modal fade" id="editModalMobil" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <form id="editMobilForm">
+                                            <meta name="csrf-token" content="{{ csrf_token() }}">
+                                            <input type="hidden" name="id" value="{{ $data_mobil->id }}">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editModalLabel">Edit Dokumen</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    @foreach ([
+                                                    'bersih' => 'a. Bersih',
+                                                    'kering' => 'b. Kering',
+                                                    'benda_asing' => 'c. Benda Asing',
+                                                    'cacat' => 'd. Cacat',
+                                                    'segel' => 'e. Segel',
+                                                    'berbau' => 'f. Berbau'
+                                                    ] as $field => $label)
+                                                    <div class="mb-3">
+                                                        <label class="form-label">{{ $label }}</label><br>
+                                                        <label><input type="radio" name="{{ $field }}" value="yes" {{ $data_mobil->$field == 'yes' ? 'checked' : '' }}> Iya</label>
+                                                        <label><input type="radio" name="{{ $field }}" value="no" {{ $data_mobil->$field == 'no' ? 'checked' : '' }}> Tidak</label>
+                                                    </div>
+                                                    @endforeach
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-success">Simpan</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
@@ -319,6 +399,7 @@
                                             <th>berair</th>
                                             <th>Basah</th>
                                             <th>Campuran</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody class="list form-check-all">
@@ -331,6 +412,11 @@
                                             <td>{{ $data_kemasan->berair ?? 'belum input'}}</td>
                                             <td>{{ $data_kemasan->basah ?? 'belum input'}}</td>
                                             <td>{{ $data_kemasan->campuran ?? 'belum input'}}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModalKemasan">
+                                                    Edit
+                                                </button>
+                                            </td>
                                         </tr>
                                         @else
                                         <tr>
@@ -339,6 +425,47 @@
                                         @endif
                                     </tbody>
                                 </table>
+                                <div class="modal fade" id="editModalKemasan" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <form id="editKemasanForm">
+                                            <meta name="csrf-token" content="{{ csrf_token() }}">
+                                            <input type="hidden" name="id" value="{{ $data_kemasan->id }}">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editModalLabel">Edit Dokumen</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                                </div>
+
+                                                <div class="modal-body">
+                                                    @foreach ([
+                                                    'kotor' => 'a. Kotor',
+                                                    'rusak' => 'b. Rusak',
+                                                    'sesuai_std' => 'c. Sesuai Standar',
+
+                                                    'berair' => 'd. Berair',
+                                                    'basah' => 'e. Basah',
+                                                    'campuran' => 'f. Campuran'
+                                                    ] as $field => $label)
+                                                    <div class="mb-3">
+                                                        <label class="form-label">{{ $label }}</label><br>
+                                                        <label><input type="radio" name="{{ $field }}" value="yes" {{ $data_kemasan->$field == 'yes' ? 'checked' : '' }}> Iya</label>
+                                                        <label><input type="radio" name="{{ $field }}" value="no" {{ $data_kemasan->$field == 'no' ? 'checked' : '' }}> Tidak</label>
+                                                    </div>
+
+                                                    @endforeach
+                                                    <div class="mb-3">
+                                                        <label class="form-label">d. Lain-lain</label><br>
+                                                        <label><input type="text" class="form-control" name="lain-lain"></label>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-success">Simpan</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                                 <!--end table-->
                             </div>
 
@@ -368,6 +495,7 @@
                                             <th>Campuran</th>
                                             <th>Aroma Sesuai Std</th>
                                             <th>Sesuai Std</th>
+                                            <th>Aksi</th>
 
                                         </tr>
                                     </thead>
@@ -379,6 +507,11 @@
                                             <td>{{ $data_raw->campuran ?? 'belum input' }}</td>
                                             <td>{{ $data_raw->aroma_std ?? 'belum input' }}</td>
                                             <td>{{ $data_raw->sesuai_std ?? 'belum input' }}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModalRaw">
+                                                    Edit
+                                                </button>
+                                            </td>
                                         </tr>
                                         @else
                                         <tr>
@@ -386,6 +519,45 @@
                                         </tr>
                                         @endif
                                     </tbody>
+                                    <div class="modal fade" id="editModalRaw" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <form id="editRawForm">
+                                                <meta name="csrf-token" content="{{ csrf_token() }}">
+                                                <input type="hidden" name="id" value="{{ $data_raw->id }}">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="editModalLabel">Edit Raw</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                                    </div>
+
+                                                    <div class="modal-body">
+                                                        @foreach ([
+                                                        'leleh' => 'a. Leleh',
+                                                        'warna_std' => 'b. Warna Sesuai Standar',
+                                                        'aroma_std' => 'c. Aroma Sesuai Standar',
+                                                        'sesuai_std_raw' => 'd. Sesuai Standar',
+
+                                                        ] as $field => $label)
+                                                        <div class="mb-3">
+                                                            <label class="form-label">{{ $label }}</label><br>
+                                                            <label><input type="radio" name="{{ $field }}" value="yes" {{ $data_raw->$field == 'yes' ? 'checked' : '' }}> Iya</label>
+                                                            <label><input type="radio" name="{{ $field }}" value="no" {{ $data_raw->$field == 'no' ? 'checked' : '' }}> Tidak</label>
+                                                        </div>
+                                                        @endforeach
+                                                        <div class="mb-3">
+                                                            <label class="form-label">e. Campuran</label><br>
+                                                            <label><input type="radio" name="campuran_raw" value="yes"> Iya</label>
+                                                            <label><input type="radio" name="campuran_raw" value="no"> Tidak</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-success">Simpan</button>
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </table>
                                 <!--end table-->
                             </div>
@@ -614,6 +786,11 @@
 <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
 
 <script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
     document.getElementById('downloadBtn').addEventListener('click', function() {
         var element = document.getElementById('demo');
 
@@ -699,6 +876,184 @@
             });
         }).fail(function(xhr) {
             Swal.fire('Gagal', 'Terjadi kesalahan saat mengirim data.', 'error');
+        });
+    });
+
+    $('#editDokumenForm').on('submit', function(e) {
+        e.preventDefault();
+
+        let formData = {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+            _method: 'POST',
+            id: $('input[name="id"]').val(),
+            coa: $('input[name="coa"]:checked').val(),
+            suratjalan_vendor: $('input[name="suratjalan_vendor"]:checked').val(),
+            packing_list: $('input[name="packing_list"]:checked').val(),
+            identitas_kemasan: $('input[name="identitas_kemasan"]:checked').val(),
+            logo_halal: $('input[name="logo_halal"]:checked').val(),
+            kesesuaian_matriks_bahan: $('input[name="kesesuaian_matriks_bahan"]:checked').val()
+        };
+
+        $.ajax({
+            url: "{{url('/foreman/sampling/edit/dokumen')}}/" + formData.id,
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+                $('#editModal').modal('hide');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Data dokumen berhasil diperbarui',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function(xhr) {
+                let msg = 'Terjadi kesalahan saat menyimpan data';
+                if (xhr.responseJSON?.errors) {
+                    msg = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: msg
+                });
+            }
+        });
+    });
+
+    $('#editKemasanForm').on('submit', function(e) {
+        e.preventDefault();
+
+        let formData = {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+            _method: 'POST',
+            id: $('input[name="id"]').val(),
+            coa: $('input[name="coa"]:checked').val(),
+            kotor: $('input[name="kotor"]:checked').val(),
+            rusak: $('input[name="rusak"]:checked').val(),
+            sesuai_std: $('input[name="sesuai_std"]:checked').val(),
+            lain_lain: $('input[name="lain-lain"]').val(),
+            berair: $('input[name="berair"]:checked').val(),
+            basah: $('input[name="basah"]:checked').val(),
+            campuran: $('input[name="campuran"]:checked').val(),
+        };
+
+        $.ajax({
+            url: "{{url('/foreman/sampling/edit/fisik-kemasan')}}/" + formData.id,
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+                $('#editModalKemasan').modal('hide');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Data dokumen berhasil diperbarui',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function(xhr) {
+                let msg = 'Terjadi kesalahan saat menyimpan data';
+                if (xhr.responseJSON?.errors) {
+                    msg = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: msg
+                });
+            }
+        });
+    });
+
+    $('#editMobilForm').on('submit', function(e) {
+        e.preventDefault();
+
+        let formData = {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+            _method: 'POST',
+            id: $('input[name="id"]').val(),
+            bersih: $('input[name="bersih"]:checked').val(),
+            kering: $('input[name="kering"]:checked').val(),
+            benda_asing: $('input[name="benda_asing"]:checked').val(),
+            cacat: $('input[name="cacat"]:checked').val(),
+            segel: $('input[name="segel"]:checked').val(),
+            berbau: $('input[name="berbau"]:checked').val()
+        };
+
+        $.ajax({
+            url: "{{url('/foreman/sampling/edit/kondisi-mobil')}}/" + formData.id,
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+                $('#editModalMobil').modal('hide');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Data dokumen berhasil diperbarui',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function(xhr) {
+                let msg = 'Terjadi kesalahan saat menyimpan data';
+                if (xhr.responseJSON?.errors) {
+                    msg = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: msg
+                });
+            }
+        });
+    });
+
+    $('#editRawForm').on('submit', function(e) {
+        e.preventDefault();
+
+        let formData = {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+            _method: 'POST',
+            id: $('input[name="id"]').val(),
+            leleh: $('input[name="leleh"]:checked').val(),
+            warna_std: $('input[name="warna_std"]:checked').val(),
+            campuran: $('input[name="campuran_raw"]:checked').val(),
+            aroma_std: $('input[name="aroma_std"]:checked').val(),
+            sesuai_std: $('input[name="sesuai_std_raw"]:checked').val(),
+
+        };
+
+        $.ajax({
+            url: "{{url('/foreman/sampling/edit/fisik-raw')}}/" + formData.id,
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+                $('#editModalRaw').modal('hide');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Data dokumen berhasil diperbarui',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function(xhr) {
+                let msg = 'Terjadi kesalahan saat menyimpan data';
+                if (xhr.responseJSON?.errors) {
+                    msg = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: msg
+                });
+            }
         });
     });
 </script>

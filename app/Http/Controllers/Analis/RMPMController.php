@@ -115,43 +115,7 @@ class RMPMController extends Controller
 
 
 
-    // public function storeLongTerm(Request $request)
-    // {
-    //     // Validasi
-    //     $request->validate([
-    //         'id_identitas' => 'required|exists:identitas_rm_master,id',
-    //         'uji_kristal' => 'required',
-    //         'disposisi' => 'required',
-    //         'attachment' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5000',
-    //     ]);
-
-    //     // Cek apakah ada file attachment
-    //     $attachmentPath = null;
-    //     if ($request->hasFile('attachment')) {
-    //         // Generate unique file name
-    //         $filename = 'attachment_' . time() . '_' . uniqid() . '.' . $request->attachment->extension();
-
-    //         // Simpan file di folder public/uploads/attachment_analisa
-    //         $request->file('attachment')->storeAs('uploads/attachment_analisa', $filename, 'public');
-
-    //         // Ambil nama file saja untuk disimpan di database
-    //         $attachmentName = basename($filename);
-    //     }
-
-    //     // Simpan data analisa long term ke database
-    //     AnalisaLongTermGKT::create([
-    //         'id_identitas'    => $request->id_identitas,
-    //         'uji_kristal'     => $request->uji_kristal,
-    //         'disposisi'       => $request->disposisi,
-    //         'attachment'      => $attachmentName,
-    //         'created_by_user' => session('username'),
-    //         'created_at'      => now(),
-    //         'updated_at'      => now(),
-    //     ]);
-
-    //     return response()->json(['message' => 'Berhasil menyimpan data long term'], 201);
-    // }
-
+   
 
 
     public function storeShortTerm(Request $request)

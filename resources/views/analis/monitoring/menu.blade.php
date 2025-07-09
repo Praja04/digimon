@@ -52,7 +52,7 @@
 
 <div class="row mt-4">
 
-    <div class="col-xl-6 col-lg-6">
+    <div class="col-xl-4 col-lg-4">
         <div class="card ribbon-box right overflow-hidden">
             <div class="card-body text-center p-4">
                 <div class="ribbon ribbon-success ribbon-shape trending-ribbon">
@@ -75,12 +75,12 @@
         </div>
     </div>
 
-    <div class="col-xl-6 col-lg-6">
+    <div class="col-xl-4 col-lg-4">
         <div class="card ribbon-box right overflow-hidden">
             <div class="card-body text-center p-4">
                 <div class="ribbon ribbon-success ribbon-shape trending-ribbon">
                     <i class="ri-hand-heart-fill text-white align-bottom"></i>
-                    <span class="trending-ribbon-text">Storage</span>
+                    <span class="trending-ribbon-text">Storage Makro</span>
                 </div>
                 <img src="{{ asset('assets/images/blending_adjust.png' ) }}" alt="gambar" height="100">
                 <h5 class="mb-1 mt-4"><a href="" class="link-primary">Data Monitoring Storage</a></h5>
@@ -94,12 +94,36 @@
                 <div class="mt-4">
                     <div class="mt-4">
                         <a href="{{url('analis/monitoring/storage/data')}}" class="btn btn-light w-100">Lihat Detail</a>
-                    </div> </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <div class="col-xl-4 col-lg-4">
+        <div class="card ribbon-box right overflow-hidden">
+            <div class="card-body text-center p-4">
+                <div class="ribbon ribbon-warning ribbon-shape trending-ribbon">
+                    <i class="ri-hand-heart-fill text-white align-bottom"></i>
+                    <span class="trending-ribbon-text">Storage Mikro</span>
+                </div>
+                <img src="{{ asset('assets/images/blending_adjust.png' ) }}" alt="gambar" height="100">
+                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Data Monitoring Storage</a></h5>
+                <p class="text-muted mb-4">Analisis Monitoring Storage</p>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div id="chart-ggas" data-colors='["--vz-danger"]'></div>
+                    </div>
+                </div>
 
+                <div class="mt-4">
+                    <div class="mt-4">
+                        <a href="{{url('analis/monitoring/storage/data/mikro')}}" class="btn btn-light w-100">Lihat Detail</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 <div class="modal fade" id="comingSoonModal" tabindex="-1" aria-labelledby="comingSoonModalLabel" aria-hidden="true">

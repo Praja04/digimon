@@ -24,23 +24,6 @@
                 @if(Session::get('role') === 'dept_head')
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
 
-                <!-- <li class="nav-item">
-                    <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarDashboards">
-                        <i class="mdi mdi-tools"></i> <span data-key="t-dashboards">Dashboard Eng</span>
-                    </a>
-                    <div class="collapse menu-dropdown" id="sidebarDashboards">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="{{ url('dept_head') }}" class="nav-link" data-key="t-analytics"> Analytics Boiler</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ url('dept_head') }}" class="nav-link" data-key="t-analytics"> Todo List ENG </a>
-                            </li>
-
-                        </ul>
-                    </div>
-                </li> -->
-
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{url('analis/rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">RMPM</span>
@@ -52,13 +35,131 @@
                     </a>
                 </li>
                 @elseif(Session::get('role') === 'supervisor')
-                @elseif(Session::get('role') === 'foreman')
+                <li class="menu-title"><span data-key="t-menu">Dashboard</span></li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#DashboardProses" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="DashboardProses">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-dashboards">Dashboard Makro</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="DashboardProses">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{url('supervisor/ggaggas/dashboard')}}" class="nav-link" data-key="t-analytics">Analisis GGA & GGAS</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{url('supervisor/blending/awal/dashboard')}}" class="nav-link" data-key="t-analytics">Analisis Blending Awal</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{url('supervisor/blending/adjust/dashboard')}}" class="nav-link" data-key="t-analytics">Analisis Blending After Adjust</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{url('supervisor/monitoring/blending/dashboard')}}" class="nav-link" data-key="t-analytics">Analisis Monitoring Turun Blending</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{url('supervisor/monitoring/storage/dashboard')}}" class="nav-link" data-key="t-analytics">Analisis Monitoring Storage</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#Dashboardmikro" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="Dashboardmikro">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-dashboards">Dashboard Mikro</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="Dashboardmikro">
+                        <ul class="nav nav-sm flex-column">
+
+                            <li class="nav-item">
+                                <a href="" class="nav-link" data-key="t-analytics">Analisis Blending After Adjust</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="" class="nav-link" data-key="t-analytics">Analisis Monitoring Storage</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('supervisor/rmpm/dashboard')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Dashboard RMPM</span>
+                    </a>
+                </li>
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
+
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('supervisor/rmpm')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">RMPM</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{url('supervisor/ggaggas/menu')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">GGA & GGAS</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{url('supervisor/blending/menu')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Blending</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{url('supervisor/monitoring/blending/menu')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Monitoring Turun Blending</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('analis/productionbatch/scan')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Scan</span>
+                    </a>
+                </li>
+                @elseif(Session::get('role') === 'foreman')
+                <li class="menu-title"><span data-key="t-menu">Dashboard</span></li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#DashboardProses" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="DashboardProses">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-dashboards">Dashboard Makro</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="DashboardProses">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{url('foreman/ggaggas/dashboard')}}" class="nav-link" data-key="t-analytics">Analisis GGA & GGAS</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{url('foreman/blending/awal/dashboard')}}" class="nav-link" data-key="t-analytics">Analisis Blending Awal</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{url('foreman/blending/adjust/dashboard')}}" class="nav-link" data-key="t-analytics">Analisis Blending After Adjust</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{url('foreman/monitoring/blending/dashboard')}}" class="nav-link" data-key="t-analytics">Analisis Monitoring Turun Blending</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{url('foreman/monitoring/storage/dashboard')}}" class="nav-link" data-key="t-analytics">Analisis Monitoring Storage</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#Dashboardmikro" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="Dashboardmikro">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-dashboards">Dashboard Mikro</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="Dashboardmikro">
+                        <ul class="nav nav-sm flex-column">
+
+                            <li class="nav-item">
+                                <a href="" class="nav-link" data-key="t-analytics">Analisis Blending After Adjust</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="" class="nav-link" data-key="t-analytics">Analisis Monitoring Storage</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ url('foreman/rmpm/dashboard')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Dashboard RMPM</span>
                     </a>
                 </li>
+                <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ url('foreman/rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">RMPM</span>
@@ -70,13 +171,23 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{url('analis/ggaggas/menu')}}">
+                    <a class="nav-link menu-link" href="{{url('foreman/ggaggas/menu')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">GGA & GGAS</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{url('analis/blending/menu')}}">
+                    <a class="nav-link menu-link" href="{{url('foreman/blending/menu')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Blending</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{url('foreman/monitoring/blending/menu')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Monitoring Turun Blending</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('analis/productionbatch/scan')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Scan</span>
                     </a>
                 </li>
                 @elseif(Session::get('role') === 'produksi')

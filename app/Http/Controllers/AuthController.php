@@ -82,10 +82,9 @@ class AuthController extends Controller
             },
             'produksi' => 'productionbatch.menu',
             'foreman' => 'rmpm_foreman.menu',
-            'supervisor' => 'supervisor.dashboard',
+            'supervisor' => 'rmpm_supervisor.menu',
             'dept_head' => 'dept_head.dashboard',
             default => 'dashboard',
         };
     }
-
 }

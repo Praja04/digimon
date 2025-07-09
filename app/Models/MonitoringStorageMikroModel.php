@@ -17,6 +17,7 @@ class MonitoringStorageMikroModel extends Model
         'tpc',
         'ym',
         'hasil',
+        'revisi'
     ];
 }
 
