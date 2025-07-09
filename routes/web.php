@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\analis\BlendingAdjustController;
-use App\Http\Controllers\analis\MonitoringTurunBlendingController;
-use App\Http\Controllers\analis\MonitoringStorageController;
+use App\Http\Controllers\Analis\BlendingAdjustController;
+use App\Http\Controllers\Analis\MonitoringTurunBlendingController;
+use App\Http\Controllers\Analis\MonitoringStorageController;
 use App\Http\Controllers\Analis\GgaGgasController;
 use App\Http\Controllers\Analis\RMPMController;
 use App\Http\Controllers\Analis\SamplingController;
