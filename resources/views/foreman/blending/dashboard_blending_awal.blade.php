@@ -95,7 +95,7 @@
 
         // 🔍 Ambil data blending dan render line chart per parameter
         function fetchBlendingData(startDate = null, endDate = null) {
-            let url = '/api/blending/awal/analysis';
+            let url = "{{url('/api/blending/awal/analysis')}}";
             if (startDate && endDate) {
                 url += `?start_date=${startDate}&end_date=${endDate}`;
             }

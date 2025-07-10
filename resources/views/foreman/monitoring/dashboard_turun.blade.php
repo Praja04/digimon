@@ -95,7 +95,7 @@
 
         // 📈 Load grafik line per parameter dari monitoring_turun_blending
         function loadMonitoringCharts(startDate = null, endDate = null) {
-            let url = '/api/monitoring/turun/analysis';
+            let url = "{{url('/api/monitoring/turun/analysis')}}";
             if (startDate && endDate) {
                 url += `?start_date=${startDate}&end_date=${endDate}`;
             }
