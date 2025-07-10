@@ -51,6 +51,10 @@
                         <input type="text" name="aw" class="form-control" required>
                     </div>
                     <div class="mb-3">
+                        <label class="form-label">pH</label>
+                        <input type="text" name="ph" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">Buih</label>
                         <input type="text" name="buih" class="form-control" required>
                     </div>

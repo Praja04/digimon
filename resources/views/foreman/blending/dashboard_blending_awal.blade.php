@@ -122,7 +122,7 @@
 
         // 📊 Ambil data disposisi dan render bar chart
         function fetchDispositionData(startDate = null, endDate = null) {
-            let url = '/api/blending/awal/disposition-analysis';
+            let url = "{{url('/api/blending/awal/disposition-analysis')}}";
             if (startDate && endDate) {
                 url += `?start_date=${startDate}&end_date=${endDate}`;
             }

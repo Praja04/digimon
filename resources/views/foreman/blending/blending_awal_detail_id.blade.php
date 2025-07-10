@@ -63,6 +63,10 @@
                         <input type="text" name="endapan" class="form-control" required>
                     </div>
                     <div class="mb-3">
+                        <label class="form-label">pH</label>
+                        <input type="text" name="ph" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
                         <label for="warna" class="form-label">Warna</label>
                         <input type="text" name="warna" id="warna" class="form-control" required value="{{ old('warna', $blending->warna) }}">
                     </div>

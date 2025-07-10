@@ -122,7 +122,7 @@
 
         // 📊 Load chart batang untuk disposisi
         function loadDispositionChart(startDate = null, endDate = null) {
-            let url = '/api/monitoring/turun/disposition-analysis';
+            let url = "{{url('/api/monitoring/turun/disposition-analysis')}}";
             if (startDate && endDate) {
                 url += `?start_date=${startDate}&end_date=${endDate}`;
             }

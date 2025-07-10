@@ -95,7 +95,7 @@
 
         // 🔍 Ambil data blending dan render line chart per parameter
         function fetchBlendingData(startDate = null, endDate = null) {
-            let url = '/api/monitoring/storage/analysis';
+            let url = "{{url('/api/monitoring/storage/analysis')}}";
             if (startDate && endDate) {
                 url += `?start_date=${startDate}&end_date=${endDate}`;
             }
@@ -122,7 +122,7 @@
 
         // 📊 Ambil data disposisi dan render bar chart
         function fetchDispositionData(startDate = null, endDate = null) {
-            let url = '/api/monitoring/storage/disposition-analysis';
+            let url = "{{url('/api/monitoring/storage/disposition-analysis')}}";
             if (startDate && endDate) {
                 url += `?start_date=${startDate}&end_date=${endDate}`;
             }

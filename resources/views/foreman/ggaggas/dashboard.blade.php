@@ -157,7 +157,7 @@
 
         // Fungsi ambil data & render chart
         function fetchChartData(type, startDate = null, endDate = null) {
-            let url = '/api/ggas/gga/analysis';
+            let url = "{{url('/api/ggas/gga/analysis')}}";
             if (startDate && endDate) {
                 url += `?start_date=${startDate}&end_date=${endDate}`;
             }
@@ -268,7 +268,7 @@
 
         // Fungsi ambil data dan render
         function fetchDispositionData(type, startDate = null, endDate = null) {
-            let url = '/api/ggas/gga/disposition-analysis';
+            let url = "{{url('/api/ggas/gga/disposition-analysis')}}";
             if (startDate && endDate) {
                 url += `?start_date=${startDate}&end_date=${endDate}`;
             }

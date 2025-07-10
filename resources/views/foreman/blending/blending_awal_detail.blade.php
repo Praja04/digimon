@@ -180,6 +180,10 @@
                                                     <input type="text" name="organo" class="form-control" required>
                                                 </div>
                                                 <div class="mb-3">
+                                                    <label class="form-label">pH</label>
+                                                    <input type="text" name="ph" class="form-control" required>
+                                                </div>
+                                                <div class="mb-3">
                                                     <label class="form-label">Endapan</label>
                                                     <input type="text" name="endapan" class="form-control" required>
                                                 </div>
@@ -263,6 +267,10 @@
                                         <div class="mb-3">
                                             <label class="form-label">Organo</label>
                                             <input type="text" name="organo_edit" class="form-control" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">pH</label>
+                                            <input type="text" name="ph_edit" class="form-control" required>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Endapan</label>
