@@ -40,11 +40,20 @@ class RMPMController extends Controller
         return view('analis.rmpm.list_identitas', compact('identitasList', 'jenis'));
     }
 
+    public function dataRM()
+    {
+        if (!Session::has('role')) {
+            return redirect('/login')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
+        return view('analis.rmpm.data_rm');
+    }
+
     // 2. Menyimpan Identitas RM
     public function simpanIdentitas(Request $request)
     {
         $identitas = IdentitasRM::create($request->all());
-        return redirect()->route('rmpm.listIdentitas', ['jenis' => $identitas->jenis_gula]);
+        // return redirect()->route('rmpm.listIdentitas', ['jenis' => $identitas->jenis_gula]);
+        return redirect()->back();
     }
 
     // 3. Menampilkan daftar Identitas RM berdasarkan jenis gula
@@ -59,7 +68,16 @@ class RMPMController extends Controller
     //4.detail identitas
     public function detailIdentitas($id)
     {
-        $identitas = IdentitasRM::findOrFail($id);
+        $identitas = IdentitasRM::with([
+            'samplingDokumen',
+            'samplingMobil',
+            'samplingFisikKemasan',
+            'samplingFisikRaw',
+            'analisaGaramGula',
+            'analisaShortTerm',
+            'analisaLongTerm'
+        ])->findOrFail($id);
+
         // Ambil data analisa short term pertama berdasarkan id_identitas
         $data_id_disposisi = $identitas->analisaShortTerm()->first();
 
@@ -312,16 +330,31 @@ class RMPMController extends Controller
 
     public function getDataKedatangan($id)
     {
-        $identitas = IdentitasRM::with('konfirmasi')->findOrFail($id);
+        // $identitas = IdentitasRM::with('konfirmasi')->findOrFail($id);
 
-        $result = [
-            'id' => $identitas->id,
-            'nama_bahan' => $identitas->nama_bahan,
-            'jam_kedatangan_exists' => $identitas->konfirmasi && $identitas->konfirmasi->jam_kedatangan ? true : false,
-            'jam_analisa_exists' => $identitas->konfirmasi && $identitas->konfirmasi->jam_analisa ? true : false,
-        ];
+        // $result = [
+        //     'id' => $identitas->id,
+        //     'nama_bahan' => $identitas->nama_bahan,
+        //     'jam_kedatangan_exists' => $identitas->konfirmasi && $identitas->konfirmasi->jam_kedatangan ? true : false,
+        //     'jam_analisa_exists' => $identitas->konfirmasi && $identitas->konfirmasi->jam_analisa ? true : false,
+        // ];
 
-        return response()->json($result);
+        // return response()->json($result);
+
+        $identitas = IdentitasRM::with([
+            'samplingMobil',
+            'samplingDokumen',
+            'samplingFisikKemasan',
+            'samplingFisikRaw'
+        ])->findOrFail($id);
+
+        $jamAnalisaExist = KonfirmasiKedatangan::where('id_identitas', $id)->exists();
+
+        return response()->json([
+            'jam_analisa_exists' => $jamAnalisaExist,
+            'sampling_complete' => $identitas->isSamplingComplete()
+        ]);
+
     }
 
 
@@ -405,5 +438,49 @@ class RMPMController extends Controller
 
         return response()->json(['message' => 'Berhasil menyimpan data long term'], 201);
     }
+
+
+    public function getDataRM(Request $request)
+    {
+        $dataRM = IdentitasRM::with([
+            'analisaGaramGula.disposisi',
+            'analisaLongTerm',
+        ])->orderby('created_at','desc')->get();
+
+        $dataRM->transform(function ($item) {
+            $status = 'progress';
+
+            if (in_array($item->jenis_gula, ['Garam', 'Gula'])) {
+                foreach ($item->analisaGaramGula as $analisa) {
+                    if ($analisa->disposisi) {
+                        $status = 'done';
+                        break;
+                    }
+                }
+            } elseif (in_array($item->jenis_gula, ['Gula Tebu', 'Gula Kelapa'])) {
+                foreach ($item->analisaLongTerm as $analisa) {
+                    if (!empty($analisa->disposisi)) {
+                        $status = 'done';
+                        break;
+                    }
+                }
+            }
+
+            return [
+                'id' => $item->id,
+                'nama_bahan' => $item->nama_bahan,
+                'tanggal_kedatangan' => $item->tanggal_kedatangan,
+                'suplier_manufactur' => $item->suplier_manufactur,
+                'asal_bahan' => $item->asal_bahan,
+                'no_spb' => $item->no_spb,
+                'jumlah_kedatangan' => $item->jumlah_kedatangan,
+                'status' => $status,
+                'jenis_gula' => $item->jenis_gula,
+            ];
+        });
+
+        return response()->json(['data' => $dataRM]);
+    }
+
 
 }

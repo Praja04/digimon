@@ -577,42 +577,6 @@
 
 
 <!-- modal -->
-<div class="modal fade" id="samplingsModal" tabindex="-1" aria-labelledby="samplingModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="samplingModalLabel">Pilih Kategori Sampling</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Silakan pilih kategori sampling yang ingin Anda isi.</p>
-                <div class="list-group">
-                    <!-- Sampling Kondisi Mobil -->
-                    <!-- <a href="{{ route('sampling.kondisi_mobil', ['id' => $identitas->id]) }}"
-                        class="list-group-item list-group-item-action {{ $identitas->sampling_kondisi_mobil ? 'disabled' : '' }}">
-                        <i class="ri-truck-line me-2"></i> Sampling Kondisi Mobil
-                    </a> -->
-                    <button type="button" class="list-group-item list-group-item-action sampling-option {{ $identitas->sampling_kondisi_mobil ? 'disabled' : '' }}" data-sampling="kondisi_mobil" data-title="Sampling Kondisi Mobil" {{ $identitas->sampling_kondisi_mobil ? 'disabled' : '' }}>
-                        <i class="ri-truck-line me-2"></i> Sampling Kondisi Mobil
-                    </button>
-
-                    <!-- Sampling Dokumen -->
-                    <a href="{{ route('sampling.dokumen', ['id' => $identitas->id]) }}" class="list-group-item list-group-item-action {{ $identitas->sampling_dokumen ? 'disabled' : '' }}">
-                        <i class="ri-file-text-line me-2"></i> Sampling Dokumen
-                    </a>
-
-                    <!-- Sampling Fisik Kemasan -->
-                    <a href="{{ route('sampling.fisik_kemasan', ['id' => $identitas->id]) }}" class="list-group-item list-group-item-action {{ $identitas->sampling_fisik_kemasan ? 'disabled' : '' }}">
-                        <i class="ri-inbox-line me-2"></i> Sampling Fisik Kemasan
-                    </a>
-
-
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Modal Pilihan Sampling -->
 <div class="modal fade" id="samplingModal" tabindex="-1" aria-labelledby="samplingModalLabel" aria-hidden="true">
@@ -625,23 +589,38 @@
             <div class="modal-body">
                 <p>Silakan pilih kategori sampling yang ingin Anda isi.</p>
                 <div class="list-group">
-                    <!-- sampling kondisi mobil -->
-                    <button type="button" class="list-group-item list-group-item-action sampling-option {{ $identitas->sampling_kondisi_mobil ? 'disabled' : '' }}" data-sampling="kondisi_mobil" data-title="Sampling Kondisi Mobil" {{ $identitas->sampling_kondisi_mobil ? 'disabled' : '' }} data-bs-dismiss="modal">
+                    @if(is_null($identitas->samplingMobil))
+                    <button type="button" class="list-group-item list-group-item-action sampling-option" data-sampling="kondisi_mobil" data-title="Sampling Kondisi Mobil" data-bs-dismiss="modal">
                         <i class="ri-truck-line me-2"></i> Sampling Kondisi Mobil
                     </button>
-                    <!-- sampling  dokumen -->
-                    <button type="button" class="list-group-item list-group-item-action sampling-option {{ $identitas->sampling_dokumen ? 'disabled' : '' }}" data-sampling="kondisi_dokumen" data-title="Sampling Dokumen" {{ $identitas->sampling_dokumen ? 'disabled' : '' }} data-bs-dismiss="modal">
+                    @endif
+
+                    @if(is_null($identitas->samplingDokumen))
+                    <button type="button" class="list-group-item list-group-item-action sampling-option" data-sampling="kondisi_dokumen" data-title="Sampling Dokumen" data-bs-dismiss="modal">
                         <i class="ri-file-text-line me-2"></i> Sampling Dokumen
                     </button>
-                    <!-- sampling  fisik kemasan -->
-                    <button type="button" class="list-group-item list-group-item-action sampling-option {{ $identitas->sampling_kemasan ? 'disabled' : '' }}" data-sampling="kondisi_kemasan" data-title="Sampling Kemasan" {{ $identitas->sampling_kemasan ? 'disabled' : '' }} data-bs-dismiss="modal">
+                    @endif
+
+                    @if(is_null($identitas->samplingFisikKemasan))
+                    <button type="button" class="list-group-item list-group-item-action sampling-option" data-sampling="kondisi_kemasan" data-title="Sampling Kemasan" data-bs-dismiss="modal">
                         <i class="ri-inbox-line me-2"></i> Sampling Kemasan
                     </button>
-                    @if($identitas->jenis_gula !== 'Garam')
-                    <!-- sampling  fisik raw -->
-                    <button type="button" class="list-group-item list-group-item-action sampling-option {{ $identitas->sampling_raw ? 'disabled' : '' }}" data-sampling="kondisi_raw" data-title="Sampling Raw" {{ $identitas->sampling_raw ? 'disabled' : '' }} data-bs-dismiss="modal">
-                        <i class="ri-flask-line me-2"></i> Sampling raw
+                    @endif
+
+                    @if($identitas->jenis_gula !== 'Garam' && is_null($identitas->samplingFisikRaw))
+                    <button type="button" class="list-group-item list-group-item-action sampling-option" data-sampling="kondisi_raw" data-title="Sampling Raw" data-bs-dismiss="modal">
+                        <i class="ri-flask-line me-2"></i> Sampling Raw
                     </button>
+                    @endif
+                    @if(
+                    !is_null($identitas->sampling_mobil) &&
+                    !is_null($identitas->sampling_dokumen) &&
+                    !is_null($identitas->sampling_fisik_kemasan) &&
+                    ($identitas->jenis_gula === 'Garam' || !is_null($identitas->sampling_fisik_raw))
+                    )
+                    <div class="alert alert-success text-center mt-3">
+                        Semua kategori sampling telah diisi.
+                    </div>
                     @endif
                 </div>
             </div>
@@ -660,7 +639,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="form-kondisi-mobil">
+                <form class="form-sampling" id="form-kondisi-mobil">
                     @csrf
                     <input type="hidden" name="id_identitas" value="{{ $identitas->id }}">
 
@@ -668,12 +647,22 @@
                         <label class="form-label">a. Bersih</label><br>
                         <label><input type="radio" name="bersih" value="yes"> Iya</label>
                         <label><input type="radio" name="bersih" value="no"> Tidak</label>
+                        <div class="zak-input-wrapper mt-2" style="display:none;">
+                            <label class="form-label">Berapa zak yang tidak standar?</label>
+                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                        </div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">b. Kering</label><br>
                         <label><input type="radio" name="kering" value="yes"> Iya</label>
                         <label><input type="radio" name="kering" value="no"> Tidak</label>
+                        <div class="zak-input-wrapper mt-2" style="display:none;">
+                            <label class="form-label">Berapa zak yang tidak standar?</label>
+                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                        </div>
+
+
                     </div>
 
                     <div class="mb-3">
@@ -686,6 +675,12 @@
                         <label class="form-label">d. Tidak Cacat / Bolong</label><br>
                         <label><input type="radio" name="cacat" value="yes"> Iya</label>
                         <label><input type="radio" name="cacat" value="no"> Tidak</label>
+                        <div class="zak-input-wrapper mt-2" style="display:none;">
+                            <label class="form-label">Berapa zak yang tidak standar?</label>
+                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                        </div>
+
+
                     </div>
 
                     <div class="mb-3">
@@ -717,7 +712,7 @@
             </div>
             <div class="modal-body">
                 <!-- Form Dokumen -->
-                <form id="form-dokumen">
+                <form class="form-sampling" id="form-dokumen">
                     @csrf
                     <input type="hidden" name="id_identitas" value="{{ $identitas->id }}">
 
@@ -774,7 +769,7 @@
             </div>
             <div class="modal-body">
                 <!-- Form Kemasan -->
-                <form id="form-kemasan">
+                <form class="form-sampling" id="form-kemasan">
                     @csrf
                     <input type="hidden" name="id_identitas" value="{{ $identitas->id }}">
                     @if($identitas->jenis_gula == 'Garam')
@@ -783,6 +778,12 @@
                         <label class="form-label">a. Kotor</label><br>
                         <label><input type="radio" name="kotor" value="yes"> Iya</label>
                         <label><input type="radio" name="kotor" value="no"> Tidak</label>
+                        <div class="zak-input-wrapper mt-2" style="display:none;">
+                            <label class="form-label">Berapa zak yang tidak standar?</label>
+                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                        </div>
+
+
                     </div>
 
                     <div class="mb-3">
@@ -807,12 +808,22 @@
                         <label class="form-label">e. Rusak Sobek</label><br>
                         <label><input type="radio" name="rusak" value="yes"> Iya</label>
                         <label><input type="radio" name="rusak" value="no"> Tidak</label>
+                        <div class="zak-input-wrapper mt-2" style="display:none;">
+                            <label class="form-label">Berapa zak yang tidak standar?</label>
+                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                        </div>
+
+
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">f. Sesuai STD</label><br>
                         <label><input type="radio" name="sesuai_std" value="yes"> Iya</label>
                         <label><input type="radio" name="sesuai_std" value="no"> Tidak</label>
+                        <div class="zak-input-wrapper mt-2" style="display:none;">
+                            <label class="form-label">Berapa zak yang tidak standar?</label>
+                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                        </div>
                     </div>
 
                     @else
@@ -820,23 +831,37 @@
                         <label class="form-label">a. Kotor</label><br>
                         <label><input type="radio" name="kotor" value="yes"> Iya</label>
                         <label><input type="radio" name="kotor" value="no"> Tidak</label>
+                        <div class="zak-input-wrapper mt-2" style="display:none;">
+                            <label class="form-label">Berapa zak yang tidak standar?</label>
+                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                        </div>
+
+
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">b. Rusak Sobek</label><br>
                         <label><input type="radio" name="rusak" value="yes"> Iya</label>
                         <label><input type="radio" name="rusak" value="no"> Tidak</label>
+                        <div class="zak-input-wrapper mt-2" style="display:none;">
+                            <label class="form-label">Berapa zak yang tidak standar?</label>
+                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                        </div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">c. Sesuai STD</label><br>
                         <label><input type="radio" name="sesuai_std" value="yes"> Iya</label>
                         <label><input type="radio" name="sesuai_std" value="no"> Tidak</label>
+                        <div class="zak-input-wrapper mt-2" style="display:none;">
+                            <label class="form-label">Berapa zak yang tidak standar?</label>
+                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                        </div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">d. Lain-lain</label><br>
-                        <label><input type="text" name="lain-lain"></label>
+                        <label><input class="form-control" type="text" name="lain-lain"></label>
                     </div>
                     @endif
 
@@ -859,7 +884,7 @@
             </div>
             <div class="modal-body">
                 <!-- Form Raw -->
-                <form id="form-raw">
+                <form class="form-sampling" id="form-raw">
                     @csrf
                     <input type="hidden" name="id_identitas" value="{{ $identitas->id }}">
 
@@ -867,6 +892,10 @@
                         <label class="form-label">a. Leleh</label><br>
                         <label><input type="radio" name="leleh" value="yes"> Iya</label>
                         <label><input type="radio" name="leleh" value="no"> Tidak</label>
+                        <div class="zak-input-wrapper mt-2" style="display:none;">
+                            <label class="form-label">Berapa zak yang tidak standar?</label>
+                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -891,6 +920,10 @@
                         <label class="form-label">e. Sesuai STD</label><br>
                         <label><input type="radio" name="sesuai_std" value="yes"> Iya</label>
                         <label><input type="radio" name="sesuai_std" value="no"> Tidak</label>
+                        <div class="zak-input-wrapper mt-2" style="display:none;">
+                            <label class="form-label">Berapa zak yang tidak standar?</label>
+                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                        </div>
                     </div>
 
 
@@ -978,6 +1011,139 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer">
 </script>
 <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
+<script>
+    $(document).ready(function() {
+        // Tampilkan atau sembunyikan input tambahan
+        $('form.form-sampling input[type=radio]').on('change', function() {
+            const parent = $(this).closest('.mb-3');
+            const wrapper = parent.find('.zak-input-wrapper');
+            const value = $(this).val();
+
+            if (value === 'no') {
+                wrapper.show();
+            } else {
+                wrapper.hide();
+                wrapper.find('.zak-qty-input').val('');
+            }
+        });
+
+        // Fungsi untuk memproses value radio sebelum submit
+        function prepareRadioValues(form) {
+            form.find('.mb-3').each(function() {
+                const parent = $(this);
+                const radio = parent.find('input[type=radio]:checked');
+                const zakInput = parent.find('.zak-qty-input').val()?.trim();
+
+                if (radio.val() === 'no' && zakInput) {
+                    radio.val(`no, karena ${zakInput}`);
+                }
+            });
+        }
+
+        $('#form-kondisi-mobil').on('submit', function(e) {
+            e.preventDefault();
+
+            const form = $(this);
+            prepareRadioValues(form);
+            let data = form.serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("sampling.kondisi_mobil.store") }}',
+                data: data,
+                success: function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: response.message || 'Data berhasil disimpan!',
+                    }).then(() => {
+                        $('#modalKondisiMobil').modal('hide');
+                    });
+                },
+                error: function(err) {
+                    console.error(err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: err.responseJSON?.message || 'Terjadi kesalahan!',
+                    });
+                }
+            });
+        });
+
+        $('#form-dokumen, #form-kemasan').on('submit', function(e) {
+            e.preventDefault();
+
+            const form = $(this);
+            prepareRadioValues(form);
+            let data = form.serialize();
+
+            const url = form.attr('id') === 'form-dokumen' ?
+                '{{ route("sampling.dokumen.store") }}' :
+                '{{ route("sampling.fisik_kemasan.store") }}';
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: data,
+                success: function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: response.message || 'Data berhasil disimpan!',
+                    }).then(() => {
+                        if (form.attr('id') === 'form-dokumen') {
+                            $('#modalDokumen').modal('hide');
+                        } else {
+                            $('#modalKemasan').modal('hide');
+                        }
+                    });
+                },
+                error: function(err) {
+                    console.error(err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: err.responseJSON?.message || 'Terjadi kesalahan!',
+                    });
+                }
+            });
+        });
+
+        $('#form-raw').on('submit', function(e) {
+            e.preventDefault();
+
+            const form = $(this);
+            prepareRadioValues(form);
+            let data = form.serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("sampling.fisik_raw.store") }}', // Pastikan route ini sesuai di Laravel Anda
+                data: data,
+                success: function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: response.message || 'Data berhasil disimpan!',
+                    }).then(() => {
+                        $('#modalFisikRaw').modal('hide');
+                        location.reload(); // Reload halaman untuk update data
+                    });
+                },
+                error: function(err) {
+                    console.error(err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: err.responseJSON?.message || 'Terjadi kesalahan!',
+                    });
+                }
+            });
+        });
+
+    });
+</script>
 
 <script>
     $(document).ready(function() {
@@ -994,20 +1160,28 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function(response) {
-                    console.log('Data:', response);
-                    if (!response.jam_kedatangan_exists) {
-                        tipeInput = 'kedatangan';
-                        $('#modalKonfirmasi').modal('show');
-                        $('#labelJam').text('Jam Kedatangan');
-                    } else if (!response.jam_analisa_exists) {
+                    if (response.sampling_complete && !response.jam_analisa_exists) {
                         tipeInput = 'analisa';
                         $('#modalKonfirmasi').modal('show');
                         $('#labelJam').text('Jam Analisa');
-                    } else if (response.jam_analisa_exists) {
-                        $('#labelJam').text('sudah dikonfirmasi semua');
+                    } else {
                         $('#jamInput').hide();
                         $('#btnSimpanJam').hide();
                     }
+                    // console.log('Data:', response);
+                    // if (!response.jam_analisa_exists) {
+                    //     tipeInput = 'analisa';
+                    //     $('#modalKonfirmasi').modal('show');
+                    //     $('#labelJam').text('Jam Analisa');
+                    // } else if (response.jam_analisa_exists) {
+                    //     $('#labelJam').text('sudah dikonfirmasi semua');
+                    //     $('#jamInput').hide();
+                    //     $('#btnSimpanJam').hide();
+                    // } else {
+                    //     $('#labelJam').text('sudah dikonfirmasi semua');
+                    //     $('#jamInput').hide();
+                    //     $('#btnSimpanJam').hide();
+                    // }
 
                 },
                 error: function(xhr, status, error) {
@@ -1077,6 +1251,10 @@
     });
 
     document.addEventListener('DOMContentLoaded', function() {
+
+
+
+
         const samplingButtons = document.querySelectorAll('.sampling-option');
 
         samplingButtons.forEach(button => {
@@ -1108,306 +1286,8 @@
                 }, 500);
             });
         });
-    });
-
-    $('#form-kondisi-mobil').on('submit', function(e) {
-        e.preventDefault();
-
-        let form = $(this);
-        let submitBtn = $('#submitBtn');
-        submitBtn.prop('disabled', true).text('Menyimpan...');
-
-        $.ajax({
-            url: "{{ route('sampling.kondisi_mobil.store') }}",
-            method: "POST",
-            data: form.serialize(),
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: response.message,
-                    showConfirmButton: true
-                }).then(() => {
-                    location.reload(); // reload setelah klik "OK"
-                });
-                form.trigger('reset');
-            },
-            error: function(xhr) {
-                const handlers = {
-                    422: function() {
-                        let errors = xhr.responseJSON.errors;
-                        let list = '';
-                        $.each(errors, function(key, value) {
-                            list += `<li>${value[0]}</li>`;
-                        });
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Validasi Gagal',
-                            html: `<ul style="text-align:left;">${list}</ul>`
-                        });
-                    },
-                    409: function() {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Data Sudah Ada',
-                            text: xhr.responseJSON.message
-                        });
-                    },
-                    500: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Server Error',
-                            text: 'Terjadi kesalahan pada server. Silakan coba lagi nanti.'
-                        });
-                    },
-                    default: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal',
-                            text: 'Terjadi kesalahan saat menyimpan data.'
-                        });
-                    }
-                };
-
-                (handlers[xhr.status] || handlers.default)(); // panggil handler sesuai status
-            },
-            complete: function() {
-                submitBtn.prop('disabled', false).text('Simpan Sampling');
-            }
-        });
-    });
 
 
-    $('#form-dokumen').on('submit', function(e) {
-        e.preventDefault();
-
-        let form = $(this);
-        let submitBtn = $('#submitBtnDokumen');
-        submitBtn.prop('disabled', true).text('Menyimpan...');
-
-        $.ajax({
-            url: "{{ route('sampling.dokumen.store') }}",
-            method: "POST",
-            data: form.serialize(),
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: response.message,
-                    showConfirmButton: true
-                }).then(() => {
-                    location.reload(); // reload setelah klik "OK"
-                });
-                form.trigger('reset');
-            },
-            error: function(xhr) {
-                const handlers = {
-                    422: function() {
-                        let errors = xhr.responseJSON.errors;
-                        let list = '';
-                        $.each(errors, function(key, value) {
-                            list += `<li>${value[0]}</li>`;
-                        });
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Validasi Gagal',
-                            html: `<ul style="text-align:left;">${list}</ul>`
-                        });
-                    },
-                    409: function() {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Data Sudah Ada',
-                            text: xhr.responseJSON.message
-                        });
-                    },
-                    500: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Server Error',
-                            text: 'Terjadi kesalahan pada server. Silakan coba lagi nanti.'
-                        });
-                    },
-                    default: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal',
-                            text: 'Terjadi kesalahan saat menyimpan data.'
-                        });
-                    }
-                };
-
-                (handlers[xhr.status] || handlers.default)(); // panggil handler sesuai status
-            },
-            complete: function() {
-                submitBtn.prop('disabled', false).text('Simpan Sampling');
-            }
-        });
-    });
-
-
-
-    $('#form-kemasan').on('submit', function(e) {
-        e.preventDefault();
-
-        let form = $(this);
-        let submitBtn = $('#submitBtnKemasan');
-        submitBtn.prop('disabled', true).text('Menyimpan...');
-
-        // Ambil data dari form
-        let formData = form.serializeArray();
-        let jenisGula = "{{ $identitas->jenis_gula }}";
-
-        // Konversi ke objek
-        let data = {};
-        formData.forEach(item => {
-            data[item.name] = item.value;
-        });
-
-        // Tambahkan field yang tidak dikirim di form (isi default '-')
-        if (jenisGula === 'Garam') {
-            data['lain-lain'] = '-';
-            if (!data['rusak']) data['rusak'] = 'no';
-            if (!data['sesuai_std']) data['sesuai_std'] = 'no';
-        } else {
-            data['berair'] = '-';
-            data['basah'] = '-';
-            data['campuran'] = '-';
-            if (!data['lain-lain'] || data['lain-lain'].trim() === '') {
-                data['lain-lain'] = '-';
-            }
-        }
-
-        // Kirim lewat AJAX
-        $.ajax({
-            url: "{{ route('sampling.fisik_kemasan.store') }}",
-            method: "POST",
-            data: {
-                ...data,
-                _token: $('input[name="_token"]').val()
-            },
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: response.message,
-                    showConfirmButton: true
-                }).then(() => {
-                    location.reload(); // reload setelah klik "OK"
-                });
-                form.trigger('reset');
-            },
-            error: function(xhr) {
-                const handlers = {
-                    422: function() {
-                        let errors = xhr.responseJSON.errors;
-                        let list = '';
-                        $.each(errors, function(key, value) {
-                            list += `<li>${value[0]}</li>`;
-                        });
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Validasi Gagal',
-                            html: `<ul style="text-align:left;">${list}</ul>`
-                        });
-                    },
-                    409: function() {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Data Sudah Ada',
-                            text: xhr.responseJSON.message
-                        });
-                    },
-                    500: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Server Error',
-                            text: 'Terjadi kesalahan pada server. Silakan coba lagi nanti.'
-                        });
-                    },
-                    default: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal',
-                            text: 'Terjadi kesalahan saat menyimpan data.'
-                        });
-                    }
-                };
-
-                (handlers[xhr.status] || handlers.default)();
-            },
-            complete: function() {
-                submitBtn.prop('disabled', false).text('Simpan Sampling');
-            }
-        });
-    });
-
-
-    $('#form-raw').on('submit', function(e) {
-        e.preventDefault();
-
-        let form = $(this);
-        let submitBtn = $('#submitBtnRaw');
-        submitBtn.prop('disabled', true).text('Menyimpan...');
-
-        $.ajax({
-            url: "{{ route('sampling.fisik_raw.store') }}",
-            method: "POST",
-            data: form.serialize(),
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: response.message,
-                    showConfirmButton: true
-                }).then(() => {
-                    location.reload(); // reload setelah klik "OK"
-                });
-                form.trigger('reset');
-            },
-            error: function(xhr) {
-                const handlers = {
-                    422: function() {
-                        let errors = xhr.responseJSON.errors;
-                        let list = '';
-                        $.each(errors, function(key, value) {
-                            list += `<li>${value[0]}</li>`;
-                        });
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Validasi Gagal',
-                            html: `<ul style="text-align:left;">${list}</ul>`
-                        });
-                    },
-                    409: function() {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Data Sudah Ada',
-                            text: xhr.responseJSON.message
-                        });
-                    },
-                    500: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Server Error',
-                            text: 'Terjadi kesalahan pada server. Silakan coba lagi nanti.'
-                        });
-                    },
-                    default: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal',
-                            text: 'Terjadi kesalahan saat menyimpan data.'
-                        });
-                    }
-                };
-
-                (handlers[xhr.status] || handlers.default)(); // panggil handler sesuai status
-            },
-            complete: function() {
-                submitBtn.prop('disabled', false).text('Simpan Sampling');
-            }
-        });
     });
 </script>
 
@@ -1445,38 +1325,7 @@
         }
     });
 
-    // const renderGroupInput = (label, name, jumlahData) => {
-    //     let html = `<div class="form-step" data-step="${name}" style="display:none;">
-    //  <h6 class="mb-3">${label}</h6>`;
 
-    //     if (name === 'disposisi') {
-    //         html += ` <label for="">Disposisi</label>
-    //         <select class="form-control mb-2" name="${name}">
-    //             <option value="">Pilih Disposisi</option>
-    //             <option value="Release">Release</option>
-    //             <option value="Reject">Reject</option>
-    //         </select>`;
-    //     } else if (name === 'uji_kristal') {
-    //         html += ` <label for="">Uji Kristal</label>
-    //         <select class="form-control mb-2" name="${name}">
-    //             <option value="">Pilih Hasil Uji</option>
-    //             <option value="Negatif">Negatif</option>
-    //             <option value="Positif">Positif</option>
-    //         </select>`;
-    //     } else if (name === 'attachment') {
-    //         html += ` <label for="">Lampirkan Gambar (opsional)</label>
-    //           <input type="file" class="form-control mb-2" name="attachment" accept="image/*" capture="environment">`;
-    //     } else {
-    //         for (let i = 1; i <= jumlahData; i++) {
-    //             html += `
-    //             <label for="">${i}</label>
-    //             <input type="text" class="form-control mb-2" name="${name}[]" placeholder="${label} ke-${i}">`;
-    //         }
-    //     }
-
-    //     html += `</div>`;
-    //     return html;
-    // };
 
     const renderGroupInput = (label, name, jumlahData) => {
         let html = `<div class="form-step" data-step="${name}" style="display:none;">
@@ -1687,7 +1536,7 @@
         }
     });
 
-   
+
     $('#formAnalisa').off('submit').on('submit', function(e) {
         e.preventDefault();
 

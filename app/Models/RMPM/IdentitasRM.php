@@ -63,4 +63,13 @@ class IdentitasRM extends Model
     {
         return $this->hasOne(KonfirmasiKedatangan::class, 'id_identitas');
     }
+
+    public function isSamplingComplete()
+    {
+        if ($this->jenis_gula === 'Garam') {
+            return $this->samplingMobil && $this->samplingDokumen && $this->samplingFisikKemasan && $this->samplingFisikRaw;
+        } else {
+            return $this->samplingMobil && $this->samplingDokumen && $this-> samplingFisikKemasan && $this->samplingFisikRaw;
+        }
+    }
 }

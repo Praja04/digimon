@@ -37,12 +37,12 @@ class SamplingController extends Controller
 
         $validated = $request->validate([
             'id_identitas' => 'required|exists:identitas_rm_master,id',
-            'bersih' => 'required|in:yes,no',
-            'kering' => 'required|in:yes,no',
-            'benda_asing' => 'required|in:yes,no',
-            'cacat' => 'required|in:yes,no',
-            'segel' => 'required|in:yes,no',
-            'berbau' => 'required|in:yes,no',
+            'bersih' => 'required',
+            'kering' => 'required',
+            'benda_asing' => 'required',
+            'cacat' => 'required',
+            'segel' => 'required',
+            'berbau' => 'required',
         ]);
         // Cek apakah data dengan id_identitas sudah ada
         $existing = SamplingKondisiMobil::where('id_identitas', $validated['id_identitas'])->first();
@@ -123,9 +123,9 @@ class SamplingController extends Controller
             'rusak' => 'required',
             'sesuai_std' => 'required',
             'lain-lain' => 'nullable',
-            'berair' => 'required',
-            'basah' => 'required',
-            'campuran' => 'required',
+            'berair' => 'nullable',
+            'basah' => 'nullable',
+            'campuran' => 'nullable',
         ]);
         // Tambahkan user ke data yang akan disimpan
         $validated['created_by_user'] = $username;

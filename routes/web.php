@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Analis\BlendingAdjustController;
 use App\Http\Controllers\Analis\MonitoringTurunBlendingController;
+use Milon\Barcode\DNS2D;
 use App\Http\Controllers\Analis\MonitoringStorageController;
 use App\Http\Controllers\Analis\GgaGgasController;
 use App\Http\Controllers\Analis\RMPMController;
@@ -45,6 +46,8 @@ Route::prefix('analis')->group(function () {
     Route::prefix('rmpm')->group(function () {
         Route::get('/', [RMPMController::class, 'pilihJenisGula'])->name('rmpm.pilihJenisGula');
         // Route::get('/identitas/{jenis}', [RMPMController::class, 'formIdentitas'])->name('rmpm.formIdentitas');
+        Route::get('/list/rm', [RMPMController::class, 'dataRM']);
+        Route::get('/data/rm', [RMPMController::class, 'getDataRM']);
         Route::post('/identitas/simpan', [RMPMController::class, 'simpanIdentitas'])->name('rmpm.simpanIdentitas');
         Route::get('/list/{jenis}', [RMPMController::class, 'listIdentitas'])->name('rmpm.listIdentitas');
         Route::get('/detail-identitas/{id}', [RMPMController::class, 'detailIdentitas'])->name('rmpm.detailIdentitas');
@@ -227,23 +230,23 @@ Route::prefix('foreman')->group(function () {
     Route::prefix('sampling')->group(function () {
         // Sampling Kondisi Mobil
         Route::get('/kondisi-mobil/{id}', [SamplingControllerForeman::class, 'showKondisiMobil'])->name('sampling.kondisi_mobil');
-        Route::post('/kondisi-mobil', [SamplingControllerForeman::class, 'storeKondisiMobil'])->name('sampling.kondisi_mobil.store');
+        Route::post('/kondisi-mobil', [SamplingControllerForeman::class, 'storeKondisiMobil']);
         Route::post('/edit/kondisi-mobil/{id}', [SamplingControllerForeman::class, 'updateKondisiMobil'])->name('sampling.kondisi_mobil.edit');
 
 
         // Sampling Dokumen
         Route::get('/dokumen/{id}', [SamplingControllerForeman::class, 'showDokumen'])->name('sampling.dokumen');
-        Route::post('/dokumen', [SamplingControllerForeman::class, 'storeDokumen'])->name('sampling.dokumen.store');
+        Route::post('/dokumen', [SamplingControllerForeman::class, 'storeDokumen']);
         Route::post('/edit/dokumen/{id}', [SamplingControllerForeman::class, 'updateDokumen'])->name('sampling.dokumen.edit');
 
         // Sampling Fisik Kemasan
         Route::get('/fisik-kemasan/{id}', [SamplingControllerForeman::class, 'showFisikKemasan'])->name('sampling.fisik_kemasan');
-        Route::post('/fisik-kemasan', [SamplingControllerForeman::class, 'storeFisikKemasan'])->name('sampling.fisik_kemasan.store');
+        Route::post('/fisik-kemasan', [SamplingControllerForeman::class, 'storeFisikKemasan']);
         Route::post('/edit/fisik-kemasan/{id}', [SamplingControllerForeman::class, 'updateKemasan'])->name('sampling.fisik_kemasan.edit');
 
         // Sampling Fisik Raw (Hanya untuk Gula, Tidak untuk Garam)
         Route::get('/fisik-raw/{id}', [SamplingControllerForeman::class, 'showFisikRaw'])->name('sampling.fisik_raw');
-        Route::post('/fisik-raw', [SamplingControllerForeman::class, 'storeFisikRaw'])->name('sampling.fisik_raw.store');
+        Route::post('/fisik-raw', [SamplingControllerForeman::class, 'storeFisikRaw']);
         Route::post('/edit/fisik-raw/{id}', [SamplingControllerForeman::class, 'updateFisikRaw'])->name('sampling.fisik_raw.edit');
     });
 
@@ -317,7 +320,7 @@ Route::prefix('foreman')->group(function () {
 
     //gga ggas
     Route::prefix('ggaggas')->group(function () {
-        Route::get('/menu', [GgaGgasControllerForeman::class, 'menu'])->name('ggaggas.menu');
+        Route::get('/menu', [GgaGgasControllerForeman::class, 'menu']);
         Route::get('/dashboard', [GgaGgasControllerForeman::class, 'dashboard']);
         Route::post('/process/store', [GgaGgasControllerForeman::class, 'store'])->name('process.store');
 
@@ -508,4 +511,8 @@ Route::prefix('supervisor')->group(function () {
         Route::post('/edit/data/mikro/{id}', [MonitoringStorageControllerSupervisor::class, 'edit_monitoring_storage_mikro']);
     });
 });
-
+Route::get('/api/qr-code/{id}', function ($id) {
+    $url = route('rmpm.detailIdentitas', ['id' => $id]);
+    $qr = DNS2D::getBarcodePNG($url, 'QRCODE');
+    return response($qr)->header('Content-Type', 'image/png');
+});
