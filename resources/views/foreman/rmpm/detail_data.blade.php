@@ -40,6 +40,9 @@
 </div>
 
 <div class="row">
+    <div class="col-lg-3">
+        <a class="btn btn-danger" href="{{url('foreman/rmpm/list/rm')}}">Back</a>
+    </div>
     <div class="col-lg-12">
         <div class="card" id="leadsList">
             <div class="card-header border-0">

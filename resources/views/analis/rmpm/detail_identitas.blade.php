@@ -33,13 +33,17 @@
                     <li class="breadcrumb-item active">
                         {{ $identitas->jenis_gula }}
                     </li>
+
                 </ol>
             </div>
         </div>
     </div>
 </div>
-
 <div class="row">
+    <div class="col-lg-3">
+        <a class="btn btn-danger" href="{{url('analis/rmpm/list/rm')}}">Back</a>
+    </div>
+    <br>
     <div class="col-lg-12">
         <div class="card" id="leadsList">
             <div class="card-header border-0">

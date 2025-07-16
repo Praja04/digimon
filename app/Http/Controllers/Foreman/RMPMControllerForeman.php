@@ -26,6 +26,14 @@ class RMPMControllerForeman extends Controller
 
         return view('foreman.rmpm.dashboard');
     }
+
+    public function dataRM()
+    {
+        if (!Session::has('role')) {
+            return redirect('/login')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
+        return view('foreman.rmpm.data_rm');
+    }
     public function menu()
     {
         if (!Session::has('role')) {

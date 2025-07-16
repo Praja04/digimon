@@ -85,9 +85,14 @@
                 </li>
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
 
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ url('supervisor/rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">RMPM</span>
+                    </a>
+                </li> -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('supervisor/rmpm/list/rm')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Data RM</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -160,9 +165,14 @@
                     </a>
                 </li>
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ url('foreman/rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">RMPM</span>
+                    </a>
+                </li> -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('foreman/rmpm/list/rm')}}">
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Data RM</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -199,11 +209,11 @@
                 </li>
                 @elseif(Session::get('role') === 'analis' && Session::get('role_group') === 'rmpm')
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ url('analis/rmpm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">RMPM</span>
                     </a>
-                </li>
+                </li> -->
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ url('analis/rmpm/list/rm')}}">
                         <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Data RM</span>

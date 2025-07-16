@@ -26,6 +26,14 @@ class RMPMControllerSupervisor extends Controller
 
         return view('supervisor.rmpm.dashboard');
     }
+
+    public function dataRM()
+    {
+        if (!Session::has('role')) {
+            return redirect('/login')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
+        return view('supervisor.rmpm.data_rm');
+    }
     public function menu()
     {
         if (!Session::has('role')) {
