@@ -77,11 +77,11 @@ class AuthController extends Controller
         return match ($role) {
             'analis' => match ($roleGroup) {
                 'makro', 'mikro' => 'ggaggas.menu',
-                'rmpm' => 'rmpm.pilihJenisGula',
+                'rmpm' => 'dataRM_analis',
                 default => 'dashboard', // fallback kalau role_group tidak dikenali
             },
             'produksi' => 'productionbatch.menu',
-            'foreman' => 'rmpm_foreman.menu',
+            'foreman' => 'dataRM_foreman',
             'supervisor' => 'rmpm_supervisor.menu',
             'dept_head' => 'dept_head.dashboard',
             default => 'dashboard',

@@ -46,7 +46,7 @@ Route::prefix('analis')->group(function () {
     Route::prefix('rmpm')->group(function () {
         Route::get('/', [RMPMController::class, 'pilihJenisGula'])->name('rmpm.pilihJenisGula');
         // Route::get('/identitas/{jenis}', [RMPMController::class, 'formIdentitas'])->name('rmpm.formIdentitas');
-        Route::get('/list/rm', [RMPMController::class, 'dataRM']);
+        Route::get('/list/rm', [RMPMController::class, 'dataRM'])->name('dataRM_analis');
         Route::get('/data/rm', [RMPMController::class, 'getDataRM']);
         Route::post('/identitas/simpan', [RMPMController::class, 'simpanIdentitas'])->name('rmpm.simpanIdentitas');
         Route::get('/list/{jenis}', [RMPMController::class, 'listIdentitas'])->name('rmpm.listIdentitas');
@@ -219,7 +219,7 @@ Route::prefix('foreman')->group(function () {
     Route::prefix('rmpm')->group(function () {
         Route::get('/', [RMPMControllerForeman::class, 'menu'])->name('rmpm_foreman.menu');
         Route::get('/dashboard', [RMPMControllerForeman::class, 'dashboard'])->name('rmpm_foreman.dashboard');
-        Route::get('/list/rm', [RMPMControllerForeman::class, 'dataRM']);
+        Route::get('/list/rm', [RMPMControllerForeman::class, 'dataRM'])->name('dataRM_foreman');
         Route::get('/list/data/{jenis}', [RMPMControllerForeman::class, 'list_data'])->name('rmpm_foreman.list_data');
         Route::get('/detail/data/{id}', [RMPMControllerForeman::class, 'detail_data'])->name('rmpm_foreman.detail_data');
         Route::post('/update/{id}', [RMPMControllerForeman::class, 'updateDisposisiLong'])->name('rmpm_foreman.updateDisposisiLong');
@@ -410,7 +410,7 @@ Route::prefix('supervisor')->group(function () {
     Route::prefix('rmpm')->group(function () {
         Route::get('/', [RMPMControllerSupervisor::class, 'menu'])->name('rmpm_supervisor.menu');
         Route::get('/dashboard', [RMPMControllerSupervisor::class, 'dashboard'])->name('rmpm_supervisor.dashboard');
-        Route::get('/list/rm', [RMPMControllerSupervisor::class, 'dataRM']);
+        Route::get('/list/rm', [RMPMControllerSupervisor::class, 'dataRM'])->name('dataRM_supervisor');
         Route::get('/list/data/{jenis}', [RMPMControllerSupervisor::class, 'list_data'])->name('rmpm_supervisor.list_data');
         Route::get('/detail/data/{id}', [RMPMControllerSupervisor::class, 'detail_data'])->name('rmpm_supervisor.detail_data');
         Route::post('/update/{id}', [RMPMControllerSupervisor::class, 'updateDisposisiLong'])->name('rmpm_supervisor.updateDisposisiLong');
