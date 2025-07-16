@@ -141,6 +141,10 @@ Route::prefix('analis')->group(function () {
         Route::get('/processmonitoringstorage/get-last-revisi', [ProductionBatchController::class, 'getLastRevisiMonitoringStorage']);
         Route::get('/processmonitoringstorage/get-available-additional-batch', [ProductionBatchController::class, 'getAvailableAdditionalMonitoringStorage']);
         Route::get('/processmonitoringstorage/get-jalan-bareng', [ProductionBatchController::class, 'getMainMonitoringStorageJalanBareng']);
+
+        //status complete
+        Route::get('/gga/complete/{id}', [ProductionBatchController::class, 'getCompletedGga']);
+        Route::get('/ggas/complete/{id}', [ProductionBatchController::class, 'getCompletedGgas']);
     });
 
     //gga ggas
@@ -215,6 +219,7 @@ Route::prefix('foreman')->group(function () {
     Route::prefix('rmpm')->group(function () {
         Route::get('/', [RMPMControllerForeman::class, 'menu'])->name('rmpm_foreman.menu');
         Route::get('/dashboard', [RMPMControllerForeman::class, 'dashboard'])->name('rmpm_foreman.dashboard');
+        Route::get('/list/rm', [RMPMControllerForeman::class, 'dataRM']);
         Route::get('/list/data/{jenis}', [RMPMControllerForeman::class, 'list_data'])->name('rmpm_foreman.list_data');
         Route::get('/detail/data/{id}', [RMPMControllerForeman::class, 'detail_data'])->name('rmpm_foreman.detail_data');
         Route::post('/update/{id}', [RMPMControllerForeman::class, 'updateDisposisiLong'])->name('rmpm_foreman.updateDisposisiLong');
@@ -405,6 +410,7 @@ Route::prefix('supervisor')->group(function () {
     Route::prefix('rmpm')->group(function () {
         Route::get('/', [RMPMControllerSupervisor::class, 'menu'])->name('rmpm_supervisor.menu');
         Route::get('/dashboard', [RMPMControllerSupervisor::class, 'dashboard'])->name('rmpm_supervisor.dashboard');
+        Route::get('/list/rm', [RMPMControllerSupervisor::class, 'dataRM']);
         Route::get('/list/data/{jenis}', [RMPMControllerSupervisor::class, 'list_data'])->name('rmpm_supervisor.list_data');
         Route::get('/detail/data/{id}', [RMPMControllerSupervisor::class, 'detail_data'])->name('rmpm_supervisor.detail_data');
         Route::post('/update/{id}', [RMPMControllerSupervisor::class, 'updateDisposisiLong'])->name('rmpm_supervisor.updateDisposisiLong');

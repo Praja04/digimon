@@ -11,7 +11,7 @@
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="javascript: void(0);">QC</a></li>
-                    <li class="breadcrumb-item active">Analis</li>
+                    <li class="breadcrumb-item active">Supervisor</li>
                 </ol>
             </div>
 
@@ -342,7 +342,7 @@
     <td>${item.jumlah_kedatangan}</td>
     <td>${item.status === 'done' ? '✅ Selesai' : '⌛ Proses'}</td>
     <td>
-        <a href="{{url('/analis/rmpm/detail-identitas/${item.id}')}}" class="btn btn-sm btn-info">
+        <a href="{{url('/supervisor/rmpm/detail/identitas/${item.id}')}}" class="btn btn-sm btn-info">
             <i class="ri-eye-line"></i> View
         </a>
     </td>
@@ -386,7 +386,7 @@
 
         const qrArea = document.getElementById('qrImageArea');
         qrArea.innerHTML = ''; // Clear previous QR
-        const urlToEncode = `${window.location.origin}/analis/rmpm/detail-identitas/${id}`;
+        const urlToEncode = `${window.location.origin}/foreman/rmpm/detail/identitas/${id}`;
 
         new QRCode(qrArea, {
             text: urlToEncode,

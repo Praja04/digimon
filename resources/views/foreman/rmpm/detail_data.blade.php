@@ -252,7 +252,7 @@
                                 <div class="modal-dialog">
                                     <form id="editDokumenForm">
                                         <meta name="csrf-token" content="{{ csrf_token() }}">
-                                        <input type="hidden" name="id" value="{{ $data_dokumen->id }}">
+                                        <input type="hidden" name="id" value="{{ $data_dokumen->id ?? null }}">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="editModalLabel">Edit Dokumen</h5>
@@ -339,7 +339,7 @@
                                     <div class="modal-dialog">
                                         <form id="editMobilForm">
                                             <meta name="csrf-token" content="{{ csrf_token() }}">
-                                            <input type="hidden" name="id" value="{{ $data_mobil->id }}">
+                                            <input type="hidden" name="id" value="{{ $data_mobil->id ?? null }}">
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title" id="editModalLabel">Edit Dokumen</h5>
@@ -429,7 +429,7 @@
                                     <div class="modal-dialog">
                                         <form id="editKemasanForm">
                                             <meta name="csrf-token" content="{{ csrf_token() }}">
-                                            <input type="hidden" name="id" value="{{ $data_kemasan->id }}">
+                                            <input type="hidden" name="id" value="{{ $data_kemasan->id ?? null }}">
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title" id="editModalLabel">Edit Dokumen</h5>
@@ -523,7 +523,7 @@
                                         <div class="modal-dialog">
                                             <form id="editRawForm">
                                                 <meta name="csrf-token" content="{{ csrf_token() }}">
-                                                <input type="hidden" name="id" value="{{ $data_raw->id }}">
+                                                <input type="hidden" name="id" value="{{ $data_raw->id ?? null }}">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="editModalLabel">Edit Raw</h5>
