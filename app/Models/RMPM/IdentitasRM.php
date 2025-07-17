@@ -72,4 +72,7 @@ class IdentitasRM extends Model
             return $this->samplingMobil && $this->samplingDokumen && $this-> samplingFisikKemasan && $this->samplingFisikRaw;
         }
     }
+
+
+    
 }

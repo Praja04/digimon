@@ -19,5 +19,10 @@ class MonitoringStorageMikroModel extends Model
         'hasil',
         'revisi'
     ];
+
+    public function productionBatch()
+    {
+        return $this->belongsTo(ProductionBatch::class);
+    }
 }
 

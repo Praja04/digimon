@@ -51,6 +51,101 @@
 
 <div class="row">
     <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row gx-lg-5">
+                    <div class="col-xl-12">
+                        <div class="mt-xl-0 mt-5">
+                            <div class="d-flex">
+                                <div class="flex-grow-1">
+                                    <h4>{{ $productionBatch->po_number }} (Nomor PO)</h4>
+                                    <div class="hstack gap-3 flex-wrap">
+                                        <div><a href="#" class="text-primary d-block">{{Session::get('username')}}</a></div>
+                                        <div class="vr"></div>
+
+                                        <div class="text-muted">Tanggal Produksi : <span class="text-body fw-medium">{{ $productionBatch->production_date }}</span></div>
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="row mt-4">
+                                <div class="col-lg-4 col-sm-6">
+                                    <div class="p-2 border border-dashed rounded">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm me-2">
+                                                <div class="avatar-title rounded bg-transparent text-success fs-24">
+                                                    <i class="ri-drop-fill"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="text-muted mb-1">Variant :</p>
+                                                <h5 class="mb-0">{{ $productionBatch->variant }}</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end col -->
+                                <div class="col-lg-4 col-sm-6">
+                                    <div class="p-2 border border-dashed rounded">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm me-2">
+                                                <div class="avatar-title rounded bg-transparent text-success fs-24">
+                                                    <i class="ri-arrow-left-right-line"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="text-muted mb-1">Batch Range :</p>
+                                                <h5 class="mb-0">{{ $productionBatch->batch_range }}</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end col -->
+                                <div class="col-lg-4 col-sm-6">
+                                    <div class="p-2 border border-dashed rounded">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm me-2">
+                                                <div class="avatar-title rounded bg-transparent text-success fs-24">
+                                                    <i class="ri-home-gear-fill"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="text-muted mb-1">Storage :</p>
+                                                <h5 class="mb-0">{{ $productionBatch->storage }}</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end col -->
+
+                                <!-- end col -->
+                            </div>
+
+
+                            <!-- end row -->
+
+                            <div class="mt-4 text-muted">
+                                <h5 class="fs-14">Description :</h5>
+                                <p>{{ $productionBatch->description }}</p>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <!-- end col -->
+                </div>
+                <!-- end row -->
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <div class="col-lg-12">
         <div class="card" id="tasksList">
             <div class="card-header border-0">
                 <div class="d-flex align-items-center">
@@ -118,30 +213,30 @@
                                                 <input type="hidden" name="id" id="id">
                                                 <div class="mb-3">
                                                     <label class="form-label">Nama</label>
-                                                    <input type="text"  name="nama_analis" class="form-control" required>
+                                                    <input type="text" name="nama_analis" class="form-control" required>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Shift</label>
-                                                   <select name="shift" id="shift" class="form-select">
-                                                    <option value="shift 1" > Shift 1</option>
-                                                    <option value="shift 2" > Shift 2</option>
-                                                    <option value="shift 3" > Shift 3</option>
-                                                   </select>
+                                                    <select name="shift" id="shift" class="form-select">
+                                                        <option value="shift 1"> Shift 1</option>
+                                                        <option value="shift 2"> Shift 2</option>
+                                                        <option value="shift 3"> Shift 3</option>
+                                                    </select>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">EB</label>
-                                                    <input type="number" step="0.01" max="100" min="0" name="eb" class="form-control" >
+                                                    <input type="number" step="0.01" max="100" min="0" name="eb" class="form-control">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">TPC</label>
-                                                    <input type="number" step="0.01" max="100" min="0" name="tpc" class="form-control" >
+                                                    <input type="number" step="0.01" max="100" min="0" name="tpc" class="form-control">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">YM</label>
-                                                    <input type="text" name="ym" class="form-control" >
+                                                    <input type="text" name="ym" class="form-control">
                                                 </div>
-                                               
-                                               
+
+
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="submit" class="btn btn-primary">Simpan</button>
@@ -197,7 +292,7 @@
         // Reset form saat modal dibuka
         $('#inputBlendingModal').on('shown.bs.modal', function() {
             $('#blendingForm')[0].reset();
-         
+
             $('.error-alert').addClass('d-none').html('');
         });
 

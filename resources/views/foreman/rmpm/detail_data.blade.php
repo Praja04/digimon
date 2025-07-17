@@ -272,8 +272,8 @@
                                                 ] as $field => $label)
                                                 <div class="mb-3">
                                                     <label class="form-label">{{ $label }}</label><br>
-                                                    <label><input type="radio" name="{{ $field }}" value="yes" {{ $data_dokumen->$field == 'yes' ? 'checked' : '' }}> Iya</label>
-                                                    <label><input type="radio" name="{{ $field }}" value="no" {{ $data_dokumen->$field == 'no' ? 'checked' : '' }}> Tidak</label>
+                                                    <label><input type="radio" name="{{ $field }}" value="yes" {{ optional($data_dokumen)->$field == 'yes' ? 'checked' : '' }}> Iya</label>
+                                                    <label><input type="radio" name="{{ $field }}" value="no" {{ optional($data_dokumen)->$field == 'no' ? 'checked' : '' }}> Tidak</label>
                                                 </div>
                                                 @endforeach
                                             </div>
@@ -359,8 +359,8 @@
                                                     ] as $field => $label)
                                                     <div class="mb-3">
                                                         <label class="form-label">{{ $label }}</label><br>
-                                                        <label><input type="radio" name="{{ $field }}" value="yes" {{ $data_mobil->$field == 'yes' ? 'checked' : '' }}> Iya</label>
-                                                        <label><input type="radio" name="{{ $field }}" value="no" {{ $data_mobil->$field == 'no' ? 'checked' : '' }}> Tidak</label>
+                                                        <label><input type="radio" name="{{ $field }}" value="yes" {{ optional($data_mobil)->$field == 'yes' ? 'checked' : '' }}> Iya</label>
+                                                        <label><input type="radio" name="{{ $field }}" value="no" {{ optional($data_mobil)->$field == 'no' ? 'checked' : '' }}> Tidak</label>
                                                     </div>
                                                     @endforeach
                                                 </div>
@@ -451,8 +451,8 @@
                                                     ] as $field => $label)
                                                     <div class="mb-3">
                                                         <label class="form-label">{{ $label }}</label><br>
-                                                        <label><input type="radio" name="{{ $field }}" value="yes" {{ $data_kemasan->$field == 'yes' ? 'checked' : '' }}> Iya</label>
-                                                        <label><input type="radio" name="{{ $field }}" value="no" {{ $data_kemasan->$field == 'no' ? 'checked' : '' }}> Tidak</label>
+                                                        <label><input type="radio" name="{{ $field }}" value="yes" {{ optional($data_kemasan)->$field == 'yes' ? 'checked' : '' }}> Iya</label>
+                                                        <label><input type="radio" name="{{ $field }}" value="no" {{ optional($data_kemasan)->$field == 'no' ? 'checked' : '' }}> Tidak</label>
                                                     </div>
 
                                                     @endforeach
@@ -543,8 +543,8 @@
                                                         ] as $field => $label)
                                                         <div class="mb-3">
                                                             <label class="form-label">{{ $label }}</label><br>
-                                                            <label><input type="radio" name="{{ $field }}" value="yes" {{ $data_raw->$field == 'yes' ? 'checked' : '' }}> Iya</label>
-                                                            <label><input type="radio" name="{{ $field }}" value="no" {{ $data_raw->$field == 'no' ? 'checked' : '' }}> Tidak</label>
+                                                            <label><input type="radio" name="{{ $field }}" value="yes" {{ optional($data_raw)->$field == 'yes' ? 'checked' : '' }}> Iya</label>
+                                                            <label><input type="radio" name="{{ $field }}" value="no" {{ optional($data_raw)->$field == 'no' ? 'checked' : '' }}> Tidak</label>
                                                         </div>
                                                         @endforeach
                                                         <div class="mb-3">

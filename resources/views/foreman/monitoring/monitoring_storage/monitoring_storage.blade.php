@@ -63,7 +63,14 @@
                             <i class="ri-search-line search-icon"></i>
                         </div>
                     </div>
-
+                    <div class="col-sm-3">
+                        <select class="form-select filter-status">
+                            <option value="">-- Filter Status --</option>
+                            <option value="">Semua</option>
+                            <option value="complete">✅ Complete</option>
+                            <option value="progress">⌛ Progress</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
@@ -75,6 +82,7 @@
                                     <th>PO Number</th>
                                     <th>Production Date</th>
                                     <th>Jumlah Monitoring</th>
+                                    <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -84,6 +92,8 @@
                                     <td>{{ $batch->po_number }}</td>
                                     <td>{{ $batch->production_date }}</td>
                                     <td>{{ $batch->MonitoringStorage ->count() }}</td>
+                                    <td>{{ $batch->isMonitoringStorageMakroComplete() ? '✅ Complete' : '⌛ Progress' }}</td>
+
                                     <td>
                                         <a href="{{ url('foreman/monitoring/storage/detail/' . $batch->id) }}" class="btn btn-sm btn-primary">View</a>
                                     </td>
@@ -134,6 +144,101 @@
     </div>
     <!--end col-->
 </div>
+<script>
+    $(document).ready(function() {
+        const rowsPerPage = 10;
+        let currentPage = 1;
 
+        function applyFilters() {
+            const keyword = $(".search").val().toLowerCase();
+            const statusFilter = $(".filter-status").val();
+            let matchCount = 0;
+
+            $("#customerTable tbody tr").each(function() {
+                const rowText = $(this).text().toLowerCase();
+                const statusText = $(this).find("td:nth-child(4)").text().toLowerCase();
+
+                const matchesKeyword = rowText.indexOf(keyword) > -1;
+                const matchesStatus = statusFilter === "" || statusText.includes(statusFilter);
+
+                const isVisible = matchesKeyword && matchesStatus;
+                $(this).data("visible", isVisible);
+                $(this).toggle(false);
+
+                if (isVisible) matchCount++;
+            });
+
+            $(".noresult").toggle(matchCount === 0);
+            renderPagination(matchCount);
+        }
+
+        function renderPagination(visibleCount) {
+            const totalPages = Math.ceil(visibleCount / rowsPerPage);
+            const pagination = $(".listjs-pagination");
+            pagination.empty();
+
+            for (let i = 1; i <= totalPages; i++) {
+                pagination.append(`<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`);
+            }
+
+            showPage(currentPage);
+
+            $(".page-link").on("click", function(e) {
+                e.preventDefault();
+                currentPage = $(this).data("page");
+                showPage(currentPage);
+            });
+
+            $(".pagination-prev").toggleClass("disabled", currentPage === 1);
+            $(".pagination-next").toggleClass("disabled", currentPage === totalPages);
+        }
+
+        function showPage(page) {
+            let start = (page - 1) * rowsPerPage;
+            let end = start + rowsPerPage;
+            let index = 0;
+
+            $("#customerTable tbody tr").each(function() {
+                if ($(this).data("visible")) {
+                    $(this).toggle(index >= start && index < end);
+                    index++;
+                }
+            });
+        }
+
+        $(".search").on("keyup", function() {
+            currentPage = 1;
+            applyFilters();
+        });
+
+        $(".filter-status").on("change", function() {
+            currentPage = 1;
+            applyFilters();
+        });
+
+        $(".pagination-prev").on("click", function(e) {
+            e.preventDefault();
+            if (currentPage > 1) {
+                currentPage--;
+                showPage(currentPage);
+            }
+        });
+
+        $(".pagination-next").on("click", function(e) {
+            e.preventDefault();
+            const totalPages = Math.ceil($("#customerTable tbody tr").filter(function() {
+                return $(this).data("visible");
+            }).length / rowsPerPage);
+
+            if (currentPage < totalPages) {
+                currentPage++;
+                showPage(currentPage);
+            }
+        });
+
+        // Initial render
+        applyFilters();
+    });
+</script>
 
 @endsection

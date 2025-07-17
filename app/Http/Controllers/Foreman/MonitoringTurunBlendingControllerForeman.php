@@ -247,7 +247,7 @@ class MonitoringTurunBlendingControllerForeman extends Controller
     public function showInputFormMonitoringTurunBlending($id)
     {
         $monitoring = MonitoringTurunBlending::with('monitoringData', 'productionBatch')->find($id);
-        return view('foreman.monitoring.foreman_data_detail', compact('monitoring'));
+        return view('foreman.monitoring.analisis_data_detail', compact('monitoring'));
     }
 
     public function showDataDetail($id)

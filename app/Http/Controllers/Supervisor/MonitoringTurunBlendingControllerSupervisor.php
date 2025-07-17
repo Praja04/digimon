@@ -247,7 +247,7 @@ class MonitoringTurunBlendingControllerSupervisor extends Controller
     public function showInputFormMonitoringTurunBlending($id)
     {
         $monitoring = MonitoringTurunBlending::with('monitoringData', 'productionBatch')->find($id);
-        return view('supervisor.monitoring.supervisor_data_detail', compact('monitoring'));
+        return view('supervisor.monitoring.analisis_data_detail', compact('monitoring'));
     }
 
     public function showDataDetail($id)

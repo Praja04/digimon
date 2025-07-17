@@ -89,14 +89,14 @@ class GgaGgasController extends Controller
     public function GGA_data()
     {
         // Ambil semua PO yang memiliki data GGA
-        $productionBatches = ProductionBatch::has('GgaProcesses')->with('GgaProcesses')->get();
+        $productionBatches = ProductionBatch::has('GgaProcesses')->with('GgaProcesses')->orderby('created_at','desc')->get();
 
         return view('analis.ggaggas.gga', compact('productionBatches'));
     }
     public function GGAS_data()
     {
         // Ambil semua PO yang memiliki data GGA
-        $productionBatches = ProductionBatch::has('GgasProcesses')->with('GgasProcesses')->get();
+        $productionBatches = ProductionBatch::has('GgasProcesses')->with('GgasProcesses')->orderby('created_at','desc')->get();
 
         return view('analis.ggaggas.ggas', compact('productionBatches'));
     }

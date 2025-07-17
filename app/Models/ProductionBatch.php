@@ -27,15 +27,15 @@ class ProductionBatch extends Model
     public function MonitoringStorageMikro()
     {
         return $this->hasMany(MonitoringStorageMikroModel::class);
-    } 
+    }
     public function MonitoringStorage()
     {
         return $this->hasMany(MonitoringStorageModel::class);
-    } 
+    }
     public function MonitoringTurunBlending()
     {
         return $this->hasMany(MonitoringTurunBlending::class);
-    } 
+    }
     public function BlendingAwal()
     {
         return $this->hasMany(BlendingAwalModel::class);
@@ -55,5 +55,152 @@ class ProductionBatch extends Model
     public function GgasProcesses()
     {
         return $this->hasMany(GgasProcess::class);
+    }
+
+    public function isGGaComplete(): bool
+    {
+        $ggaItems = $this->GgaProcesses;
+        $jumlahGGA = $ggaItems->count();
+
+        // Jika tidak ada data GGA, belum lengkap
+        if ($jumlahGGA === 0) {
+            return false;
+        }
+
+        // Cek apakah semua data brix dan nacl sudah terisi
+        $isAllFilled = $ggaItems->every(function ($item) {
+            return !is_null($item->disposition) ;
+        });
+
+        return $isAllFilled;
+    }
+
+
+    public function isGGasComplete()
+    {
+        $ggasItems = $this->GgasProcesses;
+        $jumlahGGAS = $ggasItems->count();
+
+        // Jika tidak ada data GGA, belum lengkap
+        if ($jumlahGGAS === 0) {
+            return false;
+        }
+
+        // Cek apakah semua data brix dan nacl sudah terisi
+        $isAllFilled = $ggasItems->every(function ($item) {
+            return !is_null($item->disposition);
+        });
+
+        return $isAllFilled;
+    }
+
+
+    public function isBlendingAwalComplete()
+    {
+        $blending = $this->BlendingAwal;
+        $data = $blending->count();
+
+        // Jika tidak ada data GGA, belum lengkap
+        if ($data === 0) {
+            return false;
+        }
+
+        // Cek apakah semua data brix dan nacl sudah terisi
+        $isAllFilled = $blending->every(function ($item) {
+            return !is_null($item->disposition);
+        });
+
+        return $isAllFilled;
+    }
+
+    public function isBlendingAdjustMakroComplete()
+    {
+        $blending = $this->blendingAfterAdjust;
+        $data = $blending->count();
+
+        // Jika tidak ada data GGA, belum lengkap
+        if ($data === 0) {
+            return false;
+        }
+
+        // Cek apakah semua data brix dan nacl sudah terisi
+        $isAllFilled = $blending->every(function ($item) {
+            return !is_null($item->disposition);
+        });
+
+        return $isAllFilled;
+    }
+
+    public function isBlendingAdjustMikroComplete()
+    {
+        $blending = $this->blendingAfterAdjustMikro;
+        $data = $blending->count();
+
+        // Jika tidak ada data GGA, belum lengkap
+        if ($data === 0) {
+            return false;
+        }
+
+        // Cek apakah semua data brix dan nacl sudah terisi
+        $isAllFilled = $blending->every(function ($item) {
+            return !is_null($item->disposition);
+        });
+
+        return $isAllFilled;
+    }
+
+
+    public function isMonitoringBlendingComplete()
+    {
+        $monitoring = $this->MonitoringTurunBlending;
+        $data = $monitoring->count();
+
+        // Jika tidak ada data GGA, belum lengkap
+        if ($data === 0) {
+            return false;
+        }
+
+        // Cek apakah semua data brix dan nacl sudah terisi
+        $isAllFilled = $monitoring->every(function ($item) {
+            return !is_null($item->disposition);
+        });
+
+        return $isAllFilled;
+    }
+
+    public function isMonitoringStorageMakroComplete()
+    {
+        $monitoring = $this->MonitoringStorage;
+        $data = $monitoring->count();
+
+        // Jika tidak ada data GGA, belum lengkap
+        if ($data === 0) {
+            return false;
+        }
+
+        // Cek apakah semua data brix dan nacl sudah terisi
+        $isAllFilled = $monitoring->every(function ($item) {
+            return !is_null($item->disposition);
+        });
+
+        return $isAllFilled;
+    }
+
+    public function isMonitoringStorageMikroComplete()
+    {
+        $monitoring = $this->MonitoringStorageMikro;
+        $data = $monitoring->count();
+
+        // Jika tidak ada data GGA, belum lengkap
+        if ($data === 0) {
+            return false;
+        }
+
+        // Cek apakah semua data brix dan nacl sudah terisi
+        $isAllFilled = $monitoring->every(function ($item) {
+            return !is_null($item->disposition);
+        });
+
+        return $isAllFilled;
     }
 }

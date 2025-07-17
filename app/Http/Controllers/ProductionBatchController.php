@@ -1752,4 +1752,25 @@ class ProductionBatchController extends Controller
 
         return response()->json(['message' => 'Revisi Blending Awal berhasil dibuat.']);
     }
+
+    public function getCompletedGga($id)
+    {
+       
+        $identitas = ProductionBatch::with([
+            'GgaProcesses'
+        ])->findOrFail($id);
+        return response()->json([
+            'gga_complete' => $identitas->isGgaComplete()
+        ]);
+    }
+    public function getCompletedGgas($id)
+    {
+       
+        $identitas = ProductionBatch::with([
+            'GgasProcesses'
+        ])->findOrFail($id);
+        return response()->json([
+            'ggas_complete' => $identitas->isGgasComplete()
+        ]);
+    }
 }

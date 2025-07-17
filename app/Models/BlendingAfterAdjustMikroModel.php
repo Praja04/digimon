@@ -20,4 +20,9 @@ class BlendingAfterAdjustMikroModel extends Model
         'ym',
         'hasil',
     ];
+
+    public function productionBatch()
+    {
+        return $this->belongsTo(ProductionBatch::class);
+    }
 }

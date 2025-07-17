@@ -342,7 +342,7 @@
     <td>${item.jumlah_kedatangan}</td>
     <td>${item.status === 'done' ? '✅ Selesai' : '⌛ Proses'}</td>
     <td>
-        <a href="{{url('/supervisor/rmpm/detail/identitas/${item.id}')}}" class="btn btn-sm btn-info">
+        <a href="{{url('/supervisor/rmpm/detail/data/${item.id}')}}" class="btn btn-sm btn-info">
             <i class="ri-eye-line"></i> View
         </a>
     </td>
