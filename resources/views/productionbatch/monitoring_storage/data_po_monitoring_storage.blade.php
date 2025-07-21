@@ -32,16 +32,44 @@
             </div>
             <div class="card-body border border-dashed border-end-0 border-start-0">
                 <form>
-                    <div class="row g-3">
-                        <div class="col-xxl-5 col-sm-6">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-xxl-3 col-sm-3">
                             <div class="search-box">
-                                <input type="text" class="form-control search" placeholder="Search for order ID, customer, order status or something...">
+                                <input type="text" class="form-control" id="SearchData" placeholder="Cari nama Variant, nomor Po, atau lainnya...">
                                 <i class="ri-search-line search-icon"></i>
                             </div>
                         </div>
-                        <!--end col-->
+                        <div class="dropdown col-xxl-2 col-sm-3">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="dateFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                📅 Filter Tanggal
+                            </button>
+                            <div class="dropdown-menu p-3" aria-labelledby="dateFilterDropdown" style="min-width: 300px;">
+                                <div class="mb-2">
+                                    <label for="start_date" class="form-label">Start Date</label>
+                                    <input type="date" id="start_date" class="form-control">
+                                </div>
+                                <div class="mb-2">
+                                    <label for="end_date" class="form-label">End Date</label>
+                                    <input type="date" id="end_date" class="form-control">
+                                </div>
+                                <button type="button" class="btn btn-success w-100" id="filter-date-btn">Apply Filter</button>
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-2 col-sm-3">
+                            <select class="form-select" id="filterStatus">
+                                <option value="">Filter Status</option>
+                                <option value="all" selected>Semua</option>
+                                <option value="complete">Selesai Analisa</option>
+                                <option value="progress">On Progress</option>
+                            </select>
+                        </div>
+                        <div class="col-xxl-2 col-sm-3">
+                            <button type="button" class="btn btn-outline-warning w-100" onclick="resetFilterRM()">
+                                <i class="ri-refresh-line me-1 align-bottom"></i> Reset Filter
+                            </button>
+                        </div>
                     </div>
-                    <!--end row-->
                 </form>
             </div>
             <div class="card-body pt-0">
@@ -59,6 +87,7 @@
                                     <th class="sort" data-sort="tanggal_produksi">Tanggal Produksi</th>
                                     <th class="sort" data-sort="storage">Storage</th>
                                     <th class="sort" data-sort="description">Keterangan</th>
+                                    <th>Status</th>
                                     <th>Detail</th>
                                     <th>Action</th>
 
@@ -73,6 +102,7 @@
                                     <td>{{ $productionBatch->production_date }}</td>
                                     <td>{{ $productionBatch->storage }}</td>
                                     <td>{{ $productionBatch->description }}</td>
+                                    <td>{{ $productionBatch->isMonitoringStorageMakroComplete() ? '✅ Complete' : '⌛ Progress' }}</td>
                                     <td>
                                         <a href="{{ route('productionbatch.show_monitoring_storage', $productionBatch->id) }}" class="btn btn-sm btn-info"><i class="ri-eye-line"></i></a>
                                     </td>
@@ -98,13 +128,7 @@
                     </div>
                     <div class="d-flex justify-content-end">
                         <div class="pagination-wrap hstack gap-2">
-                            <a class="page-item pagination-prev disabled" href="#">
-                                Previous
-                            </a>
-                            <ul class="pagination listjs-pagination mb-0"></ul>
-                            <a class="page-item pagination-next" href="#">
-                                Next
-                            </a>
+                            <ul id="pagination" class="pagination listjs-pagination mb-0"></ul>
                         </div>
                     </div>
                 </div>
@@ -172,6 +196,112 @@
 <!--end row-->
 <script>
     $(document).ready(function() {
+        let rowsPerPage = 10;
+        let $rows = $('#orderTable tbody tr');
+        let $pagination = $('#pagination');
+        let $searchInput = $('#SearchData');
+        let $noResult = $('.noresult');
+        let currentPage = 1;
+
+        function displayPage(page, filteredRows) {
+            let start = (page - 1) * rowsPerPage;
+            let end = start + rowsPerPage;
+            $rows.hide();
+            filteredRows.slice(start, end).show();
+            currentPage = page;
+            highlightActivePage(page);
+        }
+
+        function renderPagination(filteredRows) {
+            $pagination.empty();
+            const pageCount = Math.ceil(filteredRows.length / rowsPerPage);
+            if (pageCount <= 1) return;
+
+            for (let i = 1; i <= pageCount; i++) {
+                const isActive = i === currentPage ? 'active' : '';
+                $pagination.append(`
+          <li class="page-item">
+            <a class="page-link ${isActive}" href="#" data-page="${i}">${i}</a>
+          </li>
+        `);
+            }
+        }
+
+        function highlightActivePage(page) {
+            $pagination.find('.page-link').removeClass('active');
+            $pagination.find(`.page-link[data-page="${page}"]`).addClass('active');
+        }
+
+        function applyFilter() {
+            const query = $('#SearchData').val().toLowerCase();
+            const status = $('#filterStatus').val();
+            const startDate = $('#start_date').val();
+            const endDate = $('#end_date').val();
+
+            const startObj = startDate ? new Date(startDate) : null;
+            const endObj = endDate ? new Date(endDate) : null;
+
+            const matchedRows = $('#orderTable tbody tr').filter(function() {
+                const rowText = $(this).text().toLowerCase();
+                const includeKeyword = rowText.includes(query);
+
+                // Ambil tanggal produksi dari kolom ke-4 (index 3)
+                const tanggalProduksi = $(this).find('td').eq(3).text().trim();
+                const rowDate = new Date(tanggalProduksi);
+                const includeDate =
+                    (!startObj || rowDate >= startObj) &&
+                    (!endObj || rowDate <= endObj);
+
+                // Ambil status GGA & GGAS dari kolom 7 & 8 (index 6 & 7)
+                const statusGGA = $(this).find('td').eq(6).text().trim().toLowerCase();
+                const statusGGAS = $(this).find('td').eq(7).text().trim().toLowerCase();
+                const includeStatus =
+                    status === 'all' || status === '' ||
+                    statusGGA.includes(status) || statusGGAS.includes(status);
+
+                return includeKeyword && includeDate && includeStatus;
+            });
+
+            const $rows = $('#orderTable tbody tr');
+            const $noResult = $('.noresult');
+            const $pagination = $('#pagination');
+
+            if (matchedRows.length === 0) {
+                $rows.hide();
+                $noResult.show();
+                $pagination.empty();
+            } else {
+                $noResult.hide();
+                $rows.hide();
+                renderPagination(matchedRows);
+                displayPage(1, matchedRows);
+            }
+        }
+        // Event pagination click
+        $pagination.on('click', '.page-link', function(e) {
+            e.preventDefault();
+            const selectedPage = parseInt($(this).data('page'));
+            const query = $searchInput.val().toLowerCase();
+            const matchedRows = $rows.filter(function() {
+                return $(this).text().toLowerCase().includes(query);
+            });
+            displayPage(selectedPage, matchedRows);
+        });
+
+        // Event pencarian
+        $searchInput.on('keyup', function() {
+            applyFilter();
+        });
+        $('#filterStatus').on('change', function() {
+            applyFilter();
+        });
+        $('#filter-date-btn').on('click', function() {
+            applyFilter(); // filter hanya saat tombol diklik
+        });
+
+
+        // Inisialisasi awal
+        applyFilter();
 
 
         let editId = null;
@@ -265,5 +395,9 @@
             });
         });
     });
+
+    function resetFilterRM() {
+        location.reload();
+    }
 </script>
 @endsection

@@ -651,20 +651,14 @@
                         <label class="form-label">a. Bersih</label><br>
                         <label><input type="radio" name="bersih" value="yes"> Iya</label>
                         <label><input type="radio" name="bersih" value="no"> Tidak</label>
-                        <div class="zak-input-wrapper mt-2" style="display:none;">
-                            <label class="form-label">Berapa zak yang tidak standar?</label>
-                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
-                        </div>
+
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">b. Kering</label><br>
                         <label><input type="radio" name="kering" value="yes"> Iya</label>
                         <label><input type="radio" name="kering" value="no"> Tidak</label>
-                        <div class="zak-input-wrapper mt-2" style="display:none;">
-                            <label class="form-label">Berapa zak yang tidak standar?</label>
-                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
-                        </div>
+
 
 
                     </div>
@@ -679,10 +673,7 @@
                         <label class="form-label">d. Tidak Cacat / Bolong</label><br>
                         <label><input type="radio" name="cacat" value="yes"> Iya</label>
                         <label><input type="radio" name="cacat" value="no"> Tidak</label>
-                        <div class="zak-input-wrapper mt-2" style="display:none;">
-                            <label class="form-label">Berapa zak yang tidak standar?</label>
-                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
-                        </div>
+
 
 
                     </div>
@@ -903,21 +894,33 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">b. Warna tidak sesuai STD</label><br>
+                        <label class="form-label">b. Warna sesuai STD</label><br>
                         <label><input type="radio" name="warna_std" value="yes"> Iya</label>
                         <label><input type="radio" name="warna_std" value="no"> Tidak</label>
+                        <div class="zak-input-wrapper mt-2" style="display:none;">
+                            <label class="form-label">Berapa zak yang tidak standar?</label>
+                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                        </div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">c. Campuran</label><br>
                         <label><input type="radio" name="campuran" value="yes"> Iya</label>
                         <label><input type="radio" name="campuran" value="no"> Tidak</label>
+                        <div class="zak-input-wrapper mt-2" style="display:none;">
+                            <label class="form-label">Berapa zak yang tidak standar?</label>
+                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                        </div>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">d. Aroma tidak STD</label><br>
+                        <label class="form-label">d. Aroma STD</label><br>
                         <label><input type="radio" name="aroma_std" value="yes"> Iya</label>
                         <label><input type="radio" name="aroma_std" value="no"> Tidak</label>
+                        <div class="zak-input-wrapper mt-2" style="display:none;">
+                            <label class="form-label">Berapa zak yang tidak standar?</label>
+                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -1373,17 +1376,33 @@
             <label>Lampirkan Gambar</label>
             <input type="file" class="form-control mb-2" name="attachment" accept="image/*">
         </div>`;
+        } else if (name === 'organo' || name === 'warna' || name === 'aroma') {
+            for (let i = 1; i <= jumlahData; i++) {
+                html += `<label for="">${i}</label>
+                <input type="text" class="form-control kapital-case"  name="${name}[]" placeholder="${label} ke-${i}">`;
+            }
         } else {
             for (let i = 1; i <= jumlahData; i++) {
                 html += `<label for="">${i}</label>
-                <input type="text" class="form-control mb-2 " name="${name}[]" placeholder="${label} ke-${i}">`;
+                <input type="text" class="form-control decimal-only"  name="${name}[]" placeholder="${label} ke-${i}">`;
             }
         }
 
         html += `</div>`;
         return html;
     };
+    $(document).on('input', '.decimal-only', function() {
+        let val = $(this).val();
 
+        // Hanya izinkan angka dan satu koma
+        val = val.replace(/[^0-9,]/g, ''); // buang karakter selain angka & koma
+        val = val.replace(/(,.*),/, '$1'); // hanya satu koma maksimal
+
+        $(this).val(val);
+    });
+    $(document).on('input', '.kapital-case', function() {
+        $(this).val($(this).val().toUpperCase());
+    });
     // Event listener dinamis: tampilkan / sembunyikan attachment & disposisi
     $(document).on('change', '#select-uji-kristal', function() {
         const value = $(this).val();
@@ -1404,29 +1423,21 @@
         }
     });
 
-    // Ubah titik ke koma saat blur pada input angka
-    $(document).on('blur', '.numeric-input', function() {
-        let val = $(this).val();
-        if (val.includes('.')) {
-            val = val.replace('.', ',');
-            $(this).val(val);
+
+
+    $(document).on('keydown', 'input', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Hindari submit form
+
+            const inputs = $('input:visible'); // Ambil semua input yang terlihat
+            const currentIndex = inputs.index(this); // Cari index input aktif
+            const nextInput = inputs.get(currentIndex + 1); // Ambil input setelahnya
+
+            if (nextInput) {
+                nextInput.focus(); // Pindahkan fokus
+            }
         }
     });
-
-    $(document).on('input', '.numeric-input', function() {
-        // Hanya angka, koma, dan satu koma saja
-        let val = $(this).val().replace(/[^0-9,]/g, '');
-
-        // Batasi hanya satu koma
-        const parts = val.split(',');
-        if (parts.length > 2) {
-            val = parts[0] + ',' + parts[1]; // buang kelebihan koma
-        }
-
-        $(this).val(val);
-    });
-
-
 
     function showStep(index) {
         $('.form-step').hide();
@@ -1542,6 +1553,11 @@
 
 
     $('#formAnalisa').off('submit').on('submit', function(e) {
+        $('.decimal-only').each(function() {
+            const val = $(this).val().replace(',', '.');
+            $(this).val(val);
+        });
+
         e.preventDefault();
 
         const jenis = $('#jenis_gula').val();

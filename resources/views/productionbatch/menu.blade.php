@@ -121,7 +121,7 @@
         </div>
     </div>
 
-    <div class="col-xl-3 col-lg-6">
+    <!-- <div class="col-xl-3 col-lg-6">
         <div class="card ribbon-box right overflow-hidden">
             <div class="card-body text-center p-4">
                 <div class="ribbon ribbon-success ribbon-shape trending-ribbon">
@@ -138,14 +138,11 @@
                 </div>
 
                 <div class="mt-4">
-                    <!-- <button type="button" class="btn btn-light w-100" data-bs-toggle="modal" data-bs-target="#comingSoonModal">
-                        Lihat Detail
-                    </button> -->
                     <a href="{{url('analis/productionbatch/data_po/blending/adjust')}}" class="btn btn-light w-100">Lihat Detail</a>
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <div class="col-xl-3 col-lg-6">
         <div class="card ribbon-box right overflow-hidden">
             <div class="card-body text-center p-4">
@@ -192,7 +189,7 @@
     </div>
 
 </div>
-<div class="modal fade" id="comingSoonModal" tabindex="-1" aria-labelledby="comingSoonModalLabel" aria-hidden="true">
+<!-- <div class="modal fade" id="comingSoonModal" tabindex="-1" aria-labelledby="comingSoonModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-center">
             <div class="modal-header">
@@ -209,5 +206,5 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 @endsection

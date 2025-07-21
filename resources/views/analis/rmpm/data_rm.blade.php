@@ -63,13 +63,30 @@
             <div class="card-body border-top">
                 <form>
                     <div class="row g-3 align-items-center">
-                        <div class="col-xxl-5 col-sm-6">
+                        <div class="col-xxl-3 col-sm-3">
                             <div class="search-box">
                                 <input type="text" class="form-control" id="searchDataRM" placeholder="Cari nama bahan, SPB, atau suplier...">
                                 <i class="ri-search-line search-icon"></i>
                             </div>
                         </div>
-                        <div class="col-xxl-3 col-sm-4">
+                        <div class="dropdown col-xxl-2 col-sm-3">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="dateFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                📅 Filter Tanggal
+                            </button>
+                            <div class="dropdown-menu p-3" aria-labelledby="dateFilterDropdown" style="min-width: 300px;">
+                                <div class="mb-2">
+                                    <label for="start_date" class="form-label">Start Date</label>
+                                    <input type="date" id="start_date" class="form-control">
+                                </div>
+                                <div class="mb-2">
+                                    <label for="end_date" class="form-label">End Date</label>
+                                    <input type="date" id="end_date" class="form-control">
+                                </div>
+                                <button type="button" class="btn btn-success w-100" id="filter-date-btn">Apply Filter</button>
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-2 col-sm-3">
                             <select class="form-select" id="filterStatus">
                                 <option value="">Filter Status</option>
                                 <option value="all" selected>Semua</option>
@@ -78,8 +95,8 @@
                             </select>
                         </div>
                         <div class="col-xxl-2 col-sm-3">
-                            <button type="button" class="btn btn-primary w-100" onclick="filterDataRM()">
-                                <i class="ri-equalizer-fill me-1 align-bottom"></i> Tampilkan
+                            <button type="button" class="btn btn-outline-warning w-100" onclick="resetFilterRM()">
+                                <i class="ri-refresh-line me-1 align-bottom"></i> Reset Filter
                             </button>
                         </div>
                         <div class="col-xxl-2 col-sm-3">
@@ -170,10 +187,7 @@
                                     <option value="Garam">Garam</option>
                                 </select>
                             </div>
-                            <div class="mb-3">
-                                <label for="nama_bahan" class="form-label">Nama Bahan</label>
-                                <input type="text" class="form-control" id="nama_bahan" name="nama_bahan" required>
-                            </div>
+
 
                             <div class="mb-3">
                                 <label for="tanggal_kedatangan" class="form-label">Tanggal & Jam Kedatangan</label>
@@ -198,7 +212,7 @@
 
                             <div class="mb-3">
                                 <label for="no_spb" class="form-label">No SPB</label>
-                                <input type="text" class="form-control" id="no_spb" name="no_spb" required>
+                                <input type="number" class="form-control" id="no_spb" name="no_spb" required>
                             </div>
 
                             <div class="mb-3">
@@ -310,7 +324,8 @@
     function filterDataRM() {
         const keyword = $('#searchDataRM').val().toLowerCase();
         const statusFilter = $('#filterStatus').val();
-
+        const startDate = $('#start_date').val();
+        const endDate = $('#end_date').val();
         $.ajax({
             url: "{{url('analis/rmpm/data/rm')}}",
             method: 'GET',
@@ -329,6 +344,21 @@
                     const searchable = `${item.nama_bahan} ${item.no_spb} ${item.suplier_manufactur}`.toLowerCase();
                     if (keyword && !searchable.includes(keyword)) return;
                     if (statusFilter && statusFilter !== 'all' && item.status !== statusFilter) return;
+                    // Filter tanggal
+                    function adjustDate(date, offsetDays) {
+                        const d = new Date(date);
+                        d.setDate(d.getDate() + offsetDays);
+                        return d;
+                    }
+
+                    const itemDate = new Date(item.tanggal_kedatangan);
+                    const startDateObj = startDate ? adjustDate(startDate, -1) : null;
+                    const endDateObj = endDate ? adjustDate(endDate, +1) : null;
+
+
+                    // Filter tanggal secara inklusif
+                    if (startDateObj && itemDate < startDateObj) return;
+                    if (endDateObj && itemDate > endDateObj) return;
 
                     const row = `
 <tr>
@@ -347,7 +377,7 @@
         </a>
     </td>
     <td>
-        <button type="button" class="btn btn-sm btn-primary" onclick="showQrModal(${item.id}, '${item.no_spb}_${item.nama_bahan}')">
+        <button type="button" class="btn btn-sm btn-primary" onclick="showQrModal(${item.id}, '${item.id}_${item.no_spb}_${item.tanggal_kedatangan}_${item.nama_bahan}')">
             QR Code
         </button>
     </td>
@@ -402,7 +432,9 @@
     // Optionally load on page load
     $(document).ready(function() {
         filterDataRM();
-
+        document.getElementById('filter-date-btn').addEventListener('click', function() {
+            filterDataRM();
+        });
         // Allow search on enter
         $('#searchDataRM').on('keypress', function(e) {
             if (e.which === 13) filterDataRM();
@@ -424,6 +456,21 @@
             }
         });
     });
+
+    function resetFilterRM() {
+        // Bersihkan input pencarian
+        $('#searchDataRM').val('');
+
+        // Reset dropdown status
+        $('#filterStatus').val('all');
+
+        // Reset tanggal
+        $('#start_date').val('');
+        $('#end_date').val('');
+
+        // Panggil kembali filter tanpa syarat
+        filterDataRM();
+    }
 </script>
 
 <script>

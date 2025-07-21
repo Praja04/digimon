@@ -37,11 +37,19 @@
                         @csrf
                         <div class="mb-3">
                             <label for="po_number" class="form-label">PO</label>
-                            <input type="text" name="po_number" class="form-control" required />
+                            <input type="number" name="po_number" class="form-control" required />
                         </div>
                         <div class="mb-3">
                             <label for="variant" class="form-label">Variant</label>
-                            <input type="text" name="variant" class="form-control" required />
+                            <select name="variant" id="variant" class="form-select">
+                                <option value="" disabled selected>Pilih Variant</option>
+                                <option value="SS1">SS1</option>
+                                <option value="SS2">SS2</option>
+                                <option value="BB">BB</option>
+                                <option value="MSD NR1">MSD NR1</option>
+                                <option value="MSD NR2">MSD NR2</option>
+                                <option value="JB">JB</option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="production_date" class="form-label">Tanggal Produksi</label>
@@ -80,15 +88,27 @@
     function createStorageFields(count) {
         const container = $('#storage_fields');
         container.empty();
+
+        let options = '<option value="">Pilih Storage</option>';
+        ['A', 'B', 'C', 'D'].forEach(prefix => {
+            for (let i = 1; i <= 5; i++) {
+                options += `<option value="${prefix}${i}">${prefix}${i}</option>`;
+            }
+        });
+
         for (let i = 0; i < count; i++) {
             container.append(`
-                <div class="mb-2">
-                    <label for="storage_${i}" class="form-label">Storage ${i + 1}</label>
-                    <input type="text" name="storage[]" class="form-control" id="storage_${i}" required />
-                </div>
-            `);
+            <div class="mb-2">
+                <label for="storage_${i}" class="form-label">Storage ${i + 1}</label>
+                <select name="storage[]" class="form-select" id="storage_${i}" required>
+                    ${options}
+                </select>
+            </div>
+        `);
         }
     }
+
+
 
     $('#batch_range_input').on('change keyup', function() {
         const value = $(this).val();
@@ -98,7 +118,6 @@
             const start = parseInt(match[1]);
             const end = parseInt(match[2]);
             const totalBatches = end - start + 1;
-
             if (totalBatches > 0) {
                 const groupCount = Math.ceil(totalBatches / 10);
                 createStorageFields(groupCount);
@@ -107,6 +126,7 @@
             createStorageFields(1);
         }
     });
+
 
     // Trigger saat halaman load jika sudah diisi sebelumnya
     $(document).ready(function() {

@@ -239,15 +239,7 @@
                         <select name="batch" class="form-select" id="batch_start" required></select>
                     </div>
 
-                    <!-- <div class="mb-3">
-                        <label for="batch_end" class="form-label">Batch Kedua</label>
-                        <select name="batch_end" class="form-select" id="batch_end" required></select>
-                    </div> -->
 
-                    <div class="mb-3">
-                        <label for="storage" class="form-label">Storage</label>
-                        <input type="text" name="storage" class="form-control">
-                    </div>
 
                     <div class="mb-3">
                         <label for="no_blending" class="form-label">Nomor Blending</label>
@@ -257,6 +249,41 @@
                     <div class="mb-3">
                         <label for="volume" class="form-label">Volume</label>
                         <input type="string" name="volume" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="storage" class="form-label">Storage (Optional)</label>
+                        <select name="storage" class="form-select">
+                            <option value="">-- Pilih Storage --</option>
+                            <optgroup label="A">
+                                <option value="A1">A1</option>
+                                <option value="A2">A2</option>
+                                <option value="A3">A3</option>
+                                <option value="A4">A4</option>
+                                <option value="A5">A5</option>
+                            </optgroup>
+                            <optgroup label="B">
+                                <option value="B1">B1</option>
+                                <option value="B2">B2</option>
+                                <option value="B3">B3</option>
+                                <option value="B4">B4</option>
+                                <option value="B5">B5</option>
+                            </optgroup>
+                            <optgroup label="C">
+                                <option value="C1">C1</option>
+                                <option value="C2">C2</option>
+                                <option value="C3">C3</option>
+                                <option value="C4">C4</option>
+                                <option value="C5">C5</option>
+                            </optgroup>
+                            <optgroup label="D">
+                                <option value="D1">D1</option>
+                                <option value="D2">D2</option>
+                                <option value="D3">D3</option>
+                                <option value="D4">D4</option>
+                                <option value="D5">D5</option>
+                            </optgroup>
+                        </select>
                     </div>
 
                 </div>

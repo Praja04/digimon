@@ -222,7 +222,7 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Warna</label>
-                                                    <input type="text" name="warna" class="form-control" required>
+                                                    <input type="text" name="warna" class="form-control kapital-case" required>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Disposition</label>
@@ -280,6 +280,9 @@
 </div>
 <!--end row-->
 <script>
+    $(document).on('input', '.kapital-case', function() {
+        $(this).val($(this).val().toUpperCase());
+    });
     $(document).ready(function() {
         $.ajaxSetup({
             headers: {

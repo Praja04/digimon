@@ -75,7 +75,7 @@
         </div>
     </div>
 
-    <div class="col-xl-4 col-lg-4">
+    <!-- <div class="col-xl-4 col-lg-4">
         <div class="card ribbon-box right overflow-hidden">
             <div class="card-body text-center p-4">
                 <div class="ribbon ribbon-success ribbon-shape trending-ribbon">
@@ -92,14 +92,10 @@
                 </div>
 
                 <div class="mt-4">
-                    <!-- <button type="button" class="btn btn-light w-100" data-bs-toggle="modal" data-bs-target="#comingSoonModal">
-                        Lihat Detail
-                    </button> -->
                     <div class="mt-4">
                         <a href="{{url('analis/blending/adjust/data')}}" class="btn btn-light w-100">Lihat Detail</a>
                     </div>
 
-                    <!-- <a href="{{url('analis/ggaggas/ggas')}}" class="btn btn-light w-100">Lihat Detail</a> -->
                 </div>
             </div>
         </div>
@@ -122,18 +118,14 @@
                 </div>
 
                 <div class="mt-4">
-                    <!-- <button type="button" class="btn btn-light w-100" data-bs-toggle="modal" data-bs-target="#comingSoonModal">
-                        Lihat Detail
-                    </button> -->
                     <div class="mt-4">
                         <a href="{{url('analis/blending/mikro/data')}}" class="btn btn-light w-100">Lihat Detail</a>
                     </div>
 
-                    <!-- <a href="{{url('analis/ggaggas/ggas')}}" class="btn btn-light w-100">Lihat Detail</a> -->
-                </div>
+               </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
 
 </div>

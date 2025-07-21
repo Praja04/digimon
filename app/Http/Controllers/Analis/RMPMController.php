@@ -51,8 +51,12 @@ class RMPMController extends Controller
     // 2. Menyimpan Identitas RM
     public function simpanIdentitas(Request $request)
     {
-        $identitas = IdentitasRM::create($request->all());
-        // return redirect()->route('rmpm.listIdentitas', ['jenis' => $identitas->jenis_gula]);
+        $data = $request->all();
+
+        // Set nama_bahan berdasarkan jenis_gula
+        $data['nama_bahan'] = $request->jenis_gula;
+
+        $identitas = IdentitasRM::create($data);
         return redirect()->back();
     }
 
@@ -133,7 +137,7 @@ class RMPMController extends Controller
 
 
 
-   
+
 
 
     public function storeShortTerm(Request $request)
@@ -153,9 +157,9 @@ class RMPMController extends Controller
 
         $brix = array_map(fn ($val) => str_replace(',', '.', $val), $request->brix);
         $ph = array_map(fn ($val) => str_replace(',', '.', $val), $request->ph);
-       
+
         $ka = array_map(fn ($val) => str_replace(',', '.', $val), $request->ka);
-        
+
 
         $username = session('username');
 
@@ -354,7 +358,6 @@ class RMPMController extends Controller
             'jam_analisa_exists' => $jamAnalisaExist,
             'sampling_complete' => $identitas->isSamplingComplete()
         ]);
-
     }
 
 
@@ -445,7 +448,7 @@ class RMPMController extends Controller
         $dataRM = IdentitasRM::with([
             'analisaGaramGula.disposisi',
             'analisaLongTerm',
-        ])->orderby('created_at','desc')->get();
+        ])->orderby('created_at', 'desc')->get();
 
         $dataRM->transform(function ($item) {
             $status = 'progress';
@@ -481,6 +484,4 @@ class RMPMController extends Controller
 
         return response()->json(['data' => $dataRM]);
     }
-
-
 }

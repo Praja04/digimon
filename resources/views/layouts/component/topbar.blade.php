@@ -48,14 +48,12 @@
                     </button>
                 </div>
 
-                <a href="{{ url(trim($__env->yieldContent('dynamic_url'))) }}">
                     <div class="ms-1 header-item d-none d-sm-flex">
                         <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle light-dark-mode shadow-none">
                             <i class="mdi mdi-speedometer"></i>
                         </button>
                         Real-Time
                     </div>
-                </a>
 
 
 

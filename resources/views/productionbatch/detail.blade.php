@@ -310,8 +310,13 @@
                     <input type="hidden" name="production_batch_id" value="{{ $productionBatch->id }}">
                     <div class="mb-3">
                         <label class="form-label">Dissolver Number</label>
-                        <input type="text" name="dissolver_number" class="form-control" required>
-                    </div>
+                        <select name="dissolver_number" class="form-select" required>
+                            <option value="" selected disabled>pilih Dissolver Number</option>
+                            @for ($i = 1; $i <= 8; $i++)
+                                <option value="Dissolver {{ $i }}">Dissolver {{ $i }}</option>
+                            @endfor
+                        </select>
+                        </div>
 
                     <div class="mb-3">
                         <label class="form-label">Jenis Sample</label>

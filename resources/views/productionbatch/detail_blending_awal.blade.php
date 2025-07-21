@@ -251,10 +251,7 @@
                         <select name="batch_end" class="form-select" id="batch_end" required></select>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="storage" class="form-label">Storage</label>
-                        <input type="text" name="storage" class="form-control">
-                    </div>
+
 
                     <div class="mb-3">
                         <label for="no_blending" class="form-label">Nomor Blending</label>
@@ -265,7 +262,40 @@
                         <label for="volume" class="form-label">Volume</label>
                         <input type="string" name="volume" class="form-control">
                     </div>
-
+                    <div class="mb-3">
+                        <label for="storage" class="form-label">Storage (Optional)</label>
+                        <select name="storage" class="form-select">
+                            <option value="">-- Pilih Storage --</option>
+                            <optgroup label="A">
+                                <option value="A1">A1</option>
+                                <option value="A2">A2</option>
+                                <option value="A3">A3</option>
+                                <option value="A4">A4</option>
+                                <option value="A5">A5</option>
+                            </optgroup>
+                            <optgroup label="B">
+                                <option value="B1">B1</option>
+                                <option value="B2">B2</option>
+                                <option value="B3">B3</option>
+                                <option value="B4">B4</option>
+                                <option value="B5">B5</option>
+                            </optgroup>
+                            <optgroup label="C">
+                                <option value="C1">C1</option>
+                                <option value="C2">C2</option>
+                                <option value="C3">C3</option>
+                                <option value="C4">C4</option>
+                                <option value="C5">C5</option>
+                            </optgroup>
+                            <optgroup label="D">
+                                <option value="D1">D1</option>
+                                <option value="D2">D2</option>
+                                <option value="D3">D3</option>
+                                <option value="D4">D4</option>
+                                <option value="D5">D5</option>
+                            </optgroup>
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success">Simpan</button>
@@ -287,7 +317,9 @@
                 <div class="modal-body">
                     <input type="hidden" name="id_old_blending" id="modal_id_blending">
                     <input type="hidden" name="production_batch_id" id="modal_po_id">
-                    <input type="hidden" name="production_batch_id_leveling" id="id_leveling">
+                    <input type="hidden" name="production_batch_id_leveling[]" id="po_id_leveling_1">
+                    <input type="hidden" name="production_batch_id_leveling[]" id="po_id_leveling_2">
+
                     <input type="hidden" name="disposition" id="modal_disposition">
                     <input type="hidden" id="modal_additional_batch_po_id" name="additional_batch_po_id">
 
@@ -310,11 +342,22 @@
                     </div>
 
                     <div class="mb-3 d-none" id="additional_batch_group">
-                        <label for="additional_batch">Pilih Batch Tambahan (Jalan Bareng / Leveling)</label>
-                        <select name="additional_batch" id="additional_batch" class="form-control">
+                        <label>Pilih Batch Tambahan 1</label>
+                        <select name="additional_batch[]" id="additional_batch" class="form-control">
                             <option value="">-- Pilih Batch --</option>
                         </select>
+                        <input type="hidden" name="production_batch_id_leveling[]" id="po_id_leveling_1">
                     </div>
+
+                    <div class="mb-3 d-none" id="additional_batch_group_2">
+                        <label>Pilih Batch Tambahan 2</label>
+                        <select name="additional_batch[]" id="additional_batch_2" class="form-control">
+                            <option value="">-- Pilih Batch --</option>
+                        </select>
+                        <input type="hidden" name="production_batch_id_leveling[]" id="po_id_leveling_2">
+                    </div>
+
+
 
                 </div>
                 <div class="modal-footer">
@@ -435,7 +478,7 @@
             $('#modal_revisi_display').val(res.data?.revisi ? parseInt(res.data.revisi) + 1 : 1);
 
             if (disposition === 'Leveling') {
-                $('#additional_batch_group').removeClass('d-none');
+                $('#additional_batch_group, #additional_batch_group_2').removeClass('d-none');
                 $('#additional_batch').empty().append('<option value="">-- Pilih Batch --</option>');
                 $('#modal_po_id').val(poId);
                 $.get('{{ url("/analis/productionbatch/processblending/get-available-additional-batch") }}', {
@@ -445,23 +488,30 @@
                     console.log(batchRes);
                     batchRes.data.forEach(function(batchItem) {
                         let value = `${batchItem.batch_number}`;
-                        $('#additional_batch').append(`<option  data-id_additional_po="${batchItem.po_id}" value="${value}">Batch ${batchItem.batch_number} (PO ${batchItem.po_number})</option>`);
+                        $('#additional_batch,#additional_batch_2').append(`<option  data-id_additional_po="${batchItem.po_id}" value="${value}">Batch ${batchItem.batch_number} (PO ${batchItem.po_number})</option>`);
                     });
                 });
 
             } else if (disposition === 'Jalan Bareng') {
                 $('#additional_batch_group').removeClass('d-none');
+                $('#additional_batch_group_2').addClass('d-none');
+                $('#po_id_leveling_2').val(''); // kosongkan batch 2
                 $('#additional_batch').empty().append('<option value="">-- Pilih Batch --</option>');
                 $('#modal_po_id').val(poId);
                 $.get('{{ url("/analis/productionbatch/processblending/get-jalan-bareng") }}', {
                     production_batch_id: poId
                 }, function(batchRes) {
                     console.log(batchRes);
-                    batchRes.data.forEach(function(batchItem) {
-                        let value = `${batchItem.batch_range}`;
+                    let seen = new Set();
 
-                        $('#additional_batch').append(`<option  data-id_additional_po="${batchItem.id}" value="${value}">Batch ${batchItem.batch_range} (PO ${batchItem.po_number})</option>`);
+                    batchRes.data.forEach(function(batchItem) {
+                        let value = `${batchItem.batch_range}-${batchItem.po_number}`;
+                        if (!seen.has(value)) {
+                            seen.add(value);
+                            $('#additional_batch,#additional_batch_2').append(`<option data-id_additional_po="${batchItem.po_id}" value="${batchItem.batch_range}">Batch ${batchItem.batch_range} (PO ${batchItem.po_number})</option>`);
+                        }
                     });
+
                 });
             } else {
                 $('#additional_batch_group').addClass('d-none');
@@ -485,13 +535,21 @@
             $('#modal_additional_batch').val(batch_number);
             $('#modal_additional_batch_po_id').val(po_id);
             $('#id_leveling').val(poId);
+            $('#po_id_leveling_1').val(poId || '');
         } else {
             $('#modal_additional_batch').val('');
             $('#modal_additional_batch_po_id').val('');
         }
+
     });
 
 
+
+    $('#additional_batch_2').on('change', function() {
+        const selectedOption = $(this).find('option:selected');
+        const poId = selectedOption.data('id_additional_po');
+        $('#po_id_leveling_2').val(poId || '');
+    });
     $('#submit_generate').click(function(e) {
         e.preventDefault(); // cegah tombol submit reload page
 

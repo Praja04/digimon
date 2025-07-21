@@ -55,6 +55,11 @@
             </div>
             <div class="modal-body text-center">
                 <input type="text" id="scannedUrl" class="form-control text-center" placeholder="Scan QR Code di sini..." autofocus>
+                <!-- Preview kamera (hanya muncul di mobile) -->
+                <div id="cameraPreviewWrapper" class="d-none mt-3">
+                    <div id="mobileCameraPreview"></div>
+                    <p class="text-muted mt-2">Arahkan kamera ke QR Code untuk scan otomatis</p>
+                </div>
                 <!-- Spinner Loading -->
                 <div id="loadingSpinner" class="mt-3 d-none">
                     <div class="spinner-border text-success" role="status">
@@ -69,28 +74,68 @@
         </div>
     </div>
 </div>
+<script src="https://unpkg.com/html5-qrcode"></script>
 <script>
+    function isMobileDevice() {
+        return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    }
+
     const inputField = document.getElementById('scannedUrl');
     const spinner = document.getElementById('loadingSpinner');
+    const cameraWrapper = document.getElementById('cameraPreviewWrapper');
+    let html5QrCode;
 
-    // Fokus otomatis saat modal terbuka
+    // Modal terbuka
     document.getElementById('manualScanModal').addEventListener('shown.bs.modal', function() {
         inputField.value = '';
+        inputField.disabled = false;
         spinner.classList.add('d-none');
+        inputField.classList.remove('d-none');
+        cameraWrapper.classList.add('d-none');
         inputField.focus();
+
+        // Kalau mobile, aktifkan kamera
+        if (isMobileDevice()) {
+            inputField.classList.add('d-none');
+            cameraWrapper.classList.remove('d-none');
+
+            html5QrCode = new Html5Qrcode("mobileCameraPreview");
+            Html5Qrcode.getCameras().then(devices => {
+                if (devices && devices.length) {
+                    html5QrCode.start(
+                        devices[0].id, {
+                            fps: 10,
+                            qrbox: 250
+                        },
+                        scannedUrl => {
+                            html5QrCode.stop();
+                            spinner.classList.remove('d-none');
+                            setTimeout(() => {
+                                window.location.href = scannedUrl;
+                            }, 1500);
+                        },
+                        error => {
+                            console.warn("Scan error:", error);
+                        }
+                    );
+                }
+            }).catch(err => console.error("Kamera tidak tersedia:", err));
+        }
     });
 
-    // Jika input berubah (scanner isi URL)
+    // Modal ditutup
+    document.getElementById('manualScanModal').addEventListener('hidden.bs.modal', function() {
+        if (html5QrCode) {
+            html5QrCode.stop().catch(err => console.warn("Gagal berhenti:", err));
+        }
+    });
+
     inputField.addEventListener('input', function() {
         const url = inputField.value.trim();
-        if (url.length > 5 && url.startsWith("http")) {
-            // Tampilkan spinner
-            spinner.classList.remove('d-none');
-
-            // Nonaktifkan input sementara
+        if (url) {
+            spinner.classList.remove('d-none'); // Tampilkan loading
             inputField.disabled = true;
 
-            // Tunggu 1.5 detik, lalu redirect
             setTimeout(() => {
                 window.location.href = url;
             }, 1500);
