@@ -101,25 +101,31 @@
 
             html5QrCode = new Html5Qrcode("mobileCameraPreview");
             Html5Qrcode.getCameras().then(devices => {
-                if (devices && devices.length) {
+                if (devices.length) {
+                    // Coba cari kamera belakang
+                    let backCamera = devices.find(device =>
+                        /back|rear|environment/i.test(device.label)
+                    );
+
+                    // Kalau tidak ada label, fallback ke perangkat pertama
+                    const selectedCameraId = backCamera ? backCamera.id : devices[0].id;
+
                     html5QrCode.start(
-                        devices[0].id, {
+                        selectedCameraId, {
                             fps: 10,
                             qrbox: 250
                         },
                         scannedUrl => {
                             html5QrCode.stop();
                             spinner.classList.remove('d-none');
-                            setTimeout(() => {
-                                window.location.href = scannedUrl;
-                            }, 1500);
+                            setTimeout(() => window.location.href = scannedUrl, 1500);
                         },
-                        error => {
-                            console.warn("Scan error:", error);
-                        }
+                        error => console.warn("Scan error:", error)
                     );
+                } else {
+                    console.warn("Tidak ada kamera yang tersedia.");
                 }
-            }).catch(err => console.error("Kamera tidak tersedia:", err));
+            });
         }
     });
 
