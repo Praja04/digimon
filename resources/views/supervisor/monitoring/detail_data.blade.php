@@ -65,7 +65,7 @@
                                         <div class="vr"></div>
 
                                         <div class="text-muted">Tanggal Produksi : <span class="text-body fw-medium">{{ $productionBatch->production_date }}</span></div>
-                                      
+
 
                                     </div>
                                 </div>
@@ -135,7 +135,7 @@
                                 <p>{{ $productionBatch->description }}</p>
                             </div>
 
-                          
+
                         </div>
                     </div>
                     <!-- end col -->
@@ -324,9 +324,22 @@
                                         </div>
 
                                         <div class="mb-3 d-none adjustment-qty-wrapper">
-                                            <label class="form-label">Adjustment Qty</label>
-                                            <input type="number" name="adjustment_qty" class="form-control adjustment-qty">
-                                        </div>
+                                            <h6 class="form-label fw-bold">Adjustment Qty</h6>
+                                            <div class="row g-3">
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Air (Liter)</label>
+                                                    <input type="number" step="0.01" name="adjustment_qty_air" class="form-control adjustment-qty" placeholder="0.00">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Gula (Kg)</label>
+                                                    <input type="number" step="0.01" name="adjustment_qty_gula" class="form-control adjustment-qty" placeholder="0.00">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Garam (Kg)</label>
+                                                    <input type="number" step="0.01" name="adjustment_qty_garam" class="form-control adjustment-qty" placeholder="0.00">
+                                                </div>
+                                            </div>
+                                        </div>  
                                     </div>
 
                                     <div class="modal-footer">
@@ -516,14 +529,20 @@
         $('.disposition-select').on('change', function() {
             const selected = $(this).val();
             const qtyWrapper = $('.adjustment-qty-wrapper');
+            const qtyWrapperlabel = $('.adjustment-qty-wrapper');
             const qtyInput = $('.adjustment-qty');
+            const qtyInputedit = $('.adjustment-qty-edit');
 
             if (selected === 'Adjustment') {
                 qtyWrapper.removeClass('d-none');
+                qtyWrapperlabel.removeClass('d-none');
                 qtyInput.prop('required', true);
+                qtyInputedit.prop('required', true);
             } else {
                 qtyWrapper.addClass('d-none');
+                qtyWrapperlabel.addClass('d-none');
                 qtyInput.prop('required', false).val('');
+                qtyInputedit.prop('required', false).val('');
             }
         });
 

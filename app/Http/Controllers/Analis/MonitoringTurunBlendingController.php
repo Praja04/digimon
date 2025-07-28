@@ -209,7 +209,9 @@ class MonitoringTurunBlendingController extends Controller
             'monitoring_id' => 'required|exists:monitoring_turun_blending,id',
             'disposition' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment,Jalan Bareng,Leveling',
             'disposition_remarks' => 'nullable|string|max:255',
-            'adjustment_qty' => 'nullable|integer|min:1',
+            'adjustment_qty_air' => 'nullable',
+            'adjustment_qty_garam' => 'nullable',
+            'adjustment_qty_gula' => 'nullable',
         ]);
 
         if ($validator->fails()) {
@@ -248,7 +250,9 @@ class MonitoringTurunBlendingController extends Controller
 
         // Jika adjustment
         if ($disposition === 'Adjustment') {
-            $dataUpdate['adjusment_qty'] = $request->adjustment_qty;
+            $dataUpdate['adjustment_qty_air'] = $request->adjustment_qty_air;
+            $dataUpdate['adjustment_qty_garam'] = $request->adjustment_qty_garam;
+            $dataUpdate['adjustment_qty_gula'] = $request->adjustment_qty_gula;
             $dataUpdate['not_standar'] = true;
         }
         if ($disposition === 'Jalan Bareng') {

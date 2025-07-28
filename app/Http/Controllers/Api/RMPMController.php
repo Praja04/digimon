@@ -51,10 +51,11 @@ class RMPMController extends Controller
         ]);
     }
 
-    public function kondisiMobil(Request $request)
+
+    private function buildFilteredQuery(string $table, Request $request)
     {
-        $query = DB::table('sampling_kondisi_mobil')
-            ->join('identitas_rm_master', 'sampling_kondisi_mobil.id_identitas', '=', 'identitas_rm_master.id');
+        $query = DB::table($table)
+        ->join('identitas_rm_master', "$table.id_identitas", '=', 'identitas_rm_master.id');
 
         if ($request->filled('jenis_gula')) {
             $query->where('identitas_rm_master.jenis_gula', $request->jenis_gula);
@@ -64,109 +65,68 @@ class RMPMController extends Controller
             $query->whereDate('identitas_rm_master.tanggal_kedatangan', $request->tanggal);
         }
 
-        $total = $query->count();
-
-        $fields = ['bersih', 'kering', 'benda_asing', 'cacat', 'segel', 'berbau'];
-        $result = [];
-
-        foreach ($fields as $field) {
-            $yes = $query->where($field, 1)->count();
-            $result[$field] = [
-                'yes' => $yes,
-                'no' => $total - $yes
-            ];
-        }
-
-        return response()->json(['mobil' => $result]);
+        return $query;
     }
 
-    public function dokumen(Request $request)
+    private function buildResponse(array $fields, $query, array $specialRules = [])
     {
-        $query = DB::table('sampling_dokumen')
-            ->join('identitas_rm_master', 'sampling_dokumen.id_identitas', '=', 'identitas_rm_master.id');
-
-        if ($request->filled('jenis_gula')) {
-            $query->where('identitas_rm_master.jenis_gula', $request->jenis_gula);
-        }
-
-        if ($request->filled('tanggal')) {
-            $query->whereDate('identitas_rm_master.tanggal_kedatangan', $request->tanggal);
-        }
-
         $total = $query->count();
-
-        $fields = ['coa', 'suratjalan_vendor', 'packing_list', 'logo_halal', 'kesesuaian_matriks_bahan'];
         $result = [];
 
         foreach ($fields as $field) {
-            if ($field === 'logo_halal') {
-                $yes = $query->where('logo_halal', 1)->count();
-            } else {
+            if (isset($specialRules[$field]) && $specialRules[$field] === 'not_null') {
                 $yes = $query->whereNotNull($field)->count();
+            } elseif (isset($specialRules[$field]) && $specialRules[$field] === 'equals_1') {
+                $yes = $query->where($field, 1)->count();
+            } else {
+                $yes = $query->where(DB::raw("LOWER(TRIM(SUBSTRING_INDEX($field, ',', 1)))"), 'yes')->count();
             }
+
             $result[$field] = [
                 'yes' => $yes,
                 'no' => $total - $yes
             ];
         }
 
-        return response()->json(['dokumen' => $result]);
+        return $result;
+    }
+    public function kondisiMobil(Request $request)
+    {
+        $query = $this->buildFilteredQuery('sampling_kondisi_mobil', $request);
+        $fields = ['bersih', 'kering', 'benda_asing', 'cacat', 'segel', 'berbau'];
+
+        return response()->json(['mobil' => $this->buildResponse($fields, $query)]);
+    }
+    public function dokumen(Request $request)
+    {
+        $query = $this->buildFilteredQuery('sampling_dokumen', $request);
+        $fields = ['coa', 'suratjalan_vendor', 'packing_list', 'logo_halal', 'kesesuaian_matriks_bahan'];
+
+        $specialRules = [
+            'logo_halal' => 'equals_1',
+            'coa' => 'not_null',
+            'suratjalan_vendor' => 'not_null',
+            'packing_list' => 'not_null',
+            'kesesuaian_matriks_bahan' => 'not_null',
+        ];
+
+        return response()->json(['dokumen' => $this->buildResponse($fields, $query, $specialRules)]);
     }
 
     public function fisikKemasan(Request $request)
     {
-        $query = DB::table('sampling_fisik_kemasan')
-            ->join('identitas_rm_master', 'sampling_fisik_kemasan.id_identitas', '=', 'identitas_rm_master.id');
-
-        if ($request->filled('jenis_gula')) {
-            $query->where('identitas_rm_master.jenis_gula', $request->jenis_gula);
-        }
-
-        if ($request->filled('tanggal')) {
-            $query->whereDate('identitas_rm_master.tanggal_kedatangan', $request->tanggal);
-        }
-
-        $total = $query->count();
+        $query = $this->buildFilteredQuery('sampling_fisik_kemasan', $request);
         $fields = ['rusak', 'kotor', 'berair', 'basah', 'campuran', 'sesuai_std'];
-        $result = [];
 
-        foreach ($fields as $field) {
-            $yes = $query->where($field, 1)->count();
-            $result[$field] = [
-                'yes' => $yes,
-                'no' => $total - $yes
-            ];
-        }
-
-        return response()->json(['kemasan' => $result]);
+        return response()->json(['kemasan' => $this->buildResponse($fields, $query)]);
     }
 
     public function fisikRaw(Request $request)
     {
-        $query = DB::table('sampling_fisik_raw')
-            ->join('identitas_rm_master', 'sampling_fisik_raw.id_identitas', '=', 'identitas_rm_master.id');
-
-        if ($request->filled('jenis_gula')) {
-            $query->where('identitas_rm_master.jenis_gula', $request->jenis_gula);
-        }
-
-        if ($request->filled('tanggal')) {
-            $query->whereDate('identitas_rm_master.tanggal_kedatangan', $request->tanggal);
-        }
-
-        $total = $query->count();
+        $query = $this->buildFilteredQuery('sampling_fisik_raw', $request);
         $fields = ['leleh', 'warna_std', 'aroma_std', 'campuran', 'sesuai_std'];
-        $result = [];
 
-        foreach ($fields as $field) {
-            $yes = $query->where($field, 1)->count();
-            $result[$field] = [
-                'yes' => $yes,
-                'no' => $total - $yes
-            ];
-        }
-
-        return response()->json(['raw_material' => $result]);
+        return response()->json(['raw_material' => $this->buildResponse($fields, $query)]);
     }
 
     public function rekapDisposisiTotal()

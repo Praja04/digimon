@@ -17,7 +17,9 @@ class MonitoringTurunBlending extends Model
         'volume',
         'disposition',
         'disposition_remarks',
-        'adjusment_qty',
+        'adjustment_qty_air',
+        'adjustment_qty_garam',
+        'adjustment_qty_gula',
         'is_adjustment',
         'revisi',
         'not_standar'

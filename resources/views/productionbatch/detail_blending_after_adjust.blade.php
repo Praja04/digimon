@@ -35,9 +35,9 @@
 
                                         <div class="text-muted">Tanggal Produksi : <span class="text-body fw-medium">{{ $productionBatch->production_date }}</span></div>
                                         <div class="text-end">
-                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inputModal">
+                                            <!-- <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inputModal">
                                                 Input Blending After Adjusment
-                                            </button>
+                                            </button> -->
                                         </div>
 
                                     </div>
@@ -163,7 +163,7 @@
                                                                             <div style="display: inline-block;">
                                                                                 <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('analis/blending/adjust/detail/form/' . $blending->id), 'QRCODE') }}" alt="QR Code">
                                                                             </div>
-                                                                            <p>Blending/{{ $productionBatch->po_number }}/{{ $productionBatch->production_date }}/{{ $blending->batch_range }}</p>
+                                                                            <p>BlendingAfterAdjust-Makro/{{ $productionBatch->po_number }}/{{ $productionBatch->production_date }}/{{ $blending->batch_range }}</p>
                                                                         </div>
                                                                         <div class="modal-footer justify-content-center py-2">
                                                                             <button onclick="printQR('qrPrintArea{{ $blending->id }}')" class="btn btn-sm btn-success">Print</button>
@@ -240,7 +240,7 @@
                                                                             <div style="display: inline-block;">
                                                                                 <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('analis/blending/mikro/detail/form/' . $blending->id), 'QRCODE') }}" alt="QR Code">
                                                                             </div>
-                                                                            <p>Blending_Awal/{{ $productionBatch->po_number }}/{{ $productionBatch->variant }}/{{ $blending->batch_range }}</p>
+                                                                            <p>BlendingAfterAdjust-Mikro /{{ $productionBatch->po_number }}/{{ $productionBatch->variant }}/{{ $blending->batch_range }}</p>
                                                                         </div>
                                                                         <div class="modal-footer justify-content-center py-2">
                                                                             <button onclick="printQR('qrPrintArea{{ $blending->id }}')" class="btn btn-sm btn-success">Print</button>

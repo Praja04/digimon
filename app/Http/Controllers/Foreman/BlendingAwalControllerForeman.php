@@ -28,73 +28,7 @@ class BlendingAwalControllerForeman extends Controller
         return view('foreman.blending.menu');
     }
     //
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'production_batch_id' => 'required|exists:production_batches,id',
-            'batch_start' => 'required|integer|different:batch_end',
-            'batch_end' => 'required|integer',
-            'storage' => 'nullable|string', // ← ubah jadi nullable
-            'no_blending' => 'required',
-            //required colume harus decimal
-            'volume' => 'required|numeric',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validasi gagal.',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $start = (int) $request->batch_start;
-        $end = (int) $request->batch_end;
-
-        if ($start > $end) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Batch start tidak boleh lebih besar dari batch end.'
-            ], 422);
-        }
-
-     
-
-       $batchRange = $start . '-' . $end;
-
-        // Cek apakah batch_range persis sama sudah ada
-        $exists = BlendingAwalModel::where('production_batch_id', $request->production_batch_id)
-            ->where('batch_range', $batchRange)
-            ->exists();
-
-        if ($exists) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Batch range tersebut sudah pernah digunakan.'
-            ], 422);
-        }
-        
-
-        // Simpan data Blending Awal
-        BlendingAwalModel::create([
-            'production_batch_id' => $request->production_batch_id,
-            'batch_range' => "$start-$end",
-            'nomor_blending' => $request->no_blending,
-            'volume' => $request->volume
-        ]);
-
-        // Jika ada input 'storage', update di tabel ProductionBatch
-        if ($request->filled('storage')) {
-            $productionBatch = ProductionBatch::find($request->production_batch_id);
-            $productionBatch->storage = $request->storage;
-            $productionBatch->save();
-        }
-
-        return response()->json([
-            'status' => 'ok',
-            'message' => 'Data berhasil disimpan.'
-        ]);
-    }
+   
 
     public function Blending_data()
     {
@@ -153,7 +87,9 @@ class BlendingAwalControllerForeman extends Controller
             'warna' => 'required|string|max:20',
             'disposition' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment,Jalan Bareng,Leveling',
             'disposition_remarks' => 'nullable|string|max:255',
-            'adjustment_qty' => 'nullable|integer|min:1',
+            'adjustment_qty_air' => 'nullable',
+            'adjustment_qty_garam' => 'nullable',
+            'adjustment_qty_gula' => 'nullable',
         ], [
             'brix.max' => 'Nilai brix melebihi batas input yaitu 100.',
             'nacl.max' => 'Nilai NaCl melebihi batas input yaitu 100.',
@@ -205,7 +141,9 @@ class BlendingAwalControllerForeman extends Controller
 
         // Jika adjustment
         if ($disposition === 'Adjustment') {
-            $dataUpdate['adjusment_qty'] = $request->adjustment_qty;
+            $dataUpdate['adjustment_qty_air'] = $request->adjustment_qty_air;
+            $dataUpdate['adjustment_qty_garam'] = $request->adjustment_qty_garam;
+            $dataUpdate['adjustment_qty_gula'] = $request->adjustment_qty_gula;
             $dataUpdate['not_standar'] = true;
         }
         if ($disposition === 'Jalan Bareng') {
@@ -246,7 +184,9 @@ class BlendingAwalControllerForeman extends Controller
             'warna_edit' => 'required|string|max:20',
             'disposition_edit' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment,Jalan Bareng,Leveling',
             'disposition_remarks_edit' => 'nullable|string|max:255',
-            'adjustment_qty_edit' => 'nullable|integer|min:1',
+            'adjustment_qty_edit_air' => 'nullable',
+            'adjustment_qty_edit_garam' => 'nullable',
+            'adjustment_qty_edit_gula' => 'nullable',
         ], [
             'brix_edit.max' => 'Nilai brix melebihi batas input yaitu 100.',
             'nacl_edit.max' => 'Nilai NaCl melebihi batas input yaitu 100.',
@@ -292,7 +232,9 @@ class BlendingAwalControllerForeman extends Controller
 
         // Jika adjustment
         if ($disposition === 'Adjustment') {
-            $dataUpdate['adjusment_qty'] = $request->adjustment_qty_edit;
+            $dataUpdate['adjustment_qty_air'] = $request->adjustment_qty_edit_air;
+            $dataUpdate['adjustment_qty_garam'] = $request->adjustment_qty_edit_garam;
+            $dataUpdate['adjustment_qty_gula'] = $request->adjustment_qty_edit_gula;
             $dataUpdate['not_standar'] = true;
         }
         if ($disposition === 'Jalan Bareng') {

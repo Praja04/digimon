@@ -27,73 +27,7 @@ class BlendingAwalControllerSupervisor extends Controller
         return view('supervisor.blending.menu');
     }
     //
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'production_batch_id' => 'required|exists:production_batches,id',
-            'batch_start' => 'required|integer|different:batch_end',
-            'batch_end' => 'required|integer',
-            'storage' => 'nullable|string', // ← ubah jadi nullable
-            'no_blending' => 'required',
-            //required colume harus decimal
-            'volume' => 'required|numeric',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validasi gagal.',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $start = (int) $request->batch_start;
-        $end = (int) $request->batch_end;
-
-        if ($start > $end) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Batch start tidak boleh lebih besar dari batch end.'
-            ], 422);
-        }
-
-     
-
-       $batchRange = $start . '-' . $end;
-
-        // Cek apakah batch_range persis sama sudah ada
-        $exists = BlendingAwalModel::where('production_batch_id', $request->production_batch_id)
-            ->where('batch_range', $batchRange)
-            ->exists();
-
-        if ($exists) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Batch range tersebut sudah pernah digunakan.'
-            ], 422);
-        }
-        
-
-        // Simpan data Blending Awal
-        BlendingAwalModel::create([
-            'production_batch_id' => $request->production_batch_id,
-            'batch_range' => "$start-$end",
-            'nomor_blending' => $request->no_blending,
-            'volume' => $request->volume
-        ]);
-
-        // Jika ada input 'storage', update di tabel ProductionBatch
-        if ($request->filled('storage')) {
-            $productionBatch = ProductionBatch::find($request->production_batch_id);
-            $productionBatch->storage = $request->storage;
-            $productionBatch->save();
-        }
-
-        return response()->json([
-            'status' => 'ok',
-            'message' => 'Data berhasil disimpan.'
-        ]);
-    }
+   
 
     public function Blending_data()
     {

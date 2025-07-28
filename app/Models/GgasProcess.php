@@ -21,6 +21,9 @@ class GgasProcess extends Model
         'warna',
         'disposition',
         'disposition_remarks',
+        'adjustment_qty_air',
+        'adjustment_qty_garam',
+        'adjustment_qty_gula',
         'not_standar'
     ];
     public $timestamps = false;

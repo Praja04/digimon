@@ -162,7 +162,9 @@ class GgaGgasControllerForeman extends Controller
             'warna' => 'required|string|max:20',
             'disposition' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment',
             'disposition_remarks' => 'nullable|string|max:255',
-            'adjustment_qty' => 'nullable|integer|min:1',
+            'adjustment_qty_air' => 'nullable',
+            'adjustment_qty_garam' => 'nullable',
+            'adjustment_qty_gula' => 'nullable',
         ], [
             'brix.max' => 'Nilai brix melebihi batas input yaitu 100.',
             'nacl.max' => 'Nilai NaCl melebihi batas input yaitu 100.',
@@ -207,7 +209,6 @@ class GgaGgasControllerForeman extends Controller
 
         // Jika disposition Adjustment, update adjustment_qty pada data adjustment yang sudah ada
         if ($disposition === 'Adjustment') {
-            $adjustmentQty = $request->adjustment_qty;
 
             $gga->update([
                 'brix' => $request->brix,
@@ -215,7 +216,9 @@ class GgaGgasControllerForeman extends Controller
                 'warna' => $request->warna,
                 'disposition' => $disposition,
                 'disposition_remarks' => $remarks,
-                'adjusment_qty' => $adjustmentQty,
+                'adjustment_qty_air' => $request->adjustment_qty_air,
+                'adjustment_qty_garam' => $request->adjustment_qty_garam,
+                'adjustment_qty_gula' => $request->adjustment_qty_gula,
                 'not_standar' => true,
             ]);
         }
@@ -245,7 +248,9 @@ class GgaGgasControllerForeman extends Controller
             'warna_edit' => 'required|string|max:20',
             'disposition_edit' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment',
             'disposition_remarks_edit' => 'nullable|string|max:255',
-            'adjustment_qty_edit' => 'nullable|integer|min:1',
+            'adjustment_qty_edit_air' => 'nullable',
+            'adjustment_qty_edit_garam' => 'nullable',
+            'adjustment_qty_edit_gula' => 'nullable',
         ], [
             'brix_edit.max' => 'Nilai brix melebihi batas input yaitu 100.',
             'nacl_edit.max' => 'Nilai NaCl melebihi batas input yaitu 100.',
@@ -286,7 +291,7 @@ class GgaGgasControllerForeman extends Controller
 
         // Jika disposition Adjustment, update adjustment_qty pada data adjustment yang sudah ada
         if ($disposition === 'Adjustment') {
-            $adjustmentQty = $request->adjustment_qty_edit;
+           
 
             $gga->update([
                 'brix' => $request->brix_edit,
@@ -294,7 +299,9 @@ class GgaGgasControllerForeman extends Controller
                 'warna' => $request->warna_edit,
                 'disposition' => $disposition,
                 'disposition_remarks' => $remarks,
-                'adjusment_qty' => $adjustmentQty,
+                'adjustment_qty_air' => $request->adjustment_qty_edit_air,
+                'adjustment_qty_garam' => $request->adjustment_qty_edit_garam,
+                'adjustment_qty_gula' => $request->adjustment_qty_edit_gula,
                 'not_standar' => true,
             ]);
         }
@@ -339,7 +346,9 @@ class GgaGgasControllerForeman extends Controller
             'warna' => 'required|string|max:20',
             'disposition' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment',
             'disposition_remarks' => 'nullable|string|max:255',
-            'adjustment_qty' => 'nullable|integer|min:1',
+            'adjustment_qty_air' => 'nullable',
+            'adjustment_qty_garam' => 'nullable',
+            'adjustment_qty_gula' => 'nullable',
         ], [
             'brix.max' => 'Nilai brix melebihi batas input yaitu 100.',
             'nacl.max' => 'Nilai NaCl melebihi batas input yaitu 100.',
@@ -384,7 +393,7 @@ class GgaGgasControllerForeman extends Controller
 
         // Jika disposition Adjustment, update adjustment_qty pada data adjustment yang sudah ada
         if ($disposition === 'Adjustment') {
-            $adjustmentQty = $request->adjustment_qty;
+           
 
             $ggas->update([
                 'brix' => $request->brix,
@@ -392,7 +401,9 @@ class GgaGgasControllerForeman extends Controller
                 'warna' => $request->warna,
                 'disposition' => $disposition,
                 'disposition_remarks' => $remarks,
-                'adjusment_qty' => $adjustmentQty,
+                'adjustment_qty_air' => $request->adjustment_qty_air,
+                'adjustment_qty_garam' => $request->adjustment_qty_garam,
+                'adjustment_qty_gula' => $request->adjustment_qty_gula,
                 'not_standar' => true,
             ]);
         }
@@ -423,7 +434,9 @@ class GgaGgasControllerForeman extends Controller
             'warna_edit' => 'required|string|max:20',
             'disposition_edit' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment',
             'disposition_remarks_edit' => 'nullable|string|max:255',
-            'adjustment_qty_edit' => 'nullable|integer|min:1',
+            'adjustment_qty_edit_air' => 'nullable',
+            'adjustment_qty_edit_garam' => 'nullable',
+            'adjustment_qty_edit_gula' => 'nullable',
         ], [
             'brix_edit.max' => 'Nilai brix melebihi batas input yaitu 100.',
             'nacl_edit.max' => 'Nilai NaCl melebihi batas input yaitu 100.',
@@ -464,7 +477,7 @@ class GgaGgasControllerForeman extends Controller
 
         // Jika disposition Adjustment, update adjustment_qty pada data adjustment yang sudah ada
         if ($disposition === 'Adjustment') {
-            $adjustmentQty = $request->adjustment_qty_edit;
+          
 
             $ggas->update([
                 'brix' => $request->brix_edit,
@@ -472,7 +485,9 @@ class GgaGgasControllerForeman extends Controller
                 'warna' => $request->warna_edit,
                 'disposition' => $disposition,
                 'disposition_remarks' => $remarks,
-                'adjusment_qty' => $adjustmentQty,
+                'adjustment_qty_air' => $request->adjustment_qty_edit_air,
+                'adjustment_qty_garam' => $request->adjustment_qty_edit_garam,
+                'adjustment_qty_gula' => $request->adjustment_qty_edit_gula,
                 'not_standar' => true,
             ]);
         }

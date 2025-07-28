@@ -246,8 +246,21 @@
                                                 </div>
 
                                                 <div class="mb-3 d-none adjustment-qty-wrapper">
-                                                    <label class="form-label">Adjustment Qty</label>
-                                                    <input type="number" name="adjustment_qty" class="form-control adjustment-qty">
+                                                    <h6 class="form-label fw-bold">Adjustment Qty</h6>
+                                                    <div class="row g-3">
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">Air (Liter)</label>
+                                                            <input type="number" step="0.01" name="adjustment_qty_air" class="form-control adjustment-qty" placeholder="0.00">
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">Gula (Kg)</label>
+                                                            <input type="number" step="0.01" name="adjustment_qty_gula" class="form-control adjustment-qty" placeholder="0.00">
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">Garam (Kg)</label>
+                                                            <input type="number" step="0.01" name="adjustment_qty_garam" class="form-control adjustment-qty" placeholder="0.00">
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -301,8 +314,21 @@
                                                 </div>
 
                                                 <div class="mb-3 d-none adjustment-qty-wrapper">
-                                                    <label class="form-label">Adjustment Qty</label>
-                                                    <input type="number" name="adjustment_qty_edit" class="form-control adjustment-qty-edit">
+                                                    <h6 class="form-label fw-bold">Adjustment Qty</h6>
+                                                    <div class="row g-3">
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">Air (Liter)</label>
+                                                            <input type="number" step="0.01" name="adjustment_qty_edit_air" class="form-control adjustment-qty" placeholder="0.00">
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">Gula (Kg)</label>
+                                                            <input type="number" step="0.01" name="adjustment_qty_edit_gula" class="form-control adjustment-qty" placeholder="0.00">
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">Garam (Kg)</label>
+                                                            <input type="number" step="0.01" name="adjustment_qty_edit_garam" class="form-control adjustment-qty" placeholder="0.00">
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -378,6 +404,7 @@
                 qtyInputedit.prop('required', false).val('');
             }
         });
+
 
         // Reset form saat modal dibuka
         $('#inputGgasModal').on('shown.bs.modal', function() {

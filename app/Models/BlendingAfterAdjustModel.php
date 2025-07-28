@@ -14,7 +14,7 @@ class BlendingAfterAdjustModel extends Model
         'production_batch_id',
         'batch_range',
         'nomor_blending',
-        'volume',
+        'volume_blending',
         'brix',
         'nacl',
         'bj',

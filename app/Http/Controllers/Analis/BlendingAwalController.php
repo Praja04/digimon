@@ -23,9 +23,8 @@ class BlendingAwalController extends Controller
             'production_batch_id' => 'required|exists:production_batches,id',
             'batch_start' => 'required|integer|different:batch_end',
             'batch_end' => 'required|integer',
-            'storage' => 'nullable|string', // ← ubah jadi nullable
+            'storage' => 'nullable|string',
             'no_blending' => 'required',
-            //required colume harus decimal
             'volume' => 'required|numeric',
         ]);
 
@@ -34,7 +33,9 @@ class BlendingAwalController extends Controller
                 'status' => 'error',
                 'message' => 'Validasi gagal.',
                 'errors' => $validator->errors()
-            ], 422);
+            ],
+                422
+            );
         }
 
         $start = (int) $request->batch_start;
@@ -44,35 +45,46 @@ class BlendingAwalController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Batch start tidak boleh lebih besar dari batch end.'
-            ], 422);
+            ],
+                422
+            );
         }
 
-     
+        // Ambil angka-angka batch yang sudah dipakai
+        $usedNumbers = [];
 
-       $batchRange = $start . '-' . $end;
+        $existingRanges = BlendingAwalModel::where('production_batch_id', $request->production_batch_id)
+        ->pluck('batch_range');
 
-        // Cek apakah batch_range persis sama sudah ada
-        $exists = BlendingAwalModel::where('production_batch_id', $request->production_batch_id)
-            ->where('batch_range', $batchRange)
-            ->exists();
+        foreach ($existingRanges as $range) {
+            [$existingStart, $existingEnd] = explode('-', $range);
+            $existingStart = (int) $existingStart;
+            $existingEnd = (int) $existingEnd;
 
-        if ($exists) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Batch range tersebut sudah pernah digunakan.'
-            ], 422);
+            for ($i = $existingStart; $i <= $existingEnd; $i++) {
+                $usedNumbers[] = $i;
+            }
         }
-        
 
-        // Simpan data Blending Awal
+        // Validasi angka yang akan digunakan
+        for ($i = $start; $i <= $end; $i++) {
+            if (in_array($i, $usedNumbers)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "Angka batch $i sudah digunakan sebelumnya dan tidak boleh dipakai lagi."
+                ], 422);
+            }
+        }
+
+        $batchRange = "$start-$end";
+
         BlendingAwalModel::create([
             'production_batch_id' => $request->production_batch_id,
-            'batch_range' => "$start-$end",
+            'batch_range' => $batchRange,
             'nomor_blending' => $request->no_blending,
             'volume' => $request->volume
         ]);
 
-        // Jika ada input 'storage', update di tabel ProductionBatch
         if ($request->filled('storage')) {
             $productionBatch = ProductionBatch::find($request->production_batch_id);
             $productionBatch->storage = $request->storage;
@@ -80,9 +92,9 @@ class BlendingAwalController extends Controller
         }
 
         return response()->json([
-            'status' => 'ok',
-            'message' => 'Data berhasil disimpan.'
-        ]);
+                'status' => 'ok',
+                'message' => 'Data berhasil disimpan.'
+            ]);
     }
 
     public function Blending_data()
@@ -135,14 +147,16 @@ class BlendingAwalController extends Controller
             'bj' => 'required|string|max:20',
             'visco' => 'required|string|max:20',
             'aw' => 'required|string|max:20',
+            'ph' => 'required',
             'buih' => 'required|string|max:20',
             'organo' => 'required|string|max:20',
             'endapan' => 'required|string|max:20',
-            'ph' => 'required',
             'warna' => 'required|string|max:20',
             'disposition' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment,Jalan Bareng,Leveling',
             'disposition_remarks' => 'nullable|string|max:255',
-            'adjustment_qty' => 'nullable|integer|min:1',
+            'adjustment_qty_air' => 'nullable',
+            'adjustment_qty_garam' => 'nullable',
+            'adjustment_qty_gula' => 'nullable',
         ], [
             'brix.max' => 'Nilai brix melebihi batas input yaitu 100.',
             'nacl.max' => 'Nilai NaCl melebihi batas input yaitu 100.',
@@ -162,7 +176,7 @@ class BlendingAwalController extends Controller
                 'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
             ], 422);
         }
-    
+
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -184,9 +198,9 @@ class BlendingAwalController extends Controller
             'visco' => $request->visco,
             'aw' => $request->aw,
             'buih' => $request->buih,
-            'ph' => $request->ph,
             'organo' => $request->organo,
             'endapan' => $request->endapan,
+            'ph' => $request->ph,
             'warna' => $request->warna,
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
@@ -194,20 +208,22 @@ class BlendingAwalController extends Controller
 
         // Jika adjustment
         if ($disposition === 'Adjustment') {
-            $dataUpdate['adjusment_qty'] = $request->adjustment_qty;
+            $dataUpdate['adjustment_qty_air'] = $request->adjustment_qty_air;
+            $dataUpdate['adjustment_qty_garam'] = $request->adjustment_qty_garam;
+            $dataUpdate['adjustment_qty_gula'] = $request->adjustment_qty_gula;
             $dataUpdate['not_standar'] = true;
         }
         if ($disposition === 'Jalan Bareng') {
-           
+
             $dataUpdate['not_standar'] = true;
         }
         if ($disposition === 'Leveling') {
-          
+
             $dataUpdate['not_standar'] = true;
         }
 
         // Jika resampling
-        if ($disposition === 'Resampling' ) {
+        if ($disposition === 'Resampling') {
             $dataUpdate['disposition_remarks'] = $disposition;
             $dataUpdate['not_standar'] = true;
         }

@@ -349,7 +349,6 @@ Route::prefix('foreman')->group(function () {
         Route::get('/awal/dashboard', [BlendingAwalControllerForeman::class, 'dashboard']);
         Route::get('/awal/detail/{id}', [BlendingAwalControllerForeman::class, 'Blending_detail']);
         Route::get('/awal/detail/form/{id}', [BlendingAwalControllerForeman::class, 'showInputFormBlendingAwal']);
-        Route::post('/store', [BlendingAwalControllerForeman::class, 'store'])->name('blending.store');
         Route::post('/update/{id}', [BlendingAwalControllerForeman::class, 'updateAjaxBlending'])->name('blending.update');
         Route::post('/edit/{id}', [BlendingAwalControllerForeman::class, 'editBlending'])->name('blending.edit');
         Route::get('/awal', [BlendingAwalControllerForeman::class, 'Blending_data'])->name('blending.awal_data');
@@ -464,7 +463,6 @@ Route::prefix('supervisor')->group(function () {
         Route::get('/menu', [BlendingAwalControllerSupervisor::class, 'menu']);
         Route::get('/awal/detail/{id}', [BlendingAwalControllerSupervisor::class, 'Blending_detail']);
         Route::get('/awal/detail/form/{id}', [BlendingAwalControllerSupervisor::class, 'showInputFormBlendingAwal']);
-        Route::post('/store', [BlendingAwalControllerSupervisor::class, 'store'])->name('blending.store');
         Route::post('/update/{id}', [BlendingAwalControllerSupervisor::class, 'updateAjaxBlending']);
         Route::post('/edit/{id}', [BlendingAwalControllerSupervisor::class, 'editBlending']);
         Route::get('/awal', [BlendingAwalControllerSupervisor::class, 'Blending_data']);

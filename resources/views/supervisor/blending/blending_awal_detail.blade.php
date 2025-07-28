@@ -219,7 +219,12 @@
                                     <button class="btn btn-sm btn-primary open-blending-modal" data-id="{{ $blending->id }}">Input Analisa Blending Awal</button>
                                     @else
                                     <span class="text-muted">✓ Lengkap</span>
+                                    <button class="btn btn-sm btn-primary  open-blending-modal-edit" data-id="{{ $blending->id }}">
+                                        Edit Data
+                                    </button>
                                     @endif
+
+
                                 </td>
                             </tr>
                             @empty
@@ -301,8 +306,21 @@
                                                 </div>
 
                                                 <div class="mb-3 d-none adjustment-qty-wrapper">
-                                                    <label class="form-label">Adjustment Qty</label>
-                                                    <input type="number" name="adjustment_qty" class="form-control adjustment-qty">
+                                                    <h6 class="form-label fw-bold">Adjustment Qty</h6>
+                                                    <div class="row g-3">
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">Air (Liter)</label>
+                                                            <input type="number" step="0.01" name="adjustment_qty_air" class="form-control adjustment-qty" placeholder="0.00">
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">Gula (Kg)</label>
+                                                            <input type="number" step="0.01" name="adjustment_qty_gula" class="form-control adjustment-qty" placeholder="0.00">
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">Garam (Kg)</label>
+                                                            <input type="number" step="0.01" name="adjustment_qty_garam" class="form-control adjustment-qty" placeholder="0.00">
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -315,8 +333,93 @@
                             </div>
 
                         </tbody>
+
                     </table>
                     <!--end table-->
+                    <div class="modal fade" id="EditBlendingModal" tabindex="-1" aria-labelledby="EditBlendingModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <form id="blendingFormEdit">
+                                @csrf
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Edit Data Blending Awal</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="alert alert-danger d-none error-alert"></div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">BRIX</label>
+                                            <input type="number" step="0.01" max="100" min="0" name="brix_edit" class="form-control" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">NACL</label>
+                                            <input type="number" step="0.01" max="100" min="0" name="nacl_edit" class="form-control" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Bj</label>
+                                            <input type="text" name="bj_edit" class="form-control" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Visco</label>
+                                            <input type="text" name="visco_edit" class="form-control" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Aw</label>
+                                            <input type="text" name="aw_edit" class="form-control" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Buih</label>
+                                            <input type="text" name="buih_edit" class="form-control" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Organo</label>
+                                            <input type="text" name="organo_edit" class="form-control" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">pH</label>
+                                            <input type="text" name="ph_edit" class="form-control" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Endapan</label>
+                                            <input type="text" name="endapan_edit" class="form-control" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Warna</label>
+                                            <input type="text" name="warna_edit" class="form-control" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Disposition</label>
+                                            <select name="disposition_edit" class="form-select disposition-select" required>
+                                                <option value="">-- Pilih Disposition --</option>
+                                                <option value="Release">Release</option>
+                                                <option value="Release Bersyarat">Release Bersyarat</option>
+                                                <option value="Resampling">Resampling</option>
+                                                <option value="Reject">Reject</option>
+                                                <option value="Repro">Repro</option>
+                                                <option value="Adjustment">Adjustment</option>
+                                                <option value="Jalan Bareng">Jalan Bareng</option>
+                                                <option value="Leveling">Leveling</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Remarks</label>
+                                            <textarea name="disposition_remarks_edit" class="form-control" rows="2" placeholder="Isi remarks jika diperlukan..."></textarea>
+                                        </div>
+
+                                        <div class="mb-3 d-none adjustment-qty-wrapper">
+                                            <label class="form-label">Adjustment Qty</label>
+                                            <input type="number" name="adjustment_qty_edit" class="form-control adjustment-qty">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary">Simpan</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
 
                 </div>
                 <div class="d-flex justify-content-end mt-2">
@@ -354,18 +457,30 @@
             $('#inputBlendingModal').modal('show');
         });
 
+        $('.open-blending-modal-edit').on('click', function() {
+            console.log(typeof bootstrap.Modal);
+            selectedId = $(this).data('id');
+            $('#EditBlendingModal').modal('show');
+        });
+
         // Show/hide adjustment qty saat ganti disposition
         $('.disposition-select').on('change', function() {
             const selected = $(this).val();
             const qtyWrapper = $('.adjustment-qty-wrapper');
+            const qtyWrapperlabel = $('.adjustment-qty-wrapper');
             const qtyInput = $('.adjustment-qty');
+            const qtyInputedit = $('.adjustment-qty-edit');
 
             if (selected === 'Adjustment') {
                 qtyWrapper.removeClass('d-none');
+                qtyWrapperlabel.removeClass('d-none');
                 qtyInput.prop('required', true);
+                qtyInputedit.prop('required', true);
             } else {
                 qtyWrapper.addClass('d-none');
+                qtyWrapperlabel.addClass('d-none');
                 qtyInput.prop('required', false).val('');
+                qtyInputedit.prop('required', false).val('');
             }
         });
 
@@ -389,6 +504,41 @@
 
             $.ajax({
                 url: "{{url('/supervisor/blending/update')}}/" + selectedId,
+                method: 'POST',
+                data: form.serialize(),
+                success: function(response) {
+                    $('#inputBlendingModal').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: response.message || 'Data berhasil disimpan.'
+                    }).then(() => location.reload());
+                },
+                error: function(xhr) {
+                    const errors = xhr.responseJSON?.errors || ['Terjadi kesalahan.'];
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal menyimpan!',
+                        html: errors.join('<br>'),
+                    });
+
+                    submitBtn.prop('disabled', false).text('Simpan');
+                }
+            });
+        });
+
+        $('#blendingFormEdit').on('submit', function(e) {
+            e.preventDefault();
+
+            const form = $(this);
+            const alertBox = form.find('.error-alert');
+            const submitBtn = form.find('button[type="submit"]');
+
+            alertBox.addClass('d-none').empty();
+            submitBtn.prop('disabled', true).text('Menyimpan...');
+
+            $.ajax({
+                url: "{{url('/supervisor/blending/edit')}}/" + selectedId,
                 method: 'POST',
                 data: form.serialize(),
                 success: function(response) {

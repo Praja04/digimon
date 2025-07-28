@@ -1175,20 +1175,7 @@
                         $('#jamInput').hide();
                         $('#btnSimpanJam').hide();
                     }
-                    // console.log('Data:', response);
-                    // if (!response.jam_analisa_exists) {
-                    //     tipeInput = 'analisa';
-                    //     $('#modalKonfirmasi').modal('show');
-                    //     $('#labelJam').text('Jam Analisa');
-                    // } else if (response.jam_analisa_exists) {
-                    //     $('#labelJam').text('sudah dikonfirmasi semua');
-                    //     $('#jamInput').hide();
-                    //     $('#btnSimpanJam').hide();
-                    // } else {
-                    //     $('#labelJam').text('sudah dikonfirmasi semua');
-                    //     $('#jamInput').hide();
-                    //     $('#btnSimpanJam').hide();
-                    // }
+                   
 
                 },
                 error: function(xhr, status, error) {

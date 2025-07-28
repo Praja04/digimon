@@ -51,10 +51,10 @@
             <!-- content -->
             <div class="page-content">
                 <div class="container-fluid">
-                @yield('content')
+                    @yield('content')
                 </div>
             </div>
-            
+
             <!-- end content -->
 
             <!-- footer -->
@@ -83,13 +83,19 @@
 
     <!-- Sweet Alerts js -->
     <script src="{{ asset('material/assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
-
-    <!-- Sweet alert init js-->
     <script src="{{ asset('material/assets/js/pages/sweetalerts.init.js') }}"></script>
 
     <script src="{{ asset('material/assets/js/highcharts.js') }}"></script>
-    <!-- App js -->
     <script src="{{ asset('material/assets/js/app.js') }}"></script>
+
+    <!-- aos js -->
+    <script src="{{ asset('material/assets/libs/aos/aos.js') }}"></script>
+    <!-- prismjs plugin -->
+    <script src="{{ asset('material/assets/libs/prismjs/prism.js') }}"></script>
+    <!-- animation init -->
+    <script src="{{ asset('material/assets/js/pages/animation-aos.init.js') }}"></script>
+
+
 
     <script>
         $(document).ready(function() {

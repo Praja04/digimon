@@ -34,7 +34,7 @@ class BlendingAdjustController extends Controller
     public function Blending_detail($id)
     {
         $productionBatch = ProductionBatch::with([
-            'BlendingAwal.additionalBatches'
+            'blendingAfterAdjust.additionalBatches'
         ])->findOrFail($id);
 
         // Kelompokkan berdasarkan batch_range

@@ -107,7 +107,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{url('supervisor/monitoring/blending/menu')}}">
-                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Monitoring Turun Blending</span>
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Monitoring Blending</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -188,7 +188,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{url('foreman/monitoring/blending/menu')}}">
-                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Monitoring Turun Blending</span>
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Monitoring Blending</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -231,7 +231,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{url('analis/monitoring/blending/menu')}}">
-                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Monitoring Turun Blending</span>
+                        <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Monitoring Blending</span>
                     </a>
                 </li>
                 <li class="nav-item">

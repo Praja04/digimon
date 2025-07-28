@@ -33,7 +33,7 @@ class ProductionBatchController extends Controller
 
     public function data_po()
     {
-        $productionBatches = ProductionBatch::orderBy('created_at', 'desc')->get();
+        $productionBatches = ProductionBatch::orderBy('production_date', 'desc')->get();
         // Ambil semua revisi > 0 dan buat key gabungan batch_id|batch_range
         $revisiData = GgaProcess::where('revisi', '>', 0)
             ->get()
@@ -47,35 +47,31 @@ class ProductionBatchController extends Controller
 
     public function data_po_blending_awal()
     {
-        $productionBatches = ProductionBatch::orderBy('created_at', 'desc')->get();
-        // Ambil semua revisi > 0 dan buat key gabungan batch_id|batch_range
-        $revisiData = BlendingAwalModel::where('revisi', '>', 0)
-            ->get()
-            ->mapWithKeys(function ($item) {
-                $key = $item->production_batch_id . '|' . $item->batch_range;
-                return [$key => true];
-            });
+        $productionBatches = ProductionBatch::orderBy('production_date', 'desc')->get();
+   
 
-        return view('productionbatch.data_po_blending_awal', compact('productionBatches', 'revisiData'));
+        return view('productionbatch.data_po_blending_awal', compact('productionBatches'));
     }
 
     public function data_po_blending_after_adjust()
     {
-        $productionBatches = ProductionBatch::orderBy('created_at', 'desc')->get();
-        // Ambil semua revisi > 0 dan buat key gabungan batch_id|batch_range
-        $revisiData = BlendingAwalModel::where('revisi', '>', 0)
-            ->get()
-            ->mapWithKeys(function ($item) {
-                $key = $item->production_batch_id . '|' . $item->batch_range;
-                return [$key => true];
-            });
+        $productionBatches = ProductionBatch::whereHas('blendingAwal', function ($query) {
+            $query->where('disposition', 'Adjustment');
+        })
+            ->with(['blendingAwal' => function ($query) {
+                $query->where('disposition', 'Adjustment');
+            }])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        return view('productionbatch.data_po_blending_after_adjust', compact('productionBatches', 'revisiData'));
+
+        return view('productionbatch.data_po_blending_after_adjust', compact('productionBatches'));
     }
+
 
     public function data_po_monitoring()
     {
-        $productionBatches = ProductionBatch::orderBy('created_at', 'desc')->get();
+        $productionBatches = ProductionBatch::orderBy('production_date', 'desc')->get();
         // Ambil semua revisi > 0 dan buat key gabungan batch_id|batch_range
         $revisiData = MonitoringTurunBlending::where('revisi', '>', 0)
             ->get()
@@ -89,7 +85,7 @@ class ProductionBatchController extends Controller
 
     public function data_po_monitoring_storage()
     {
-        $productionBatches = ProductionBatch::orderBy('created_at', 'desc')->get();
+        $productionBatches = ProductionBatch::orderBy('production_date', 'desc')->get();
         // Ambil semua revisi > 0 dan buat key gabungan batch_id|batch_range
         $revisiData = MonitoringStorageModel::where('revisi', '>', 0)
             ->get()
@@ -476,7 +472,7 @@ class ProductionBatchController extends Controller
                     'production_batch_id' => $validated['production_batch_id'],
                     'batch_range' => $validated['batch_range'],
                     'nomor_blending' => $validated['no_blending'],
-                    'volume' => $validated['volume'],
+                    'volume_blending' => $validated['volume'],
                     'brix' => null,
                     'nacl' => null,
                     'bj' => null,
@@ -489,8 +485,10 @@ class ProductionBatchController extends Controller
                     'warna' => null,
                     'disposition' => null,
                     'disposition_remarks' => null,
-                    'adjusment_qty' => null,
-                    'is_adjustment' => false,
+                    'adjustment_qty_air' => null,
+                    'adjustment_qty_garam' => null,
+                    'adjustment_qty_gula' => null,
+                    'is_adjustment' => true,
                     'revisi' => $validated['revisi'],
                     'not_standar' => false,
                 ]);
@@ -523,7 +521,9 @@ class ProductionBatchController extends Controller
                 'warna' => null,
                 'disposition' => null,
                 'disposition_remarks' => null,
-                'adjusment_qty' => null,
+                'adjustment_qty_air' => null,
+                'adjustment_qty_garam' => null,
+                'adjustment_qty_gula' => null,
                 'is_adjustment' => false,
                 'revisi' => $validated['revisi'],
                 'not_standar' => false,
@@ -555,7 +555,9 @@ class ProductionBatchController extends Controller
                 'warna' => null,
                 'disposition' => null,
                 'disposition_remarks' => null,
-                'adjusment_qty' => null,
+                'adjustment_qty_air' => null,
+                'adjustment_qty_garam' => null,
+                'adjustment_qty_gula' => null,
                 'is_adjustment' => false,
                 'revisi' => $validated['revisi'],
                 'not_standar' => false,
@@ -564,8 +566,6 @@ class ProductionBatchController extends Controller
 
         return response()->json(['message' => 'Revisi Blending Awal berhasil dibuat.']);
     }
-
-
 
 
     public function getAvailableAdditionalBatch(Request $request)
@@ -1004,9 +1004,15 @@ class ProductionBatchController extends Controller
 
         $validDispositions = ['Release', 'Release Bersyarat'];
 
-        $all = BlendingAwalModel::where('production_batch_id', $id)
-            ->whereIn('disposition', $validDispositions)
-            ->get();
+        $blendingAwal = BlendingAwalModel::where('production_batch_id', $id)
+        ->whereIn('disposition', $validDispositions)
+        ->get();
+
+        $adjustmentBlending = BlendingAfterAdjustModel::where('production_batch_id', $id)
+        ->whereIn('disposition', $validDispositions)
+        ->get();
+
+        $all = $blendingAwal->concat($adjustmentBlending);
 
         $grouped = $all->groupBy('batch_range');
         $rawBatchGroups = [];
