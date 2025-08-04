@@ -350,7 +350,7 @@
                         <input type="text" class="form-control" name="no_blending">
                     </div>
                     <div class="mb-3">
-                        <label>Volume</label>
+                        <label>Volume After</label>
                         <input type="text" class="form-control" name="volume">
                     </div>
 

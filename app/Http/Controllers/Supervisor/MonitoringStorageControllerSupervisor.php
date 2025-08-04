@@ -24,7 +24,7 @@ class MonitoringStorageControllerSupervisor extends Controller
     public function Monitoring_Storage_data()
     {
 
-        $productionBatches = ProductionBatch::with('MonitoringStorage')->has('MonitoringStorage')->get();
+        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringStorage')->has('MonitoringStorage')->get();
 
         // return response()->json($productionBatches);
         return view('supervisor.monitoring.monitoring_storage.monitoring_storage', compact('productionBatches'));

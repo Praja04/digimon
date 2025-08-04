@@ -129,6 +129,7 @@
                                                         <th>QR Code (URL)</th>
                                                         <th>Disposisi</th>
                                                         <th>Keterangan</th>
+                                                        <th>Catatan</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -179,6 +180,18 @@
 
                                                             @else
 
+                                                            @endif
+                                                        </td>
+                                                        <td>
+
+                                                            @if($blending->disposition_remarks != null && $blending->disposition_remarks != '-' && $blending->disposition != 'Adjustment' )
+                                                            {{ $blending->disposition_remarks }}
+                                                            @elseif( $blending->disposition == 'Adjustment')
+                                                            Adjustment Air: {{ $blending->adjustment_qty_air }} Liter, Garam: {{ $blending->adjustment_qty_garam }} Kg, Gula: {{ $blending->adjustment_qty_gula }} Kg
+                                                            @elseif($blending->is_adjustment == true)
+                                                            After Adjustment
+                                                            @else
+                                                            -
                                                             @endif
                                                         </td>
                                                         <td>

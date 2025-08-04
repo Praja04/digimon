@@ -133,6 +133,7 @@
 
                                                         <th>QR Code (URL)</th>
                                                         <th>Disposisi</th>
+                                                        <th>Catatan</th>
                                                         <th>Keterangan</th>
                                                     </tr>
                                                 </thead>
@@ -187,6 +188,18 @@
                                                             -
                                                             @endif
                                                         </td>
+                                                        <td>
+
+                                                            @if($gga->disposition_remarks != null && $gga->disposition_remarks != '-' && $gga->disposition != 'Adjustment' )
+                                                            {{ $gga->disposition_remarks }}
+                                                            @elseif( $gga->disposition == 'Adjustment')
+                                                            Adjustment Air: {{ $gga->adjustment_qty_air }} Liter, Garam: {{ $gga->adjustment_qty_garam }} Kg, Gula: {{ $gga->adjustment_qty_gula }} Kg
+                                                            @elseif($gga->is_adjustment == true)
+                                                            After Adjustment
+                                                            @else
+                                                            -
+                                                            @endif
+                                                        </td>
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
@@ -210,6 +223,7 @@
 
                                                         <th>QR Code (URL)</th>
                                                         <th>Disposisi</th>
+                                                        <th>Catatan</th>
                                                         <th>Keterangan</th>
                                                     </tr>
                                                 </thead>
@@ -264,6 +278,18 @@
                                                             -
                                                             @endif
                                                         </td>
+                                                        <td>
+
+                                                            @if($gga->disposition_remarks != null && $gga->disposition_remarks != '-' && $gga->disposition != 'Adjustment' )
+                                                            {{ $gga->disposition_remarks }}
+                                                            @elseif( $gga->disposition == 'Adjustment')
+                                                            Adjustment Air: {{ $gga->adjustment_qty_air }} Liter, Garam: {{ $gga->adjustment_qty_garam }} Kg, Gula: {{ $gga->adjustment_qty_gula }} Kg
+                                                            @elseif($gga->is_adjustment == true)
+                                                            After Adjustment
+                                                            @else
+                                                            -
+                                                            @endif
+                                                        </td>
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
@@ -312,11 +338,10 @@
                         <label class="form-label">Dissolver Number</label>
                         <select name="dissolver_number" class="form-select" required>
                             <option value="" selected disabled>pilih Dissolver Number</option>
-                            @for ($i = 1; $i <= 8; $i++)
-                                <option value="Dissolver {{ $i }}">Dissolver {{ $i }}</option>
-                            @endfor
+                            @for ($i = 1; $i <= 8; $i++) <option value="Dissolver {{ $i }}">Dissolver {{ $i }}</option>
+                                @endfor
                         </select>
-                        </div>
+                    </div>
 
                     <div class="mb-3">
                         <label class="form-label">Jenis Sample</label>

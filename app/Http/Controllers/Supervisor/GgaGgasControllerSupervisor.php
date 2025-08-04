@@ -98,14 +98,14 @@ class GgaGgasControllerSupervisor extends Controller
     public function GGA_data()
     {
         // Ambil semua PO yang memiliki data GGA
-        $productionBatches = ProductionBatch::has('GgaProcesses')->with('GgaProcesses')->get();
+        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->has('GgaProcesses')->with('GgaProcesses')->get();
 
         return view('supervisor.ggaggas.gga', compact('productionBatches'));
     }
     public function GGAS_data()
     {
         // Ambil semua PO yang memiliki data GGA
-        $productionBatches = ProductionBatch::has('GgasProcesses')->with('GgasProcesses')->get();
+        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->has('GgasProcesses')->with('GgasProcesses')->get();
 
         return view('supervisor.ggaggas.ggas', compact('productionBatches'));
     }

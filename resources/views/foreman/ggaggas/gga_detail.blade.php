@@ -166,6 +166,7 @@
                                 <th>NACL</th>
                                 <th>Warna</th>
                                 <th>Disposisi</th>
+                                <th>catatan</th>
                                 <th>Keterangan</th>
                                 <th>Action</th>
                             </tr>
@@ -186,6 +187,17 @@
                                 <td>{{ $gga->warna ?? '-' }}</td>
                                 <td>{{ $gga->disposition ?? '-' }}</td>
                                 <td>{{ $gga->disposition_remarks ?? '-' }}</td>
+                                <td>
+                                     @if($gga->disposition_remarks != null && $gga->disposition_remarks != '-' && $gga->disposition != 'Adjustment' )
+                                    {{ $gga->disposition_remarks }}
+                                    @elseif( $gga->disposition == 'Adjustment')
+                                    Adjustment Air: {{ $gga->adjustment_qty_air }} Liter, Garam: {{ $gga->adjustment_qty_garam }} Kg, Gula: {{ $gga->adjustment_qty_gula }} Kg
+                                    @elseif($gga->is_adjustment == true)
+                                    After Adjustment
+                                    @else
+                                    -
+                                    @endif
+                                </td>
                                 <td>
                                     @if (is_null($gga->disposition))
                                     <button class="btn btn-sm btn-primary open-gga-modal" data-id="{{ $gga->id }}">Input GGA</button>

@@ -106,7 +106,7 @@
                     <span class="trending-ribbon-text">Pilih Batch</span>
                 </div>
                 <img src="{{ asset('assets/images/blending_awal.png' ) }}" alt="gambar" height="100" style="border-radius: 20px;">
-                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Batch Blending Awal</a></h5>
+                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Batch Blending</a></h5>
                 <p class="text-muted mb-4">Produksi Masak</p>
                 <div class="row justify-content-center">
                     <div class="col-lg-8">

@@ -30,7 +30,7 @@ class MonitoringTurunBlendingControllerForeman extends Controller
     public function Monitoring_Blending_data()
     {
 
-        $productionBatches = ProductionBatch::with('MonitoringTurunBlending')->has('MonitoringTurunBlending')->get();
+        $productionBatches = ProductionBatch::orderby('created_at','desc')->with('MonitoringTurunBlending')->has('MonitoringTurunBlending')->get();
         //return json
         //return response()->json($productionBatches);
 

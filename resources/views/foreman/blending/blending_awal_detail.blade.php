@@ -174,6 +174,7 @@
                                 <th>Endapan</th>
                                 <th>Warna</th>
                                 <th>Disposisi</th>
+                                <th>Catatan</th>
                                 <th>Keterangan</th>
                                 <th>Action</th>
                             </tr>
@@ -214,6 +215,17 @@
                                 <td>{{ $blending->warna ?? '-' }}</td>
                                 <td>{{ $blending->disposition ?? '-' }}</td>
                                 <td>{{ $blending->disposition_remarks ?? '-' }}</td>
+                                <td>
+                                    @if($blending->disposition_remarks != null && $blending->disposition_remarks != '-' && $blending->disposition != 'Adjustment' )
+                                    {{ $blending->disposition_remarks }}
+                                    @elseif( $blending->disposition == 'Adjustment')
+                                    Adjustment Air: {{ $blending->adjustment_qty_air }} Liter, Garam: {{ $blending->adjustment_qty_garam }} Kg, Gula: {{ $blending->adjustment_qty_gula }} Kg
+                                    @elseif($blending->is_adjustment == true)
+                                    After Adjustment
+                                    @else
+                                    -
+                                    @endif
+                                </td>
                                 <td>
                                     @if (is_null($blending->disposition))
                                     <button class="btn btn-sm btn-primary open-blending-modal" data-id="{{ $blending->id }}">Input Analisa Blending Awal</button>
@@ -407,7 +419,7 @@
                                             <textarea name="disposition_remarks_edit" class="form-control" rows="2" placeholder="Isi remarks jika diperlukan..."></textarea>
                                         </div>
 
-                                       
+
 
                                         <div class="mb-3 d-none adjustment-qty-wrapper">
                                             <h6 class="form-label fw-bold">Adjustment Qty</h6>

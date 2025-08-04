@@ -98,15 +98,20 @@ class GgaGgasControllerForeman extends Controller
 
     public function GGA_data()
     {
-        // Ambil semua PO yang memiliki data GGA
-        $productionBatches = ProductionBatch::has('GgaProcesses')->with('GgaProcesses')->get();
+        $productionBatches = ProductionBatch::has('GgaProcesses')
+            ->with('GgaProcesses')
+            ->get()
+            ->sortByDesc(function ($batch) {
+                // Ambil waktu dari proses GGA pertama (atau terakhir, tergantung struktur data)
+                return optional($batch->GgaProcesses->first())->waktu;
+            });
 
         return view('foreman.ggaggas.gga', compact('productionBatches'));
     }
     public function GGAS_data()
     {
         // Ambil semua PO yang memiliki data GGA
-        $productionBatches = ProductionBatch::has('GgasProcesses')->with('GgasProcesses')->get();
+        $productionBatches = ProductionBatch::orderby('created_at','desc')->has('GgasProcesses')->with('GgasProcesses')->get();
 
         return view('foreman.ggaggas.ggas', compact('productionBatches'));
     }
@@ -153,7 +158,7 @@ class GgaGgasControllerForeman extends Controller
 
         return response()->json(['status' => 'ok']);
     }
-    
+
     public function updateAjaxGGA(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -184,7 +189,7 @@ class GgaGgasControllerForeman extends Controller
                 'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
             ], 422);
         }
-    
+
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -265,7 +270,7 @@ class GgaGgasControllerForeman extends Controller
         }
 
         $gga = GgaProcess::findOrFail($id);
-      
+
 
         $disposition = $request->disposition_edit;
         $remarks = $request->disposition_remarks_edit ?? null;
@@ -291,7 +296,7 @@ class GgaGgasControllerForeman extends Controller
 
         // Jika disposition Adjustment, update adjustment_qty pada data adjustment yang sudah ada
         if ($disposition === 'Adjustment') {
-           
+
 
             $gga->update([
                 'brix' => $request->brix_edit,
@@ -368,7 +373,7 @@ class GgaGgasControllerForeman extends Controller
                 'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
             ], 422);
         }
-    
+
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -393,7 +398,7 @@ class GgaGgasControllerForeman extends Controller
 
         // Jika disposition Adjustment, update adjustment_qty pada data adjustment yang sudah ada
         if ($disposition === 'Adjustment') {
-           
+
 
             $ggas->update([
                 'brix' => $request->brix,
@@ -451,7 +456,7 @@ class GgaGgasControllerForeman extends Controller
         }
 
         $ggas = GgasProcess::findOrFail($id);
-       
+
 
         $disposition = $request->disposition_edit;
         $remarks = $request->disposition_remarks_edit ?? null;
@@ -477,7 +482,7 @@ class GgaGgasControllerForeman extends Controller
 
         // Jika disposition Adjustment, update adjustment_qty pada data adjustment yang sudah ada
         if ($disposition === 'Adjustment') {
-          
+
 
             $ggas->update([
                 'brix' => $request->brix_edit,

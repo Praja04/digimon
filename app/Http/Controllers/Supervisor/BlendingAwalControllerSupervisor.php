@@ -32,7 +32,7 @@ class BlendingAwalControllerSupervisor extends Controller
     public function Blending_data()
     {
         // Ambil semua PO yang memiliki data GGA
-        $productionBatches = ProductionBatch::has('BlendingAwal')->with('BlendingAwal')->get();
+        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->has('BlendingAwal')->with('BlendingAwal')->get();
 
         return view('supervisor.blending.blending_awal', compact('productionBatches'));
     }
