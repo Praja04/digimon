@@ -240,38 +240,40 @@ class ApiGGAGGASController extends Controller
         $ggaData = GgaProcess::with(['productionBatch:id,po_number,variant'])
         ->select('id', 'batch_number', 'brix', 'nacl', 'production_batch_id', 'created_at')
         ->whereNotNull('brix')
-            ->whereNotNull('nacl')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->orderBy('created_at')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'batch_number' => $item->batch_number,
-                    'brix' => $item->brix,
-                    'nacl' => $item->nacl,
-                    'production_batch_id' => $item->production_batch_id,
-                    'po_number' => optional($item->productionBatch)->po_number,
-                    'variant' => optional($item->productionBatch)->variant,
-                ];
-            });
+        ->whereNotNull('nacl')
+        ->whereBetween('created_at', [$startDate, $endDate])
+        ->orderBy('created_at')
+        ->get()
+        ->map(function ($item) {
+            return [
+                'batch_number' => $item->batch_number,
+                'brix' => $item->brix,
+                'nacl' => $item->nacl,
+                'production_batch_id' => $item->production_batch_id,
+                'po_number' => optional($item->productionBatch)->po_number,
+                'variant' => optional($item->productionBatch)->variant,
+                'created_at' => $item->created_at->toDateTimeString(), // Tambahkan ini
+            ];
+        });
 
         $ggasData = GgasProcess::with(['productionBatch:id,po_number,variant'])
         ->select('id', 'batch_number', 'brix', 'nacl', 'production_batch_id', 'created_at')
         ->whereNotNull('brix')
-            ->whereNotNull('nacl')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->orderBy('created_at')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'batch_number' => $item->batch_number,
-                    'brix' => $item->brix,
-                    'nacl' => $item->nacl,
-                    'production_batch_id' => $item->production_batch_id,
-                    'po_number' => optional($item->productionBatch)->po_number,
-                    'variant' => optional($item->productionBatch)->variant,
-                ];
-            });
+        ->whereNotNull('nacl')
+        ->whereBetween('created_at', [$startDate, $endDate])
+        ->orderBy('created_at')
+        ->get()
+        ->map(function ($item) {
+            return [
+                'batch_number' => $item->batch_number,
+                'brix' => $item->brix,
+                'nacl' => $item->nacl,
+                'production_batch_id' => $item->production_batch_id,
+                'po_number' => optional($item->productionBatch)->po_number,
+                'variant' => optional($item->productionBatch)->variant,
+                'created_at' => $item->created_at->toDateTimeString(), // Tambahkan ini
+            ];
+        });
 
         return response()->json([
             'gga' => $ggaData,

@@ -257,6 +257,17 @@ class BlendingAdjustController extends Controller
         }
 
         $blending = BlendingAfterAdjustMikroModel::findOrFail($id);
+        // 🛡️ Validasi agar data tidak bisa diisi ulang
+        if (
+            ($request->filled('eb') && $blending->eb !== null) ||
+            ($request->filled('tpc') && $blending->tpc !== null) ||
+            ($request->filled('ym') && $blending->ym !== null)
+        ) {
+            return response()->json([
+                'error' => 'Data EB/TPC/YM sudah diisi sebelumnya dan tidak bisa diubah ulang.'
+            ], 422);
+        }
+        
         KonfirmasiBlendingAdjustMikroModel::create([
             'blending_after_adjust_mikro_id' => $blending->id, // Ambil ID dari blending yang baru diupdate
             'nama_analis' => $request->nama_analis,

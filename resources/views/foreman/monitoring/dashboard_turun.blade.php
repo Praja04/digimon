@@ -171,6 +171,13 @@
 
         // 🧭 Render line chart per parameter
         function renderLineChart(selector, data, title) {
+            const categories = data.map(point => point.x);
+            const values = data.map(point => point.y);
+            const metaData = data.map(point => point.meta || {
+                po: '-',
+                variant: '-'
+            });
+
             const options = {
                 chart: {
                     type: 'line',
@@ -181,7 +188,7 @@
                 },
                 series: [{
                     name: title,
-                    data: data
+                    data: values
                 }],
                 stroke: {
                     curve: 'smooth'
@@ -197,7 +204,7 @@
                     align: 'left'
                 },
                 xaxis: {
-                    type: 'category',
+                    categories: categories,
                     title: {
                         text: 'Batch Range'
                     }
@@ -212,21 +219,18 @@
                     custom: function({
                         series,
                         seriesIndex,
-                        dataPointIndex,
-                        w
+                        dataPointIndex
                     }) {
-                        const point = w.config.series[seriesIndex].data[dataPointIndex];
-                        if (!point || typeof point.y === 'undefined') {
-                            return `<div class="apex-tooltip">Data tidak tersedia</div>`;
-                        }
+                        const value = series[seriesIndex][dataPointIndex];
+                        const meta = metaData[dataPointIndex];
 
                         return `
-                        <div class="apex-tooltip">
-                            <strong>${title}: ${point.y.toFixed(2)}</strong><br/>
-                            PO Number: ${point.meta?.po || '-' }<br/>
-                            Variant: ${point.meta?.variant || '-' }
-                        </div>
-                    `;
+                    <div class="apex-tooltip">
+                        <strong>${title}: ${value.toFixed(2)}</strong><br/>
+                        PO Number: ${meta.po}<br/>
+                        Variant: ${meta.variant}
+                    </div>
+                `;
                     }
                 }
             };

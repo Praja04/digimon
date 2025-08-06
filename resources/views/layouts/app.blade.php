@@ -4,7 +4,7 @@
 <head>
 
     <meta charset="utf-8" />
-    <title>Monitoring Parameter Proses</title>
+    <title>Digimon QC</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />

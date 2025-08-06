@@ -536,7 +536,40 @@ class ProductionBatchController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-        } else {
+        } elseif ($oldDisposition === 'Adjustment'){
+            $new = BlendingAwalModel::create([
+                'production_batch_id' => $validated['production_batch_id'],
+                'batch_range' => $validated['batch_range'],
+                'nomor_blending' => $validated['no_blending'],
+                'volume' => $validated['volume'],
+                'brix' => null,
+                'nacl' => null,
+                'bj' => null,
+                'visco' => null,
+                'aw' => null,
+                'buih' => null,
+                'organo' => null,
+                'ph' => null,
+                'endapan' => null,
+                'warna' => null,
+                'disposition' => null,
+                'disposition_remarks' => null,
+                'adjustment_qty_air' => null,
+                'adjustment_qty_garam' => null,
+                'adjustment_qty_gula' => null,
+                'is_adjustment' => false,
+                'revisi' => $validated['revisi'],
+                'not_standar' => false,
+            ]);
+
+            DB::table('blending_after_adjust_mikro')->insert([
+                'production_batch_id' => $validated['production_batch_id'],
+                'batch_range' => $validated['batch_range'],
+                'nomor_blending' => $validated['no_blending'],
+                'volume_blending' => $validated['volume']
+            ]);
+        }
+         else {
             // Disposisi biasa, tanpa batch tambahan
             $new = BlendingAwalModel::create([
                 'production_batch_id' => $validated['production_batch_id'],
@@ -1273,65 +1306,7 @@ class ProductionBatchController extends Controller
     }
 
 
-    //Monitoring Storage
-
-    // public function show_monitoring_storage($id)
-    // {
-    //     $productionBatch = ProductionBatch::with(['MonitoringStorage' => function ($query) {
-    //         $query->with('additionalBatches');
-    //     }])->findOrFail($id);
-    //     // $productionBatch = ProductionBatch::findOrFail($id);
-    //     $validDispositions = ['Release', 'Release Bersyarat'];
-
-    //     $all = MonitoringStorageModel::where('production_batch_id', $id)
-    //         ->whereIn('disposition', $validDispositions)
-    //         ->get();
-
-    //     $grouped = $all->groupBy('batch_range');
-    //     $batchGroups = [];
-
-    //     foreach ($grouped as $batchRange => $items) {
-    //         $chosen = $items->sortByDesc(function ($item) {
-    //             return is_numeric($item->revisi) ? (int)$item->revisi : 0;
-    //         })->first();
-
-    //         $fullRange = $chosen->batch_range;
-
-    //         // Cek jika ada relasi
-    //         $relatedBatches = DB::table('monitoring_storage_relations')
-    //             ->where('monitoring_storage_id', $chosen->id)
-    //             ->pluck('batch'); // contoh: ['8-9', '12-13']
-
-    //         foreach ($relatedBatches as $relRange) {
-    //             $fullRange .= '-' . $relRange;
-    //         }
-
-    //         $batchGroups[] = $fullRange;
-    //     }
-    //     foreach ($productionBatch->MonitoringStorage as $data) {
-    //         $data->has_relation = $data->additionalBatches && $data->additionalBatches->isNotEmpty();
-    //         $data->related_batches = $data->has_relation
-    //             ? $data->additionalBatches->pluck('batch')->implode(', ')
-    //             : null;
-
-    //         // Tambahkan po_number ke setiap additionalBatch
-    //         foreach ($data->additionalBatches as $addBatch) {
-    //             $po = ProductionBatch::find($addBatch->production_batch_id);
-    //             $addBatch->po_number = $po->po_number;
-    //         }
-    //     }
-
-    //     // return response()->json([
-    //     //     'productionBatch' => $productionBatch,
-    //     //     'batchGroups' => $batchGroups
-    //     // ]);
-    //     return view('productionbatch.monitoring_storage.detail_monitoring_storage', compact(
-    //         'productionBatch',
-    //         'batchGroups',
-
-    //     ));
-    // }
-
+   
     public function show_monitoring_storage($id)
     {
         $productionBatch = ProductionBatch::with([

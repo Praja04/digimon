@@ -176,7 +176,7 @@
                                                         </td>
                                                         <td>
                                                             {{ $blending->disposition }}
-                                                            @if(in_array($blending->disposition, ['Adjustment', 'Resampling','Leveling','Jalan Bareng']) && $blending->revisi == null && $blending->not_standar == true )
+                                                            @if(in_array($blending->disposition, ['Adjustment', 'Resampling','Leveling','Jalan Bareng']) && $blending->not_standar == true )
                                                             <button class="btn btn-sm btn-warning generate-revisi-btn" data-id="{{ $blending->id }}" data-batch="{{ $blending->batch_range }}" data-po="{{ $blending->production_batch_id }}" data-disposition="{{ $blending->disposition }}">
                                                                 ❗
                                                             </button>
@@ -194,7 +194,7 @@
                                                             @elseif( $blending->disposition == 'Adjustment')
                                                             Adjustment Air: {{ $blending->adjustment_qty_air }} Liter, Garam: {{ $blending->adjustment_qty_garam }} Kg, Gula: {{ $blending->adjustment_qty_gula }} Kg
                                                             @elseif($blending->is_adjustment == true)
-                                                            After Adjustment 
+                                                            After Adjustment
                                                             @else
                                                             -
                                                             @endif
@@ -488,7 +488,8 @@
             production_batch_id: poId,
             batch_range: batch
         }, function(res) {
-            $('#modal_revisi_display').val(res.data?.revisi ? parseInt(res.data.revisi) + 1 : 1);
+            //console.log(res);
+            $('#modal_revisi_display').val(res.revisi);
 
             if (disposition === 'Leveling') {
                 $('#additional_batch_group, #additional_batch_group_2').removeClass('d-none');

@@ -26,8 +26,7 @@ class GgasProcess extends Model
         'adjustment_qty_gula',
         'not_standar'
     ];
-    public $timestamps = false;
-
+  
     // Relasi dengan tabel ProductionBatch
     public function productionBatch()
     {

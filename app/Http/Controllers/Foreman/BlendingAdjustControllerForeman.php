@@ -36,7 +36,7 @@ class BlendingAdjustControllerForeman extends Controller
     public function Blending_adjust_data_mikro()
     {
 
-        $productionBatches = ProductionBatch::with('blendingAfterAdjust')->has('blendingAfterAdjust')->get();
+        $productionBatches = ProductionBatch::orderby('created_at','desc')->with('blendingAfterAdjustMikro')->has('blendingAfterAdjustMikro')->get();
 
         return view('foreman.blending.blending_adjust_mikro', compact('productionBatches'));
     }
@@ -342,7 +342,7 @@ class BlendingAdjustControllerForeman extends Controller
             'eb' => 'nullable|numeric|min:0|max:100',
             'tpc' => 'nullable|numeric|min:0|max:100',
             'ym' => 'nullable |string|max:20', 
-            'nama_foreman' => 'string', 
+            'nama_analis' => 'string', 
             'shift' => 'string', 
         ]);
 
@@ -353,9 +353,22 @@ class BlendingAdjustControllerForeman extends Controller
         }
 
         $blending = BlendingAfterAdjustMikroModel::findOrFail($id);
+
+        // 🛡️ Validasi agar data tidak bisa diisi ulang
+        if (
+            ($request->filled('eb') && $blending->eb !== null) ||
+            ($request->filled('tpc') && $blending->tpc !== null) ||
+            ($request->filled('ym') && $blending->ym !== null)
+        ) {
+            return response()->json([
+                'error' => 'Data EB/TPC/YM sudah diisi sebelumnya dan tidak bisa diubah ulang.'
+            ], 422);
+        }
+
+
         KonfirmasiBlendingAdjustMikroModel::create([
             'blending_after_adjust_mikro_id' => $blending->id, // Ambil ID dari blending yang baru diupdate
-            'nama_foreman' => $request->nama_foreman,
+            'nama_analis' => $request->nama_analis,
             'shift' => $request->shift,
         ]);
         
