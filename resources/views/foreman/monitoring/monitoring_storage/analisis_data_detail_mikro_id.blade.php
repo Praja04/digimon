@@ -144,16 +144,26 @@
                                 </select>
                             </div>
                             <div class="mb-3">
+                                <label class="form-label">Pilih Parameter</label>
+                                <select id="parameterSelector" class="form-select">
+                                    <option value="">-- Pilih --</option>
+                                    <option value="eb">EB</option>
+                                    <option value="tpc">TPC</option>
+                                    <option value="ym">YM</option>
+                                </select>
+                            </div>
+
+                            <div id="ebContainer" class="mb-3 d-none">
                                 <label class="form-label">EB</label>
-                                <input type="number" step="0.01" max="100" min="0" name="eb" class="form-control" required>
+                                <input type="number" step="0.01" max="100" min="0" name="eb" id="ebInput" class="form-control">
                             </div>
-                            <div class="mb-3">
+                            <div id="tpcContainer" class="mb-3 d-none">
                                 <label class="form-label">TPC</label>
-                                <input type="number" step="0.01" max="100" min="0" name="tpc" class="form-control" required>
+                                <input type="number" step="0.01" max="100" min="0" name="tpc" id="tpcInput" class="form-control">
                             </div>
-                            <div class="mb-3">
+                            <div id="ymContainer" class="mb-3 d-none">
                                 <label class="form-label">YM</label>
-                                <input type="text" name="ym" class="form-control" required>
+                                <input type="text" name="ym" id="ymInput" class="form-control">
                             </div>
 
 
@@ -175,6 +185,17 @@
 @endif
 
 <script>
+    $('#parameterSelector').on('change', function() {
+        const selected = $(this).val();
+
+        // Sembunyikan semua
+        $('#ebContainer, #tpcContainer, #ymContainer').addClass('d-none');
+
+        // Tampilkan sesuai pilihan
+        if (selected === 'eb') $('#ebContainer').removeClass('d-none');
+        if (selected === 'tpc') $('#tpcContainer').removeClass('d-none');
+        if (selected === 'ym') $('#ymContainer').removeClass('d-none');
+    });
     $(document).ready(function() {
         $.ajaxSetup({
             headers: {

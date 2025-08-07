@@ -371,7 +371,7 @@
         //    $end.empty();
 
         if (validGgasBatches.length === 0) {
-            $start.append('<option disabled>Semua batch belum lolos blending after adjust</option>');
+            $start.append('<option disabled>Belum ada Batch yang lolos blending(Release)</option>');
             //$end.append('<option disabled>Semua batch belum lolos GGAS</option>');
             return;
         }

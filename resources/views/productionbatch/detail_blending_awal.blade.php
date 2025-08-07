@@ -115,7 +115,9 @@
                                         <li class="nav-item">
                                             <a class="nav-link active" id="nav-speci-tab" data-bs-toggle="tab" href="#nav-speci" role="tab" aria-controls="nav-speci" aria-selected="true">Blending</a>
                                         </li>
-
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="nav-detail-tab" data-bs-toggle="tab" href="#nav-detail" role="tab" aria-controls="nav-detail" aria-selected="false">Blending Mikro - Adjustment</a>
+                                        </li>
                                     </ul>
                                 </nav>
                                 <div class="tab-content border border-top-0 p-4" id="nav-tabContent">
@@ -197,6 +199,82 @@
                                                             After Adjustment
                                                             @else
                                                             -
+                                                            @endif
+                                                        </td>
+                                                        <td>
+
+                                                            @if($blending->revisi != null)
+                                                            Revisi Ke-{{ $blending->revisi }}
+                                                            @else
+                                                            -
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                            @else
+                                            <p class="text-muted">Belum ada data Blending.</p>
+                                            @endif
+
+
+
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="nav-detail" role="tabpanel" aria-labelledby="nav-detail-tab">
+                                        <div class="table-responsive">
+                                            @if($productionBatch->blendingAfterAdjustMikro->count() > 0)
+                                            <table class="table mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Batch Range</th>
+                                                        <th>QR Code (URL)</th>
+                                                        <th>Disposisi</th>
+                                                        <th>Keterangan</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($productionBatch->blendingAfterAdjustMikro as $blending)
+                                                    <tr>
+                                                        <td>{{ $blending->batch_range }}</td>
+                                                        <td>
+                                                            <!-- Tombol untuk buka modal -->
+                                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#qrModal{{ $blending->id }}">
+                                                                QR Code - {{ $blending->id }}
+                                                            </button>
+
+                                                            <!-- Modal Besar -->
+                                                            <div class="modal fade" id="qrModal{{ $blending->id }}" tabindex="-1" aria-labelledby="qrModalLabel{{ $blending->id }}" aria-hidden="true">
+                                                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header py-2">
+                                                                            <h5 class="modal-title" id="qrModalLabel{{ $blending->id }}">QR Code - Mikro</h5>
+                                                                            <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                        </div>
+                                                                        <div class="modal-body text-center" id="qrPrintArea{{ $blending->id }}">
+                                                                            <div style="display: inline-block;">
+                                                                                <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('analis/blending/mikro/detail/form/' . $blending->id), 'QRCODE') }}" alt="QR Code">
+                                                                            </div>
+                                                                            <p>BlendingAfterAdjust-Mikro /{{ $productionBatch->po_number }}/{{ $productionBatch->variant }}/{{ $blending->batch_range }}</p>
+                                                                        </div>
+                                                                        <div class="modal-footer justify-content-center py-2">
+                                                                            <button onclick="printQR('qrPrintArea{{ $blending->id }}')" class="btn btn-sm btn-success">Print</button>
+                                                                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            {{ $blending->disposition }}
+                                                            @if(in_array($blending->disposition, ['Adjustment', 'Resampling','Leveling','Jalan Bareng']) && $blending->revisi == null && $blending->not_standar == true )
+                                                            <button class="btn btn-sm btn-warning generate-revisi-btn" data-id="{{ $blending->id }}" data-batch="{{ $blending->batch_range }}" data-po="{{ $blending->production_batch_id }}" data-disposition="{{ $blending->disposition }}">
+                                                                ❗
+                                                            </button>
+
+                                                            @else
+
                                                             @endif
                                                         </td>
                                                         <td>

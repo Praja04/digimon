@@ -268,6 +268,15 @@ class MonitoringStorageController extends Controller
         }
 
         $data = MonitoringStorageMikroModel::findOrFail($id);
+        if (
+            ($request->filled('eb') && $data->eb !== null) ||
+            ($request->filled('tpc') && $data->tpc !== null) ||
+            ($request->filled('ym') && $data->ym !== null)
+        ) {
+            return response()->json([
+                'error' => 'Data EB/TPC/YM sudah diisi sebelumnya dan tidak bisa diubah ulang.'
+            ], 422);
+        }
         KonfirmasiMonitoringStorageMikroModel::create([
             'monitoring_storage_mikro_id' => $data->id, // Ambil ID dari blending yang baru diupdate
             'nama_analis' => $request->nama_analis,

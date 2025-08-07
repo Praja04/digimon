@@ -1175,7 +1175,7 @@
                         $('#jamInput').hide();
                         $('#btnSimpanJam').hide();
                     }
-                   
+
 
                 },
                 error: function(xhr, status, error) {
@@ -1388,7 +1388,8 @@
         $(this).val(val);
     });
     $(document).on('input', '.kapital-case', function() {
-        $(this).val($(this).val().toUpperCase());
+        let value = $(this).val().toUpperCase().replace(/[^A-Z\s]/g, ''); // hanya huruf besar dan spasi
+        $(this).val(value);
     });
     // Event listener dinamis: tampilkan / sembunyikan attachment & disposisi
     $(document).on('change', '#select-uji-kristal', function() {

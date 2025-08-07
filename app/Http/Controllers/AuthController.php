@@ -58,18 +58,19 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:analis,foreman,supervisor,dept_head'
+            'role' => 'required|in:analis,foreman,supervisor,dept_head',
+            'role_group' => 'required'
         ]);
 
-        $user = User::create([
+        User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => bcrypt($validated['password']), // Pakai bcrypt untuk hashing password
-            'role' => $validated['role']
+            'role' => $validated['role'],
+            'role_group' => $validated['role_group'],
         ]);
 
-        Auth::login($user);
-        return redirect()->route($this->redirectByRole($user->role));
+        return response()->json(['success' => 'User created successfully.']);
     }
 
     private function redirectByRole($role, $roleGroup = null)
@@ -86,5 +87,61 @@ class AuthController extends Controller
             'dept_head' => 'dept_head.dashboard',
             default => 'dashboard',
         };
+    }
+
+    public function manage_user()
+    {
+        if (!Session::has('role') || Session::get('role') !== 'supervisor') {
+            return redirect('/login')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
+
+        return view('supervisor.manage_user');
+    }
+
+    public function getUsers()
+    {
+        $users = User::select(
+            'id',
+            'email',
+            'name',
+            'email',
+            'role',
+            'role_group',
+        )->get();
+
+        return response()->json($users);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'username' => 'required',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'role' => 'required',
+            'role_group' => 'required',
+            'password' => 'nullable|min:6',
+        ]);
+
+        $user = User::findOrFail($id);
+
+       
+        // Update data user
+        $user->update([
+            'name' => $request->username,
+            'email' => $request->email,
+            'role' => $request->role,
+            'role_group' => $request->role_group,
+            'password' => $request->password ? bcrypt($request->password) : $user->password,
+        ]);
+
+        return response()->json(['success' => 'User updated successfully.']);
+    }
+
+    // Menghapus data pengguna
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+        return response()->json(['success' => 'User deleted successfully.']);
     }
 }

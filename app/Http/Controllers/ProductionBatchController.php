@@ -1041,11 +1041,11 @@ class ProductionBatchController extends Controller
         ->whereIn('disposition', $validDispositions)
         ->get();
 
-        $adjustmentBlending = BlendingAfterAdjustModel::where('production_batch_id', $id)
-        ->whereIn('disposition', $validDispositions)
-        ->get();
+        // $adjustmentBlending = BlendingAfterAdjustModel::where('production_batch_id', $id)
+        // ->whereIn('disposition', $validDispositions)
+        // ->get();
 
-        // $all = $blendingAwal->concat($adjustmentBlending);
+      
          $all = $blendingAwal;
 
         $grouped = $all->groupBy('batch_range');

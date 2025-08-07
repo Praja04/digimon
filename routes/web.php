@@ -39,7 +39,9 @@ Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
-
+Route::get('/users', [AuthController::class, 'getUsers'])->name('users.get');
+Route::post('users/{id}', [AuthController::class, 'update'])->name('users.update'); // Update user
+Route::delete('users/{id}', [AuthController::class, 'destroy'])->name('users.destroy'); // Hapus user
 
 
 Route::prefix('analis')->group(function () {
@@ -403,6 +405,7 @@ Route::prefix('foreman')->group(function () {
 });
 
 Route::prefix('supervisor')->group(function () {
+    Route::get('/manajemen_user', [AuthController::class, 'manage_user']);
     Route::prefix('makro')->group(function () {
         Route::get('/dashboard', [DashboardMakro::class, 'dashboard']);
     });

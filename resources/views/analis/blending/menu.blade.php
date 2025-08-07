@@ -99,7 +99,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>-->
 
     <div class="col-xl-4 col-lg-4">
         <div class="card ribbon-box right overflow-hidden">
@@ -122,10 +122,10 @@
                         <a href="{{url('analis/blending/mikro/data')}}" class="btn btn-light w-100">Lihat Detail</a>
                     </div>
 
-               </div>
+                </div>
             </div>
         </div>
-    </div> -->
+    </div>
 
 
 </div>

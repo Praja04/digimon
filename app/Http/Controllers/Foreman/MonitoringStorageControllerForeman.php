@@ -275,6 +275,17 @@ class MonitoringStorageControllerForeman extends Controller
         }
 
         $data = MonitoringStorageModel::findOrFail($id);
+        // 🛡️ Validasi agar data tidak bisa diisi ulang
+        if (
+            ($request->filled('eb') && $data->eb !== null) ||
+            ($request->filled('tpc') && $data->tpc !== null) ||
+            ($request->filled('ym') && $data->ym !== null)
+        ) {
+            return response()->json([
+                'error' => 'Data EB/TPC/YM sudah diisi sebelumnya dan tidak bisa diubah ulang.'
+            ], 422);
+        }
+
         $disposition = $request->disposition_edit;
         $remarks = $request->disposition_remarks_edit ?? null;
 

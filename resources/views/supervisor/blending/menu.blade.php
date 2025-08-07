@@ -60,8 +60,8 @@
                     <span class="trending-ribbon-text">Makro</span>
                 </div>
                 <img src="{{ asset('assets/images/blending_awal.png' ) }}" alt="gambar" height="100">
-                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Data Blending Awal</a></h5>
-                <p class="text-muted mb-4">Analisis Blending Awal - Makro</p>
+                <h5 class="mb-1 mt-4"><a href="" class="link-primary">Data Blending </a></h5>
+                <p class="text-muted mb-4">Analisis Blending - Makro</p>
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
                         <div id="chart-gga" data-colors='["--vz-danger"]'></div>
@@ -100,7 +100,7 @@
             </div>
         </div>
     </div>
-
+-->
     <div class="col-xl-4 col-lg-4">
         <div class="card ribbon-box right overflow-hidden">
             <div class="card-body text-center p-4">
@@ -122,10 +122,10 @@
                         <a href="{{url('supervisor/blending/mikro/data')}}" class="btn btn-light w-100">Lihat Detail</a>
                     </div>
 
-                 </div>
+                </div>
             </div>
         </div>
-    </div> -->
+    </div>
 
 
 </div>
