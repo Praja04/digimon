@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Log;
-
 class AuthController extends Controller
 {
     public function loginForm()
@@ -124,7 +122,7 @@ class AuthController extends Controller
 
         $user = User::findOrFail($id);
 
-       
+
         // Update data user
         $user->update([
             'name' => $request->username,
@@ -144,4 +142,7 @@ class AuthController extends Controller
         $user->delete();
         return response()->json(['success' => 'User deleted successfully.']);
     }
+
+
+
 }

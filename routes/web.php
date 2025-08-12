@@ -43,8 +43,9 @@ Route::get('/users', [AuthController::class, 'getUsers'])->name('users.get');
 Route::post('users/{id}', [AuthController::class, 'update'])->name('users.update'); // Update user
 Route::delete('users/{id}', [AuthController::class, 'destroy'])->name('users.destroy'); // Hapus user
 
-
 Route::prefix('analis')->group(function () {
+    Route::get('/analisa/temp/{identitasId}', [AuthController::class, 'getTemporary']);
+    Route::post('/analisa/temp/save', [AuthController::class, 'saveTemporary']);
     Route::prefix('rmpm')->group(function () {
         Route::get('/', [RMPMController::class, 'pilihJenisGula'])->name('rmpm.pilihJenisGula');
         // Route::get('/identitas/{jenis}', [RMPMController::class, 'formIdentitas'])->name('rmpm.formIdentitas');

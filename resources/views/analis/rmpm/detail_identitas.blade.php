@@ -1287,16 +1287,52 @@
 
 <script>
     const formContent = $('#form-analisa-content');
-    const jenisGula = $('#jenis_gula').val();
-    let currentStep = 0;
-    let steps = [];
+    let jenisGula = $('#jenis_gula').val();
 
-    // Handle compression sebelum submit
-    $(document).on('change', 'input[name="attachment"]', async function(event) {
+    // Initialize when document is ready
+    $(document).ready(function() {
+        // Event handlers setup
+        setupEventHandlers();
+    });
+
+    function setupEventHandlers() {
+        // Image compression handler
+        $(document).on('change', 'input[name="attachment"]', handleImageCompression);
+
+        // Input formatting handlers
+        $(document).on('input', '.decimal-only', formatDecimalInput);
+        $(document).on('input', '.kapital-case', formatCapitalCase);
+
+        // Dynamic crystal test handling
+        $(document).on('change', '#select-uji-kristal', handleCrystalTestChange);
+
+        // Enter key navigation
+        $(document).on('keydown', 'input', handleEnterKey);
+
+        // Modal handlers
+        $('#modalAnalisa')
+            .on('show.bs.modal', initializeModal)
+            .on('shown.bs.modal', function() {
+                // Load draft setelah modal sepenuhnya terbuka
+                setTimeout(loadDraft, 100);
+            });
+
+        // Form submission
+        $('#formAnalisa').on('submit', handleFormSubmit);
+
+        // Next button
+        $('#nextBtn').click(handleNextButton);
+
+        // Auto-save changes
+        $(document).on('input change', '#form-analisa-content input, #form-analisa-content select, #form-analisa-content textarea', function() {
+            saveDraft();
+        });
+    }
+
+    async function handleImageCompression(event) {
         const file = event.target.files[0];
         if (!file) return;
 
-        // Cek ukuran file, kalau sudah kecil, tidak perlu compress
         if (file.size <= 2 * 1024 * 1024) return;
 
         const options = {
@@ -1307,165 +1343,152 @@
 
         try {
             const compressedFile = await imageCompression(file, options);
-
-            // Ganti file input dengan file hasil compress
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(compressedFile);
             event.target.files = dataTransfer.files;
-
             console.log('Gambar berhasil dikompres:', compressedFile.size / 1024, 'KB');
         } catch (error) {
             console.error('Error saat kompres gambar:', error);
         }
-    });
-
-
-
-    const renderGroupInput = (label, name, jumlahData) => {
-        let html = `<div class="form-step" data-step="${name}" style="display:none;">
-        <h6 class="mb-3">${label}</h6>`;
-
-        if (name === 'disposisi') {
-            html += `<div class="disposisi-wrapper" style="display: none;">
-            <label>Disposisi</label>
-            <select class="form-control mb-2" name="disposisi">
-                <option value="">Pilih Disposisi</option>
-                <option value="Release">Release</option>
-                <option value="Reject">Reject</option>
-            </select>
-        </div>
-        <div class="disposisi-wrapper-negatif" style="display: none;">
-            <label>Disposisi</label>
-            <select class="form-control mb-2" name="disposisi">
-                <option value="">Pilih Disposisi</option>
-                <option value="Release">Release</option>
-               
-            </select>
-        </div>
-        <div class="disposisi">
-            <label>Disposisi</label>
-            <select class="form-control mb-2" name="disposisi">
-                <option value="">Pilih Disposisi</option>
-                <option value="Release">Release</option>
-                <option value="Reject">Reject</option>
-            </select>
-        </div>
-        `;
-        } else if (name === 'uji_kristal') {
-            html += `<label for="">Uji Kristal</label>
-            <select class="form-control mb-2" name="uji_kristal" id="select-uji-kristal">
-                <option value="">Pilih Hasil Uji</option>
-                <option value="negatif">Negatif</option>
-                <option value="positif">Positif</option>
-            </select>`;
-        } else if (name === 'attachment') {
-            html += `<div class="attachment-wrapper">
-            <label>Lampirkan Gambar</label>
-            <input type="file" class="form-control mb-2" name="attachment" accept="image/*">
-        </div>`;
-        } else if (name === 'organo' || name === 'warna' || name === 'aroma') {
-            for (let i = 1; i <= jumlahData; i++) {
-                html += `<label for="">${i}</label>
-                <input type="text" class="form-control kapital-case"  name="${name}[]" placeholder="${label} ke-${i}">`;
-            }
-        } else {
-            for (let i = 1; i <= jumlahData; i++) {
-                html += `<label for="">${i}</label>
-                <input type="text" class="form-control decimal-only"  name="${name}[]" placeholder="${label} ke-${i}">`;
-            }
-        }
-
-        html += `</div>`;
-        return html;
-    };
-    $(document).on('input', '.decimal-only', function() {
-        let val = $(this).val();
-
-        // Hanya izinkan angka dan satu koma
-        val = val.replace(/[^0-9,]/g, ''); // buang karakter selain angka & koma
-        val = val.replace(/(,.*),/, '$1'); // hanya satu koma maksimal
-
-        $(this).val(val);
-    });
-    $(document).on('input', '.kapital-case', function() {
-        let value = $(this).val().toUpperCase().replace(/[^A-Z\s]/g, ''); // hanya huruf besar dan spasi
-        $(this).val(value);
-    });
-    // Event listener dinamis: tampilkan / sembunyikan attachment & disposisi
-    $(document).on('change', '#select-uji-kristal', function() {
-        const value = $(this).val();
-        if (value === 'negatif') {
-            $('.attachment-wrapper').hide();
-            $('.disposisi-wrapper-negatif').show();
-            $('.disposisi').hide();
-            $('select[name="disposisi"]').val('release');
-        } else if (value === 'positif') {
-            $('.disposisi').hide();
-            $('.attachment-wrapper').show();
-            $('.disposisi-wrapper').hide();
-            $('.disposisi-wrapper-negatif').hide();
-            $('select[name="disposisi"]').val('');
-        } else {
-            $('.attachment-wrapper').hide();
-            $('.disposisi').show();
-        }
-    });
-
-
-
-    $(document).on('keydown', 'input', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault(); // Hindari submit form
-
-            const inputs = $('input:visible'); // Ambil semua input yang terlihat
-            const currentIndex = inputs.index(this); // Cari index input aktif
-            const nextInput = inputs.get(currentIndex + 1); // Ambil input setelahnya
-
-            if (nextInput) {
-                nextInput.focus(); // Pindahkan fokus
-            }
-        }
-    });
-
-    function showStep(index) {
-        $('.form-step').hide();
-        $('.form-step').eq(index).show();
-        $('#prevBtn').toggle(index > 0);
-        $('#nextBtn').text(index === steps.length - 1 ? 'Simpan Analisa' : 'Berikutnya');
     }
 
-    $('#modalAnalisa').on('show.bs.modal', function() {
+    function formatDecimalInput() {
+        let val = $(this).val();
+        val = val.replace(/[^0-9,]/g, '');
+        val = val.replace(/(,.*),/, '$1');
+        $(this).val(val);
+    }
+
+    function formatCapitalCase() {
+        let value = $(this).val().toUpperCase().replace(/[^A-Z\s]/g, '');
+        $(this).val(value);
+    }
+
+    function handleCrystalTestChange() {
+        const value = $(this).val();
+        console.log('Crystal test changed to:', value);
+
+        // Hide all sections first
+        $('.attachment-wrapper, .disposisi-wrapper, .disposisi-wrapper-negatif, .disposisi').hide();
+
+        if (value === 'negatif') {
+            console.log('Showing disposisi-wrapper-negatif');
+            $('.disposisi-wrapper-negatif').show();
+
+            // Auto-set disposisi to Release for negatif
+            $('.disposisi-wrapper-negatif select[name="disposisi"]').val('Release');
+
+            // Trigger save draft
+            saveDraft();
+
+        } else if (value === 'positif') {
+            console.log('Showing attachment-wrapper');
+            $('.attachment-wrapper').show();
+
+            // Clear disposisi for positif (backend will handle)
+            $('select[name="disposisi"]').val('');
+
+            // Trigger save draft
+            saveDraft();
+
+        } else {
+            console.log('Showing default disposisi');
+            $('.disposisi').show();
+
+            // Clear disposisi when no selection
+            $('.disposisi select[name="disposisi"]').val('');
+
+            // Trigger save draft
+            saveDraft();
+        }
+    }
+
+    function handleEnterKey(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const inputs = $('input:visible');
+            const currentIndex = inputs.index(this);
+            const nextInput = inputs.get(currentIndex + 1);
+            if (nextInput) nextInput.focus();
+        }
+    }
+
+    function initializeModal() {
         formContent.html('');
-        steps = [];
-        currentStep = 0;
+        $('#analisa-type-select, #analisa-jumlah').hide();
+        $('#prevBtn, #nextBtn').show().text('Berikutnya');
 
-        $('#analisa-type-select').hide();
-        $('#analisa-jumlah').hide();
-        $('#prevBtn').hide();
-        $('#nextBtn').text('Berikutnya');
+        const draft = localStorage.getItem('analisaDraft');
+        console.log('Draft analisa:', draft);
 
+        if (draft) {
+            const draftData = JSON.parse(draft);
+
+            // Check if there's actual analysis data (not just analisaType and jumlahData)
+            const hasOtherData = Object.keys(draftData).some(key => {
+                const cleanKey = key.replace(/\[\]$/, '');
+                // Skip analisaType and jumlahData
+                if (['analisaType', 'jumlahData'].includes(cleanKey)) {
+                    return false;
+                }
+
+                // Check if this field has meaningful data
+                const value = draftData[key];
+                if (Array.isArray(value)) {
+                    // For arrays, check if at least one element is not empty
+                    return value.some(item => item && item.toString().trim() !== '');
+                } else {
+                    // For non-arrays, check if not empty
+                    return value && value.toString().trim() !== '';
+                }
+            });
+
+            console.log('Has other data:', hasOtherData);
+            console.log('Draft data keys:', Object.keys(draftData));
+
+            if (hasOtherData && draftData.jumlahData && draftData.analisaType) {
+                console.log('Loading existing draft data...');
+
+                // Update jenisGula if available in draft
+                if (draftData.jenisGula) {
+                    jenisGula = draftData.jenisGula;
+                }
+
+                const jumlahData = parseInt(draftData.jumlahData);
+                const analisaType = draftData.analisaType;
+
+                // Render analysis fields immediately
+                renderAnalysisFields(jumlahData, analisaType);
+
+                // Hide the navigation buttons since we're going directly to the analysis form
+                $('#prevBtn, #nextBtn').hide();
+
+                return; // Exit early, loadDraft will be called in shown.bs.modal
+            }
+        }
+
+        // Fallback - show initial selection screens
         if (jenisGula === 'Gula Kelapa' || jenisGula === 'Gula Tebu') {
             $('#analisa-type-select').show();
         } else if (jenisGula === 'Gula' || jenisGula === 'Garam') {
-            steps = ['analisa-jumlah'];
-            $('#analisa-jumlah').show(); // Sudah ada di HTML
+            $('#analisa-jumlah').show();
         } else {
-            formContent.html(`<div class="alert alert-warning">Jenis gula tidak dikenali: ${jenisGula}</div>`);
-            $('#prevBtn').hide();
-            $('#nextBtn').hide();
+            formContent.html(
+                `<div class="alert alert-warning">Jenis gula tidak dikenali: ${jenisGula}</div>`
+            );
+            $('#prevBtn, #nextBtn').hide();
         }
-    });
+    }
 
-    $('#nextBtn').click(function() {
+    function handleNextButton() {
         if ($('#analisa-type-select').is(':visible')) {
             const analisaType = $('input[name="analisa_type"]:checked').val();
             if (!analisaType) {
                 alert('Silakan pilih jenis analisa (Short-Term / Long-Term)');
                 return;
             }
-
             $('#analisa-type-select').hide();
-            $('#analisa-jumlah').show(); // Tampilkan input jumlah data
+            $('#analisa-jumlah').show();
             return;
         }
 
@@ -1477,142 +1500,356 @@
             }
 
             $('#analisa-jumlah').hide();
+            $('#prevBtn, #nextBtn').hide();
 
-            const jenisGula = $('#jenis_gula').val(); // Pastikan ini tersedia
-
-            // Jika jenis Gula/Garam, baru render field berdasarkan jumlah
-            if (jenisGula === 'Gula' || jenisGula === 'Garam') {
-                const fields = ['fisik', '%ka', 'kotoran', 'organo', 'warna', 'aroma', '%nacl', 'gross_weight', 'disposisi'];
-
-                // Isi steps baru
-                steps = fields;
-
-                // Kosongkan form dan isi ulang
-                formContent.html('');
-                fields.forEach(field => {
-                    formContent.append(renderGroupInput(field.toUpperCase(), field, jumlahData));
-                });
-
-                currentStep = 0;
-                showStep(currentStep);
-                return;
-            }
-
-            // Untuk jenis lain seperti short-term/long-term
             const analisaType = $('input[name="analisa_type"]:checked').val();
+            renderAnalysisFields(jumlahData, analisaType);
+        }
+    }
 
-            let fields = [];
-            if (analisaType === 'short-term') {
-                fields = ['brix', 'ph', 'kotoran', 'ka', 'organo', 'warna', 'aroma'];
-            } else if (analisaType === 'long-term') {
-                fields = ['uji_kristal', 'attachment'];
+    function renderAnalysisFields(jumlahData, analisaType = null) {
+        let fields = [];
+
+        if (jenisGula === 'Gula' || jenisGula === 'Garam') {
+            fields = ['fisik', '%ka', 'kotoran', 'organo', 'warna', 'aroma', '%nacl', 'gross_weight', 'disposisi'];
+        } else {
+            // If analisaType is not provided, try to get it from the form or draft
+            if (!analisaType) {
+                analisaType = $('input[name="analisa_type"]:checked').val();
             }
 
-            fields.push('disposisi');
-
-            steps = fields;
-            formContent.html('');
-            fields.forEach(field => {
-                formContent.append(renderGroupInput(field.toUpperCase(), field, jumlahData));
-            });
-
-            currentStep = 0;
-            showStep(currentStep);
-            return;
+            if (analisaType === 'short-term') {
+                fields = ['brix', 'ph', 'kotoran', 'ka', 'organo', 'warna', 'aroma', 'disposisi'];
+            } else if (analisaType === 'long-term') {
+                fields = ['uji_kristal', 'attachment', 'disposisi'];
+            }
         }
 
+        let navHtml = `<ul class="nav nav-tabs" id="analisaTab" role="tablist">`;
+        let tabContentHtml = `<div class="tab-content mt-3">`;
 
-        // Step input biasa
-        if (currentStep < steps.length - 1) {
-            currentStep++;
-            showStep(currentStep);
-        } else {
-            $('#formAnalisa').submit();
+        fields.forEach((field, idx) => {
+            const activeClass = idx === 0 ? 'active' : '';
+            const showClass = idx === 0 ? 'show active' : '';
+
+            navHtml += `
+        <li class="nav-item" role="presentation">
+            <button class="nav-link ${activeClass}" id="${field}-tab" data-bs-toggle="tab" data-bs-target="#tab-${field}" type="button" role="tab">
+                ${field.toUpperCase()}
+            </button>
+        </li>`;
+
+            tabContentHtml += `
+        <div class="tab-pane fade ${showClass}" id="tab-${field}" role="tabpanel">
+            ${renderFieldInput(field, jumlahData)}
+        </div>`;
+        });
+
+        navHtml += `</ul>`;
+        tabContentHtml += `</div>`;
+
+        formContent.html(navHtml + tabContentHtml);
+        console.log('Analysis fields rendered');
+    }
+
+    function renderFieldInput(fieldName, count) {
+        switch (fieldName) {
+            case 'disposisi':
+                return `
+            <div class="disposisi-wrapper" style="display: none;">
+                <label>Disposisi</label>
+                <select class="form-control mb-2" name="disposisi">
+                    <option value="">Pilih Disposisi</option>
+                    <option value="Release">Release</option>
+                    <option value="Reject">Reject</option>
+                </select>
+            </div>
+            <div class="disposisi-wrapper-negatif" style="display: none;">
+                <label>Disposisi</label>
+                <select class="form-control mb-2" name="disposisi">
+                    <option value="">Pilih Disposisi</option>
+                    <option value="Release">Release</option>
+                </select>
+            </div>
+            <div class="disposisi">
+                <label>Disposisi</label>
+                <select class="form-control mb-2" name="disposisi">
+                    <option value="">Pilih Disposisi</option>
+                    <option value="Release">Release</option>
+                    <option value="Reject">Reject</option>
+                </select>
+            </div>
+             <button type="submit" class="btn btn-primary mt-3">Simpan</button>
+            `;
+
+            case 'uji_kristal':
+                return `
+            <select class="form-control mb-2" name="uji_kristal" id="select-uji-kristal">
+                <option value="">Pilih Hasil Uji</option>
+                <option value="negatif">Negatif</option>
+                <option value="positif">Positif</option>
+            </select>`;
+
+            case 'attachment':
+                return `<div class="attachment-wrapper">
+            <label>Lampirkan Gambar</label>
+            <input type="file" class="form-control mb-2" name="attachment" accept="image/*">
+        </div>`;
+
+            case 'organo':
+            case 'warna':
+            case 'aroma':
+                let html = '';
+                for (let i = 1; i <= count; i++) {
+                    html += `<label>${i}</label>
+                <input type="text" class="form-control kapital-case" name="${fieldName}[]" placeholder="${fieldName} ke-${i}">`;
+                }
+                return html;
+
+            default:
+                let defaultHtml = '';
+                for (let i = 1; i <= count; i++) {
+                    defaultHtml += `<label>${i}</label>
+                <input type="text" class="form-control decimal-only" name="${fieldName}[]" placeholder="${fieldName} ke-${i}">`;
+                }
+                return defaultHtml;
         }
-    });
+    }
 
+    function saveDraft() {
+        let draftData = {};
 
-    $('#prevBtn').click(function() {
-        if (currentStep > 0) {
-            currentStep--;
-            showStep(currentStep);
+        // Get existing draft first to preserve analisaType and jumlahData
+        const existingDraft = localStorage.getItem('analisaDraft');
+        if (existingDraft) {
+            try {
+                const existing = JSON.parse(existingDraft);
+                // Preserve important meta fields
+                if (existing.analisaType) draftData.analisaType = existing.analisaType;
+                if (existing.jumlahData) draftData.jumlahData = existing.jumlahData;
+                if (existing.jenisGula) draftData.jenisGula = existing.jenisGula;
+            } catch (e) {
+                console.log('Error parsing existing draft:', e);
+            }
         }
-    });
 
+        // Collect current form data
+        $('#form-analisa-content').find('input, select, textarea').each(function() {
+            let name = $(this).attr('name');
+            let value = $(this).val();
 
-    $('#formAnalisa').off('submit').on('submit', function(e) {
+            if (name && value !== undefined) {
+                if (name.endsWith('[]')) {
+                    if (!draftData[name]) draftData[name] = [];
+                    draftData[name].push(value);
+                } else {
+                    draftData[name] = value;
+                }
+            }
+        });
+
+        // Try to get analysis type and jumlah data from current form state
+        const analisaTypeFromForm = $('input[name="analisa_type"]:checked').val();
+        const jumlahDataFromForm = $('#jumlah_data').val();
+
+        // Update with current form values if available
+        if (analisaTypeFromForm) draftData.analisaType = analisaTypeFromForm;
+        if (jumlahDataFromForm) draftData.jumlahData = jumlahDataFromForm;
+
+        // Always save jenisGula for context
+        draftData.jenisGula = jenisGula;
+
+        localStorage.setItem('analisaDraft', JSON.stringify(draftData));
+        console.log('Draft saved:', draftData);
+    }
+
+    function loadDraft(draftData = null) {
+        if (!draftData) {
+            const draft = localStorage.getItem('analisaDraft');
+            if (!draft) return;
+            draftData = JSON.parse(draft);
+        }
+
+        console.log('Loading draft:', draftData);
+
+        // Load form values
+        for (const name in draftData) {
+            if (['analisaType', 'jumlahData', 'jenisGula'].includes(name)) {
+                continue; // Skip meta fields
+            }
+
+            const elements = $(`[name="${name}"]`);
+            if (elements.length > 0) {
+                if (Array.isArray(draftData[name])) {
+                    elements.each(function(index) {
+                        if (draftData[name][index] !== undefined) {
+                            $(this).val(draftData[name][index]);
+                        }
+                    });
+                } else {
+                    elements.val(draftData[name]);
+                }
+            }
+        }
+
+        // Handle crystal test change if uji_kristal exists
+        if (draftData.uji_kristal) {
+            setTimeout(() => {
+                $('#select-uji-kristal').trigger('change');
+            }, 100);
+        }
+
+        // Show the first tab (usually BRIX for short-term)
+        setTimeout(() => {
+            const firstTab = $('.nav-tabs a').first();
+            if (firstTab.length) {
+                firstTab.tab('show');
+            }
+        }, 200);
+
+        console.log('Draft loaded successfully');
+    }
+
+    function handleFormSubmit(e) {
+        e.preventDefault();
+
+        // Convert comma decimals to dots
         $('.decimal-only').each(function() {
             const val = $(this).val().replace(',', '.');
             $(this).val(val);
         });
 
-        e.preventDefault();
-
         const jenis = $('#jenis_gula').val();
+
+        // Get analisaType from multiple sources - prioritas dari draft
+        let analisaType = null;
+
+        // 1. Try to get from checked radio button
+        analisaType = $('input[name="analisa_type"]:checked').val();
+
+        // 2. If not found, try to get from localStorage draft
+        if (!analisaType) {
+            const draft = localStorage.getItem('analisaDraft');
+            if (draft) {
+                const draftData = JSON.parse(draft);
+                analisaType = draftData.analisaType;
+            }
+        }
+
+        console.log('jenis:', jenis);
+        console.log('analisaType:', analisaType);
+
         let url = '';
 
-        // Tentukan URL berdasarkan jenis dan tipe analisa
+        // Create FormData FIRST
+        const token = $('meta[name="csrf-token"]').attr('content');
+        const formData = new FormData(this);
+        formData.append('_token', token);
+
+        // Add analisaType to formData if available
+        if (analisaType) {
+            formData.append('analisa_type', analisaType);
+        }
+
         if (jenis === 'Gula Kelapa' || jenis === 'Gula Tebu') {
-            const analisaType = $('input[name="analisa_type"]:checked').val();
-
-            if (!analisaType) {
-                alert('Silakan pilih jenis analisa (Short-Term / Long-Term)');
-                return;
-            }
-
-            if (analisaType === 'short-term') {
-                url = '/analis/analisa/short-term';
-            } else if (analisaType === 'long-term') {
+            if (analisaType === 'long-term') {
                 url = '/analis/analisa/long-term';
+
+                const kristalVal = $('select[name="uji_kristal"]').val();
+                console.log('kristalVal:', kristalVal);
+
+                // Validasi wajib uji_kristal untuk long-term
+                if (!kristalVal) {
+                    alert('Silakan pilih hasil uji kristal.');
+                    return;
+                }
+
+                // Jika uji kristal negatif, disposisi wajib Release dan attachment dihapus
+                if (kristalVal === 'negatif') {
+                    console.log('Kristal negatif - setting disposisi to Release');
+
+                    // Set disposisi ke Release di form dan formData
+                    $('.disposisi-wrapper-negatif select[name="disposisi"]').val('Release');
+                    formData.set('disposisi', 'Release');
+
+                    // Hapus attachment dari formData jika ada
+                    formData.delete('attachment');
+                }
+
+                // Jika positif, wajib lampirkan gambar dan hapus disposisi (biar backend handle)
+                if (kristalVal === 'positif') {
+                    console.log('Kristal positif - checking attachment');
+
+                    const attachment = $('input[name="attachment"]')[0];
+                    if (!attachment || !attachment.files || !attachment.files[0]) {
+                        alert('Silakan lampirkan gambar karena hasil uji kristal positif.');
+                        return;
+                    }
+
+                    // Hapus disposisi dari formData (biar backend yang handle)
+                    formData.delete('disposisi');
+                    console.log('Attachment found, disposisi removed from formData');
+                }
+
+            } else if (analisaType === 'short-term') {
+                // short-term
+                url = '/analis/analisa/short-term';
+
+                // Ambil disposisi dari form - cari yang visible/active untuk short-term
+                const disposisiVal = $('.disposisi select[name="disposisi"]:visible').val();
+                console.log('Short-term disposisiVal:', disposisiVal);
+
+                if (!disposisiVal || disposisiVal.trim() === '') {
+                    alert('Silakan pilih disposisi.');
+                    return;
+                }
+
             } else {
-                alert('Jenis analisa tidak dikenali!');
+                alert('Jenis analisa tidak diketahui. Silakan refresh halaman dan pilih ulang.');
                 return;
             }
         } else if (jenis === 'Gula' || jenis === 'Garam') {
-            url = 'analis/analisa/garam-gula';
+            url = '/analis/analisa/garam-gula';
+
+            // Untuk Gula/Garam, cek disposisi - cari yang visible/active
+            const disposisiVal = $('.disposisi select[name="disposisi"]:visible').val();
+            console.log('Gula/Garam disposisiVal:', disposisiVal);
+
+            if (!disposisiVal || disposisiVal.trim() === '') {
+                alert('Silakan pilih disposisi.');
+                return;
+            }
         } else {
-            alert('Jenis gula tidak dikenali!');
+            alert('Jenis gula tidak dikenali: ' + jenis);
             return;
         }
 
-        const token = $('meta[name="csrf-token"]').attr('content');
-        let formData = new FormData(this);
-        formData.append('_token', token);
-
-        // === Penanganan khusus Long-Term ===
-        const analisaType = $('input[name="analisa_type"]:checked').val();
-        const kristalVal = $('select[name="uji_kristal"]').val();
-
-        if (analisaType === 'long-term') {
-            if (!kristalVal) {
-                alert('Silakan pilih hasil uji kristal.');
-                return;
-            }
-
-            if (kristalVal === 'negatif') {
-                formData.set('disposisi', 'release');
-                formData.delete('attachment'); // Tidak perlu file
-            }
-
-            if (kristalVal === 'positif') {
-                const attachment = $('input[name="attachment"]')[0].files[0];
-                if (!attachment) {
-                    alert('Silakan lampirkan gambar karena hasil uji kristal positif.');
-                    return;
-                }
-                // Disposisi tidak diisi user di tahap ini
-                formData.delete('disposisi');
-            }
+        // Log formData contents for debugging
+        console.log('FormData contents:');
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
         }
 
-        // === AJAX Submit ===
+        // Build proper URL
+        const baseUrl = "{{ url('/') }}";
+        const fullUrl = baseUrl + url;
+        console.log('Submitting to URL:', fullUrl);
+
+        // Final validation
+        if (!url) {
+            alert('URL tidak dapat dibentuk. Silakan refresh halaman dan coba lagi.');
+            return;
+        }
+
         $.ajax({
-            url: "{{url('/')}}" + url,
+            url: fullUrl,
             type: 'POST',
             data: formData,
             processData: false,
             contentType: false,
             success: function(response) {
+                console.log('Success response:', response);
+                localStorage.removeItem('analisaDraft');
                 Swal.fire({
                     icon: 'success',
                     title: 'Berhasil',
@@ -1624,7 +1861,19 @@
                 });
             },
             error: function(xhr) {
-                const errMsg = xhr.responseJSON?.message || 'Gagal menyimpan data!';
+                console.log('Error response:', xhr);
+                console.log('Status:', xhr.status);
+                console.log('Response Text:', xhr.responseText);
+
+                let errMsg = 'Gagal menyimpan data!';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errMsg = xhr.responseJSON.message;
+                } else if (xhr.status === 404) {
+                    errMsg = 'Endpoint tidak ditemukan. Periksa routing Laravel.';
+                } else if (xhr.status === 405) {
+                    errMsg = 'Method tidak diizinkan. Periksa routing Laravel.';
+                }
+
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
@@ -1633,8 +1882,9 @@
                 });
             }
         });
-    });
+    }
 </script>
+
 
 
 @endsection
