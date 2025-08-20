@@ -1186,7 +1186,7 @@
                 </div>
                 <div class="d-flex justify-content-between mt-3">
                     <button type="button" id="prevBtn" class="btn btn-secondary" style="display: none;">Sebelumnya</button>
-                    <button type="button" id="nextBtn" class="btn btn-primary">Berikutnya</button>
+                    <button type="button" id="nextBtn" class="btn btn-primary" >Berikutnya</button>
                 </div>
                 <!-- <div class="modal-footer"> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button> <button type="submit" class="btn btn-primary">Simpan Analisa</button> </div> -->
             </form>
@@ -1504,14 +1504,30 @@
             const parent = $(this).closest('.mb-3');
             const wrapper = parent.find('.zak-input-wrapper');
             const value = $(this).val();
+            const name = $(this).attr('name'); // ambil nama input (misalnya: sesuai_std, kotor, dll)
 
-            if (value === 'no') {
-                wrapper.show();
+            // Default hide dulu
+            wrapper.hide();
+            wrapper.find('.zak-qty-input').val('');
+
+            if (name === 'sesuai_std') {
+                // KHUSUS untuk Sesuai STD
+                if (value === 'no') {
+                    wrapper.show();
+                }
             } else {
-                wrapper.hide();
-                wrapper.find('.zak-qty-input').val('');
+                // Untuk field lain
+                if (value === 'yes') {
+                    wrapper.show();
+                }
             }
         });
+
+        $('.modal').on('hidden.bs.modal', function() {
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+        });
+
 
         // Fungsi untuk memproses value radio sebelum submit
         function prepareRadioValues(form) {
@@ -1520,7 +1536,7 @@
                 const radio = parent.find('input[type=radio]:checked');
                 const zakInput = parent.find('.zak-qty-input').val()?.trim();
 
-                if (radio.val() === 'no' && zakInput) {
+                if (radio.val() === 'yes' && zakInput) {
                     radio.val(`no, karena ${zakInput}`);
                 }
             });
@@ -1897,7 +1913,7 @@
     function initializeModal() {
         formContent.html('');
         $('#analisa-type-select, #analisa-jumlah').hide();
-        $('#prevBtn, #nextBtn').show().text('Berikutnya');
+        $(' #nextBtn').show().text('Berikutnya');
 
         const draft = localStorage.getItem('analisaDraft');
         console.log('Draft analisa:', draft);

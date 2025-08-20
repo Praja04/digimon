@@ -81,7 +81,7 @@ class SamplingController extends Controller
         $validated = $request->validate([
             'id_identitas' => 'required|exists:identitas_rm_master,id',
             'coa' => 'required',
-            'surat_jalan_vendor' => 'required',
+            'suratjalan_vendor' => 'required',
             'packing_list' => 'required',
             'identitas_kemasan' => 'required',
             'logo_halal' => 'required',

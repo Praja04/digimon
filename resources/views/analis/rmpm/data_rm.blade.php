@@ -217,12 +217,12 @@
 
                             <div class="mb-3">
                                 <label for="jumlah_kedatangan" class="form-label">Jumlah Kedatangan (kg)</label>
-                                <input type="number" class="form-control" id="jumlah_kedatangan" name="jumlah_kedatangan" placeholder="input dalam kilogram" required>
+                                <input type="number" class="form-control" id="jumlah_kedatangan" name="jumlah_kedatangan" placeholder="input dalam kilogram">
                             </div>
 
                             <div class="mb-3">
                                 <label for="lot_batch" class="form-label">Lot / Batch</label>
-                                <input type="text" class="form-control" id="lot_batch" name="lot_batch" required>
+                                <input type="text" class="form-control" id="lot_batch" name="lot_batch">
                             </div>
 
                             <div class="modal-footer">
@@ -235,7 +235,7 @@
             </div>
         </div>
         <div class="modal fade" id="qrModalDynamic" tabindex="-1" aria-labelledby="qrModalDynamicLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-dialog modal-dialog-centered mod al-lg">
                 <div class="modal-content">
                     <div class="modal-header py-2">
                         <h5 class="modal-title" id="qrModalDynamicLabel">QR Code - ID</h5>

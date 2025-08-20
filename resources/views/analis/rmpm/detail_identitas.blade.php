@@ -1025,13 +1025,28 @@
             const parent = $(this).closest('.mb-3');
             const wrapper = parent.find('.zak-input-wrapper');
             const value = $(this).val();
+            const name = $(this).attr('name'); // ambil nama input (misalnya: sesuai_std, kotor, dll)
 
-            if (value === 'no') {
-                wrapper.show();
+            // Default hide dulu
+            wrapper.hide();
+            wrapper.find('.zak-qty-input').val('');
+
+            if (name === 'sesuai_std') {
+                // KHUSUS untuk Sesuai STD
+                if (value === 'no') {
+                    wrapper.show();
+                }
             } else {
-                wrapper.hide();
-                wrapper.find('.zak-qty-input').val('');
+                // Untuk field lain
+                if (value === 'yes') {
+                    wrapper.show();
+                }
             }
+        });
+
+        $('.modal').on('hidden.bs.modal', function() {
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
         });
 
         // Fungsi untuk memproses value radio sebelum submit
@@ -1416,7 +1431,7 @@
     function initializeModal() {
         formContent.html('');
         $('#analisa-type-select, #analisa-jumlah').hide();
-        $('#prevBtn, #nextBtn').show().text('Berikutnya');
+        $(' #nextBtn').show().text('Berikutnya');
 
         const draft = localStorage.getItem('analisaDraft');
         console.log('Draft analisa:', draft);
