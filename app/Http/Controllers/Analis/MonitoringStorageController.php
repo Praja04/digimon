@@ -256,7 +256,7 @@ class MonitoringStorageController extends Controller
         $validator = Validator::make($request->all(), [
             'eb' => 'nullable|numeric|min:0|max:100',
             'tpc' => 'nullable|numeric|min:0|max:100',
-            'ym' => 'nullable |string|max:20',
+            'ym' => 'nullable|string|max:20',
             'nama_analis' => 'string',
             'shift' => 'string',
         ]);
@@ -268,27 +268,29 @@ class MonitoringStorageController extends Controller
         }
 
         $data = MonitoringStorageMikroModel::findOrFail($id);
+
+        // 🛡️ Validasi agar data tidak bisa diisi ulang
         if (
-            ($request->filled('eb') && $data->eb !== null) ||
-            ($request->filled('tpc') && $data->tpc !== null) ||
-            ($request->filled('ym') && $data->ym !== null)
+            ($request->has('eb') && $request->eb !== null && $data->eb !== null) ||
+            ($request->has('tpc') && $request->tpc !== null && $data->tpc !== null) ||
+            ($request->has('ym') && $request->ym !== null && $data->ym !== null)
         ) {
             return response()->json([
                 'error' => 'Data EB/TPC/YM sudah diisi sebelumnya dan tidak bisa diubah ulang.'
             ], 422);
         }
+
+        // 📝 Buat konfirmasi
         KonfirmasiMonitoringStorageMikroModel::create([
-            'monitoring_storage_mikro_id' => $data->id, // Ambil ID dari blending yang baru diupdate
+            'blending_after_adjust_mikro_id' => $data->id,
             'nama_analis' => $request->nama_analis,
             'shift' => $request->shift,
         ]);
 
-        $dataUpdate = [
-            'eb' => $request->eb,
-            'tpc' => $request->tpc,
-            'ym' => $request->ym,
-        ];
-
+        // 🔄 Update hanya field yang dikirim dan tidak null
+        $dataUpdate = collect(['eb', 'tpc', 'ym'])->mapWithKeys(function ($field) use ($request, $data) {
+            return [$field => $request->has($field) && $request->$field !== null ? $request->$field : $data->$field];
+        })->toArray();
 
         $data->update($dataUpdate);
 
@@ -296,5 +298,6 @@ class MonitoringStorageController extends Controller
             'success' => true,
             'message' => 'Data berhasil disimpan.'
         ]);
+
     }
 }
