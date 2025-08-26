@@ -217,15 +217,50 @@
             const pageCount = Math.ceil(filteredRows.length / rowsPerPage);
             if (pageCount <= 1) return;
 
-            for (let i = 1; i <= pageCount; i++) {
+            const maxVisible = 5; // jumlah halaman sekitar yang ditampilkan
+            let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+            let end = Math.min(pageCount, start + maxVisible - 1);
+
+            // Kalau di akhir, geser biar tetap maxVisible
+            if (end - start + 1 < maxVisible) {
+                start = Math.max(1, end - maxVisible + 1);
+            }
+
+            // Tombol First
+            if (start > 1) {
+                $pagination.append(`
+            <li class="page-item">
+                <a class="page-link" href="#" data-page="1">First</a>
+            </li>
+        `);
+                if (start > 2) {
+                    $pagination.append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                }
+            }
+
+            // Nomor halaman
+            for (let i = start; i <= end; i++) {
                 const isActive = i === currentPage ? 'active' : '';
                 $pagination.append(`
-          <li class="page-item">
-            <a class="page-link ${isActive}" href="#" data-page="${i}">${i}</a>
-          </li>
+            <li class="page-item">
+                <a class="page-link ${isActive}" href="#" data-page="${i}">${i}</a>
+            </li>
+        `);
+            }
+
+            // Tombol Last
+            if (end < pageCount) {
+                if (end < pageCount - 1) {
+                    $pagination.append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                }
+                $pagination.append(`
+            <li class="page-item">
+                <a class="page-link" href="#" data-page="${pageCount}">Last</a>
+            </li>
         `);
             }
         }
+
 
         function highlightActivePage(page) {
             $pagination.find('.page-link').removeClass('active');

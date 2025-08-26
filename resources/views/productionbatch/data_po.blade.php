@@ -220,13 +220,58 @@
             const pageCount = Math.ceil(filteredRows.length / rowsPerPage);
             if (pageCount <= 1) return;
 
-            for (let i = 1; i <= pageCount; i++) {
+            const maxVisiblePages = 7;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(pageCount, startPage + maxVisiblePages - 1);
+
+            if (endPage - startPage < maxVisiblePages - 1) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+
+            // Tombol « (First)
+            if (startPage > 1) {
+                $pagination.append(`
+            <li class="page-item">
+                <a class="page-link" href="#" data-page="1">«</a>
+            </li>
+            `);
+            }
+
+            // Tombol ‹ (Prev)
+            if (currentPage > 1) {
+                $pagination.append(`
+            <li class="page-item">
+                <a class="page-link" href="#" data-page="${currentPage - 1}">‹</a>
+            </li>
+           `);
+            }
+
+            // Tombol halaman aktif
+            for (let i = startPage; i <= endPage; i++) {
                 const isActive = i === currentPage ? 'active' : '';
                 $pagination.append(`
-          <li class="page-item">
-            <a class="page-link ${isActive}" href="#" data-page="${i}">${i}</a>
-          </li>
-        `);
+            <li class="page-item">
+                <a class="page-link ${isActive}" href="#" data-page="${i}">${i}</a>
+            </li>
+            `);
+            }
+
+            // Tombol › (Next)
+            if (currentPage < pageCount) {
+                $pagination.append(`
+            <li class="page-item">
+                <a class="page-link" href="#" data-page="${currentPage + 1}">›</a>
+            </li>
+            `);
+            }
+
+            // Tombol » (Last)
+            if (endPage < pageCount) {
+                $pagination.append(`
+            <li class="page-item">
+                <a class="page-link" href="#" data-page="${pageCount}">»</a>
+            </li>
+          `);
             }
         }
 
@@ -400,7 +445,7 @@
     });
 
     function resetFilterRM() {
-      location.reload();
+        location.reload();
     }
 </script>
 @endsection

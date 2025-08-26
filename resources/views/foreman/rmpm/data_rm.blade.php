@@ -294,9 +294,18 @@
         <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
             <a class="page-link rm-page-btn" href="#" data-tab="${tabId}" data-page="${currentPage - 1}">←</a>
         </li>
-    `);
+     `);
 
-        for (let i = 1; i <= totalPages; i++) {
+        const maxVisiblePages = 7;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        // Adjust startPage if we're near the end
+        if (endPage - startPage < maxVisiblePages - 1) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
             $pagination.append(`
             <li class="page-item ${i === currentPage ? 'active' : ''}">
                 <a class="page-link rm-page-btn" href="#" data-tab="${tabId}" data-page="${i}">${i}</a>
@@ -309,7 +318,7 @@
         <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
             <a class="page-link rm-page-btn" href="#" data-tab="${tabId}" data-page="${currentPage + 1}">→</a>
         </li>
-    `);
+      `);
 
         // Event klik pagination
         $('.rm-page-btn').click(function(e) {
@@ -364,27 +373,27 @@
 
 
                     const row = `
-<tr>
-    <td>${index + 1}</td>
-    <td>${item.no_spb}</td>
-    <td>${item.jenis_gula}</td>
-    <td>${item.nama_bahan}</td>
-    <td>${item.suplier_manufactur}</td>
-    <td>${item.tanggal_kedatangan}</td>
-    <td>${item.asal_bahan}</td>
-    <td>${item.jumlah_kedatangan}</td>
-    <td>${item.status === 'done' ? '✅ Selesai' : '⌛ Proses'}</td>
-    <td>
-        <a href="{{url('/foreman/rmpm/detail/data/${item.id}')}}" class="btn btn-sm btn-info">
-            <i class="ri-eye-line"></i> View
-        </a>
-    </td>
-    <td>
-        <button type="button" class="btn btn-sm btn-primary" onclick="showQrModal(${item.id}, '${item.id}_${item.no_spb}_${item.tanggal_kedatangan}_${item.nama_bahan}')">
-            QR Code
-        </button>
-    </td>
-</tr>`;
+            <tr>
+                <td>${index + 1}</td>
+                <td>${item.no_spb}</td>
+                <td>${item.jenis_gula}</td>
+                <td>${item.nama_bahan}</td>
+                <td>${item.suplier_manufactur}</td>
+                <td>${item.tanggal_kedatangan}</td>
+                <td>${item.asal_bahan}</td>
+                <td>${item.jumlah_kedatangan}</td>
+                <td>${item.status === 'done' ? '✅ Selesai' : '⌛ Proses'}</td>
+                <td>
+                    <a href="{{url('/foreman/rmpm/detail/data/${item.id}')}}" class="btn btn-sm btn-info">
+                        <i class="ri-eye-line"></i> View
+                    </a>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showQrModal(${item.id}, '${item.id}_${item.no_spb}_${item.tanggal_kedatangan}_${item.nama_bahan}')">
+                        QR Code
+                    </button>
+                </td>
+            </tr>`;
 
                     tabRows.tabAll.push(row);
                     if (item.jenis_gula === 'Gula') tabRows.gula.push(row);
