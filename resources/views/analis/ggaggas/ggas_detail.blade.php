@@ -221,9 +221,8 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Warna</label>
-                                                    <select name="warna" id="warnaSelect" class="form-select" required>
-                                                        <option value="">-- Pilih Warna --</option>
-                                                    </select>
+
+                                                    <input type="text" name="warna" class="form-control kapital-case" required>
 
                                                 </div>
                                                 <div class="mb-3">
@@ -309,7 +308,7 @@
                     res.data.forEach(item => {
                         const option = $('<option></option>')
                             .val(item.code_warna)
-                            .text( item.nama_warna + ' (' + item.code_warna + ')')
+                            .text(item.nama_warna + ' (' + item.code_warna + ')')
                             .css('background-color', item.code_warna)
                             .css('color', '#fff');
                         select.append(option);
