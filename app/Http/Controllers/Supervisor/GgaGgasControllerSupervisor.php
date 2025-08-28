@@ -337,7 +337,7 @@ class GgaGgasControllerSupervisor extends Controller
     {
         $validator = Validator::make($request->all(), [
             'brix' => 'required|numeric|min:0|max:100',
-            'nacl' => 'required|numeric|min:0|max:100',
+            'nacl' => 'nullable|numeric|min:0|max:100',
             'warna' => 'required|string|max:20',
             'disposition' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment',
             'disposition_remarks' => 'nullable|string|max:255',

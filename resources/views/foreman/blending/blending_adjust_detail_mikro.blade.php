@@ -166,6 +166,7 @@
                                 <th>EB</th>
                                 <th>TPC</th>
                                 <th>YM</th>
+                                <th>Created By</th>
                                 <th>Action</th>
                                 <th>Hasil</th>
                             </tr>
@@ -182,7 +183,7 @@
                                 <td>{{ $blending->tpc }}</td>
                                 <td>{{ $blending->ym }}</td>
                                 <td>
-                                    @if (is_null($blending->ym))
+                                    @if (is_null($blending->ym) || is_null($blending->tpc) || is_null($blending->eb))
                                     <button class="btn btn-sm btn-primary open-blending-modal" data-id="{{ $blending->id }}">Input Analisa Blending After Adjust</button>
                                     @else
                                     <span class="text-muted">✓ Lengkap</span>

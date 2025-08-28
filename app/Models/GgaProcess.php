@@ -24,6 +24,7 @@ class GgaProcess extends Model
         'disposition_remarks',
         'not_standar',
         'revisi',
+        'created_by',
     ];
 
     // Relasi dengan tabel ProductionBatch

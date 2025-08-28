@@ -29,11 +29,12 @@ class BlendingAwalController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validasi gagal.',
-                'errors' => $validator->errors()
-            ],
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Validasi gagal.',
+                    'errors' => $validator->errors()
+                ],
                 422
             );
         }
@@ -42,10 +43,11 @@ class BlendingAwalController extends Controller
         $end = (int) $request->batch_end;
 
         if ($start > $end) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Batch start tidak boleh lebih besar dari batch end.'
-            ],
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Batch start tidak boleh lebih besar dari batch end.'
+                ],
                 422
             );
         }
@@ -54,7 +56,7 @@ class BlendingAwalController extends Controller
         $usedNumbers = [];
 
         $existingRanges = BlendingAwalModel::where('production_batch_id', $request->production_batch_id)
-        ->pluck('batch_range');
+            ->pluck('batch_range');
 
         foreach ($existingRanges as $range) {
             [$existingStart, $existingEnd] = explode('-', $range);
@@ -92,9 +94,9 @@ class BlendingAwalController extends Controller
         }
 
         return response()->json([
-                'status' => 'ok',
-                'message' => 'Data berhasil disimpan.'
-            ]);
+            'status' => 'ok',
+            'message' => 'Data berhasil disimpan.'
+        ]);
     }
 
     public function Blending_data()
@@ -147,10 +149,10 @@ class BlendingAwalController extends Controller
             'bj' => 'required|string|max:20',
             'visco' => 'required|string|max:20',
             'aw' => 'required|string|max:20',
-            'ph' => 'required',
-            'buih' => 'required|string|max:20',
+            'ph' => 'nullable',
+            'buih' => 'nullable|string|max:20',
             'organo' => 'required|string|max:20',
-            'endapan' => 'required|string|max:20',
+            'endapan' => 'nullable|string|max:20',
             'warna' => 'required|string|max:20',
             'disposition' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment,Jalan Bareng,Leveling',
             'disposition_remarks' => 'nullable|string|max:255',
@@ -190,7 +192,7 @@ class BlendingAwalController extends Controller
         if ($disposition === 'Release') {
             $remarks = '-';
         }
-
+        $username = session('username');
         $dataUpdate = [
             'brix' => $request->brix,
             'nacl' => $request->nacl,
@@ -204,6 +206,7 @@ class BlendingAwalController extends Controller
             'warna' => $request->warna,
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
+            'created_by' => $username,
         ];
 
         // Jika adjustment

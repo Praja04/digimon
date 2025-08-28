@@ -30,11 +30,11 @@ class MonitoringTurunBlendingControllerForeman extends Controller
     public function Monitoring_Blending_data()
     {
 
-        $productionBatches = ProductionBatch::orderby('created_at','desc')->with('MonitoringTurunBlending')->has('MonitoringTurunBlending')->get();
+        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringTurunBlending')->has('MonitoringTurunBlending')->get();
         //return json
         //return response()->json($productionBatches);
 
-         return view('foreman.monitoring.turun_blending', compact('productionBatches'));
+        return view('foreman.monitoring.turun_blending', compact('productionBatches'));
     }
 
     public function Monitoring_Blending_detail($id)
@@ -64,7 +64,7 @@ class MonitoringTurunBlendingControllerForeman extends Controller
         ]);
     }
 
-  
+
 
     public function store(Request $request)
     {
@@ -165,6 +165,7 @@ class MonitoringTurunBlendingControllerForeman extends Controller
         }
 
         try {
+            $username = session('username');
             // Simpan data ke database
             MonitoringTurunBlendingData::create([
                 'monitoring_turun_blending_id' => $request->monitoring_turun_blending_id,
@@ -179,6 +180,7 @@ class MonitoringTurunBlendingControllerForeman extends Controller
                 'endapan' => $request->endapan,
                 'warna' => $request->warna,
                 'shift' => $request->shift,
+                'created_by' => $username,
             ]);
 
             return response()->json([
@@ -193,7 +195,7 @@ class MonitoringTurunBlendingControllerForeman extends Controller
             ], 500);
         }
     }
-    
+
     public function edit_data(Request $request)
     {
         // Validasi input
@@ -209,12 +211,13 @@ class MonitoringTurunBlendingControllerForeman extends Controller
             'ph_edit' => 'nullable|numeric',
             'endapan_edit' => 'nullable|string',
             'warna_edit' => 'nullable|string',
-           
+
         ]);
         $Data = MonitoringTurunBlendingData::findOrFail($request->id_edit);
 
         try {
             // Simpan data ke database
+            $username = session('username');
             $dataUpdate = [
                 'brix' => $request->brix_edit,
                 'nacl' => $request->nacl_edit,
@@ -226,6 +229,7 @@ class MonitoringTurunBlendingControllerForeman extends Controller
                 'ph' => $request->ph_edit,
                 'endapan' => $request->endapan_edit,
                 'warna' => $request->warna_edit,
+                'created_by' => $username,
             ];
 
 
@@ -284,8 +288,8 @@ class MonitoringTurunBlendingControllerForeman extends Controller
                 'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
             ], 422);
         }
-    
-    
+
+
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -299,11 +303,12 @@ class MonitoringTurunBlendingControllerForeman extends Controller
         if ($disposition === 'Release') {
             $remarks = '-';
         }
-
+        $username = session('username');
         $dataUpdate = [
-           
+
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
+            'created_by' => $username,
         ];
 
         // Jika adjustment
@@ -335,5 +340,4 @@ class MonitoringTurunBlendingControllerForeman extends Controller
             'message' => 'Data berhasil disimpan.'
         ]);
     }
-
 }

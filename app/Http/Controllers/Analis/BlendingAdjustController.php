@@ -27,7 +27,7 @@ class BlendingAdjustController extends Controller
     {
         $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('blendingAfterAdjustMikro')->has('blendingAfterAdjustMikro')->get();
 
-        
+
         //$productionBatches = ProductionBatch::with('blendingAfterAdjust')->has('blendingAfterAdjust')->get();
 
         return view('analis.blending.blending_adjust_mikro', compact('productionBatches'));
@@ -62,7 +62,7 @@ class BlendingAdjustController extends Controller
             $filteredblendingAfterAdjust->push($selected);
         }
 
-       // return response()->json($filteredblendingAfterAdjust->values());
+        // return response()->json($filteredblendingAfterAdjust->values());
         return view('analis.blending.blending_adjust_detail', [
             'productionBatch' => $productionBatch,
             'filteredBlendingAwal' => $filteredblendingAfterAdjust->values()
@@ -100,8 +100,8 @@ class BlendingAdjustController extends Controller
         }
 
         $exists = BlendingAfterAdjustModel::where('production_batch_id', $request->production_batch_id)
-        ->where('batch_range', $request->batch)
-        ->exists();
+            ->where('batch_range', $request->batch)
+            ->exists();
 
         if ($exists) {
             return response()->json([
@@ -146,9 +146,9 @@ class BlendingAdjustController extends Controller
             'bj' => 'required|string|max:20',
             'visco' => 'required|string|max:20',
             'aw' => 'required|string|max:20',
-            'buih' => 'required|string|max:20',
+            'buih' => 'nullable|string|max:20',
             'organo' => 'required|string|max:20',
-            'endapan' => 'required|string|max:20',
+            'endapan' => 'nullable|string|max:20',
             'warna' => 'required|string|max:20',
             'disposition' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment,Jalan Bareng,Leveling',
             'disposition_remarks' => 'nullable|string|max:255',
@@ -172,7 +172,7 @@ class BlendingAdjustController extends Controller
                 'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
             ], 422);
         }
-    
+
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -182,11 +182,11 @@ class BlendingAdjustController extends Controller
                 'errors' => ['Kolom keterangan (remarks) wajib diisi untuk disposition ini.']
             ], 422);
         }
-        
+
         if ($disposition === 'Release') {
             $remarks = '-';
         }
-
+        $username = session('username');
         $dataUpdate = [
             'brix' => $request->brix,
             'nacl' => $request->nacl,
@@ -199,6 +199,7 @@ class BlendingAdjustController extends Controller
             'warna' => $request->warna,
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
+            'created_by' => $username,
         ];
 
         // Jika adjustment
@@ -217,7 +218,7 @@ class BlendingAdjustController extends Controller
 
         // Jika resampling
         if ($disposition === 'Resampling') {
-           // $dataUpdate['disposition_remarks'] = $disposition;
+            // $dataUpdate['disposition_remarks'] = $disposition;
             $dataUpdate['not_standar'] = true;
         }
 
@@ -290,5 +291,4 @@ class BlendingAdjustController extends Controller
             'message' => 'Data berhasil disimpan.'
         ]);
     }
-
 }

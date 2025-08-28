@@ -202,32 +202,32 @@
 
                     <div class="col-md-4">
                         <label for="brix" class="form-label">Brix</label>
-                        <input type="text" class="form-control" name="brix" id="brix" required>
+                        <input type="number" class="form-control" name="brix" id="brix" required>
                     </div>
 
                     <div class="col-md-4">
                         <label for="nacl" class="form-label">NaCl</label>
-                        <input type="text" class="form-control" name="nacl" id="nacl" required>
+                        <input type="number" class="form-control" name="nacl" id="nacl" required>
                     </div>
 
                     <div class="col-md-4">
                         <label for="bj" class="form-label">BJ</label>
-                        <input type="text" class="form-control" name="bj" id="bj" required>
+                        <input type="number" class="form-control" name="bj" id="bj" required>
                     </div>
 
                     <div class="col-md-4">
                         <label for="visco" class="form-label">Visco</label>
-                        <input type="text" class="form-control" name="visco" id="visco">
+                        <input type="number" class="form-control" name="visco" id="visco">
                     </div>
 
                     <div class="col-md-4">
                         <label for="aw" class="form-label">AW</label>
-                        <input type="text" class="form-control" name="aw" id="aw">
+                        <input type="number" class="form-control" name="aw" id="aw">
                     </div>
 
                     <div class="col-md-4">
                         <label for="buih" class="form-label">Buih</label>
-                        <input type="text" class="form-control" name="buih" id="buih">
+                        <input type="number" class="form-control" name="buih" id="buih">
                     </div>
 
                     <div class="col-md-4">
@@ -237,7 +237,7 @@
 
                     <div class="col-md-4">
                         <label for="ph" class="form-label">pH</label>
-                        <input type="text" class="form-control" name="ph" id="ph">
+                        <input type="number" class="form-control" name="ph" id="ph">
                     </div>
 
                     <div class="col-md-4">
@@ -247,7 +247,10 @@
 
                     <div class="col-md-4">
                         <label for="warna" class="form-label">Warna</label>
-                        <input type="text" class="form-control" name="warna" id="warna">
+                        <!-- <input type="text" class="form-control" name="warna" id="warna"> -->
+                        <select name="warna" id="warnaSelect" class="form-select" required>
+                            <option value="">-- Pilih Warna --</option>
+                        </select>
                     </div>
 
                     <div class="col-md-4">
@@ -333,6 +336,36 @@
 </div>
 @endif
 <script>
+    const warnaUrl = "{{ url('/data/warna') }}";
+
+    function loadWarnaOptions() {
+        $.ajax({
+            url: warnaUrl,
+            method: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                if (res.success && res.data.length > 0) {
+                    const select = $('#warnaSelect');
+                    select.empty().append('<option value="">-- Pilih Warna --</option>');
+                    res.data.forEach(item => {
+                        const option = $('<option></option>')
+                            .val(item.code_warna)
+                            .text(item.nama_warna + ' (' + item.code_warna + ')')
+                            .css('background-color', item.code_warna)
+                            .css('color', '#fff');
+                        select.append(option);
+                    });
+                }
+            },
+            error: function() {
+                console.warn('Gagal mengambil data warna');
+            }
+        });
+    }
+
+    // Load saat modal dibuka
+    loadWarnaOptions();
+
     $(document).ready(function() {
         $('#form-monitoring-input').on('submit', function(e) {
             e.preventDefault();

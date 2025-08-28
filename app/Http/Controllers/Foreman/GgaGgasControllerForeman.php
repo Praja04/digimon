@@ -98,13 +98,7 @@ class GgaGgasControllerForeman extends Controller
 
     public function GGA_data()
     {
-        $productionBatches = ProductionBatch::has('GgaProcesses')
-            ->with('GgaProcesses')
-            ->get()
-            ->sortByDesc(function ($batch) {
-                // Ambil waktu dari proses GGA pertama (atau terakhir, tergantung struktur data)
-                return optional($batch->GgaProcesses->first())->waktu;
-            });
+        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->has('GgasProcesses')->with('GgasProcesses')->orderby('created_at', 'desc')->get();
 
         return view('foreman.ggaggas.gga', compact('productionBatches'));
     }
@@ -204,12 +198,14 @@ class GgaGgasControllerForeman extends Controller
         }
 
         // Update data GGA utama (brix, nacl, warna, disposition, remarks)
+        $username = session('username');
         $gga->update([
             'brix' => $request->brix,
             'nacl' => $request->nacl,
             'warna' => $request->warna,
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
+            'created_by' => $username,
         ]);
 
         // Jika disposition Adjustment, update adjustment_qty pada data adjustment yang sudah ada
@@ -286,12 +282,14 @@ class GgaGgasControllerForeman extends Controller
         }
 
         // Update data GGA utama (brix, nacl, warna, disposition, remarks)
+        $username = session('username');
         $gga->update([
             'brix' => $request->brix_edit,
             'nacl' => $request->nacl_edit,
             'warna' => $request->warna_edit,
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
+            'created_by' => $username,
         ]);
 
         // Jika disposition Adjustment, update adjustment_qty pada data adjustment yang sudah ada
@@ -347,7 +345,7 @@ class GgaGgasControllerForeman extends Controller
     {
         $validator = Validator::make($request->all(), [
             'brix' => 'required|numeric|min:0|max:100',
-            'nacl' => 'required|numeric|min:0|max:100',
+            'nacl' => 'nullable|numeric|min:0|max:100',
             'warna' => 'required|string|max:20',
             'disposition' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment',
             'disposition_remarks' => 'nullable|string|max:255',
@@ -388,12 +386,14 @@ class GgaGgasControllerForeman extends Controller
         }
 
         // Update data GGA utama (brix, nacl, warna, disposition, remarks)
+        $username = session('username');
         $ggas->update([
             'brix' => $request->brix,
             'nacl' => $request->nacl,
             'warna' => $request->warna,
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
+            'created_by' => $username,
         ]);
 
         // Jika disposition Adjustment, update adjustment_qty pada data adjustment yang sudah ada
@@ -472,12 +472,14 @@ class GgaGgasControllerForeman extends Controller
         }
 
         // Update data GGA utama (brix, nacl, warna, disposition, remarks)
+        $username = session('username');
         $ggas->update([
             'brix' => $request->brix_edit,
             'nacl' => $request->nacl_edit,
             'warna' => $request->warna_edit,
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
+            'created_by' => $username,
         ]);
 
         // Jika disposition Adjustment, update adjustment_qty pada data adjustment yang sudah ada

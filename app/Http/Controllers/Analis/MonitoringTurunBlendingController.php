@@ -25,7 +25,7 @@ class MonitoringTurunBlendingController extends Controller
         //return json
         //return response()->json($productionBatches);
 
-         return view('analis.monitoring.turun_blending', compact('productionBatches'));
+        return view('analis.monitoring.turun_blending', compact('productionBatches'));
     }
 
     public function Monitoring_Blending_detail($id)
@@ -55,7 +55,7 @@ class MonitoringTurunBlendingController extends Controller
         ]);
     }
 
-  
+
 
     public function store(Request $request)
     {
@@ -157,6 +157,7 @@ class MonitoringTurunBlendingController extends Controller
 
         try {
             // Simpan data ke database
+            $username = session('username');
             MonitoringTurunBlendingData::create([
                 'monitoring_turun_blending_id' => $request->monitoring_turun_blending_id,
                 'brix' => $request->brix,
@@ -170,6 +171,7 @@ class MonitoringTurunBlendingController extends Controller
                 'endapan' => $request->endapan,
                 'warna' => $request->warna,
                 'shift' => $request->shift,
+                'created_by' => $username,
             ]);
 
             return response()->json([
@@ -226,8 +228,8 @@ class MonitoringTurunBlendingController extends Controller
                 'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
             ], 422);
         }
-    
-    
+
+
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -241,11 +243,12 @@ class MonitoringTurunBlendingController extends Controller
         if ($disposition === 'Release') {
             $remarks = '-';
         }
-
+        $username = session('username');
         $dataUpdate = [
-           
+
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
+            'created_by' => $username,
         ];
 
         // Jika adjustment
@@ -277,5 +280,4 @@ class MonitoringTurunBlendingController extends Controller
             'message' => 'Data berhasil disimpan.'
         ]);
     }
-
 }

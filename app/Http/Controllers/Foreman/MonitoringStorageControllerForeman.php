@@ -24,7 +24,7 @@ class MonitoringStorageControllerForeman extends Controller
     public function Monitoring_Storage_data()
     {
 
-        $productionBatches = ProductionBatch::orderby('created_at','desc')->with('MonitoringStorage')->has('MonitoringStorage')->get();
+        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringStorage')->has('MonitoringStorage')->get();
 
         // return response()->json($productionBatches);
         return view('foreman.monitoring.monitoring_storage.monitoring_storage', compact('productionBatches'));
@@ -33,7 +33,7 @@ class MonitoringStorageControllerForeman extends Controller
     public function Monitoring_Storage_data_mikro()
     {
 
-        $productionBatches = ProductionBatch::orderby('created_at','desc')->with('MonitoringStorageMikro')->has('MonitoringStorageMikro')->get();
+        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringStorageMikro')->has('MonitoringStorageMikro')->get();
 
         return view('foreman.monitoring.monitoring_storage.monitoring_storage_mikro', compact('productionBatches'));
     }
@@ -203,7 +203,7 @@ class MonitoringStorageControllerForeman extends Controller
         if ($disposition === 'Release') {
             $remarks = '-';
         }
-
+        $username = session('username');
         $dataUpdate = [
             'brix' => $request->brix,
             'nacl' => $request->nacl,
@@ -217,6 +217,7 @@ class MonitoringStorageControllerForeman extends Controller
             'warna' => $request->warna,
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
+            'created_by' => $username,
         ];
 
         // Jika adjustment
@@ -261,7 +262,7 @@ class MonitoringStorageControllerForeman extends Controller
             'warna_edit' => 'required|string|max:20',
             'disposition_edit' => 'required',
             'disposition_remarks_edit' => 'nullable|string|max:255',
-           ], [
+        ], [
             'brix.max' => 'Nilai brix melebihi batas input yaitu 100.',
             'nacl.max' => 'Nilai NaCl melebihi batas input yaitu 100.',
             'brix.min' => 'Nilai brix tidak boleh negatif.',
@@ -299,7 +300,7 @@ class MonitoringStorageControllerForeman extends Controller
         if ($disposition === 'Release') {
             $remarks = '-';
         }
-
+        $username = session('username');
         $dataUpdate = [
             'brix' => $request->brix_edit,
             'nacl' => $request->nacl_edit,
@@ -313,10 +314,11 @@ class MonitoringStorageControllerForeman extends Controller
             'warna' => $request->warna_edit,
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
+            'created_by' => $username,
         ];
 
         // Jika adjustment
-       
+
         if ($disposition === 'Jalan Bareng') {
 
             $dataUpdate['not_standar'] = true;
@@ -399,7 +401,6 @@ class MonitoringStorageControllerForeman extends Controller
             'success' => true,
             'message' => 'Data berhasil disimpan.'
         ]);
-
     }
 
     public function edit_monitoring_storage_mikro(Request $request, $id)
@@ -417,7 +418,7 @@ class MonitoringStorageControllerForeman extends Controller
         }
 
         $data = MonitoringStorageMikroModel::findOrFail($id);
-       
+
 
         $dataUpdate = [
             'eb' => $request->eb_edit,
@@ -434,4 +435,3 @@ class MonitoringStorageControllerForeman extends Controller
         ]);
     }
 }
-

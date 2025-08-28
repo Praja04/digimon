@@ -32,7 +32,8 @@ class BlendingAwalModel extends Model
         'adjustment_qty_gula',
         'is_adjustment',
         'revisi',
-        'not_standar'
+        'not_standar',
+        'created_by',
     ];
 
     public function productionBatch()

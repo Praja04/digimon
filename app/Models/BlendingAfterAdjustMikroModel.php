@@ -19,6 +19,7 @@ class BlendingAfterAdjustMikroModel extends Model
         'tpc',
         'ym',
         'hasil',
+        // 'created_by',
     ];
 
     public function productionBatch()

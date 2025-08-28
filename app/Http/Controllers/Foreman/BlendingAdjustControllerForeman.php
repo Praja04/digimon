@@ -36,7 +36,7 @@ class BlendingAdjustControllerForeman extends Controller
     public function Blending_adjust_data_mikro()
     {
 
-        $productionBatches = ProductionBatch::orderby('created_at','desc')->with('blendingAfterAdjustMikro')->has('blendingAfterAdjustMikro')->get();
+        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('blendingAfterAdjustMikro')->has('blendingAfterAdjustMikro')->get();
 
         return view('foreman.blending.blending_adjust_mikro', compact('productionBatches'));
     }
@@ -70,7 +70,7 @@ class BlendingAdjustControllerForeman extends Controller
             $filteredblendingAfterAdjust->push($selected);
         }
 
-       // return response()->json($filteredblendingAfterAdjust->values());
+        // return response()->json($filteredblendingAfterAdjust->values());
         return view('foreman.blending.blending_adjust_detail', [
             'productionBatch' => $productionBatch,
             'filteredBlendingAwal' => $filteredblendingAfterAdjust->values()
@@ -108,8 +108,8 @@ class BlendingAdjustControllerForeman extends Controller
         }
 
         $exists = BlendingAfterAdjustModel::where('production_batch_id', $request->production_batch_id)
-        ->where('batch_range', $request->batch)
-        ->exists();
+            ->where('batch_range', $request->batch)
+            ->exists();
 
         if ($exists) {
             return response()->json([
@@ -154,9 +154,9 @@ class BlendingAdjustControllerForeman extends Controller
             'bj' => 'required|string|max:20',
             'visco' => 'required|string|max:20',
             'aw' => 'required|string|max:20',
-            'buih' => 'required|string|max:20',
+            'buih' => 'nullable|string|max:20',
             'organo' => 'required|string|max:20',
-            'endapan' => 'required|string|max:20',
+            'endapan' => 'nullable|string|max:20',
             'warna' => 'required|string|max:20',
             'disposition' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment,Jalan Bareng,Leveling',
             'disposition_remarks' => 'nullable|string|max:255',
@@ -180,7 +180,7 @@ class BlendingAdjustControllerForeman extends Controller
                 'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
             ], 422);
         }
-    
+
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -190,11 +190,11 @@ class BlendingAdjustControllerForeman extends Controller
                 'errors' => ['Kolom keterangan (remarks) wajib diisi untuk disposition ini.']
             ], 422);
         }
-        
+
         if ($disposition === 'Release') {
             $remarks = '-';
         }
-
+        $username = session('username');
         $dataUpdate = [
             'brix' => $request->brix,
             'nacl' => $request->nacl,
@@ -207,6 +207,7 @@ class BlendingAdjustControllerForeman extends Controller
             'warna' => $request->warna,
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
+            'created_by' => $username,
         ];
 
         // Jika adjustment
@@ -225,7 +226,7 @@ class BlendingAdjustControllerForeman extends Controller
 
         // Jika resampling
         if ($disposition === 'Resampling') {
-           // $dataUpdate['disposition_remarks'] = $disposition;
+            // $dataUpdate['disposition_remarks'] = $disposition;
             $dataUpdate['not_standar'] = true;
         }
 
@@ -266,7 +267,7 @@ class BlendingAdjustControllerForeman extends Controller
         }
 
         $blending = BlendingAfterAdjustModel::findOrFail($id);
-     
+
         $disposition = $request->disposition_edit;
         $remarks = $request->disposition_remarks_edit ?? null;
 
@@ -280,7 +281,7 @@ class BlendingAdjustControllerForeman extends Controller
         if ($disposition === 'Release') {
             $remarks = '-';
         }
-
+        $username = session('username');
         $dataUpdate = [
             'brix' => $request->brix_edit,
             'nacl' => $request->nacl_edit,
@@ -293,6 +294,7 @@ class BlendingAdjustControllerForeman extends Controller
             'warna' => $request->warna_edit,
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
+            'created_by' => $username,
         ];
 
         // Jika adjustment
@@ -391,7 +393,7 @@ class BlendingAdjustControllerForeman extends Controller
             'eb_edit' => 'nullable|numeric|min:0|max:100',
             'tpc_edit' => 'nullable|numeric|min:0|max:100',
             'ym_edit' => 'nullable |string|max:20',
-           
+
             'shift_edit' => 'string',
         ]);
 
@@ -402,7 +404,7 @@ class BlendingAdjustControllerForeman extends Controller
         }
 
         $blending = BlendingAfterAdjustMikroModel::findOrFail($id);
-       
+
 
         $dataUpdate = [
             'eb' => $request->eb_edit,

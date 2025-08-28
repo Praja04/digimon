@@ -24,6 +24,7 @@ class MonitoringTurunBlendingData extends Model
         'endapan',
         'warna',
         'shift',
+        'created_by',
     ];
 
     public function MasterData()

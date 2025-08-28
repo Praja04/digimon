@@ -222,7 +222,10 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Warna</label>
-                                                    <input type="text" name="warna" class="form-control kapital-case" required>
+                                                    <!-- <input type="text" name="warna" class="form-control kapital-case" required> -->
+                                                    <select name="warna" id="warnaSelect" class="form-select" required>
+                                                        <option value="">-- Pilih Warna --</option>
+                                                    </select>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Disposition</label>
@@ -297,6 +300,38 @@
         $(this).val($(this).val().toUpperCase());
     });
     $(document).ready(function() {
+        const warnaUrl = "{{ url('/data/warna') }}";
+
+        function loadWarnaOptions() {
+            $.ajax({
+                url: warnaUrl,
+                method: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    if (res.success && res.data.length > 0) {
+                        const select = $('#warnaSelect');
+                        select.empty().append('<option value="">-- Pilih Warna --</option>');
+                        res.data.forEach(item => {
+                            const option = $('<option></option>')
+                                .val(item.code_warna)
+                                .text(item.nama_warna + ' (' + item.code_warna + ')')
+                                .css('background-color', item.code_warna)
+                                .css('color', '#fff');
+                            select.append(option);
+                        });
+                    }
+                },
+                error: function() {
+                    console.warn('Gagal mengambil data warna');
+                }
+            });
+        }
+
+
+        loadWarnaOptions();
+
+
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

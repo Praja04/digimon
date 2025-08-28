@@ -176,6 +176,7 @@
                                 <th>Warna</th>
                                 <th>Disposisi</th>
                                 <th>Keterangan</th>
+                                <th>Created By</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -213,6 +214,7 @@
                                 <td>{{ $item->warna ?? '-'}}</td>
                                 <td>{{ $item->disposition ?? '-'}}</td>
                                 <td>{{ $item->disposition_remarks ?? '-'}}</td>
+                                <td>{{ $item->created_by ?? '-'}}</td>
                                 <td>
                                     @if (is_null($item->disposition))
                                     <button class="btn btn-sm btn-primary open-monitoring-modal" data-id="{{ $item->id }}">Input Analisa Monitoring Storage</button>
@@ -249,23 +251,23 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Bj</label>
-                                                    <input type="text" name="bj" class="form-control" required>
+                                                    <input type="number" name="bj" class="form-control" required>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Visco</label>
-                                                    <input type="text" name="visco" class="form-control" required>
+                                                    <input type="number" name="visco" class="form-control" required>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Aw</label>
-                                                    <input type="text" name="aw" class="form-control" required>
+                                                    <input type="number" name="aw" class="form-control" required>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Buih</label>
-                                                    <input type="text" name="buih" class="form-control" required>
+                                                    <input type="number" name="buih" class="form-control">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">PH</label>
-                                                    <input type="text" name="ph" class="form-control" required>
+                                                    <input type="number" name="ph" class="form-control">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Organo</label>
@@ -273,11 +275,14 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Endapan</label>
-                                                    <input type="text" name="endapan" class="form-control" required>
+                                                    <input type="text" name="endapan" class="form-control">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Warna</label>
-                                                    <input type="text" name="warna" class="form-control" required>
+                                                    <!-- <input type="text" name="warna" class="form-control" required> -->
+                                                    <select name="warna" id="warnaSelect" class="form-select" required>
+                                                        <option value="">-- Pilih Warna --</option>
+                                                    </select>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Disposition</label>
@@ -356,7 +361,11 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Warna</label>
-                                                    <input type="text" name="warna_edit" class="form-control" required>
+                                                    <!-- <input type="text" name="warna_edit" class="form-control" required> -->
+                                                    <select name="warna_edit" id="warnaSelect" class="form-select" required>
+                                                        <option value="">-- Pilih Warna --</option>
+                                                    </select>
+
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Disposition</label>
@@ -410,6 +419,37 @@
 </div>
 <!--end row-->
 <script>
+    const warnaUrl = "{{ url('/data/warna') }}";
+
+    function loadWarnaOptions() {
+        $.ajax({
+            url: warnaUrl,
+            method: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                if (res.success && res.data.length > 0) {
+                    const select = $('#warnaSelect');
+                    select.empty().append('<option value="">-- Pilih Warna --</option>');
+                    res.data.forEach(item => {
+                        const option = $('<option></option>')
+                            .val(item.code_warna)
+                            .text(item.nama_warna + ' (' + item.code_warna + ')')
+                            .css('background-color', item.code_warna)
+                            .css('color', '#fff');
+                        select.append(option);
+                    });
+                }
+            },
+            error: function() {
+                console.warn('Gagal mengambil data warna');
+            }
+        });
+    }
+
+    // Load saat modal dibuka
+    loadWarnaOptions();
+
+
     $(document).ready(function() {
         $.ajaxSetup({
             headers: {

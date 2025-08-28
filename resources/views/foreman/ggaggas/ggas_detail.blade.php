@@ -163,6 +163,7 @@
                                 <th>BRIX</th>
                                 <th>NACL</th>
                                 <th>Warna</th>
+                                <th>Created By</th>
                                 <th>Disposisi</th>
                                 <th>Catatan</th>
                                 <th>Keterangan</th>
@@ -183,6 +184,7 @@
                                 <td>{{ $ggas->brix ?? '-' }}</td>
                                 <td>{{ $ggas->nacl ?? '-' }}</td>
                                 <td>{{ $ggas->warna ?? '-' }}</td>
+                                <td>{{ $ggas->created_by ?? '-' }}</td>
                                 <td>{{ $ggas->disposition ?? '-' }}</td>
                                 <td>{{ $ggas->disposition_remarks ?? '-' }}</td>
                                 <td>
@@ -233,12 +235,15 @@
                                                     <input type="number" step="0.01" max="100" min="0" name="brix" class="form-control" required>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label class="form-label">NACL</label>
-                                                    <input type="number" step="0.01" max="100" min="0" name="nacl" class="form-control" required>
+                                                    <label class="form-label">NACL (Optional)</label>
+                                                    <input type="number" step="0.01" max="100" min="0" name="nacl" class="form-control">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Warna</label>
-                                                    <input type="text" name="warna" class="form-control" required>
+                                                    <!-- <input type="text" name="warna" class="form-control" required oninput="this.value = this.value.toUpperCase();"> -->
+                                                    <select name="warna" id="warnaSelect" class="form-select" required>
+                                                        <option value="">-- Pilih Warna --</option>
+                                                    </select>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Disposition</label>
@@ -254,7 +259,7 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Remarks</label>
-                                                    <textarea name="disposition_remarks" class="form-control" rows="2" placeholder="Isi remarks jika diperlukan..."></textarea>
+                                                    <textarea name="disposition_remarks" class="form-control" rows="2" placeholder="Isi remarks jika diperlukan..." oninput="this.value = this.value.toUpperCase();"></textarea>
                                                 </div>
 
                                                 <div class="mb-3 d-none adjustment-qty-wrapper">
@@ -301,12 +306,16 @@
                                                     <input type="number" step="0.01" max="100" min="0" name="brix_edit" class="form-control" required>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label class="form-label">NACL</label>
+                                                    <label class="form-label">NACL (Optional)</label>
                                                     <input type="number" step="0.01" max="100" min="0" name="nacl_edit" class="form-control" required>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Warna</label>
-                                                    <input type="text" name="warna_edit" class="form-control" required>
+                                                    <!-- <input type="text" name="warna_edit" class="form-control" required> -->
+                                                    <select name="warna_edit" id="warnaSelect" class="form-select" required>
+                                                        <option value="">-- Pilih Warna --</option>
+                                                    </select>
+
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Disposition</label>
@@ -378,6 +387,38 @@
 <!--end row-->
 <script>
     $(document).ready(function() {
+
+        const warnaUrl = "{{ url('/data/warna') }}";
+
+        function loadWarnaOptions() {
+            $.ajax({
+                url: warnaUrl,
+                method: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    if (res.success && res.data.length > 0) {
+                        const select = $('#warnaSelect');
+                        select.empty().append('<option value="">-- Pilih Warna --</option>');
+                        res.data.forEach(item => {
+                            const option = $('<option></option>')
+                                .val(item.code_warna)
+                                .text(item.nama_warna + ' (' + item.code_warna + ')')
+                                .css('background-color', item.code_warna)
+                                .css('color', '#fff');
+                            select.append(option);
+                        });
+                    }
+                },
+                error: function() {
+                    console.warn('Gagal mengambil data warna');
+                }
+            });
+        }
+
+        // Load saat modal dibuka
+        loadWarnaOptions();
+
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

@@ -135,31 +135,35 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Bj</label>
-                        <input type="text" name="bj" class="form-control" required>
+                        <input type="number" name="bj" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Visco</label>
-                        <input type="text" name="visco" class="form-control" required>
+                        <input type="number" name="visco" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Aw</label>
-                        <input type="text" name="aw" class="form-control" required>
+                        <input type="number" name="aw" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Buih</label>
-                        <input type="text" name="buih" class="form-control" required>
+                        <input type="number" name="buih" class="form-control">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Organo</label>
-                        <input type="text" name="organo" class="form-control" required>
+                        <input type="text" name="organo" class="form-control" required oninput="this.value = this.value.toUpperCase();">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Endapan</label>
-                        <input type="text" name="endapan" class="form-control" required>
+                        <input type="text" name="endapan" class="form-control" oninput="this.value = this.value.toUpperCase();">
                     </div>
                     <div class="mb-3">
                         <label for="warna" class="form-label">Warna</label>
-                        <input type="text" name="warna" id="warna" class="form-control" required value="{{ old('warna', $blending->warna) }}">
+                        <!-- <input type="text" name="warna" id="warna" class="form-control" required value="{{ old('warna', $blending->warna) }}" oninput="this.value = this.value.toUpperCase();"> -->
+                        <select name="warna" id="warnaSelect" class="form-select" required>
+                            <option value="">-- Pilih Warna --</option>
+                        </select>
+
                     </div>
 
                     <div class="mb-3">
@@ -202,6 +206,36 @@
 @endif
 
 <script>
+    const warnaUrl = "{{ url('/data/warna') }}";
+
+    function loadWarnaOptions() {
+        $.ajax({
+            url: warnaUrl,
+            method: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                if (res.success && res.data.length > 0) {
+                    const select = $('#warnaSelect');
+                    select.empty().append('<option value="">-- Pilih Warna --</option>');
+                    res.data.forEach(item => {
+                        const option = $('<option></option>')
+                            .val(item.code_warna)
+                            .text(item.nama_warna + ' (' + item.code_warna + ')')
+                            .css('background-color', item.code_warna)
+                            .css('color', '#fff');
+                        select.append(option);
+                    });
+                }
+            },
+            error: function() {
+                console.warn('Gagal mengambil data warna');
+            }
+        });
+    }
+
+    // Load saat modal dibuka
+    loadWarnaOptions();
+
     $(document).ready(function() {
 
         $.ajaxSetup({

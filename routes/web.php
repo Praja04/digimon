@@ -11,6 +11,7 @@ use App\Http\Controllers\Analis\BlendingAwalController;
 use App\Http\Controllers\ProductionBatchController;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ManageStandarDataController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Foreman\RMPMControllerForeman;
 use App\Http\Controllers\Foreman\BlendingAdjustControllerForeman;
@@ -20,8 +21,6 @@ use App\Http\Controllers\Foreman\GgaGgasControllerForeman;
 use App\Http\Controllers\Foreman\SamplingControllerForeman;
 use App\Http\Controllers\Foreman\BlendingAwalControllerForeman;
 use App\Http\Controllers\Supervisor\DashboardMakro;
-use App\Models\MonitoringStorageModel;
-use App\Models\MonitoringTurunBlending;
 use App\Http\Controllers\Supervisor\RMPMControllerSupervisor;
 use App\Http\Controllers\Supervisor\BlendingAdjustControllerSupervisor;
 use App\Http\Controllers\Supervisor\MonitoringTurunBlendingControllerSupervisor;
@@ -523,4 +522,15 @@ Route::get('/api/qr-code/{id}', function ($id) {
     $url = route('rmpm.detailIdentitas', ['id' => $id]);
     $qr = DNS2D::getBarcodePNG($url, 'QRCODE');
     return response($qr)->header('Content-Type', 'image/png');
+});
+
+
+
+Route::prefix('data')->group(function () {
+    Route::get('/', [ManageStandarDataController::class, 'tampilan']);          // 🔍 List semua warna
+    Route::get('warna/', [ManageStandarDataController::class, 'index']);          // 🔍 List semua warna
+    Route::post('warna/', [ManageStandarDataController::class, 'store']);         // ➕ Tambah warna baru
+    Route::get('warna/{id}', [ManageStandarDataController::class, 'show']);       // 📄 Detail warna
+    Route::put('warna/{id}', [ManageStandarDataController::class, 'update']);     // ✏️ Update warna
+    Route::delete('warna/{id}', [ManageStandarDataController::class, 'destroy']); // ❌ Hapus warna
 });

@@ -167,7 +167,7 @@ class GgaGgasController extends Controller
                 'errors' => $validator->errors()->all()
             ], 422);
         }
-
+        $username = session('username');
         $gga = GgaProcess::findOrFail($id);
         if ($gga->disposition) {
             return response()->json([
@@ -195,6 +195,7 @@ class GgaGgasController extends Controller
             'warna' => $request->warna,
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
+            'created_by' => $username,
         ]);
 
         // Jika disposition Adjustment, update adjustment_qty pada data adjustment yang sudah ada
@@ -250,7 +251,7 @@ class GgaGgasController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'brix' => 'required|numeric|min:0|max:100',
-            'nacl' => 'required|numeric|min:0|max:100',
+            'nacl' => 'nullable|numeric|min:0|max:100',
             'warna' => 'required|string|max:20',
             'disposition' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment',
             'disposition_remarks' => 'nullable|string|max:255',
@@ -269,7 +270,7 @@ class GgaGgasController extends Controller
                 'errors' => $validator->errors()->all()
             ], 422);
         }
-
+        $username = session('username');
         $ggas = GgasProcess::findOrFail($id);
         if ($ggas->disposition) {
             return response()->json([
@@ -297,6 +298,7 @@ class GgaGgasController extends Controller
             'warna' => $request->warna,
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
+            'created_by' => $username,
         ]);
 
         // Jika disposition Adjustment, update adjustment_qty pada data adjustment yang sudah ada

@@ -33,18 +33,18 @@ class MonitoringStorageController extends Controller
 
     public function Monitoring_Storage_detail($id)
     {
-        
+
         $productionBatch = ProductionBatch::findOrFail($id);
 
         foreach ($productionBatch->MonitoringStorage as $data) {
             // Tambahkan properti custom 'additional_batch_info' ke setiap data
             $data->additional_batch_info = $data->additionalBatches->isNotEmpty()
-            ? $data->additionalBatches
+                ? $data->additionalBatches
                 : null;
 
             $data->po_number = $productionBatch->po_number;
         }
-    //    return response()->json($productionBatch->MonitoringStorage);
+        //    return response()->json($productionBatch->MonitoringStorage);
         return view('analis.monitoring.monitoring_storage.detail_data', [
             'productionBatch' => $productionBatch,
             'filteredMonitoringStorage' => $productionBatch->MonitoringStorage
@@ -86,7 +86,7 @@ class MonitoringStorageController extends Controller
         return view('analis.monitoring.monitoring_storage.analisis_data_detail_mikro_id', compact('data'));
     }
 
- 
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -173,15 +173,15 @@ class MonitoringStorageController extends Controller
 
         $data = MonitoringStorageModel::findOrFail($id);
         if (
-            $data->disposition 
+            $data->disposition
         ) {
             return response()->json([
                 'errors' => ['Data id sudah ada sudah ada dan tidak ada perubahan.']
             ], 422);
         }
-    
-    
-    
+
+
+
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -195,7 +195,7 @@ class MonitoringStorageController extends Controller
         if ($disposition === 'Release') {
             $remarks = '-';
         }
-
+        $username = session('username');
         $dataUpdate = [
             'brix' => $request->brix,
             'nacl' => $request->nacl,
@@ -209,6 +209,7 @@ class MonitoringStorageController extends Controller
             'warna' => $request->warna,
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
+            'created_by' => $username,
         ];
 
         // Jika adjustment
@@ -247,7 +248,7 @@ class MonitoringStorageController extends Controller
 
     public function showInputFormMonitoringStorageMikro($id)
     {
-        $monitoring_storage =MonitoringStorageMikroModel::find($id);
+        $monitoring_storage = MonitoringStorageMikroModel::find($id);
         return view('analis.monitoring_storage.monitoring_storage_detail_mikro_id', compact('monitoring_storage'));
     }
 
@@ -298,6 +299,5 @@ class MonitoringStorageController extends Controller
             'success' => true,
             'message' => 'Data berhasil disimpan.'
         ]);
-
     }
 }

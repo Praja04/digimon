@@ -17,7 +17,8 @@ class MonitoringStorageMikroModel extends Model
         'tpc',
         'ym',
         'hasil',
-        'revisi'
+        'revisi',
+        'created_by',
     ];
 
     public function productionBatch()

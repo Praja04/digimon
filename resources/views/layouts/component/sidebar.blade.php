@@ -116,15 +116,64 @@
                         <i class="mdi mdi-chemical-weapon"></i> <span data-key="t-widgets">Dashboard RMPM</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#ManageData" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="ManageData">
+                        <i class="mdi mdi-database-cog"></i> <span>Manage Data</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="ManageData">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{ url('data') }}" class="nav-link">
+                                    <i class="mdi mdi-palette-swatch"></i> Manage Warna
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="menu-title"><span>Menu</span></li>
 
-                <li class="menu-title"><span data-key="t-menu">Menu</span></li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('foreman/rmpm/dashboard') }}">
+                        <i class="mdi mdi-chemical-weapon"></i> <span>Dashboard RMPM</span>
+                    </a>
+                </li>
 
-                <li class="nav-item"><a class="nav-link menu-link" href="{{ url('foreman/rmpm/list/rm') }}"><i class="mdi mdi-database-search"></i> Data RM</a></li>
-                <li class="nav-item"><a class="nav-link menu-link" href="{{url('analis/productionbatch/menu')}}"><i class="mdi mdi-food-fork-drink"></i> Persiapan Masak</a></li>
-                <li class="nav-item"><a class="nav-link menu-link" href="{{url('foreman/ggaggas/menu')}}"><i class="mdi mdi-flask"></i> GGA & GGAS</a></li>
-                <li class="nav-item"><a class="nav-link menu-link" href="{{url('foreman/blending/menu')}}"><i class="mdi mdi-blender-software"></i> Blending</a></li>
-                <li class="nav-item"><a class="nav-link menu-link" href="{{url('foreman/monitoring/blending/menu')}}"><i class="mdi mdi-monitor-dashboard"></i> Monitoring Blending</a></li>
-                <li class="nav-item"><a class="nav-link menu-link" href="{{ url('analis/productionbatch/scan') }}"><i class="mdi mdi-qrcode-scan"></i> Scan</a></li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('foreman/rmpm/list/rm') }}">
+                        <i class="mdi mdi-database-search"></i> <span>Data RM</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('analis/productionbatch/menu') }}">
+                        <i class="mdi mdi-food-fork-drink"></i> <span>Persiapan Masak</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('foreman/ggaggas/menu') }}">
+                        <i class="mdi mdi-flask"></i> <span>GGA & GGAS</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('foreman/blending/menu') }}">
+                        <i class="mdi mdi-blender-software"></i> <span>Blending</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('foreman/monitoring/blending/menu') }}">
+                        <i class="mdi mdi-monitor-dashboard"></i> <span>Monitoring Blending</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('analis/productionbatch/scan') }}">
+                        <i class="mdi mdi-qrcode-scan"></i> <span>Scan</span>
+                    </a>
+                </li>
+
                 @elseif(Session::get('role') === 'produksi')
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                 <li class="nav-item">

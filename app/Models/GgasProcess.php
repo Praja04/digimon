@@ -24,7 +24,8 @@ class GgasProcess extends Model
         'adjustment_qty_air',
         'adjustment_qty_garam',
         'adjustment_qty_gula',
-        'not_standar'
+        'not_standar',
+        'created_by',
     ];
   
     // Relasi dengan tabel ProductionBatch

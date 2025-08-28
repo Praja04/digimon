@@ -30,7 +30,8 @@ class MonitoringStorageModel extends Model
         'adjusment_qty',
         'is_adjustment',
         'revisi',
-        'not_standar'
+        'not_standar',
+        'created_by',
     ];
 
     public function productionBatch()
