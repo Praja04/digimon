@@ -177,9 +177,9 @@
                 <td>${item.id}</td>
                 <td>${item.nama_warna}</td>
                 <td>
-                    <span class="badge" >
+                    
                         ${item.code_warna}
-                    </span>
+                  
                 </td>
                 <td>
                     <button class="btn btn-sm btn-warning edit-btn" data-id="${item.id}">Edit</button>
