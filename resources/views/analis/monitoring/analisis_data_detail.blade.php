@@ -352,9 +352,7 @@
                         res.data.forEach(item => {
                             const option = $('<option></option>')
                                 .val(item.code_warna)
-                                .text(item.nama_warna + ' (' + item.code_warna + ')')
-                                .css('background-color', item.code_warna)
-                                .css('color', '#fff');
+                                .text(item.nama_warna + ' (' + item.code_warna + ')');
                             select.append(option);
                         });
                     }
