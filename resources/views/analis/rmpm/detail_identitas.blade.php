@@ -719,8 +719,8 @@
 
                     <div class="mb-3">
                         <label class="form-label">b. Surat Jalan Vendor</label><br>
-                        <label><input type="radio" name="surat_jalan_vendor" value="yes"> Iya</label>
-                        <label><input type="radio" name="surat_jalan_vendor" value="no"> Tidak</label>
+                        <label><input type="radio" name="suratjalan_vendor" value="yes"> Iya</label>
+                        <label><input type="radio" name="suratjalan_vendor" value="no"> Tidak</label>
                     </div>
 
                     <div class="mb-3">
