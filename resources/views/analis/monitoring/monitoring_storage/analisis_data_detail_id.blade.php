@@ -134,23 +134,23 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Bj</label>
-                        <input type="text" name="bj" class="form-control" required>
+                        <input type="number" step="0.01" name="bj" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Visco</label>
-                        <input type="text" name="visco" class="form-control" required>
+                        <input type="number" step="0.01" name="visco" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Aw</label>
-                        <input type="text" name="aw" class="form-control" required>
+                        <input type="number" step="0.01" name="aw" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Buih</label>
-                        <input type="text" name="buih" class="form-control" required>
+                        <input type="number" step="0.01" name="buih" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">PH</label>
-                        <input type="text" name="ph" class="form-control" required>
+                        <input type="number" step="0.01" name="ph" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Organo</label>

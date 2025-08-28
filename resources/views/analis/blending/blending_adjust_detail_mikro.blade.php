@@ -241,7 +241,7 @@
                                                 </div>
                                                 <div id="ymContainer" class="mb-3 d-none">
                                                     <label class="form-label">YM</label>
-                                                    <input type="text" name="ym" id="ymInput" class="form-control">
+                                                    <input type="number" step="0.01" name="ym" id="ymInput" class="form-control">
                                                 </div>
 
 

@@ -229,32 +229,32 @@
 
                                         <div class="col-md-4">
                                             <label for="brix" class="form-label">Brix</label>
-                                            <input type="number" class="form-control" name="brix" id="brix" required>
+                                            <input type="number" step="0.01" class="form-control" name="brix" id="brix" required>
                                         </div>
 
                                         <div class="col-md-4">
                                             <label for="nacl" class="form-label">NaCl</label>
-                                            <input type="number" class="form-control" name="nacl" id="nacl" required>
+                                            <input type="number" step="0.01" class="form-control" name="nacl" id="nacl" required>
                                         </div>
 
                                         <div class="col-md-4">
                                             <label for="bj" class="form-label">BJ</label>
-                                            <input type="number" class="form-control" name="bj" id="bj" required>
+                                            <input type="number" step="0.01" class="form-control" name="bj" id="bj" required>
                                         </div>
 
                                         <div class="col-md-4">
                                             <label for="visco" class="form-label">Visco</label>
-                                            <input type="number" class="form-control" name="visco" id="visco">
+                                            <input type="number" step="0.01" class="form-control" name="visco" id="visco">
                                         </div>
 
                                         <div class="col-md-4">
                                             <label for="aw" class="form-label">AW</label>
-                                            <input type="number" class="form-control" name="aw" id="aw">
+                                            <input type="number" step="0.01" class="form-control" name="aw" id="aw">
                                         </div>
 
                                         <div class="col-md-4">
                                             <label for="buih" class="form-label">Buih</label>
-                                            <input type="number" class="form-control" name="buih" id="buih">
+                                            <input type="number" step="0.01" class="form-control" name="buih" id="buih">
                                         </div>
 
                                         <div class="col-md-4">
@@ -264,7 +264,7 @@
 
                                         <div class="col-md-4">
                                             <label for="ph" class="form-label">pH</label>
-                                            <input type="number" class="form-control" name="ph" id="ph">
+                                            <input type="number" step="0.01" class="form-control" name="ph" id="ph">
                                         </div>
 
                                         <div class="col-md-4">
@@ -347,7 +347,7 @@
                                             <div class="row g-3">
                                                 <div class="col-md-4">
                                                     <label class="form-label">Air (Liter)</label>
-                                                    <input type="number" step="0.01" name="adjustment_qty_air" class="form-control adjustment-qty" placeholder="0.00">
+                                                    <input type="number" step="0.01"  name="adjustment_qty_air" class="form-control adjustment-qty" placeholder="0.00">
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="form-label">Gula (Kg)</label>
