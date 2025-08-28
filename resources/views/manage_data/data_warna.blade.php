@@ -177,7 +177,7 @@
                 <td>${item.id}</td>
                 <td>${item.nama_warna}</td>
                 <td>
-                    <span class="badge" style="background-color: ${item.code_warna}; color: #fff;">
+                    <span class="badge" >
                         ${item.code_warna}
                     </span>
                 </td>
