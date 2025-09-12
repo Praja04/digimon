@@ -43,11 +43,11 @@
                     </a>
                     <div class="collapse menu-dropdown" id="DashboardProses">
                         <ul class="nav nav-sm flex-column">
-                            <li class="nav-item"><a href="{{url('supervisor/ggaggas/dashboard')}}" class="nav-link"><i class="mdi mdi-flask"></i> Analisis GGA & GGAS</a></li>
-                            <li class="nav-item"><a href="{{url('supervisor/blending/awal/dashboard')}}" class="nav-link"><i class="mdi mdi-blender"></i> Analisis Blending Awal</a></li>
-                            <li class="nav-item"><a href="{{url('supervisor/blending/adjust/dashboard')}}" class="nav-link"><i class="mdi mdi-blender-outline"></i> Analisis Blending After Adjust</a></li>
-                            <li class="nav-item"><a href="{{url('supervisor/monitoring/blending/dashboard')}}" class="nav-link"><i class="mdi mdi-chart-line"></i> Monitoring Turun Blending</a></li>
-                            <li class="nav-item"><a href="{{url('supervisor/monitoring/storage/dashboard')}}" class="nav-link"><i class="mdi mdi-database"></i> Monitoring Storage</a></li>
+                            <li class="nav-item"><a href="{{url('dashboard/gga-ggas')}}" class="nav-link"><i class="mdi mdi-flask"></i> Analisis GGA & GGAS</a></li>
+                            <li class="nav-item"><a href="{{url('dashboard/blending/awal')}}" class="nav-link"><i class="mdi mdi-blender"></i> Analisis Blending Awal</a></li>
+                            <li class="nav-item"><a href="{{url('dashboard/blending/after')}}" class="nav-link"><i class="mdi mdi-blender-outline"></i> Analisis Blending After Adjust</a></li>
+                            <li class="nav-item"><a href="{{url('dashboard/monitoring/turun')}}" class="nav-link"><i class="mdi mdi-chart-line"></i> Monitoring Turun Blending</a></li>
+                            <li class="nav-item"><a href="{{url('dashboard/monitoring/storage')}}" class="nav-link"><i class="mdi mdi-database"></i> Monitoring Storage</a></li>
                         </ul>
                     </div>
                 </li>
@@ -58,14 +58,14 @@
                     </a>
                     <div class="collapse menu-dropdown" id="Dashboardmikro">
                         <ul class="nav nav-sm flex-column">
-                            <li class="nav-item"><a href="#" class="nav-link"><i class="mdi mdi-blender"></i> Blending After Adjust</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link"><i class="mdi mdi-database-check-outline"></i> Monitoring Storage</a></li>
+                            <li class="nav-item"><a href="{{url('dashboard/mikro/blending/after')}}" class="nav-link"><i class="mdi mdi-blender"></i> Blending After Adjust</a></li>
+                            <li class="nav-item"><a href="{{url('dashboard/mikro/monitoring/storage')}}" class="nav-link"><i class="mdi mdi-database"></i> Monitoring Storage</a></li>
                         </ul>
                     </div>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ url('supervisor/rmpm/dashboard')}}">
+                    <a class="nav-link menu-link" href="{{ url('dashboard/rm')}}">
                         <i class="mdi mdi-chemical-weapon"></i> <span data-key="t-widgets">Dashboard RMPM</span>
                     </a>
                 </li>
@@ -90,11 +90,11 @@
                     </a>
                     <div class="collapse menu-dropdown" id="DashboardProses">
                         <ul class="nav nav-sm flex-column">
-                            <li class="nav-item"><a href="{{url('foreman/ggaggas/dashboard')}}" class="nav-link"><i class="mdi mdi-flask-outline"></i> Analisis GGA & GGAS</a></li>
-                            <li class="nav-item"><a href="{{url('foreman/blending/awal/dashboard')}}" class="nav-link"><i class="mdi mdi-blender"></i> Analisis Blending Awal</a></li>
-                            <li class="nav-item"><a href="{{url('foreman/blending/adjust/dashboard')}}" class="nav-link"><i class="mdi mdi-blender-outline"></i> Blending After Adjust</a></li>
-                            <li class="nav-item"><a href="{{url('foreman/monitoring/blending/dashboard')}}" class="nav-link"><i class="mdi mdi-chart-line"></i> Monitoring Turun Blending</a></li>
-                            <li class="nav-item"><a href="{{url('foreman/monitoring/storage/dashboard')}}" class="nav-link"><i class="mdi mdi-database-check"></i> Monitoring Storage</a></li>
+                            <li class="nav-item"><a href="{{url('dashboard/gga-ggas')}}" class="nav-link"><i class="mdi mdi-flask-outline"></i> Analisis GGA & GGAS</a></li>
+                            <li class="nav-item"><a href="{{url('dashboard/blending/awal')}}" class="nav-link"><i class="mdi mdi-blender"></i> Analisis Blending Awal</a></li>
+                            <li class="nav-item"><a href="{{url('dashboard/blending/after')}}" class="nav-link"><i class="mdi mdi-blender-outline"></i> Blending After Adjust</a></li>
+                            <li class="nav-item"><a href="{{url('dashboard/monitoring/turun')}}" class="nav-link"><i class="mdi mdi-chart-line"></i> Monitoring Turun Blending</a></li>
+                            <li class="nav-item"><a href="{{url('dashboard/monitoring/storage')}}" class="nav-link"><i class="mdi mdi-database-check"></i> Monitoring Storage</a></li>
                         </ul>
                     </div>
                 </li>
@@ -105,14 +105,14 @@
                     </a>
                     <div class="collapse menu-dropdown" id="Dashboardmikro">
                         <ul class="nav nav-sm flex-column">
-                            <li class="nav-item"><a href="#" class="nav-link"><i class="mdi mdi-blender"></i> Blending After Adjust</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link"><i class="mdi mdi-database"></i> Monitoring Storage</a></li>
+                            <li class="nav-item"><a href="{{url('dashboard/mikro/blending/after')}}" class="nav-link"><i class="mdi mdi-blender"></i> Blending After Adjust</a></li>
+                            <li class="nav-item"><a href="{{url('dashboard/mikro/monitoring/storage')}}" class="nav-link"><i class="mdi mdi-database"></i> Monitoring Storage</a></li>
                         </ul>
                     </div>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ url('foreman/rmpm/dashboard') }}">
+                    <a class="nav-link menu-link" href="{{ url('dashboard/rm') }}">
                         <i class="mdi mdi-chemical-weapon"></i> <span data-key="t-widgets">Dashboard RMPM</span>
                     </a>
                 </li>
@@ -132,11 +132,7 @@
                 </li>
                 <li class="menu-title"><span>Menu</span></li>
 
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ url('foreman/rmpm/dashboard') }}">
-                        <i class="mdi mdi-chemical-weapon"></i> <span>Dashboard RMPM</span>
-                    </a>
-                </li>
+
 
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ url('foreman/rmpm/list/rm') }}">

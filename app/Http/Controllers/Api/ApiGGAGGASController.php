@@ -232,66 +232,86 @@ class ApiGGAGGASController extends Controller
     public function analisaGGAGGAS(Request $request)
     {
         $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $endDate   = $request->input('end_date');
+        $variant   = $request->input('variant'); // 👈 tangkap variant
 
         $startDate = $startDate ? Carbon::parse($startDate)->startOfDay() : Carbon::now()->startOfDay();
-        $endDate = $endDate ? Carbon::parse($endDate)->endOfDay() : Carbon::now()->endOfDay();
+        $endDate   = $endDate ? Carbon::parse($endDate)->endOfDay()   : Carbon::now()->endOfDay();
 
+        // === GGA Data ===
         $ggaData = GgaProcess::with(['productionBatch:id,po_number,variant'])
         ->select('id', 'batch_number', 'brix', 'nacl', 'production_batch_id', 'created_at')
         ->whereNotNull('brix')
         ->whereNotNull('nacl')
         ->whereBetween('created_at', [$startDate, $endDate])
-        ->orderBy('created_at')
-        ->get()
-        ->map(function ($item) {
-            return [
-                'batch_number' => $item->batch_number,
-                'brix' => $item->brix,
-                'nacl' => $item->nacl,
-                'production_batch_id' => $item->production_batch_id,
-                'po_number' => optional($item->productionBatch)->po_number,
-                'variant' => optional($item->productionBatch)->variant,
-                'created_at' => $item->created_at->toDateTimeString(), // Tambahkan ini
-            ];
-        });
+        ->when($variant, function ($q) use ($variant) {
+            $q->whereHas('productionBatch', function ($sub) use ($variant) {
+                $sub->where('variant', $variant);
+            });
+        }) // 👈 filter by variant jika ada
+            ->orderBy('created_at')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'batch_number'        => $item->batch_number,
+                    'brix'                => $item->brix,
+                    'nacl'                => $item->nacl,
+                    'production_batch_id' => $item->production_batch_id,
+                    'po_number'           => optional($item->productionBatch)->po_number,
+                    'variant'             => optional($item->productionBatch)->variant,
+                    'created_at'          => $item->created_at->toDateTimeString(),
+                ];
+            });
 
+        // === GGAS Data ===
         $ggasData = GgasProcess::with(['productionBatch:id,po_number,variant'])
         ->select('id', 'batch_number', 'brix', 'nacl', 'production_batch_id', 'created_at')
         ->whereNotNull('brix')
         ->whereNotNull('nacl')
         ->whereBetween('created_at', [$startDate, $endDate])
-        ->orderBy('created_at')
-        ->get()
-        ->map(function ($item) {
-            return [
-                'batch_number' => $item->batch_number,
-                'brix' => $item->brix,
-                'nacl' => $item->nacl,
-                'production_batch_id' => $item->production_batch_id,
-                'po_number' => optional($item->productionBatch)->po_number,
-                'variant' => optional($item->productionBatch)->variant,
-                'created_at' => $item->created_at->toDateTimeString(), // Tambahkan ini
-            ];
-        });
+        ->when($variant, function ($q) use ($variant) {
+            $q->whereHas('productionBatch', function ($sub) use ($variant) {
+                $sub->where('variant', $variant);
+            });
+        }) // 👈 filter by variant juga
+            ->orderBy('created_at')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'batch_number'        => $item->batch_number,
+                    'brix'                => $item->brix,
+                    'nacl'                => $item->nacl,
+                    'production_batch_id' => $item->production_batch_id,
+                    'po_number'           => optional($item->productionBatch)->po_number,
+                    'variant'             => optional($item->productionBatch)->variant,
+                    'created_at'          => $item->created_at->toDateTimeString(),
+                ];
+            });
 
         return response()->json([
-            'gga' => $ggaData,
-            'ggas' => $ggasData,
-        ]);
+                'gga'  => $ggaData,
+                'ggas' => $ggasData,
+            ]);
     }
+
 
     public function analisaDisposisi(Request $request)
     {
         $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $endDate   = $request->input('end_date');
+        $variant   = $request->input('variant');
 
         $startDate = $startDate ? Carbon::parse($startDate)->startOfDay() : Carbon::now()->startOfDay();
-        $endDate = $endDate ? Carbon::parse($endDate)->endOfDay() : Carbon::now()->endOfDay();
+        $endDate   = $endDate ? Carbon::parse($endDate)->endOfDay()   : Carbon::now()->endOfDay();
 
         // GGA analysis
         $ggaDispositions = GgaProcess::whereNotNull('disposition')
             ->whereBetween('created_at', [$startDate, $endDate])
+            ->when($variant, function ($q) use ($variant) {
+                $q->whereHas('productionBatch', function ($sub) use ($variant) {
+                    $sub->where('variant', $variant);
+                });
+            })
             ->get()
             ->groupBy('disposition')
             ->map(fn ($group) => $group->count());
@@ -299,12 +319,17 @@ class ApiGGAGGASController extends Controller
         // GGAS analysis
         $ggasDispositions = GgasProcess::whereNotNull('disposition')
             ->whereBetween('created_at', [$startDate, $endDate])
+            ->when($variant, function ($q) use ($variant) {
+                $q->whereHas('productionBatch', function ($sub) use ($variant) {
+                    $sub->where('variant', $variant);
+                });
+            })
             ->get()
             ->groupBy('disposition')
             ->map(fn ($group) => $group->count());
 
         return response()->json([
-            'gga' => $ggaDispositions,
+            'gga'  => $ggaDispositions,
             'ggas' => $ggasDispositions,
         ]);
     }

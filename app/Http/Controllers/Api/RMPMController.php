@@ -5,39 +5,55 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\RMPM\IdentitasRM;
-use App\Models\RMPM\SamplingKondisiMobil;
-use App\Models\RMPM\SamplingDokumen;
-use App\Models\RMPM\SamplingFisikKemasan;
-use App\Models\RMPM\SamplingFisikRaw;
 use Illuminate\Support\Facades\DB;
 
 class RMPMController extends Controller
 {
-    //
-    public function analisaUmum()
+    private function resolveDateRange(Request $request): array
     {
-        $totalIdentitas = IdentitasRM::count();
+        $startDate = $request->filled('start_date')
+            ? now()->parse($request->start_date)->startOfDay()
+            : now()->subMonth()->startOfDay();
 
-        $jenisGulaStat = IdentitasRM::select('jenis_gula')
+        $endDate = $request->filled('end_date')
+            ? now()->parse($request->end_date)->endOfDay()
+            : now()->endOfDay();
+
+        return [$startDate, $endDate];
+    }
+
+    public function analisaUmum(Request $request)
+    {
+        [$startDate, $endDate] = $this->resolveDateRange($request);
+
+        $baseQuery = IdentitasRM::whereBetween('tanggal_kedatangan', [$startDate, $endDate]);
+
+        $totalIdentitas = $baseQuery->count();
+
+        $jenisGulaStat = (clone $baseQuery)
+            ->select('jenis_gula')
             ->groupBy('jenis_gula')
             ->selectRaw('jenis_gula, COUNT(*) as jumlah')
             ->pluck('jumlah', 'jenis_gula');
 
-        $topSuppliers = IdentitasRM::select('suplier_manufactur')
+        $topSuppliers = (clone $baseQuery)
+            ->select('suplier_manufactur')
             ->groupBy('suplier_manufactur')
             ->selectRaw('suplier_manufactur, COUNT(*) as total')
             ->orderByDesc('total')
             ->take(5)
             ->pluck('total', 'suplier_manufactur');
 
-        $samplingCompletion = IdentitasRM::with([
-            'samplingMobil', 'samplingDokumen',
-            'samplingFisikKemasan', 'samplingFisikRaw'
-        ])->get()->map(function ($item) {
-            return ($item->samplingMobil && $item->samplingDokumen && $item->samplingFisikKemasan && $item->samplingFisikRaw) ? 'complete' : 'incomplete';
-        })->countBy();
+        $samplingCompletion = (clone $baseQuery)
+            ->with(['samplingMobil', 'samplingDokumen', 'samplingFisikKemasan', 'samplingFisikRaw'])
+            ->get()
+            ->map(function ($item) {
+                return ($item->samplingMobil && $item->samplingDokumen && $item->samplingFisikKemasan && $item->samplingFisikRaw)
+                    ? 'complete' : 'incomplete';
+            })->countBy();
 
-        $trendKedatangan = IdentitasRM::selectRaw('DATE(tanggal_kedatangan) as tanggal, COUNT(*) as jumlah')
+        $trendKedatangan = (clone $baseQuery)
+            ->selectRaw('DATE(tanggal_kedatangan) as tanggal, COUNT(*) as jumlah')
             ->groupBy('tanggal')
             ->orderBy('tanggal', 'ASC')
             ->get();
@@ -51,11 +67,13 @@ class RMPMController extends Controller
         ]);
     }
 
-
     private function buildFilteredQuery(string $table, Request $request)
     {
+        [$startDate, $endDate] = $this->resolveDateRange($request);
+
         $query = DB::table($table)
-        ->join('identitas_rm_master', "$table.id_identitas", '=', 'identitas_rm_master.id');
+            ->join('identitas_rm_master', "$table.id_identitas", '=', 'identitas_rm_master.id')
+            ->whereBetween('identitas_rm_master.tanggal_kedatangan', [$startDate, $endDate]);
 
         if ($request->filled('jenis_gula')) {
             $query->where('identitas_rm_master.jenis_gula', $request->jenis_gula);
@@ -75,11 +93,11 @@ class RMPMController extends Controller
 
         foreach ($fields as $field) {
             if (isset($specialRules[$field]) && $specialRules[$field] === 'not_null') {
-                $yes = $query->whereNotNull($field)->count();
+                $yes = (clone $query)->whereNotNull($field)->count();
             } elseif (isset($specialRules[$field]) && $specialRules[$field] === 'equals_1') {
-                $yes = $query->where($field, 1)->count();
+                $yes = (clone $query)->where($field, 1)->count();
             } else {
-                $yes = $query->where(DB::raw("LOWER(TRIM(SUBSTRING_INDEX($field, ',', 1)))"), 'yes')->count();
+                $yes = (clone $query)->where(DB::raw("LOWER(TRIM(SUBSTRING_INDEX($field, ',', 1)))"), 'yes')->count();
             }
 
             $result[$field] = [
@@ -90,6 +108,7 @@ class RMPMController extends Controller
 
         return $result;
     }
+
     public function kondisiMobil(Request $request)
     {
         $query = $this->buildFilteredQuery('sampling_kondisi_mobil', $request);
@@ -97,6 +116,7 @@ class RMPMController extends Controller
 
         return response()->json(['mobil' => $this->buildResponse($fields, $query)]);
     }
+
     public function dokumen(Request $request)
     {
         $query = $this->buildFilteredQuery('sampling_dokumen', $request);
@@ -129,21 +149,30 @@ class RMPMController extends Controller
         return response()->json(['raw_material' => $this->buildResponse($fields, $query)]);
     }
 
-    public function rekapDisposisiTotal()
+    public function rekapDisposisiTotal(Request $request)
     {
+        [$startDate, $endDate] = $this->resolveDateRange($request);
+
         $all = DB::table('disposisi_rm')
-        ->select('disposisi', DB::raw('COUNT(*) as total'))
-        ->groupBy('disposisi')
-        ->get();
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->select('disposisi', DB::raw('COUNT(*) as total'))
+            ->groupBy('disposisi')
+            ->get();
 
         $pendingShort = DB::table('analisa_short_term_gkt')
-        ->whereNull('id_disposisi')->count();
+            ->whereNull('id_disposisi')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->count();
 
         $pendingGaram = DB::table('analisa_garam_gula')
-        ->whereNull('id_disposisi')->count();
+            ->whereNull('id_disposisi')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->count();
 
         $pendingLong = DB::table('analisa_long_term_gkt')
-        ->whereNull('disposisi')->count();
+            ->whereNull('disposisi')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->count();
 
         return response()->json([
             'rekap_disposisi' => $all,
@@ -153,6 +182,7 @@ class RMPMController extends Controller
 
     public function analisaParameterKualitasPerJenisGula(Request $request)
     {
+        [$startDate, $endDate] = $this->resolveDateRange($request);
         $jenisGula = $request->jenis_gula;
 
         if (!$jenisGula) {
@@ -160,46 +190,50 @@ class RMPMController extends Controller
         }
 
         if (in_array($jenisGula, ['Gula', 'Garam'])) {
-            // Analisa Garam/Gula
             $query = DB::table('analisa_garam_gula')
-            ->join('disposisi_rm', 'analisa_garam_gula.id_disposisi', '=', 'disposisi_rm.id')
-            ->join('identitas_rm_master', 'analisa_garam_gula.id_identitas', '=', 'identitas_rm_master.id')
-            ->where('identitas_rm_master.jenis_gula', $jenisGula)
+                ->join('disposisi_rm', 'analisa_garam_gula.id_disposisi', '=', 'disposisi_rm.id')
+                ->join('identitas_rm_master', 'analisa_garam_gula.id_identitas', '=', 'identitas_rm_master.id')
+                ->where('identitas_rm_master.jenis_gula', $jenisGula)
+                ->whereBetween('analisa_garam_gula.created_at', [$startDate, $endDate])
                 ->selectRaw("
-                disposisi_rm.disposisi,
-                AVG(`%ka`) as avg_ka,
-                AVG(`%nacl`) as avg_nacl,
-                AVG(gross_weight) as avg_weight,
-                COUNT(*) as jumlah
-            ")
+                    disposisi_rm.disposisi,
+                    AVG(`%ka`) as avg_ka,
+                    AVG(`%nacl`) as avg_nacl,
+                    AVG(gross_weight) as avg_weight,
+                    COUNT(*) as jumlah
+                ")
                 ->groupBy('disposisi_rm.disposisi')
                 ->get();
 
             return response()->json([
                 'jenis_gula' => $jenisGula,
                 'analisa' => 'garam_gula',
+                'start_date' => $startDate->toDateString(),
+                'end_date' => $endDate->toDateString(),
                 'data' => $query
             ]);
         }
 
         if (in_array($jenisGula, ['Gula Tebu', 'Gula Kelapa'])) {
-            // Analisa Short-Term
             $query = DB::table('analisa_short_term_gkt')
-            ->join('disposisi_rm', 'analisa_short_term_gkt.id_disposisi', '=', 'disposisi_rm.id')
-            ->join('identitas_rm_master', 'analisa_short_term_gkt.id_identitas', '=', 'identitas_rm_master.id')
-            ->where('identitas_rm_master.jenis_gula', $jenisGula)
+                ->join('disposisi_rm', 'analisa_short_term_gkt.id_disposisi', '=', 'disposisi_rm.id')
+                ->join('identitas_rm_master', 'analisa_short_term_gkt.id_identitas', '=', 'identitas_rm_master.id')
+                ->where('identitas_rm_master.jenis_gula', $jenisGula)
+                ->whereBetween('analisa_short_term_gkt.created_at', [$startDate, $endDate])
                 ->selectRaw("
-                disposisi_rm.disposisi,
-                AVG(brix) as avg_brix,
-                AVG(ph) as avg_ph,
-                COUNT(*) as jumlah
-            ")
+                    disposisi_rm.disposisi,
+                    AVG(brix) as avg_brix,
+                    AVG(ph) as avg_ph,
+                    COUNT(*) as jumlah
+                ")
                 ->groupBy('disposisi_rm.disposisi')
                 ->get();
 
             return response()->json([
                 'jenis_gula' => $jenisGula,
                 'analisa' => 'short_term_gkt',
+                'start_date' => $startDate->toDateString(),
+                'end_date' => $endDate->toDateString(),
                 'data' => $query
             ]);
         }

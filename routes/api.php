@@ -4,9 +4,12 @@ use App\Http\Controllers\Foreman\RMPMControllerForeman;
 use App\Http\Controllers\Api\ApiGGAGGASController;
 use App\Http\Controllers\Api\BlendingAwalController;
 use App\Http\Controllers\Api\BlendingAfterAdjustController;
+use App\Http\Controllers\Api\BlendingAfterAdjustMikroController;
 use App\Http\Controllers\Api\MonitoringTurunBlendingController;
 use App\Http\Controllers\Api\MonitoringStorageController;
+use App\Http\Controllers\Api\MonitoringStorageMikroController;
 use App\Http\Controllers\Api\RMPMController;
+use App\Models\BlendingAfterAdjustMikroModel;
 use App\Models\BlendingAfterAdjustModel;
 use Illuminate\Support\Facades\Route;
 
@@ -61,15 +64,18 @@ Route::prefix('ggas/gga')->group(function () {
     Route::get('/disposition-analysis', [ApiGGAGGASController::class, 'analisaDisposisi']);
 
 });
-Route::prefix('blending/awal')->group(function () {
-    Route::get('/analysis', [BlendingAwalController::class, 'analisaBlendingAwal']);
-    Route::get('/disposition-analysis', [BlendingAwalController::class, 'analisaDisposisi']);
+Route::prefix('blending/')->group(function () {
+    Route::get('/awal/analysis', [BlendingAwalController::class, 'analisaBlendingAwal']);
+    Route::get('/awal/disposition-analysis', [BlendingAwalController::class, 'analisaDisposisi']);
 
+    Route::get('/after/analysis', [BlendingAwalController::class, 'analisaBlendingAfterAdjust']);
+    Route::get('/after/disposition-analysis', [BlendingAwalController::class, 'analisaDisposisiAfterAdjust']);
 });
-Route::prefix('blending/after')->group(function () {
-    Route::get('/analysis', [BlendingAfterAdjustController::class, 'analisaBlendingAfter']);
-    Route::get('/disposition-analysis', [BlendingAfterAdjustController::class, 'analisaDisposisi']);
-});
+
+// Route::prefix('blending/after')->group(function () {
+//     Route::get('/analysis', [BlendingAfterAdjustController::class, 'analisaBlendingAfter']);
+//     Route::get('/disposition-analysis', [BlendingAfterAdjustController::class, 'analisaDisposisi']);
+// });
 Route::prefix('monitoring/turun')->group(function () {
     Route::get('/analysis', [MonitoringTurunBlendingController::class, 'analisaMonitoringTurun']);
     Route::get('/disposition-analysis', [MonitoringTurunBlendingController::class, 'analisaDisposisi']);
@@ -78,4 +84,13 @@ Route::prefix('monitoring/turun')->group(function () {
 Route::prefix('monitoring/storage')->group(function () {
     Route::get('/analysis', [MonitoringStorageController::class, 'analisaMonitoringStorage']);
     Route::get('/disposition-analysis', [MonitoringStorageController::class, 'analisaDisposisi']);
+});
+
+Route::prefix('blending/mikro')->group(function () {
+    Route::get('/analysis', [BlendingAfterAdjustMikroController::class, 'analisaBlendingMikro']);
+});
+
+
+Route::prefix('storage/mikro')->group(function () {
+    Route::get('/analysis', [MonitoringStorageMikroController::class, 'analisaStorageMikro']);
 });

@@ -28,6 +28,7 @@ use App\Http\Controllers\Supervisor\MonitoringStorageControllerSupervisor;
 use App\Http\Controllers\Supervisor\GgaGgasControllerSupervisor;
 use App\Http\Controllers\Supervisor\SamplingControllerSupervisor;
 use App\Http\Controllers\Supervisor\BlendingAwalControllerSupervisor;
+use App\Http\Controllers\DashboardController;
 
 // Login & Logout
 Route::get('/', [AuthController::class, 'loginForm']);
@@ -41,6 +42,18 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.su
 Route::get('/users', [AuthController::class, 'getUsers'])->name('users.get');
 Route::post('users/{id}', [AuthController::class, 'update'])->name('users.update'); // Update user
 Route::delete('users/{id}', [AuthController::class, 'destroy'])->name('users.destroy'); // Hapus user
+
+Route::prefix('dashboard')->group(function () {
+    Route::get('/gga-ggas', [DashboardController::class, 'dashboard_gga_ggas'])->name('dashboard.gga_ggas');
+    Route::get('/blending/awal', [DashboardController::class, 'dashboard_blending_awal'])->name('dashboard.blending_awal');
+    Route::get('/blending/after', [DashboardController::class, 'dashboard_blending_after'])->name('dashboard.blending_after');
+    Route::get('/rm', [DashboardController::class, 'dashboard_rm'])->name('dashboard.rm');
+    Route::get('/monitoring/turun', [DashboardController::class, 'dashboard_monitoring_turun'])->name('dashboard.monitoring_turun');
+    Route::get('/monitoring/storage', [DashboardController::class, 'dashboard_monitoring_storage'])->name('dashboard.monitoring_storage');
+    Route::get('/mikro/blending/after', [DashboardController::class, 'dashboard_blending_after_mikro'])->name('dashboard.mikro_blending');
+    Route::get('/mikro/monitoring/storage', [DashboardController::class, 'dashboard_monitoring_storage_mikro'])->name('dashboard.mikro_monitoring_storage');
+});
+
 
 Route::prefix('analis')->group(function () {
     Route::get('/analisa/temp/{identitasId}', [AuthController::class, 'getTemporary']);

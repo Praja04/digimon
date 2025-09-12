@@ -9,85 +9,157 @@ use App\Models\BlendingAwalModel;
 
 class BlendingAwalController extends Controller
 {
-    //
+    private function baseQuery($startDate, $endDate, $variant = null)
+    {
+        $query = BlendingAwalModel::with(['productionBatch:id,po_number,variant'])
+            ->whereBetween('created_at', [$startDate, $endDate]);
+
+        if ($variant) {
+            $query->whereHas('productionBatch', function ($q) use ($variant) {
+                $q->where('variant', $variant);
+            });
+        }
+
+        return $query;
+    }
+
+    private function classifyData($rawData)
+    {
+        $grouped = $rawData->groupBy(fn ($item) => $item->production_batch_id . '_' . $item->batch_range);
+
+        $blendingAwal = collect();
+        $blendingAfterAdjust = collect();
+
+        foreach ($grouped as $group) {
+            $awal = $group->firstWhere('revisi', null) ?? $group->firstWhere('revisi', 0);
+
+            if ($awal) {
+                $blendingAwal->push($awal);
+
+                $revisis = $group->where('revisi', '>', 0)->sortByDesc('revisi')->values();
+
+                foreach ($revisis as $rev) {
+                    if ($awal->disposition === 'Adjustment') {
+                        $blendingAfterAdjust->push($rev);
+                    } else {
+                        $blendingAwal->push($rev);
+                    }
+                }
+            }
+        }
+
+        return [$blendingAwal, $blendingAfterAdjust];
+    }
+
+    private function transformData($collection)
+    {
+        return $collection->map(function ($item) {
+            return [
+                'id'                   => $item->id,
+                'production_batch_id'  => $item->production_batch_id,
+                'batch_range'          => $item->batch_range,
+                'disposition'          => $item->disposition,
+                'created_at'           => $item->created_at,
+                'nomor_blending'       => $item->nomor_blending,
+                'volume'               => $item->volume,
+                'brix'                 => $item->brix,
+                'nacl'                 => $item->nacl,
+                'bj'                   => $item->bj,
+                'visco'                => $item->visco,
+                'aw'                   => $item->aw,
+                'buih'                 => $item->buih,
+                'organo'               => $item->organo,
+                'ph'                   => $item->ph,
+                'endapan'              => $item->endapan,
+                'warna'                => $item->warna,
+                'adjustment_qty_air'   => $item->adjustment_qty_air,
+                'adjustment_qty_garam' => $item->adjustment_qty_garam,
+                'adjustment_qty_gula'  => $item->adjustment_qty_gula,
+                'disposition_remarks'  => $item->disposition_remarks,
+                'revisi'               => $item->revisi,
+                'is_adjustment'        => $item->is_adjustment,
+                'updated_at'           => $item->updated_at,
+                'not_standar'          => $item->not_standar,
+                'created_by'           => $item->created_by,
+                'po_number'            => $item->productionBatch->po_number ?? null,
+                'variant'              => $item->productionBatch->variant ?? null,
+            ];
+        });
+    }
+
+    private function getDateRange(Request $request)
+    {
+        $startDate = $request->input('start_date')
+            ? Carbon::parse($request->input('start_date'))->startOfDay()
+            : Carbon::now()->subMonth()->startOfDay();
+
+        $endDate = $request->input('end_date')
+            ? Carbon::parse($request->input('end_date'))->endOfDay()
+            : Carbon::now()->endOfDay();
+
+        return [$startDate, $endDate];
+    }
+
     public function analisaBlendingAwal(Request $request)
     {
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        [$startDate, $endDate] = $this->getDateRange($request);
+        $variant = $request->input('variant');
 
-        $startDate = $startDate ? Carbon::parse($startDate)->startOfDay() : Carbon::now()->startOfDay();
-        $endDate = $endDate ? Carbon::parse($endDate)->endOfDay() : Carbon::now()->endOfDay();
+        $rawData = $this->baseQuery($startDate, $endDate, $variant)->get();
+        [$blendingAwal] = $this->classifyData($rawData);
 
-        $rawData = BlendingAwalModel::with(['productionBatch:id,po_number,variant'])
-            ->select(
-                'batch_range',
-                'nomor_blending',
-                'brix',
-                'nacl',
-                'bj',
-                'visco',
-                'aw',
-                'buih',
-                'organo',
-                'ph',
-                'revisi',
-                'production_batch_id',
-                'created_at'
-            )
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->orderBy('created_at')
-            ->get();
+        return response()->json([
+            'blending_awal' => $this->transformData($blendingAwal)->values()
+        ]);
+    }
 
-        $filtered = $rawData
-            ->groupBy('batch_range')
-            ->map(function ($group) {
-                return $group
-                    ->filter(fn ($item) => $item->revisi !== null)
-                    ->sortByDesc('revisi')
-                    ->first() ?? $group->first();
-            })
-            ->values()
-            ->map(function ($item) {
-                return [
-                    'batch_range' => $item->batch_range,
-                    'nomor_blending' => $item->nomor_blending,
-                    'brix' => $item->brix,
-                    'nacl' => $item->nacl,
-                    'bj' => $item->bj,
-                    'visco' => $item->visco,
-                    'aw' => $item->aw,
-                    'buih' => $item->buih,
-                    'organo' => $item->organo,
-                    'ph' => $item->ph,
-                    'created_at' => $item->created_at,
-                    'revisi' => $item->revisi,
-                    'po_number' => optional($item->productionBatch)->po_number,
-                    'variant' => optional($item->productionBatch)->variant
-                ];
-            });
+    public function analisaBlendingAfterAdjust(Request $request)
+    {
+        [$startDate, $endDate] = $this->getDateRange($request);
+        $variant = $request->input('variant');
 
-        return response()->json(['blending_awal' => $filtered]);
+        $rawData = $this->baseQuery($startDate, $endDate, $variant)->get();
+        [, $blendingAfterAdjust] = $this->classifyData($rawData);
+
+        return response()->json([
+            'blending_after_adjust' => $this->transformData($blendingAfterAdjust)->values()
+        ]);
     }
 
     public function analisaDisposisi(Request $request)
     {
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        [$startDate, $endDate] = $this->getDateRange($request);
+        $variant = $request->input('variant');
 
-        $startDate = $startDate ? Carbon::parse($startDate)->startOfDay() : Carbon::now()->startOfDay();
-        $endDate = $endDate ? Carbon::parse($endDate)->endOfDay() : Carbon::now()->endOfDay();
+        $rawData = $this->baseQuery($startDate, $endDate, $variant)->get();
+        [$blendingAwal] = $this->classifyData($rawData);
 
-        $dispositions = BlendingAwalModel::whereNotNull('disposition')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
+        $dispositions = $blendingAwal->whereNotNull('disposition')
             ->groupBy('disposition')
-            ->map(fn ($group) => $group->count());
+            ->map(fn ($g) => $g->count());
 
         return response()->json([
             'disposition_summary' => $dispositions,
+            'total_batches'       => $blendingAwal->count()
         ]);
     }
 
+    public function analisaDisposisiAfterAdjust(Request $request)
+    {
+        [$startDate, $endDate] = $this->getDateRange($request);
+        $variant = $request->input('variant');
 
+        $rawData = $this->baseQuery($startDate, $endDate, $variant)->get();
+        [, $blendingAfterAdjust] = $this->classifyData($rawData);
 
+        $dispositions = $blendingAfterAdjust->whereNotNull('disposition')
+            ->groupBy('disposition')
+            ->map(fn ($g) => $g->count());
+
+        return response()->json([
+            'disposition_summary' => $dispositions,
+            'total_batches'       => $blendingAfterAdjust->count(),
+            'data'                => $this->transformData($blendingAfterAdjust)->values()
+        ]);
+    }
 }
