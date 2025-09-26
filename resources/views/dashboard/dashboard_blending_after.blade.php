@@ -313,7 +313,7 @@
 
         let chartDisposition = null;
         let paramCharts = {};
-        const API_BASE = "/api/blending/after";
+        const API_BASE = "{{url('/api/blending/after')}}";
 
         function getParams() {
             const params = {};

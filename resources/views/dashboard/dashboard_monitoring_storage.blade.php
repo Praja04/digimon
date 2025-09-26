@@ -212,7 +212,7 @@ $parameters = ['brix', 'nacl', 'bj', 'visco', 'aw', 'buih', 'organo', 'ph'];
 
         let chartDisposition = null;
         let paramCharts = {};
-        const API_BASE = "/api/monitoring/storage";
+        const API_BASE = "{{url('api/monitoring/storage')}}";
 
         function getParams() {
             const params = {};

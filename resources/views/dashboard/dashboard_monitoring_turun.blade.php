@@ -210,7 +210,7 @@ $parameters = ['brix', 'nacl', 'bj', 'visco', 'aw', 'buih', 'organo', 'ph'];
 
         let chartDisposition = null;
         let paramCharts = {};
-        const API_BASE = "/api/monitoring/turun";
+        const API_BASE = "{{url('/api/monitoring/turun')}}";
 
         function getParams() {
             const params = {};

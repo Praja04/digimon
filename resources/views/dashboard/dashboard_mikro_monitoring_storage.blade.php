@@ -144,7 +144,7 @@ $parameters = ['eb', 'tpc', 'ym', 'hasil'];
         const $filterStatusText = document.getElementById("filter-status-text");
 
         let paramCharts = {};
-        const API_BASE = "/api/storage/mikro";
+        const API_BASE = "{{url('api/storage/mikro')}}";
 
         function getParams() {
             const params = {};

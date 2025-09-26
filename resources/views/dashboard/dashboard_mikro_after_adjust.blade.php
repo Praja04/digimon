@@ -144,7 +144,7 @@ $parameters = ['eb', 'tpc', 'ym', 'hasil'];
         const $filterStatusText = document.getElementById("filter-status-text");
 
         let paramCharts = {};
-        const API_BASE = "/api/blending/mikro";
+        const API_BASE = "{{url('api/blending/mikro')}}";
 
         function getParams() {
             const params = {};
