@@ -113,18 +113,7 @@ class BlendingAwalController extends Controller
         ]);
     }
 
-    public function analisaBlendingAfterAdjust(Request $request)
-    {
-        [$startDate, $endDate] = $this->getDateRange($request);
-        $variant = $request->input('variant');
-
-        $rawData = $this->baseQuery($startDate, $endDate, $variant)->get();
-        [, $blendingAfterAdjust] = $this->classifyData($rawData);
-
-        return response()->json([
-            'blending_after_adjust' => $this->transformData($blendingAfterAdjust)->values()
-        ]);
-    }
+    
 
     public function analisaDisposisi(Request $request)
     {
@@ -144,6 +133,19 @@ class BlendingAwalController extends Controller
         ]);
     }
 
+    
+    public function analisaBlendingAfterAdjust(Request $request)
+    {
+        [$startDate, $endDate] = $this->getDateRange($request);
+        $variant = $request->input('variant');
+
+        $rawData = $this->baseQuery($startDate, $endDate, $variant)->get();
+        [, $blendingAfterAdjust] = $this->classifyData($rawData);
+
+        return response()->json([
+            'blending_after_adjust' => $this->transformData($blendingAfterAdjust)->values()
+        ]);
+    }
     public function analisaDisposisiAfterAdjust(Request $request)
     {
         [$startDate, $endDate] = $this->getDateRange($request);

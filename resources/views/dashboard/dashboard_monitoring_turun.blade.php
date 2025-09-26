@@ -201,208 +201,213 @@ $parameters = ['brix', 'nacl', 'bj', 'visco', 'aw', 'buih', 'organo', 'ph'];
 <!-- JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.41.0/dist/apexcharts.min.js"></script>
 <script>
-    $(document).ready(function() {
-        var parameterList = ['brix', 'nacl', 'bj', 'visco', 'aw', 'buih', 'organo', 'ph'];
-        let chartInstances = {};
+    document.addEventListener("DOMContentLoaded", function() {
+        const $start = document.getElementById("start_date");
+        const $end = document.getElementById("end_date");
+        const $variant = document.getElementById("variant");
+        const $btnFilter = document.getElementById("filter-data");
+        const $btnReset = document.getElementById("reset-filter");
 
-        // Spinner
-        function showLoading(selector) {
-            $(selector).html(`
-            <div class="d-flex justify-content-center align-items-center" style="height: 280px;">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        `);
+        let chartDisposition = null;
+        let paramCharts = {};
+        const API_BASE = "/api/monitoring/turun";
+
+        function getParams() {
+            const params = {};
+            if ($start.value) params.start_date = $start.value;
+            if ($end.value) params.end_date = $end.value;
+            if ($variant.value) params.variant = $variant.value;
+            return new URLSearchParams(params).toString();
         }
 
-        // Init
-        initializeDashboard();
+        async function loadDisposition() {
+            try {
+                const res = await fetch(`${API_BASE}/disposition-analysis?${getParams()}`);
+                const data = await res.json();
+                const labels = Object.keys(data.disposition_summary || {});
+                const series = Object.values(data.disposition_summary || {});
+                const container = document.querySelector("#chart-disposition-blending");
 
-        // Apply filter
-        $('#filter-data').on('click', function() {
-            const start = $('#start_date').val();
-            const end = $('#end_date').val();
-            const variant = $('#variant').val();
+                if (series.length === 0) {
+                    if (chartDisposition) {
+                        chartDisposition.destroy();
+                        chartDisposition = null;
+                    }
+                    container.innerHTML = `<div class="text-center text-muted py-5">Tidak ada data untuk ditampilkan</div>`;
+                    return;
+                }
 
-            initializeDashboard(start, end, variant);
-        });
-
-        // Reset filter
-        $('#reset-filter').on('click', function() {
-            $('#start_date').val('');
-            $('#end_date').val('');
-            $('#variant').val('');
-            initializeDashboard();
-        });
-
-        function initializeDashboard(start = null, end = null, variant = null) {
-            showLoading('#chart-disposition-blending');
-            parameterList.forEach(p => showLoading(`#chart-${p}`));
-
-            loadMonitoringCharts(start, end, variant);
-            loadDispositionChart(start, end, variant);
-        }
-
-        // Load monitoring chart
-        function loadMonitoringCharts(startDate = null, endDate = null, variant = null) {
-            let url = "{{url('/api/monitoring/turun/analysis')}}";
-            let params = [];
-
-            if (startDate) params.push(`start_date=${startDate}`);
-            if (endDate) params.push(`end_date=${endDate}`);
-            if (variant) params.push(`variant=${variant}`);
-
-            if (params.length) url += `?${params.join('&')}`;
-
-            $.getJSON(url, function(response) {
-                const monitoringData = response.monitoring_turun_blending || [];
-
-                parameterList.forEach(parameter => {
-                    const series = monitoringData
-                        .filter(entry => entry[parameter] !== null)
-                        .map(entry => ({
-                            x: `Batch ${entry.batch_range} • Shift ${entry.shift}`,
-                            y: parseFloat(entry[parameter]),
-                            meta: {
-                                po: entry.po_number,
-                                variant: entry.variant
+                const options = {
+                    series: series,
+                    chart: {
+                        type: "donut",
+                        height: 320,
+                        animations: {
+                            enabled: true,
+                            easing: 'easeinout',
+                            speed: 1000,
+                            animateGradually: {
+                                enabled: true,
+                                delay: 200
+                            },
+                            dynamicAnimation: {
+                                enabled: true,
+                                speed: 500
                             }
-                        }));
-
-                    renderLineChart(`#chart-${parameter}`, series, parameter.toUpperCase());
-                });
-            });
-        }
-
-        // Load disposition chart
-        function loadDispositionChart(startDate = null, endDate = null, variant = null) {
-            let url = "{{url('/api/monitoring/turun/disposition-analysis')}}";
-            let params = [];
-
-            if (startDate) params.push(`start_date=${startDate}`);
-            if (endDate) params.push(`end_date=${endDate}`);
-            if (variant) params.push(`variant=${variant}`);
-
-            if (params.length) url += `?${params.join('&')}`;
-
-            $.getJSON(url, function(response) {
-                const disposition = response.disposition_summary || {};
-                renderBarChart('#chart-disposition-blending', disposition, 'Disposition');
-            });
-        }
-
-        // Render line chart
-        function renderLineChart(selector, data, title) {
-            if (chartInstances[selector]) {
-                chartInstances[selector].destroy();
-                delete chartInstances[selector];
-            }
-
-            if (!data || data.length === 0) {
-                $(selector).html(`
-                <div class="alert alert-info text-center" role="alert" style="height:300px;">
-                    <i class="ri-information-line me-2"></i>No ${title} data available.
-                </div>
-            `);
-                return;
-            }
-
-            const categories = data.map(p => p.x);
-            const values = data.map(p => p.y);
-            const metaData = data.map(p => p.meta);
-
-            const options = {
-                chart: {
-                    type: 'line',
-                    height: 320,
-                    animations: {
+                        }
+                    },
+                    labels: labels,
+                    legend: {
+                        position: "bottom"
+                    },
+                    colors: ["#1abc9c", "#e67e22", "#9b59b6", "#3498db", "#e74c3c"],
+                    dataLabels: {
                         enabled: true
                     }
-                },
-                series: [{
-                    name: title,
-                    data: values
-                }],
-                xaxis: {
-                    categories: categories
-                },
-                stroke: {
-                    curve: 'smooth',
-                    width: 3
-                },
-                markers: {
-                    size: 5
-                },
-                tooltip: {
-                    custom: function({
-                        series,
-                        dataPointIndex
-                    }) {
-                        const meta = metaData[dataPointIndex];
-                        return `
-                        <div class="p-2">
-                            <strong>${title}: ${series[0][dataPointIndex]}</strong><br/>
-                            PO: ${meta.po}<br/>
-                            Variant: ${meta.variant}
-                        </div>
-                    `;
-                    }
-                }
-            };
+                };
 
-            $(selector).html('');
-            chartInstances[selector] = new ApexCharts(document.querySelector(selector), options);
-            chartInstances[selector].render();
+                container.innerHTML = "";
+                chartDisposition = new ApexCharts(container, options);
+                chartDisposition.render();
+            } catch (err) {
+                console.error("Error loading disposition:", err);
+            }
         }
+        async function loadParameters() {
+            try {
+                const res = await fetch(`${API_BASE}/analysis?${getParams()}`);
+                const data = await res.json();
+                const monitoringData = data.monitoring_turun_blending || [];
 
-        // Render bar chart
-        function renderBarChart(selector, data, title) {
-            if (chartInstances[selector]) {
-                chartInstances[selector].destroy();
-                delete chartInstances[selector];
-            }
+                monitoringData.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
-            if (!data || Object.keys(data).length === 0) {
-                $(selector).html(`
-                <div class="alert alert-info text-center" role="alert" style="height:300px;">
-                    <i class="ri-information-line me-2"></i>No ${title} data available.
-                </div>
-            `);
-                return;
-            }
+                const params = ["brix", "nacl", "bj", "visco", "aw", "buih", "organo", "ph"];
 
-            const options = {
-                chart: {
-                    type: 'bar',
-                    height: 320
-                },
-                series: [{
-                    name: 'Jumlah',
-                    data: Object.values(data),
-                    color: '#11998e'
-                }],
-                xaxis: {
-                    categories: Object.keys(data)
-                },
-                plotOptions: {
-                    bar: {
-                        borderRadius: 4,
-                        dataLabels: {
-                            position: 'top'
+                params.forEach(param => {
+                    const el = document.querySelector(`#chart-${param}`);
+                    if (!el) return;
+
+                    const validData = monitoringData.filter(item => {
+                        const val = item[param];
+                        return val !== null && val !== undefined && val !== "";
+                    });
+
+                    const seriesData = validData.map(item => [
+                        new Date(item.created_at).getTime(),
+                        parseFloat(item[param])
+                    ]);
+
+                    if (seriesData.length === 0) {
+                        if (paramCharts[param]) {
+                            paramCharts[param].destroy();
+                            paramCharts[param] = null;
                         }
+                        el.innerHTML = `<div class="text-center text-muted py-5">Tidak ada data untuk parameter ${param.toUpperCase()}</div>`;
+                        return;
                     }
-                },
-                dataLabels: {
-                    enabled: true,
-                    formatter: val => `${val} cases`
-                }
-            };
 
-            $(selector).html('');
-            chartInstances[selector] = new ApexCharts(document.querySelector(selector), options);
-            chartInstances[selector].render();
+                    const options = {
+                        series: [{
+                            name: param.toUpperCase(),
+                            data: seriesData
+                        }],
+                        chart: {
+                            type: "line",
+                            height: 280,
+                            zoom: {
+                                enabled: true,
+                                type: "x"
+                            },
+                            toolbar: {
+                                show: true,
+                                tools: {
+                                    download: true,
+                                    selection: true,
+                                    zoom: true,
+                                    zoomin: true,
+                                    zoomout: true,
+                                    pan: true,
+                                    reset: true
+                                }
+                            },
+                            animations: {
+                                enabled: true,
+                                easing: 'easeinout',
+                                speed: 800,
+                                animateGradually: {
+                                    enabled: true,
+                                    delay: 150
+                                },
+                                dynamicAnimation: {
+                                    enabled: true,
+                                    speed: 350
+                                }
+                            }
+                        },
+                        stroke: {
+                            curve: "smooth",
+                            width: 3
+                        },
+                        xaxis: {
+                            type: "datetime"
+                        },
+                        yaxis: {
+                            labels: {
+                                formatter: val => val != null ? val.toFixed(2) : "-"
+                            }
+                        },
+                        markers: {
+                            size: 4
+                        },
+                        tooltip: {
+                            x: {
+                                format: "dd MMM yyyy HH:mm"
+                            },
+                            y: {
+                                formatter: val => val != null ? val.toFixed(2) : "-"
+                            },
+                            custom: function({
+                                series,
+                                seriesIndex,
+                                dataPointIndex
+                            }) {
+                                const item = validData[dataPointIndex];
+                                return item ? `
+                            <div class="p-2">
+                                <strong>${param.toUpperCase()}: ${series[seriesIndex][dataPointIndex]}</strong><br/>
+                                Variant: ${item.variant || "-"}<br/>
+                                PO: ${item.po_number || "-"}<br/>
+                                Shift: ${item.shift || "-"}<br/>
+                                Date: ${new Date(item.created_at).toLocaleString("id-ID")}
+                            </div>
+                        ` : "";
+                            }
+                        }
+                    };
+
+                    el.innerHTML = "";
+                    paramCharts[param] = new ApexCharts(el, options);
+                    paramCharts[param].render();
+                });
+            } catch (err) {
+                console.error("Error loading parameters:", err);
+            }
         }
+
+        function loadAll() {
+            loadDisposition();
+            loadParameters();
+        }
+
+        $btnFilter.addEventListener("click", loadAll);
+        $btnReset.addEventListener("click", () => {
+            $start.value = "";
+            $end.value = "";
+            $variant.value = "";
+            loadAll();
+        });
+
+        loadAll();
     });
 </script>
 @endsection

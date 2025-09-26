@@ -134,116 +134,172 @@ $parameters = ['eb', 'tpc', 'ym', 'hasil'];
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-    $(document).ready(function() {
-        const params = ['eb', 'tpc', 'ym', 'hasil'];
+    document.addEventListener("DOMContentLoaded", function() {
+        const $start = document.getElementById("start_date");
+        const $end = document.getElementById("end_date");
+        const $variant = document.getElementById("variant");
+        const $btnFilter = document.getElementById("filter-data");
+        const $btnReset = document.getElementById("reset-filter");
+        const $filterStatus = document.getElementById("filter-status");
+        const $filterStatusText = document.getElementById("filter-status-text");
 
-        fetchData();
+        let paramCharts = {};
+        const API_BASE = "/api/blending/mikro";
 
-        $('#filter-data').on('click', function() {
-            const s = $('#start_date').val();
-            const e = $('#end_date').val();
-            const v = $('#variant').val();
-            fetchData(s, e, v);
-            updateFilterStatus(s, e, v);
-        });
-
-        $('#reset-filter').on('click', function() {
-            $('#start_date').val('');
-            $('#end_date').val('');
-            $('#variant').val('');
-            fetchData();
-            updateFilterStatus('', '', '');
-        });
-
-        function updateFilterStatus(s, e, v) {
-            let txt = 'All data displayed';
-            if (s || e || v) {
-                txt = 'Filter: ';
-                if (s && e) txt += `from ${s} to ${e} `;
-                if (v) txt += `variant ${v}`;
-            }
-            $('#filter-status-text').text(txt);
-            $('#filter-status').show();
+        function getParams() {
+            const params = {};
+            if ($start.value) params.start_date = $start.value;
+            if ($end.value) params.end_date = $end.value;
+            if ($variant.value) params.variant = $variant.value;
+            return new URLSearchParams(params).toString();
         }
 
-        function parseNumeric(val) {
-            if (val === null || val === undefined || val === '') return null;
-            return parseFloat(String(val).replace(',', '.'));
-        }
+        async function loadParameters() {
+            try {
+                const res = await fetch(`${API_BASE}/analysis?${getParams()}`);
+                const data = await res.json();
+                const mikroData = data.blending_after_adjust_mikro || [];
 
-        function fetchData(s = null, e = null, v = null) {
-            let url = "{{url('/api/blending/mikro/analysis')}}";
-            const q = [];
-            if (s && e) q.push(`start_date=${s}&end_date=${e}`);
-            if (v) q.push(`variant=${v}`);
-            if (q.length) url += '?' + q.join('&');
+                // Update filter status
+                if (data.filter_applied) {
+                    const {
+                        start_date,
+                        end_date,
+                        variant,
+                        total_records
+                    } = data.filter_applied;
+                    $filterStatus.style.display = "inline-block";
+                    $filterStatusText.textContent = `Menampilkan ${total_records} data untuk ${variant !== "all" ? variant : "semua variant"} dari ${start_date} hingga ${end_date}`;
+                }
 
-            $.getJSON(url, function(res) {
-                const data = res.blending_after_adjust_mikro || [];
-                params.forEach(p => {
-                    const series = data.map(item => {
-                        const y = parseNumeric(item[p]);
-                        if (y === null) return null;
-                        return {
-                            x: `Batch ${item.batch_range} (No ${item.nomor_blending}, ${item.variant})`,
-                            y: y,
-                            meta: {
-                                po: item.po_number,
-                                variant: item.variant,
-                                created: item.created_at
+                mikroData.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+                const params = ["eb", "tpc", "ym", "hasil"];
+
+                params.forEach(param => {
+                    const el = document.querySelector(`#chart-${param}`);
+                    if (!el) return;
+
+                    const validData = mikroData.filter(item => {
+                        const val = item[param];
+                        return val !== null && val !== undefined && val !== "";
+                    });
+
+                    const seriesData = validData.map(item => [
+                        new Date(item.created_at).getTime(),
+                        parseFloat(item[param])
+                    ]);
+
+                    if (seriesData.length === 0) {
+                        if (paramCharts[param]) {
+                            paramCharts[param].destroy();
+                            paramCharts[param] = null;
+                        }
+                        el.innerHTML = `<div class="text-center text-muted py-5">Tidak ada data untuk parameter ${param.toUpperCase()}</div>`;
+                        return;
+                    }
+
+                    const options = {
+                        series: [{
+                            name: param.toUpperCase(),
+                            data: seriesData
+                        }],
+                        chart: {
+                            type: "line",
+                            height: 280,
+                            zoom: {
+                                enabled: true,
+                                type: "x"
+                            },
+                            toolbar: {
+                                show: true,
+                                tools: {
+                                    download: true,
+                                    selection: true,
+                                    zoom: true,
+                                    zoomin: true,
+                                    zoomout: true,
+                                    pan: true,
+                                    reset: true
+                                }
+                            },
+                            animations: {
+                                enabled: true,
+                                easing: 'easeinout',
+                                speed: 800,
+                                animateGradually: {
+                                    enabled: true,
+                                    delay: 150
+                                },
+                                dynamicAnimation: {
+                                    enabled: true,
+                                    speed: 350
+                                }
+                            }
+                        },
+                        stroke: {
+                            curve: "smooth",
+                            width: 3
+                        },
+                        xaxis: {
+                            type: "datetime"
+                        },
+                        yaxis: {
+                            labels: {
+                                formatter: val => val != null ? val.toFixed(2) : "-"
+                            }
+                        },
+                        markers: {
+                            size: 4
+                        },
+                        tooltip: {
+                            x: {
+                                format: "dd MMM yyyy HH:mm"
+                            },
+                            y: {
+                                formatter: val => val != null ? val.toFixed(2) : "-"
+                            },
+                            custom: function({
+                                series,
+                                seriesIndex,
+                                dataPointIndex
+                            }) {
+                                const item = validData[dataPointIndex];
+                                return item ? `
+                                <div class="p-2">
+                                    <strong>${param.toUpperCase()}: ${series[seriesIndex][dataPointIndex]}</strong><br/>
+                                    Variant: ${item.variant || "-"}<br/>
+                                    PO: ${item.po_number || "-"}<br/>
+                                    Volume: ${item.volume_blending || "-"}<br/>
+                                    Date: ${new Date(item.created_at).toLocaleString("id-ID")}
+                                </div>
+                            ` : "";
                             }
                         }
-                    }).filter(Boolean);
-                    renderChart(`#chart-${p}`, series, p.toUpperCase());
+                    };
+
+                    el.innerHTML = "";
+                    paramCharts[param] = new ApexCharts(el, options);
+                    paramCharts[param].render();
                 });
-            });
+            } catch (err) {
+                console.error("Error loading mikro parameters:", err);
+            }
         }
 
-        function renderChart(sel, series, title) {
-            $(sel).html('');
-            new ApexCharts(document.querySelector(sel), {
-                chart: {
-                    type: 'line',
-                    height: 350,
-                    zoom: {
-                        enabled: true
-                    }
-                },
-                series: [{
-                    name: title,
-                    data: series
-                }],
-                stroke: {
-                    curve: 'smooth',
-                    width: 3
-                },
-                markers: {
-                    size: 4
-                },
-                xaxis: {
-                    type: 'category',
-                    labels: {
-                        rotate: -45
-                    }
-                },
-                yaxis: {
-                    labels: {
-                        formatter: val => val.toFixed(2)
-                    }
-                },
-                tooltip: {
-                    custom: ({
-                        series,
-                        seriesIndex,
-                        dataPointIndex,
-                        w
-                    }) => {
-                        const it = w.config.series[seriesIndex].data[dataPointIndex];
-                        return `<div><b>${title}:</b> ${it.y}<br>PO: ${it.meta.po}<br>Variant: ${it.meta.variant}</div>`;
-                    }
-                }
-            }).render();
+        function loadAll() {
+            loadParameters();
         }
+
+        $btnFilter.addEventListener("click", loadAll);
+        $btnReset.addEventListener("click", () => {
+            $start.value = "";
+            $end.value = "";
+            $variant.value = "";
+            loadAll();
+        });
+
+        loadAll();
     });
 </script>
 @endsection

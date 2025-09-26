@@ -68,8 +68,10 @@
                             <option value="">-- All Variants --</option>
                             <option value="SS1">SS1</option>
                             <option value="SS2">SS2</option>
-                            <option value="SS3">SS3</option>
-                            <option value="SS4">SS4</option>
+                            <option value="BB">BB</option>
+                            <option value="MSD NR1">MSD NR1</option>
+                            <option value="MSD NR2">MSD NR2</option>
+                            <option value="JB">JB</option>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -201,282 +203,215 @@ $parameters = ['brix', 'nacl', 'bj', 'visco', 'aw', 'buih', 'organo', 'ph'];
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.41.0/dist/apexcharts.min.js"></script>
 <script>
-    $(document).ready(function() {
-        const params = ['brix', 'nacl', 'bj', 'visco', 'aw', 'buih', 'organo', 'ph'];
+    document.addEventListener("DOMContentLoaded", function() {
+        const $start = document.getElementById("start_date");
+        const $end = document.getElementById("end_date");
+        const $variant = document.getElementById("variant");
+        const $btnFilter = document.getElementById("filter-data");
+        const $btnReset = document.getElementById("reset-filter");
 
-        // Initial load
-        fetchData();
-        fetchDispositionData();
+        let chartDisposition = null;
+        let paramCharts = {};
+        const API_BASE = "/api/monitoring/storage";
 
-        // Apply filter
-        $('#filter-data').on('click', function() {
-            const start = $('#start_date').val();
-            const end = $('#end_date').val();
-            const variant = $('#variant').val();
-
-            console.log('Filter applied:', {
-                start,
-                end,
-                variant
-            });
-
-            fetchData(start, end, variant);
-            fetchDispositionData(start, end, variant);
-            updateFilterStatus(start, end, variant);
-        });
-
-        // Reset filter
-        $('#reset-filter').on('click', function() {
-            $('#start_date').val('');
-            $('#end_date').val('');
-            $('#variant').val('');
-            console.log('Filter reset');
-
-            fetchData();
-            fetchDispositionData();
-            updateFilterStatus('', '', '');
-        });
-
-        // Update filter status display
-        function updateFilterStatus(startDate, endDate, variant) {
-            let statusText = 'Showing ';
-            const filters = [];
-
-            if (startDate && endDate) filters.push(`from ${startDate} to ${endDate}`);
-            else if (startDate) filters.push(`from ${startDate}`);
-            else if (endDate) filters.push(`until ${endDate}`);
-
-            if (variant && variant !== '') filters.push(`variant: ${variant}`);
-
-            if (filters.length > 0) {
-                statusText += filters.join(', ');
-                $('#filter-status-text').text(statusText);
-                $('#filter-status').removeClass('bg-soft-info text-info').addClass('bg-soft-primary text-primary').show();
-            } else {
-                $('#filter-status-text').text('All data displayed');
-                $('#filter-status').removeClass('bg-soft-primary text-primary').addClass('bg-soft-info text-info').show();
-            }
+        function getParams() {
+            const params = {};
+            if ($start.value) params.start_date = $start.value;
+            if ($end.value) params.end_date = $end.value;
+            if ($variant.value) params.variant = $variant.value;
+            return new URLSearchParams(params).toString();
         }
 
-        // Helper: parsing numeric, skip if tidak valid
-        function parseNumericValue(value) {
-            if (value === null || value === undefined || value === '' || value === 'null') return null;
-            const stringValue = String(value).trim();
-            const numericMatch = stringValue.match(/^(\d+(?:[.,]\d+)?)/);
-            if (numericMatch) return parseFloat(numericMatch[1].replace(',', '.'));
-            return null;
-        }
+        async function loadDisposition() {
+            try {
+                const res = await fetch(`${API_BASE}/disposition-analysis?${getParams()}`);
+                const data = await res.json();
+                const labels = Object.keys(data.disposition_summary || {});
+                const series = Object.values(data.disposition_summary || {});
+                const container = document.querySelector("#chart-disposition-storage");
 
-        // === Fetch & Render Monitoring Storage ===
-        function fetchData(startDate = null, endDate = null, variant = null) {
-            let url = "{{ url('/api/monitoring/storage/analysis') }}";
-            const paramsUrl = [];
-
-            if (startDate && endDate) paramsUrl.push(`start_date=${startDate}&end_date=${endDate}`);
-            if (variant && variant !== '') paramsUrl.push(`variant=${variant}`);
-            if (paramsUrl.length) url += '?' + paramsUrl.join('&');
-
-            console.log('Fetching data from:', url);
-
-            $.getJSON(url, function(response) {
-                const data = response.monitoring_storage || [];
-
-                params.forEach(param => {
-                    const seriesData = data
-                        .map(item => {
-                            const numericValue = parseNumericValue(item[param]);
-                            if (numericValue === null) return null; // skip null
-                            return {
-                                x: `Batch ${item.batch_range} (No ${item.nomor_blending}, ${item.variant})`,
-                                y: numericValue,
-                                meta: {
-                                    po: item.po_number,
-                                    variant: item.variant,
-                                    originalValue: item[param],
-                                    createdAt: item.created_at
-                                }
-                            };
-                        })
-                        .filter(item => item !== null);
-
-                    renderLineChart(`#chart-${param}`, seriesData, param.toUpperCase());
-                    console.log(`Data for ${param}:`, seriesData);
-                });
-            }).fail(function(xhr, status, error) {
-                console.error('Error fetching data:', error);
-            });
-        }
-
-        // === Fetch & Render Disposition Data ===
-        function fetchDispositionData(startDate = null, endDate = null, variant = null) {
-            let url = "{{ url('/api/monitoring/storage/disposition-analysis') }}";
-            const paramsUrl = [];
-
-            if (startDate && endDate) paramsUrl.push(`start_date=${startDate}&end_date=${endDate}`);
-            if (variant && variant !== '') paramsUrl.push(`variant=${variant}`);
-            if (paramsUrl.length) url += '?' + paramsUrl.join('&');
-
-            $.getJSON(url, function(response) {
-                const summary = response.disposition_summary || {};
-                const labels = Object.keys(summary);
-                const counts = Object.values(summary);
+                if (series.length === 0) {
+                    if (chartDisposition) {
+                        chartDisposition.destroy();
+                        chartDisposition = null;
+                    }
+                    container.innerHTML = `<div class="text-center text-muted py-5">Tidak ada data untuk ditampilkan</div>`;
+                    return;
+                }
 
                 const options = {
+                    series: series,
                     chart: {
-                        type: 'bar',
-                        height: 350,
+                        type: "donut",
+                        height: 320,
                         animations: {
                             enabled: true,
                             easing: 'easeinout',
-                            speed: 800
+                            speed: 1000,
+                            animateGradually: {
+                                enabled: true,
+                                delay: 200
+                            },
+                            dynamicAnimation: {
+                                enabled: true,
+                                speed: 500
+                            }
                         }
                     },
-                    series: counts.length ? [{
-                        name: 'Jumlah',
-                        data: counts
-                    }] : [],
-                    noData: {
-                        text: "No Data Found",
-                        align: 'center',
-                        verticalAlign: 'middle',
-                        style: {
-                            fontSize: '14px',
-                            color: '#999'
-                        }
+                    labels: labels,
+                    legend: {
+                        position: "bottom"
                     },
-                    xaxis: {
-                        categories: labels,
-                        title: {
-                            text: 'Disposition Type'
-                        }
-                    },
-                    yaxis: {
-                        title: {
-                            text: 'Total Cases'
-                        }
-                    },
-                    title: {
-                        text: 'Monitoring Storage Disposition Summary',
-                        align: 'left'
-                    },
-                    colors: ['#0AB39C'],
-                    tooltip: {
-                        y: {
-                            formatter: val => `${val} kasus`
-                        }
+                    colors: ["#1abc9c", "#e67e22", "#9b59b6", "#3498db", "#e74c3c"],
+                    dataLabels: {
+                        enabled: true
                     }
                 };
 
-                $('#chart-disposition-storage').html('');
-                new ApexCharts(document.querySelector('#chart-disposition-storage'), options).render();
-            }).fail(function(xhr, status, error) {
-                console.error('Error fetching disposition data:', error);
-            });
-        }
-
-        // === Render Line Chart ===
-        function renderLineChart(selector, seriesData, title) {
-            if (seriesData.length && seriesData[0].meta?.createdAt) {
-                seriesData.sort((a, b) => new Date(a.meta.createdAt) - new Date(b.meta.createdAt));
+                container.innerHTML = "";
+                chartDisposition = new ApexCharts(container, options);
+                chartDisposition.render();
+            } catch (err) {
+                console.error("Error loading disposition:", err);
             }
-
-            const options = {
-                chart: {
-                    type: 'line',
-                    height: 350,
-                    zoom: {
-                        enabled: true
-                    },
-                    animations: {
-                        enabled: true,
-                        easing: 'easeinout',
-                        speed: 800
-                    }
-                },
-                series: seriesData.length ? [{
-                    name: title,
-                    data: seriesData
-                }] : [],
-                noData: {
-                    text: "No Data Found",
-                    align: 'center',
-                    verticalAlign: 'middle',
-                    style: {
-                        fontSize: '14px',
-                        color: '#999'
-                    }
-                },
-                stroke: {
-                    curve: 'smooth',
-                    width: 3
-                },
-                markers: {
-                    size: 4,
-                    hover: {
-                        size: 6
-                    }
-                },
-                title: {
-                    text: `${title} Trend`,
-                    align: 'left'
-                },
-                xaxis: {
-                    type: 'category',
-                    title: {
-                        text: 'Batch'
-                    },
-                    labels: {
-                        rotate: -45,
-                        style: {
-                            fontSize: '12px'
-                        }
-                    }
-                },
-                yaxis: {
-                    title: {
-                        text: title
-                    },
-                    labels: {
-                        formatter: val => typeof val === 'number' ? val.toFixed(2) : val
-                    }
-                },
-                tooltip: {
-                    shared: false,
-                    custom: function({
-                        series,
-                        seriesIndex,
-                        dataPointIndex,
-                        w
-                    }) {
-                        const item = w.config.series[seriesIndex]?.data[dataPointIndex];
-                        if (!item) return `<div class="apex-tooltip">Data tidak tersedia</div>`;
-                        const formattedValue = typeof item.y === 'number' ? item.y.toFixed(2) : item.y;
-                        return `
-                        <div class="apex-tooltip" style="padding:8px; background:white; border:1px solid #ccc; border-radius:4px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
-                            <strong>${title}: ${formattedValue}</strong><br/>
-                            <small>PO: ${item.meta?.po || '-'}</small><br/>
-                            <small>Variant: ${item.meta?.variant || '-'}</small><br/>
-                            ${item.meta?.originalValue ? `<small>Original: ${item.meta.originalValue}</small>` : ''}
-                        </div>
-                    `;
-                    }
-                },
-                grid: {
-                    borderColor: '#f1f1f1',
-                    strokeDashArray: 4
-                },
-                colors: ['#667eea']
-            };
-
-            $(selector).html('');
-            new ApexCharts(document.querySelector(selector), options).render();
         }
 
-        // Initialize filter status
-        updateFilterStatus('', '', '');
+        async function loadParameters() {
+            try {
+                const res = await fetch(`${API_BASE}/analysis?${getParams()}`);
+                const data = await res.json();
+                const storageData = data.monitoring_storage || [];
+
+                storageData.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+                const params = ["brix", "nacl", "bj", "visco", "aw", "buih", "organo", "ph"];
+
+                params.forEach(param => {
+                    const el = document.querySelector(`#chart-${param}`);
+                    if (!el) return;
+
+                    const validData = storageData.filter(item => {
+                        const val = item[param];
+                        return val !== null && val !== undefined && val !== "";
+                    });
+
+                    const seriesData = validData.map(item => [
+                        new Date(item.created_at).getTime(),
+                        parseFloat(item[param])
+                    ]);
+
+                    if (seriesData.length === 0) {
+                        if (paramCharts[param]) {
+                            paramCharts[param].destroy();
+                            paramCharts[param] = null;
+                        }
+                        el.innerHTML = `<div class="text-center text-muted py-5">Tidak ada data untuk parameter ${param.toUpperCase()}</div>`;
+                        return;
+                    }
+
+                    const options = {
+                        series: [{
+                            name: param.toUpperCase(),
+                            data: seriesData
+                        }],
+                        chart: {
+                            type: "line",
+                            height: 280,
+                            zoom: {
+                                enabled: true,
+                                type: "x"
+                            },
+                            toolbar: {
+                                show: true,
+                                tools: {
+                                    download: true,
+                                    selection: true,
+                                    zoom: true,
+                                    zoomin: true,
+                                    zoomout: true,
+                                    pan: true,
+                                    reset: true
+                                }
+                            },
+                            animations: {
+                                enabled: true,
+                                easing: 'easeinout',
+                                speed: 800,
+                                animateGradually: {
+                                    enabled: true,
+                                    delay: 150
+                                },
+                                dynamicAnimation: {
+                                    enabled: true,
+                                    speed: 350
+                                }
+                            }
+                        },
+                        stroke: {
+                            curve: "smooth",
+                            width: 3
+                        },
+                        xaxis: {
+                            type: "datetime"
+                        },
+                        yaxis: {
+                            labels: {
+                                formatter: val => val != null ? val.toFixed(2) : "-"
+                            }
+                        },
+                        markers: {
+                            size: 4
+                        },
+                        tooltip: {
+                            x: {
+                                format: "dd MMM yyyy HH:mm"
+                            },
+                            y: {
+                                formatter: val => val != null ? val.toFixed(2) : "-"
+                            },
+                            custom: function({
+                                series,
+                                seriesIndex,
+                                dataPointIndex
+                            }) {
+                                const item = validData[dataPointIndex];
+                                return item ? `
+                                <div class="p-2">
+                                    <strong>${param.toUpperCase()}: ${series[seriesIndex][dataPointIndex]}</strong><br/>
+                                    Variant: ${item.variant || "-"}<br/>
+                                    PO: ${item.po_number || "-"}<br/>
+                                    Date: ${new Date(item.created_at).toLocaleString("id-ID")}
+                                </div>
+                            ` : "";
+                            }
+                        }
+                    };
+
+                    el.innerHTML = "";
+                    paramCharts[param] = new ApexCharts(el, options);
+                    paramCharts[param].render();
+                });
+            } catch (err) {
+                console.error("Error loading parameters:", err);
+            }
+        }
+
+        function loadAll() {
+            loadDisposition();
+            loadParameters();
+        }
+
+        $btnFilter.addEventListener("click", loadAll);
+        $btnReset.addEventListener("click", () => {
+            $start.value = "";
+            $end.value = "";
+            $variant.value = "";
+            loadAll();
+        });
+
+        loadAll();
     });
 </script>
-
 
 
 @endsection

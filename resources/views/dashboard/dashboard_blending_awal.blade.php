@@ -304,390 +304,211 @@
 <!-- Enhanced JavaScript with loading states -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.41.0/dist/apexcharts.min.js"></script>
 <script>
-    $(document).ready(function() {
-        const params = ['brix', 'nacl', 'bj', 'visco', 'aw', 'buih', 'organo', 'ph'];
-        let chartInstances = {};
+    document.addEventListener("DOMContentLoaded", function() {
+        const $start = document.getElementById("start_date");
+        const $end = document.getElementById("end_date");
+        const $variant = document.getElementById("variant");
+        const $btnFilter = document.getElementById("filter-data");
+        const $btnReset = document.getElementById("reset-filter");
 
-        // Loading spinner function
-        function showLoading(selector) {
-            $(selector).html(`
-                <div class="d-flex justify-content-center align-items-center" style="height: 300px;">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            `);
+        let chartDisposition = null;
+        let paramCharts = {};
+        const API_BASE = "/api/blending/awal";
+
+        function getParams() {
+            const params = {};
+            if ($start.value) params.start_date = $start.value;
+            if ($end.value) params.end_date = $end.value;
+            if ($variant.value) params.variant = $variant.value;
+            return new URLSearchParams(params).toString();
         }
 
-        // Initialize dashboard
-        function initializeDashboard() {
-            // Show loading for all charts
-            showLoading('#chart-disposition-blending');
-            params.forEach(param => showLoading(`#chart-${param}`));
+        async function loadDisposition() {
+            try {
+                const res = await fetch(`${API_BASE}/disposition-analysis?${getParams()}`);
+                const data = await res.json();
+                const labels = Object.keys(data.disposition_summary || {});
+                const series = Object.values(data.disposition_summary || {});
+                const container = document.querySelector("#chart-disposition-blending");
 
-            // Load default data
-            fetchBlendingData();
-            fetchDispositionData();
+                if (series.length === 0) {
+                    if (chartDisposition) {
+                        chartDisposition.destroy(); // hapus chart lama
+                        chartDisposition = null;
+                    }
+                    container.innerHTML = `<div class="text-center text-muted py-5">Tidak ada data untuk ditampilkan</div>`;
+                    return;
+                }
+
+                const options = {
+                    series: series,
+                    chart: {
+                        type: "donut",
+                        height: 320,
+                        animations: {
+                            enabled: true,
+                            easing: 'easeinout',
+                            speed: 1000,
+                            animateGradually: {
+                                enabled: true,
+                                delay: 200
+                            },
+                            dynamicAnimation: {
+                                enabled: true,
+                                speed: 500
+                            }
+                        }
+                    },
+                    labels: labels,
+                    legend: {
+                        position: "bottom"
+                    },
+                    colors: ["#f39c12", "#2ecc71", "#3498db", "#e74c3c", "#9b59b6"],
+                    dataLabels: {
+                        enabled: true
+                    }
+                };
+
+                container.innerHTML = "";
+                chartDisposition = new ApexCharts(container, options);
+                chartDisposition.render();
+            } catch (err) {
+                console.error("Error loading disposition:", err);
+            }
         }
 
-        // Reset filter handler
-        $('#reset-filter').on('click', function() {
-            $('#start_date, #end_date, #variant').val('');
-            showLoading('#chart-disposition-blending');
-            params.forEach(param => showLoading(`#chart-${param}`));
-            fetchBlendingData();
-            fetchDispositionData();
-        });
+        async function loadParameters() {
+            try {
+                const res = await fetch(`${API_BASE}/analysis?${getParams()}`);
+                const data = await res.json();
+                const blendingAwal = data.blending_awal || [];
+                blendingAwal.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
-        // Filter event handler
-        $('#filter-data').on('click', function() {
-            const $btn = $(this);
-            const originalText = $btn.html();
+                const params = ["brix", "nacl", "bj", "visco", "aw", "buih", "organo", "ph"];
 
-            $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>Loading...');
+                params.forEach(param => {
+                    const el = document.querySelector(`#chart-${param}`);
+                    if (!el) return;
 
-            const start = $('#start_date').val();
-            const end = $('#end_date').val();
-            const variant = $('#variant').val();
+                    const validData = blendingAwal.filter(item => item[param] != null);
+                    const seriesData = validData.map(item => [
+                        new Date(item.created_at).getTime(),
+                        parseFloat(item[param])
+                    ]);
 
-            // Show loading for all charts
-            showLoading('#chart-disposition-blending');
-            params.forEach(param => showLoading(`#chart-${param}`));
+                    if (seriesData.length === 0) {
+                        if (paramCharts[param]) {
+                            paramCharts[param].destroy(); // hapus chart lama
+                            paramCharts[param] = null;
+                        }
+                        el.innerHTML = `<div class="text-center text-muted py-5">Tidak ada data untuk parameter ${param.toUpperCase()}</div>`;
+                        return;
+                    }
 
-            Promise.all([
-                fetchBlendingData(start, end, variant),
-                fetchDispositionData(start, end, variant)
-            ]).finally(() => {
-                $btn.html(originalText).prop('disabled', false);
-            });
-        });
-
-        // Fetch blending data function
-        function fetchBlendingData(startDate = null, endDate = null, variant = null) {
-            let url = "{{url('/api/blending/awal/analysis')}}";
-            let params_url = [];
-
-            if (startDate && endDate) {
-                params_url.push(`start_date=${startDate}&end_date=${endDate}`);
-            }
-            if (variant) {
-                params_url.push(`variant=${encodeURIComponent(variant)}`);
-            }
-
-            if (params_url.length > 0) {
-                url += `?${params_url.join('&')}`;
-            }
-
-            return $.getJSON(url)
-                .done(function(response) {
-                    const data = response.blending_awal || [];
-
-                    params.forEach(param => {
-                        const seriesData = data
-                            .filter(d => d[param] !== null && d[param] !== undefined)
-                            .map(item => ({
-                                x: `Batch ${item.batch_range} (No ${item.nomor_blending})`,
-                                y: parseFloat(item[param]) || 0,
-                                meta: {
-                                    po: item.po_number,
-                                    variant: item.variant,
-                                    batch: item.batch_range,
-                                    nomor: item.nomor_blending
+                    const options = {
+                        series: [{
+                            name: param.toUpperCase(),
+                            data: seriesData
+                        }],
+                        chart: {
+                            type: "line",
+                            height: 280,
+                            zoom: {
+                                enabled: true,
+                                type: "x"
+                            },
+                            toolbar: {
+                                show: true,
+                                tools: {
+                                    download: true,
+                                    selection: true,
+                                    zoom: true,
+                                    zoomin: true,
+                                    zoomout: true,
+                                    pan: true,
+                                    reset: true
                                 }
-                            }));
-
-                        renderLineChart(`#chart-${param}`, seriesData, param.toUpperCase());
-                    });
-                })
-                .fail(function(xhr) {
-                    console.error('Error fetching blending data:', xhr);
-                    params.forEach(param => {
-                        $(`#chart-${param}`).html(`
-                            <div class="alert alert-danger d-flex align-items-center" role="alert">
-                                <i class="ri-error-warning-line me-2"></i>
-                                <div>Error loading ${param.toUpperCase()} data. Please try again.</div>
-                            </div>
-                        `);
-                    });
-                });
-        }
-
-        // Fetch disposition data function
-        function fetchDispositionData(startDate = null, endDate = null, variant = null) {
-            let url = "{{url('/api/blending/awal/disposition-analysis')}}";
-            let params_url = [];
-
-            if (startDate && endDate) {
-                params_url.push(`start_date=${startDate}&end_date=${endDate}`);
-            }
-            if (variant) {
-                params_url.push(`variant=${encodeURIComponent(variant)}`);
-            }
-
-            if (params_url.length > 0) {
-                url += `?${params_url.join('&')}`;
-            }
-
-            return $.getJSON(url)
-                .done(function(response) {
-                    const summary = response.disposition_summary || {};
-                    renderDispositionChart(summary);
-                })
-                .fail(function(xhr) {
-                    console.error('Error fetching disposition data:', xhr);
-                    $('#chart-disposition-blending').html(`
-                        <div class="alert alert-danger d-flex align-items-center" role="alert">
-                            <i class="ri-error-warning-line me-2"></i>
-                            <div>Error loading disposition data. Please try again.</div>
-                        </div>
-                    `);
-                });
-        }
-
-        // Render disposition chart function
-        function renderDispositionChart(data) {
-            // Destroy existing chart
-            if (chartInstances['#chart-disposition-blending']) {
-                chartInstances['#chart-disposition-blending'].destroy();
-                delete chartInstances['#chart-disposition-blending'];
-            }
-
-            if (!data || Object.keys(data).length === 0) {
-                $('#chart-disposition-blending').html(`
-                    <div class="alert alert-info d-flex align-items-center justify-content-center" role="alert" style="height:300px;">
-                        <i class="ri-information-line me-2"></i>
-                        <div>No disposition data available for the selected period.</div>
-                    </div>
-                `);
-                return;
-            }
-
-            const labels = Object.keys(data);
-            const counts = Object.values(data);
-
-            const options = {
-                chart: {
-                    type: 'bar',
-                    height: 350,
-                    toolbar: {
-                        show: true
-                    },
-                    animations: {
-                        enabled: true,
-                        easing: 'easeinout',
-                        speed: 800
-                    }
-                },
-                series: [{
-                    name: 'Total Cases',
-                    data: counts,
-                    color: '#ffc107'
-                }],
-                xaxis: {
-                    categories: labels,
-                    title: {
-                        text: 'Disposition Type',
-                        style: {
-                            fontWeight: 600
-                        }
-                    },
-                    labels: {
-                        style: {
-                            fontSize: '12px'
-                        }
-                    }
-                },
-                yaxis: {
-                    title: {
-                        text: 'Total Cases',
-                        style: {
-                            fontWeight: 600
-                        }
-                    }
-                },
-                title: {
-                    text: 'Blending Awal Disposition Summary',
-                    align: 'left',
-                    style: {
-                        fontSize: '16px',
-                        fontWeight: 700,
-                        color: '#2d3748'
-                    }
-                },
-                grid: {
-                    borderColor: '#f1f1f1',
-                    strokeDashArray: 3
-                },
-                plotOptions: {
-                    bar: {
-                        borderRadius: 4,
-                        dataLabels: {
-                            position: 'top'
-                        }
-                    }
-                },
-                dataLabels: {
-                    enabled: true,
-                    formatter: function(val) {
-                        return val + ' cases';
-                    },
-                    offsetY: -20,
-                    style: {
-                        fontSize: '12px',
-                        fontWeight: 600,
-                        colors: ['#304758']
-                    }
-                },
-                tooltip: {
-                    y: {
-                        formatter: val => `${val} kasus`
-                    }
-                }
-            };
-
-            $('#chart-disposition-blending').html('');
-            chartInstances['#chart-disposition-blending'] = new ApexCharts(document.querySelector('#chart-disposition-blending'), options);
-            chartInstances['#chart-disposition-blending'].render();
-        }
-
-        // Render line chart function
-        function renderLineChart(selector, seriesData, title) {
-            // Destroy existing chart
-            if (chartInstances[selector]) {
-                chartInstances[selector].destroy();
-                delete chartInstances[selector];
-            }
-
-            if (!seriesData || seriesData.length === 0) {
-                $(selector).html(`
-                    <div class="alert alert-info d-flex align-items-center justify-content-center" role="alert" style="height:300px;">
-                        <i class="ri-information-line me-2"></i>
-                        <div>No ${title} data available for the selected period.</div>
-                    </div>
-                `);
-                return;
-            }
-
-            // Color mapping for different parameters
-            const colorMap = {
-                'BRIX': '#667eea',
-                'NACL': '#17a2b8',
-                'BJ': '#28a745',
-                'VISCO': '#ffc107',
-                'AW': '#dc3545',
-                'BUIH': '#6c757d',
-                'ORGANO': '#343a40',
-                'PH': '#6f42c1'
-            };
-
-            const options = {
-                chart: {
-                    type: 'line',
-                    height: 350,
-                    toolbar: {
-                        show: true,
-                        tools: {
-                            download: true,
-                            zoom: true,
-                            zoomin: true,
-                            zoomout: true,
-                            pan: false,
-                            reset: true
-                        }
-                    },
-                    animations: {
-                        enabled: true,
-                        easing: 'easeinout',
-                        speed: 800
-                    }
-                },
-                series: [{
-                    name: title,
-                    data: seriesData,
-                    color: colorMap[title] || '#667eea'
-                }],
-                stroke: {
-                    curve: 'smooth',
-                    width: 3
-                },
-                markers: {
-                    size: 6,
-                    hover: {
-                        size: 8
-                    }
-                },
-                title: {
-                    text: `${title} Trend Analysis`,
-                    align: 'left',
-                    style: {
-                        fontSize: '16px',
-                        fontWeight: 700,
-                        color: '#2d3748'
-                    }
-                },
-                xaxis: {
-                    type: 'category',
-                    title: {
-                        text: 'Blending Number / Range',
-                        style: {
-                            fontWeight: 600
-                        }
-                    },
-                    labels: {
-                        rotate: -45,
-                        style: {
-                            fontSize: '11px'
-                        }
-                    }
-                },
-                yaxis: {
-                    title: {
-                        text: title,
-                        style: {
-                            fontWeight: 600
-                        }
-                    }
-                },
-                grid: {
-                    borderColor: '#f1f1f1',
-                    strokeDashArray: 3
-                },
-                tooltip: {
-                    shared: false,
-                    custom: function({
-                        series,
-                        seriesIndex,
-                        dataPointIndex,
-                        w
-                    }) {
-                        const item = w.config.series[seriesIndex].data[dataPointIndex];
-                        if (!item || typeof item.y === 'undefined') {
-                            return `<div class="apex-tooltip p-2">Data tidak tersedia</div>`;
-                        }
-
-                        return `
-                            <div class="apex-tooltip p-3 bg-white shadow-lg border-0 rounded">
-                                <div class="fw-bold text-dark mb-2">${title}: ${item.y.toFixed(2)}</div>
-                                <div class="small text-muted">
-                                    <div>Batch: ${item.meta?.batch || '-'}</div>
-                                    <div>Nomor: ${item.meta?.nomor || '-'}</div>
-                                    <div>PO: ${item.meta?.po || '-'}</div>
-                                    <div>Variant: ${item.meta?.variant || '-'}</div>
+                            },
+                            animations: {
+                                enabled: true,
+                                easing: 'easeinout',
+                                speed: 800,
+                                animateGradually: {
+                                    enabled: true,
+                                    delay: 150
+                                },
+                                dynamicAnimation: {
+                                    enabled: true,
+                                    speed: 350
+                                }
+                            }
+                        },
+                        stroke: {
+                            curve: "smooth",
+                            width: 3
+                        },
+                        xaxis: {
+                            type: "datetime"
+                        },
+                        yaxis: {
+                            labels: {
+                                formatter: val => val != null ? val.toFixed(2) : "-"
+                            }
+                        },
+                        markers: {
+                            size: 4
+                        },
+                        tooltip: {
+                            x: {
+                                format: "dd MMM yyyy HH:mm"
+                            },
+                            y: {
+                                formatter: val => val != null ? val.toFixed(2) : "-"
+                            },
+                            custom: function({
+                                series,
+                                seriesIndex,
+                                dataPointIndex
+                            }) {
+                                const item = validData[dataPointIndex];
+                                return item ? `
+                                <div class="p-2">
+                                    <strong>${param.toUpperCase()}: ${series[seriesIndex][dataPointIndex]}</strong><br/>
+                                    Variant: ${item.variant || "-"}<br/>
+                                    PO: ${item.po_number || "-"}<br/>
+                                    Date: ${new Date(item.created_at).toLocaleString("id-ID")}
                                 </div>
-                            </div>
-                        `;
-                    }
-                }
-            };
+                            ` : "";
+                            }
+                        }
+                    };
 
-            $(selector).html('');
-            chartInstances[selector] = new ApexCharts(document.querySelector(selector), options);
-            chartInstances[selector].render();
+                    el.innerHTML = "";
+                    paramCharts[param] = new ApexCharts(el, options);
+                    paramCharts[param].render();
+                });
+            } catch (err) {
+                console.error("Error loading parameters:", err);
+            }
         }
 
-        // Initialize the dashboard
-        initializeDashboard();
+        function loadAll() {
+            loadDisposition();
+            loadParameters();
+        }
+
+        $btnFilter.addEventListener("click", loadAll);
+        $btnReset.addEventListener("click", () => {
+            $start.value = "";
+            $end.value = "";
+            $variant.value = "";
+            loadAll();
+        });
+
+        loadAll();
     });
 </script>
+
+
 
 @endsection
