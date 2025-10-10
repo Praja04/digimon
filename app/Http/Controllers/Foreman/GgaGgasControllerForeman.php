@@ -19,7 +19,6 @@ class GgaGgasControllerForeman extends Controller
             return redirect('/login')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
         }
 
-
         return view('foreman.ggaggas.dashboard');
     }
 
@@ -93,19 +92,14 @@ class GgaGgasControllerForeman extends Controller
         ]);
     }
 
-
-
-
     public function GGA_data()
     {
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->has('GgasProcesses')->with('GgasProcesses')->orderby('created_at', 'desc')->get();
-
+        $productionBatches = ProductionBatch::has('GgaProcesses')->with('GgaProcesses')->orderby('created_at', 'desc')->get();
         return view('foreman.ggaggas.gga', compact('productionBatches'));
     }
     public function GGAS_data()
     {
-        // Ambil semua PO yang memiliki data GGA
-        $productionBatches = ProductionBatch::orderby('created_at','desc')->has('GgasProcesses')->with('GgasProcesses')->get();
+        $productionBatches = ProductionBatch::has('GgasProcesses')->with('GgasProcesses')->orderby('created_at', 'desc')->get();
 
         return view('foreman.ggaggas.ggas', compact('productionBatches'));
     }
