@@ -36,7 +36,7 @@
                                         <div class="text-muted">Tanggal Produksi : <span class="text-body fw-medium">{{ $productionBatch->production_date }}</span></div>
                                         <div class="text-end">
                                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inputModal">
-                                                Input Monitoring Blending
+                                                Input Monitoring
                                             </button>
                                         </div>
 

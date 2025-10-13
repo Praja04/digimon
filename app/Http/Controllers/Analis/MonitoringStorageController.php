@@ -15,18 +15,13 @@ class MonitoringStorageController extends Controller
     //
     public function Monitoring_Storage_data()
     {
-
         $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringStorage')->has('MonitoringStorage')->get();
-
-        // return response()->json($productionBatches);
         return view('analis.monitoring.monitoring_storage.monitoring_storage', compact('productionBatches'));
     }
 
     public function Monitoring_Storage_data_mikro()
     {
-
         $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringStorageMikro')->has('MonitoringStorageMikro')->get();
-
         return view('analis.monitoring.monitoring_storage.monitoring_storage_mikro', compact('productionBatches'));
     }
 

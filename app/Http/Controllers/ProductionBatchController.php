@@ -1145,8 +1145,8 @@ class ProductionBatchController extends Controller
 
             $fullRange = $chosen->batch_range;
 
-            $relatedBatches = DB::table('monitoring_pasteurisasi_relations')
-                ->where('monitoring_pasteurisasi_id', $chosen->id)
+            $relatedBatches = DB::table('monitoring_turun_blending_relations')
+                ->where('monitoring_turun_blending_id', $chosen->id)
                 ->pluck('batch');
 
             foreach ($relatedBatches as $relRange) {
@@ -1397,7 +1397,7 @@ class ProductionBatchController extends Controller
     public function show_monitoring_storage($id)
     {
         $productionBatch = ProductionBatch::with([
-            'MonitoringTurunBlending' => fn($query) => $query->with('additionalBatches')
+            'MonitoringPasteurisasi' => fn($query) => $query->with('additionalBatches')
         ])->findOrFail($id);
 
         $validDispositions = [
@@ -1405,7 +1405,7 @@ class ProductionBatchController extends Controller
             'Release Bersyarat'
         ];
 
-        $all = MonitoringTurunBlending::where('production_batch_id', $id)
+        $all = MonitoringPasteurisasi::where('production_batch_id', $id)
             ->whereIn('disposition', $validDispositions)
             ->get();
 
@@ -1420,8 +1420,8 @@ class ProductionBatchController extends Controller
 
             $fullRange = $chosen->batch_range;
 
-            $relatedBatches = DB::table('monitoring_turun_blending_relations')
-                ->where('monitoring_turun_blending_id', $chosen->id)
+            $relatedBatches = DB::table('monitoring_pasteurisasi_relations')
+                ->where('monitoring_pasteurisasi_id', $chosen->id)
                 ->pluck('batch');
 
             foreach ($relatedBatches as $relRange) {
