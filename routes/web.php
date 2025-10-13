@@ -29,6 +29,7 @@ use App\Http\Controllers\Supervisor\GgaGgasControllerSupervisor;
 use App\Http\Controllers\Supervisor\SamplingControllerSupervisor;
 use App\Http\Controllers\Supervisor\BlendingAwalControllerSupervisor;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Foreman\MonitoringPasteurisasiControllerForeman;
 
 // Login & Logout
 Route::get('/', [AuthController::class, 'loginForm']);
@@ -196,14 +197,14 @@ Route::prefix('analis')->group(function () {
         Route::post('/update/{id}', [BlendingAdjustController::class, 'updateAjaxBlending'])->name('blending_adjust.update');
         Route::get('/data', [BlendingAdjustController::class, 'Blending_adjust_data']);
     });
-    
+
     Route::prefix('blending/mikro')->group(function () {
         Route::get('/detail/form/{id}', [BlendingAdjustController::class, 'showInputFormBlendingAdjustMikro']);
         Route::get('/data', [BlendingAdjustController::class, 'Blending_adjust_data_mikro']);
         Route::get('/detail/{id}', [BlendingAdjustController::class, 'Blending_detail_mikro']);
         Route::post('/update/{id}', [BlendingAdjustController::class, 'updateAjaxBlendingMikro'])->name('blending_adjust_mikro.update');
     });
-    
+
     Route::prefix('monitoring/blending')->group(function () {
         Route::get('/menu', [MonitoringTurunBlendingController::class, 'menu']);
         Route::post('/store', [MonitoringTurunBlendingController::class, 'store'])->name('monitoring_blending.store');
@@ -214,19 +215,32 @@ Route::prefix('analis')->group(function () {
         Route::get('/data', [MonitoringTurunBlendingController::class, 'Monitoring_Blending_data']);
         Route::get('/detail/{id}', [MonitoringTurunBlendingController::class, 'Monitoring_Blending_detail']);
     });
+
+    Route::prefix('monitoring/pasteurisasi')->group(function () {
+        Route::get('/dashboard', [MonitoringPasteurisasiControllerForeman::class, 'dashboard']);
+        Route::get('/menu', [MonitoringPasteurisasiControllerForeman::class, 'menu']);
+        Route::post('/store', [MonitoringPasteurisasiControllerForeman::class, 'store'])->name('monitoring_pasteurisasi.store');
+        Route::post('/update/data', [MonitoringPasteurisasiControllerForeman::class, 'updateMonitoringPasteurisasi']);
+        Route::post('/detail/data', [MonitoringPasteurisasiControllerForeman::class, 'store_data_pasteurisasi']);
+        Route::post('/detail/edit', [MonitoringPasteurisasiControllerForeman::class, 'edit_data']);
+        Route::get('/detail/data/{id}', [MonitoringPasteurisasiControllerForeman::class, 'showDataDetail']);
+        Route::get('/detail/data/id/{id}', [MonitoringPasteurisasiControllerForeman::class, 'showInputFormMonitoringPasteurisasi']);
+        Route::get('/data', [MonitoringPasteurisasiControllerForeman::class, 'Monitoring_Pasteurisasi_data']);
+        Route::get('/detail/{id}', [MonitoringPasteurisasiControllerForeman::class, 'Monitoring_Pasteurisasi_detail']);
+    });
+
     Route::prefix('monitoring/storage')->group(function () {
         Route::post('/store', [MonitoringStorageController::class, 'store'])->name('monitoring_storage.store');
         Route::get('/data', [MonitoringStorageController::class, 'Monitoring_Storage_data']);
         Route::get('/detail/{id}', [MonitoringStorageController::class, 'Monitoring_Storage_detail']);
         Route::get('/detail/data/{id}', [MonitoringStorageController::class, 'Monitoring_Storage_detail_id']);
         Route::post('/update/data/{id}', [MonitoringStorageController::class, 'update_monitoring_storage_makro']);
-        
+
         //mikro
         Route::get('/data/mikro', [MonitoringStorageController::class, 'Monitoring_Storage_data_mikro']);
         Route::get('/detail/mikro/{id}', [MonitoringStorageController::class, 'Monitoring_Storage_detail_mikro']);
         Route::get('/detail/data/mikro/{id}', [MonitoringStorageController::class, 'Monitoring_Storage_detail_mikro_id']);
         Route::post('/update/data/mikro/{id}', [MonitoringStorageController::class, 'update_monitoring_storage_mikro']);
-       
     });
 });
 
@@ -298,10 +312,12 @@ Route::prefix('foreman')->group(function () {
         Route::get('/data_po/blending/awal', [ProductionBatchController::class, 'data_po_blending_awal'])->name('productionbatch.data_po_blending_awal');
         Route::get('/data_po/blending/adjust', [ProductionBatchController::class, 'data_po_blending_after_adjust'])->name('productionbatch.data_po_blending_adjust');
         Route::get('/data_po/monitoring/blending', [ProductionBatchController::class, 'data_po_monitoring'])->name('productionbatch.data_po_monitoring');
+        Route::get('/data_po/monitoring/pasteurisasi', [ProductionBatchController::class, 'data_po_monitoring_pasteurisasi'])->name('productionbatch.data_po_monitoring_pasteurisasi');
         Route::get('/data_po/monitoring/storage', [ProductionBatchController::class, 'data_po_monitoring_storage'])->name('productionbatch.data_po_monitoring_storage');
         Route::get('/po_masak/blending/awal/{id}', [ProductionBatchController::class, 'show_blending_awal'])->name('productionbatch.show_blending_awal');
         Route::get('/po_masak/blending/adjust/{id}', [ProductionBatchController::class, 'show_blending_after_adjust'])->name('productionbatch.show_blending_adjust');
         Route::get('/po_masak/monitoring/blending/{id}', [ProductionBatchController::class, 'show_monitoring_blending'])->name('productionbatch.show_monitoring_blending');
+        Route::get('/po_masak/monitoring/pasteurisasi/{id}', [ProductionBatchController::class, 'show_monitoring_pasteurisasi'])->name('productionbatch.show_monitoring_pasteurisasi');
         Route::get('/po_masak/monitoring/storage/{id}', [ProductionBatchController::class, 'show_monitoring_storage'])->name('productionbatch.show_monitoring_storage');
         Route::resource('/po_masak', ProductionBatchController::class)->names([
             'index' => 'productionbatch.index',
@@ -399,6 +415,20 @@ Route::prefix('foreman')->group(function () {
         Route::get('/data', [MonitoringTurunBlendingControllerForeman::class, 'Monitoring_Blending_data']);
         Route::get('/detail/{id}', [MonitoringTurunBlendingControllerForeman::class, 'Monitoring_Blending_detail']);
     });
+
+    Route::prefix('monitoring/pasteurisasi')->group(function () {
+        Route::get('/dashboard', [MonitoringPasteurisasiControllerForeman::class, 'dashboard']);
+        Route::get('/menu', [MonitoringPasteurisasiControllerForeman::class, 'menu']);
+        Route::post('/store', [MonitoringPasteurisasiControllerForeman::class, 'store'])->name('monitoring_pasteurisasi.store');
+        Route::post('/update/data', [MonitoringPasteurisasiControllerForeman::class, 'updateMonitoringPasteurisasi']);
+        Route::post('/detail/data', [MonitoringPasteurisasiControllerForeman::class, 'store_data_pasteurisasi']);
+        Route::post('/detail/edit', [MonitoringPasteurisasiControllerForeman::class, 'edit_data']);
+        Route::get('/detail/data/{id}', [MonitoringPasteurisasiControllerForeman::class, 'showDataDetail']);
+        Route::get('/detail/data/id/{id}', [MonitoringPasteurisasiControllerForeman::class, 'showInputFormMonitoringPasteurisasi']);
+        Route::get('/data', [MonitoringPasteurisasiControllerForeman::class, 'Monitoring_Pasteurisasi_data']);
+        Route::get('/detail/{id}', [MonitoringPasteurisasiControllerForeman::class, 'Monitoring_Pasteurisasi_detail']);
+    });
+
     Route::prefix('monitoring/storage')->group(function () {
         Route::get('/dashboard', [MonitoringStorageControllerForeman::class, 'dashboard']);
         Route::post('/store', [MonitoringStorageControllerForeman::class, 'store'])->name('monitoring_storage.store');
@@ -430,7 +460,7 @@ Route::prefix('supervisor')->group(function () {
         Route::get('/detail/data/{id}', [RMPMControllerSupervisor::class, 'detail_data'])->name('rmpm_supervisor.detail_data');
         Route::post('/update/{id}', [RMPMControllerSupervisor::class, 'updateDisposisiLong'])->name('rmpm_supervisor.updateDisposisiLong');
     });
-    
+
     Route::prefix('sampling')->group(function () {
         // Sampling Kondisi Mobil
         Route::get('/kondisi-mobil/{id}', [SamplingControllerSupervisor::class, 'showKondisiMobil']);

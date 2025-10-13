@@ -64,14 +64,9 @@
                                         <div class="vr"></div>
 
                                         <div class="text-muted">Tanggal Produksi : <span class="text-body fw-medium">{{ $productionBatch->production_date }}</span></div>
-
-
                                     </div>
                                 </div>
-
                             </div>
-
-
 
                             <div class="row mt-4">
                                 <div class="col-lg-4 col-sm-6">

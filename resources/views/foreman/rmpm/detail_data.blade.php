@@ -223,7 +223,6 @@
                                     <table class="table align-middle table-nowrap mb-0" id="tasksTable">
                                         <thead class="table-light text-muted">
                                             <tr>
-
                                                 <th>COA</th>
                                                 <th>Surat Jalan</th>
                                                 <th>Packing List</th>
@@ -273,13 +272,13 @@
                                                 </div>
                                                 <div class="modal-body">
                                                     @foreach ([
-            'coa' => 'a. CoA',
-            'suratjalan_vendor' => 'b. Surat Jalan Vendor',
-            'packing_list' => 'c. Packing List',
-            'identitas_kemasan' => 'd. Identitas di Kemasan',
-            'logo_halal' => 'e. Logo Halal di Kemasan',
-            'kesesuaian_matriks_bahan' => 'f. Kesesuaian dengan Matriks Bahan Baku',
-        ] as $field => $label)
+                                                        'coa' => 'a. CoA',
+                                                        'suratjalan_vendor' => 'b. Surat Jalan Vendor',
+                                                        'packing_list' => 'c. Packing List',
+                                                        'identitas_kemasan' => 'd. Identitas di Kemasan',
+                                                        'logo_halal' => 'e. Logo Halal di Kemasan',
+                                                        'kesesuaian_matriks_bahan' => 'f. Kesesuaian dengan Matriks Bahan Baku',
+                                                    ] as $field => $label)
                                                         <div class="mb-3">
                                                             <label class="form-label">{{ $label }}</label><br>
                                                             <label><input type="radio" name="{{ $field }}"
@@ -360,7 +359,7 @@
                                         <div class="modal-dialog">
                                             <form id="editMobilForm">
                                                 <meta name="csrf-token" content="{{ csrf_token() }}">
-                                                <input type="hidden" name="id"
+                                                <input type="hidden" name="id_mobil"  
                                                     value="{{ $data_mobil->id ?? null }}">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
@@ -421,7 +420,6 @@
                                     <table class="table align-middle table-nowrap mb-0" id="tasksTable">
                                         <thead class="table-light text-muted">
                                             <tr>
-
                                                 <th>Kotor</th>
                                                 <th>Rusak/Sobek</th>
                                                 <th>Sesuai STD</th>
@@ -461,7 +459,7 @@
                                         <div class="modal-dialog">
                                             <form id="editKemasanForm">
                                                 <meta name="csrf-token" content="{{ csrf_token() }}">
-                                                <input type="hidden" name="id"
+                                                <input type="hidden" name="id_kemasan"
                                                     value="{{ $data_kemasan->id ?? null }}">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
@@ -472,14 +470,13 @@
 
                                                     <div class="modal-body">
                                                         @foreach ([
-            'kotor' => 'a. Kotor',
-            'rusak' => 'b. Rusak',
-            'sesuai_std' => 'c. Sesuai Standar',
-
-            'berair' => 'd. Berair',
-            'basah' => 'e. Basah',
-            'campuran' => 'f. Campuran',
-        ] as $field => $label)
+                                                            'kotor' => 'a. Kotor',
+                                                            'rusak' => 'b. Rusak',
+                                                            'sesuai_std' => 'c. Sesuai Standar',
+                                                            'berair' => 'd. Berair',
+                                                            'basah' => 'e. Basah',
+                                                            'campuran' => 'f. Campuran',
+                                                        ] as $field => $label)
                                                             <div class="mb-3">
                                                                 <label class="form-label">{{ $label }}</label><br>
                                                                 <label><input type="radio" name="{{ $field }}"
@@ -565,7 +562,7 @@
                                             <div class="modal-dialog">
                                                 <form id="editRawForm">
                                                     <meta name="csrf-token" content="{{ csrf_token() }}">
-                                                    <input type="hidden" name="id"
+                                                    <input type="hidden" name="id_raw"
                                                         value="{{ $data_raw->id ?? null }}">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -576,12 +573,12 @@
 
                                                         <div class="modal-body">
                                                             @foreach ([
-            'leleh' => 'a. Leleh',
-            'warna_std' => 'b. Warna Sesuai Standar',
-            'aroma_std' => 'c. Aroma Sesuai Standar',
-            'sesuai_std_raw' => 'd. Sesuai Standar',
-        ] as $field => $label)
-                                                                <div class="mb-3">
+                                                                'leleh' => 'a. Leleh',
+                                                                'warna_std' => 'b. Warna Sesuai Standar',
+                                                                'aroma_std' => 'c. Aroma Sesuai Standar',
+                                                                'sesuai_std_raw' => 'd. Sesuai Standar',
+                                                            ] as $field => $label)
+                                                                    <div class="mb-3">
                                                                     <label
                                                                         class="form-label">{{ $label }}</label><br>
                                                                     <label><input type="radio"
@@ -1420,7 +1417,7 @@
             let formData = {
                 _token: $('meta[name="csrf-token"]').attr('content'),
                 _method: 'POST',
-                id: $('input[name="id"]').val(),
+                id: $('input[name="id_kemasan"]').val(),
                 coa: $('input[name="coa"]:checked').val(),
                 kotor: $('input[name="kotor"]:checked').val(),
                 rusak: $('input[name="rusak"]:checked').val(),
@@ -1466,7 +1463,7 @@
             let formData = {
                 _token: $('meta[name="csrf-token"]').attr('content'),
                 _method: 'POST',
-                id: $('input[name="id"]').val(),
+                id: $('input[name="id_mobil"]').val(),
                 bersih: $('input[name="bersih"]:checked').val(),
                 kering: $('input[name="kering"]:checked').val(),
                 benda_asing: $('input[name="benda_asing"]:checked').val(),
@@ -1510,7 +1507,7 @@
             let formData = {
                 _token: $('meta[name="csrf-token"]').attr('content'),
                 _method: 'POST',
-                id: $('input[name="id"]').val(),
+                id: $('input[name="id_raw"]').val(),
                 leleh: $('input[name="leleh"]:checked').val(),
                 warna_std: $('input[name="warna_std"]:checked').val(),
                 campuran: $('input[name="campuran_raw"]:checked').val(),

@@ -24,10 +24,17 @@ class ProductionBatch extends Model
         }
         return [$this->batch_range]; // fallback kalau cuma satu angka
     }
+
+    public function MonitoringPasteurisasi()
+    {
+        return $this->hasMany(MonitoringPasteurisasi::class);
+    }
+
     public function MonitoringStorageMikro()
     {
         return $this->hasMany(MonitoringStorageMikroModel::class);
     }
+
     public function MonitoringStorage()
     {
         return $this->hasMany(MonitoringStorageModel::class);
@@ -69,7 +76,7 @@ class ProductionBatch extends Model
 
         // Cek apakah semua data brix dan nacl sudah terisi
         $isAllFilled = $ggaItems->every(function ($item) {
-            return !is_null($item->disposition) ;
+            return !is_null($item->disposition);
         });
 
         return $isAllFilled;
@@ -153,6 +160,23 @@ class ProductionBatch extends Model
     public function isMonitoringBlendingComplete()
     {
         $monitoring = $this->MonitoringTurunBlending;
+        $data = $monitoring->count();
+
+        // Jika tidak ada data GGA, belum lengkap
+        if ($data === 0) {
+            return false;
+        }
+
+        // Cek apakah semua data brix dan nacl sudah terisi
+        $isAllFilled = $monitoring->every(function ($item) {
+            return !is_null($item->disposition);
+        });
+
+        return $isAllFilled;
+    }
+    public function isMonitoringPasteurisasiComplete()
+    {
+        $monitoring = $this->MonitoringPasteurisasi;
         $data = $monitoring->count();
 
         // Jika tidak ada data GGA, belum lengkap

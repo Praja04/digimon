@@ -82,7 +82,6 @@ class MonitoringStorageControllerSupervisor extends Controller
 
     public function Monitoring_Storage_detail_id($id)
     {
-
         $data = MonitoringStorageModel::find($id);
         return view('supervisor.monitoring.monitoring_storage.analisis_data_detail_id', compact('data'));
     }

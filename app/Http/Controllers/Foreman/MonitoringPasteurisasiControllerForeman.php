@@ -3,65 +3,45 @@
 namespace App\Http\Controllers\Foreman;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\MonitoringTurunBlending;
-use App\Models\MonitoringTurunBlendingData;
+use App\Models\MonitoringPasteurisasi;
+use App\Models\MonitoringPasteurisasiData;
 use App\Models\ProductionBatch;
-use App\Models\MonitoringTurunBlendingRelation;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Session;
 
-class MonitoringTurunBlendingControllerForeman extends Controller
+class MonitoringPasteurisasiControllerForeman extends Controller
 {
-    //
-    public function dashboard()
-    {
-        if (!Session::has('role')) {
-            return redirect('/login')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
-        }
-        // Menampilkan view 'productionbatch.index' dengan data
-        return view('foreman.monitoring.dashboard_turun');
-    }
-
-    public function menu()
-    {
-        // Menampilkan view 'productionbatch.index' dengan data
-        return view('foreman.monitoring.menu');
-    }
-
-    public function Monitoring_Blending_data()
+    public function Monitoring_Pasteurisasi_data()
     {
 
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringTurunBlending')->has('MonitoringTurunBlending')->get();
-        //return json
-        //return response()->json($productionBatches);
+        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringPasteurisasi')->has('MonitoringPasteurisasi')->get();
 
-        return view('foreman.monitoring.turun_blending', compact('productionBatches'));
+        return view('foreman.monitoring.pasteurisasi.data', compact('productionBatches'));
     }
 
-    public function Monitoring_Blending_detail($id)
+    public function Monitoring_Pasteurisasi_detail($id)
     {
         $productionBatch = ProductionBatch::with([
-            'MonitoringTurunBlending.additionalBatches',
-            'MonitoringTurunBlending.monitoringData',
+            'MonitoringPasteurisasi.additionalBatches',
+            'MonitoringPasteurisasi.monitoringPasteurisasiData',
         ])->findOrFail($id);
 
         // Kelompokkan berdasarkan batch_range
-        $grouped = $productionBatch->MonitoringTurunBlending;
+        $grouped = $productionBatch->MonitoringPasteurisasi;
 
         $filtered = collect();
 
-        $filtered = $productionBatch->MonitoringTurunBlending->map(function ($item) use ($productionBatch) {
+        $filtered = $productionBatch->MonitoringPasteurisasi->map(function ($item) use ($productionBatch) {
             $item->additional_batch_info = $item->additionalBatches->isNotEmpty()
                 ? $item->additionalBatches
                 : null;
             $item->po_number = $productionBatch->po_number;
-            $item->data_count = $item->monitoringData->count();
+            $item->data_count = $item->monitoringPasteurisasiData->count();
             return $item;
         });
 
         // return response()->json($filtered->values());
-        return view('foreman.monitoring.detail_data', [
+        return view('foreman.monitoring.pasteurisasi.detail_data', [
             'productionBatch' => $productionBatch,
             'filteredMonitoring' => $filtered->values()
         ]);
@@ -74,7 +54,7 @@ class MonitoringTurunBlendingControllerForeman extends Controller
             'batch' => 'required',
             // 'batch_end' => 'required',
             'storage' => 'nullable|string', // ← ubah jadi nullable
-            'no_blending' => 'required',
+            'no_pasteurisasi' => 'required',
             //required colume harus decimal
             'volume' => 'required|numeric',
         ]);
@@ -87,7 +67,7 @@ class MonitoringTurunBlendingControllerForeman extends Controller
             ], 422);
         }
 
-        $exists = MonitoringTurunBlending::where('production_batch_id', $request->production_batch_id)
+        $exists = MonitoringPasteurisasi::where('production_batch_id', $request->production_batch_id)
             ->where('batch_range', $request->batch)
             ->exists();
 
@@ -98,12 +78,12 @@ class MonitoringTurunBlendingControllerForeman extends Controller
             ], 409);
         }
 
-        // Simpan data Blending After Adjust
-        MonitoringTurunBlending::create([
+        // Simpan data Pasterisasi After Adjust
+        MonitoringPasteurisasi::create([
             'production_batch_id' => $request->production_batch_id,
             'batch_range' => $request->batch,
-            'nomor_blending' => $request->no_blending,
-            'volume_blending' => $request->volume
+            'nomor_pasteurisasi' => $request->no_blending,
+            'volume_pasteurisasi' => $request->volume
         ]);
 
         // Jika ada input 'storage', update di tabel ProductionBatch
@@ -119,12 +99,11 @@ class MonitoringTurunBlendingControllerForeman extends Controller
         ]);
     }
 
-
-    public function store_data_foreman(Request $request)
+    public function store_data_pasteurisasi(Request $request)
     {
         // Validasi input
         $validator = Validator::make($request->all(), [
-            'monitoring_turun_blending_id' => 'required|exists:monitoring_turun_blending,id',
+            'monitoring_pasteurisasi_id' => 'required|exists:monitoring_pasteurisasi,id',
             'brix' => 'required|numeric',
             'nacl' => 'required|numeric',
             'bj' => 'required|numeric',
@@ -146,7 +125,7 @@ class MonitoringTurunBlendingControllerForeman extends Controller
                 'errors' => $validator->errors(),
             ], 422);
         }
-        $existingData = MonitoringTurunBlendingData::where('monitoring_turun_blending_id', $request->monitoring_turun_blending_id)->get();
+        $existingData = MonitoringPasteurisasiData::where('monitoring_pasteurisasi_id', $request->monitoring_pasteurisasi_id)->get();
 
         // Jika shift sudah ada
         $existingShift = $existingData->where('shift', $request->shift)->first();
@@ -168,8 +147,8 @@ class MonitoringTurunBlendingControllerForeman extends Controller
         try {
             $username = session('username');
             // Simpan data ke database
-            MonitoringTurunBlendingData::create([
-                'monitoring_turun_blending_id' => $request->monitoring_turun_blending_id,
+            MonitoringPasteurisasiData::create([
+                'monitoring_pasteurisasi_id' => $request->monitoring_pasteurisasi_id,
                 'brix' => $request->brix,
                 'nacl' => $request->nacl,
                 'bj' => $request->bj,
@@ -197,6 +176,17 @@ class MonitoringTurunBlendingControllerForeman extends Controller
         }
     }
 
+    public function showDataDetail($id)
+    {
+        $monitoring = MonitoringPasteurisasi::findOrFail($id);
+        $dataforeman = MonitoringPasteurisasiData::where('monitoring_pasteurisasi_id', $id)->get();
+
+        return response()->json([
+            'monitoring' => $monitoring,
+            'dataforeman' => $dataforeman
+        ]);
+    }
+
     public function edit_data(Request $request)
     {
         // Validasi input
@@ -214,7 +204,7 @@ class MonitoringTurunBlendingControllerForeman extends Controller
             'warna_edit' => 'nullable|string',
 
         ]);
-        $Data = MonitoringTurunBlendingData::findOrFail($request->id_edit);
+        $Data = MonitoringPasteurisasiData::findOrFail($request->id_edit);
 
         try {
             // Simpan data ke database
@@ -249,28 +239,10 @@ class MonitoringTurunBlendingControllerForeman extends Controller
         }
     }
 
-    public function showInputFormMonitoringTurunBlending($id)
+    public function updateMonitoringPasteurisasi(Request $request)
     {
-        $monitoring = MonitoringTurunBlending::with('monitoringData', 'productionBatch')->find($id);
-        return view('foreman.monitoring.analisis_data_detail', compact('monitoring'));
-    }
-
-    public function showDataDetail($id)
-    {
-        $monitoring = MonitoringTurunBlending::findOrFail($id);
-        $dataforeman = MonitoringTurunBlendingData::where('monitoring_turun_blending_id', $id)->get();
-
-        return response()->json([
-            'monitoring' => $monitoring,
-            'dataforeman' => $dataforeman
-        ]);
-    }
-
-    public function updateMonitoringBlending(Request $request)
-    {
-        
         $validator = Validator::make($request->all(), [
-            'monitoring_id' => 'required|exists:monitoring_turun_blending,id',
+            'monitoring_id' => 'required|exists:monitoring_pasteurisasi,id',
             'disposition' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment,Jalan Bareng,Leveling',
             'disposition_remarks' => 'nullable|string|max:255',
             'adjustment_qty_air' => 'nullable',
@@ -284,7 +256,7 @@ class MonitoringTurunBlendingControllerForeman extends Controller
             ], 422);
         }
 
-        $blending = MonitoringTurunBlending::findOrFail($request->monitoring_id);
+        $blending = MonitoringPasteurisasi::findOrFail($request->monitoring_id);
         if ($blending->disposition) {
             return response()->json([
                 'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
@@ -341,5 +313,11 @@ class MonitoringTurunBlendingControllerForeman extends Controller
             'success' => true,
             'message' => 'Data berhasil disimpan.'
         ]);
+    }
+
+    public function showInputFormMonitoringPasteurisasi($id)
+    {
+        $monitoring = MonitoringPasteurisasi::with('monitoringPasteurisasiData', 'productionBatch')->find($id);
+        return view('foreman.monitoring.pasteurisasi.analisis_data_detail', compact('monitoring'));
     }
 }
