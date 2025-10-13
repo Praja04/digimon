@@ -33,7 +33,14 @@ class ProductionBatchController extends Controller
 
     public function data_po()
     {
-        $productionBatches = ProductionBatch::orderBy('production_date', 'desc')->get();
+        $productionBatches = ProductionBatch::with('GgaProcesses')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isGGaComplete() && $batch->isGGasComplete()) ? 1 : 0;
+            })
+            ->values();
+
         // Ambil semua revisi > 0 dan buat key gabungan batch_id|batch_range
         $revisiData = GgaProcess::where('revisi', '>', 0)
             ->get()
@@ -47,7 +54,13 @@ class ProductionBatchController extends Controller
 
     public function data_po_blending_awal()
     {
-        $productionBatches = ProductionBatch::orderBy('production_date', 'desc')->get();
+        $productionBatches = ProductionBatch::with('BlendingAwal')
+            ->orderBy('production_date', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return $batch->isBlendingAwalComplete() ? 1 : 0;
+            })
+            ->values();
 
 
         return view('productionbatch.data_po_blending_awal', compact('productionBatches'));
@@ -71,7 +84,13 @@ class ProductionBatchController extends Controller
 
     public function data_po_monitoring()
     {
-        $productionBatches = ProductionBatch::orderBy('production_date', 'desc')->get();
+        $productionBatches = ProductionBatch::orderBy('production_date', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return $batch->isMonitoringBlendingComplete() ? 1 : 0;
+            })
+            ->values();
+
         $revisiData = MonitoringTurunBlending::where('revisi', '>', 0)
             ->get()
             ->mapWithKeys(function ($item) {
@@ -84,7 +103,13 @@ class ProductionBatchController extends Controller
 
     public function data_po_monitoring_pasteurisasi()
     {
-        $productionBatches = ProductionBatch::orderBy('production_date', 'desc')->get();
+        $productionBatches = ProductionBatch::orderBy('production_date', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return $batch->isMonitoringPasteurisasiComplete() ? 1 : 0;
+            })
+            ->values();
+
         $revisiData = MonitoringPasteurisasi::where('revisi', '>', 0)
             ->get()
             ->mapWithKeys(function ($item) {
@@ -97,7 +122,13 @@ class ProductionBatchController extends Controller
 
     public function data_po_monitoring_storage()
     {
-        $productionBatches = ProductionBatch::orderBy('production_date', 'desc')->get();
+        $productionBatches = ProductionBatch::orderBy('production_date', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return $batch->isMonitoringStorageMakroComplete() ? 1 : 0;
+            })
+            ->values();
+
         // Ambil semua revisi > 0 dan buat key gabungan batch_id|batch_range
         $revisiData = MonitoringStorageModel::where('revisi', '>', 0)
             ->get()
