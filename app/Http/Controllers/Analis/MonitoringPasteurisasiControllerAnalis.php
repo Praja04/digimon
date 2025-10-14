@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Foreman;
+namespace App\Http\Controllers\Analis;
 
 use App\Http\Controllers\Controller;
 use App\Models\MonitoringPasteurisasi;
@@ -9,14 +9,14 @@ use App\Models\ProductionBatch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class MonitoringPasteurisasiControllerForeman extends Controller
+class MonitoringPasteurisasiControllerAnalis extends Controller
 {
     public function Monitoring_Pasteurisasi_data()
     {
 
         $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringPasteurisasi')->has('MonitoringPasteurisasi')->get();
 
-        return view('foreman.monitoring.pasteurisasi.data', compact('productionBatches'));
+        return view('analis.monitoring.pasteurisasi.data', compact('productionBatches'));
     }
 
     public function Monitoring_Pasteurisasi_detail($id)
@@ -41,7 +41,7 @@ class MonitoringPasteurisasiControllerForeman extends Controller
         });
 
         // return response()->json($filtered->values());
-        return view('foreman.monitoring.pasteurisasi.detail_data', [
+        return view('analis.monitoring.pasteurisasi.detail_data', [
             'productionBatch' => $productionBatch,
             'filteredMonitoring' => $filtered->values()
         ]);
@@ -179,11 +179,11 @@ class MonitoringPasteurisasiControllerForeman extends Controller
     public function showDataDetail($id)
     {
         $monitoring = MonitoringPasteurisasi::findOrFail($id);
-        $dataforeman = MonitoringPasteurisasiData::where('monitoring_pasteurisasi_id', $id)->get();
+        $dataanalis = MonitoringPasteurisasiData::where('monitoring_pasteurisasi_id', $id)->get();
 
         return response()->json([
             'monitoring' => $monitoring,
-            'dataforeman' => $dataforeman
+            'dataanalis' => $dataanalis
         ]);
     }
 
@@ -318,6 +318,6 @@ class MonitoringPasteurisasiControllerForeman extends Controller
     public function showInputFormMonitoringPasteurisasi($id)
     {
         $monitoring = MonitoringPasteurisasi::with('monitoringPasteurisasiData', 'productionBatch')->find($id);
-        return view('foreman.monitoring.pasteurisasi.analisis_data_detail', compact('monitoring'));
+        return view('analis.monitoring.pasteurisasi.analisis_data_detail', compact('monitoring'));
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\Analis\GgaGgasController;
 use App\Http\Controllers\Analis\RMPMController;
 use App\Http\Controllers\Analis\SamplingController;
 use App\Http\Controllers\Analis\BlendingAwalController;
+use App\Http\Controllers\Analis\MonitoringPasteurisasiControllerAnalis;
 use App\Http\Controllers\ProductionBatchController;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\AuthController;
@@ -30,6 +31,7 @@ use App\Http\Controllers\Supervisor\SamplingControllerSupervisor;
 use App\Http\Controllers\Supervisor\BlendingAwalControllerSupervisor;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Foreman\MonitoringPasteurisasiControllerForeman;
+use App\Http\Controllers\Supervisor\MonitoringPasteurisasiControllerSupervisor;
 
 // Login & Logout
 Route::get('/', [AuthController::class, 'loginForm']);
@@ -217,16 +219,16 @@ Route::prefix('analis')->group(function () {
     });
 
     Route::prefix('monitoring/pasteurisasi')->group(function () {
-        Route::get('/dashboard', [MonitoringPasteurisasiControllerForeman::class, 'dashboard']);
-        Route::get('/menu', [MonitoringPasteurisasiControllerForeman::class, 'menu']);
-        Route::post('/store', [MonitoringPasteurisasiControllerForeman::class, 'store'])->name('monitoring_pasteurisasi.store');
-        Route::post('/update/data', [MonitoringPasteurisasiControllerForeman::class, 'updateMonitoringPasteurisasi']);
-        Route::post('/detail/data', [MonitoringPasteurisasiControllerForeman::class, 'store_data_pasteurisasi']);
-        Route::post('/detail/edit', [MonitoringPasteurisasiControllerForeman::class, 'edit_data']);
-        Route::get('/detail/data/{id}', [MonitoringPasteurisasiControllerForeman::class, 'showDataDetail']);
-        Route::get('/detail/data/id/{id}', [MonitoringPasteurisasiControllerForeman::class, 'showInputFormMonitoringPasteurisasi']);
-        Route::get('/data', [MonitoringPasteurisasiControllerForeman::class, 'Monitoring_Pasteurisasi_data']);
-        Route::get('/detail/{id}', [MonitoringPasteurisasiControllerForeman::class, 'Monitoring_Pasteurisasi_detail']);
+        Route::get('/dashboard', [MonitoringPasteurisasiControllerAnalis::class, 'dashboard']);
+        Route::get('/menu', [MonitoringPasteurisasiControllerAnalis::class, 'menu']);
+        Route::post('/store', [MonitoringPasteurisasiControllerAnalis::class, 'store'])->name('monitoring_pasteurisasi.store');
+        Route::post('/update/data', [MonitoringPasteurisasiControllerAnalis::class, 'updateMonitoringPasteurisasi']);
+        Route::post('/detail/data', [MonitoringPasteurisasiControllerAnalis::class, 'store_data_pasteurisasi']);
+        Route::post('/detail/edit', [MonitoringPasteurisasiControllerAnalis::class, 'edit_data']);
+        Route::get('/detail/data/{id}', [MonitoringPasteurisasiControllerAnalis::class, 'showDataDetail']);
+        Route::get('/detail/data/id/{id}', [MonitoringPasteurisasiControllerAnalis::class, 'showInputFormMonitoringPasteurisasi']);
+        Route::get('/data', [MonitoringPasteurisasiControllerAnalis::class, 'Monitoring_Pasteurisasi_data']);
+        Route::get('/detail/{id}', [MonitoringPasteurisasiControllerAnalis::class, 'Monitoring_Pasteurisasi_detail']);
     });
 
     Route::prefix('monitoring/storage')->group(function () {
@@ -544,6 +546,20 @@ Route::prefix('supervisor')->group(function () {
         Route::get('/data', [MonitoringTurunBlendingControllerSupervisor::class, 'Monitoring_Blending_data']);
         Route::get('/detail/{id}', [MonitoringTurunBlendingControllerSupervisor::class, 'Monitoring_Blending_detail']);
     });
+
+    Route::prefix('monitoring/pasteurisasi')->group(function () {
+        Route::get('/dashboard', [MonitoringPasteurisasiControllerSupervisor::class, 'dashboard']);
+        Route::get('/menu', [MonitoringPasteurisasiControllerSupervisor::class, 'menu']);
+        Route::post('/store', [MonitoringPasteurisasiControllerSupervisor::class, 'store'])->name('monitoring_pasteurisasi.store');
+        Route::post('/update/data', [MonitoringPasteurisasiControllerSupervisor::class, 'updateMonitoringPasteurisasi']);
+        Route::post('/detail/data', [MonitoringPasteurisasiControllerSupervisor::class, 'store_data_pasteurisasi']);
+        Route::post('/detail/edit', [MonitoringPasteurisasiControllerSupervisor::class, 'edit_data']);
+        Route::get('/detail/data/{id}', [MonitoringPasteurisasiControllerSupervisor::class, 'showDataDetail']);
+        Route::get('/detail/data/id/{id}', [MonitoringPasteurisasiControllerSupervisor::class, 'showInputFormMonitoringPasteurisasi']);
+        Route::get('/data', [MonitoringPasteurisasiControllerSupervisor::class, 'Monitoring_Pasteurisasi_data']);
+        Route::get('/detail/{id}', [MonitoringPasteurisasiControllerSupervisor::class, 'Monitoring_Pasteurisasi_detail']);
+    });
+
     Route::prefix('monitoring/storage')->group(function () {
         Route::get('/dashboard', [MonitoringStorageControllerSupervisor::class, 'dashboard']);
         Route::post('/store', [MonitoringStorageControllerSupervisor::class, 'store'])->name('monitoring_storage.store');
