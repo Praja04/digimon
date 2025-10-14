@@ -155,10 +155,10 @@ class RMPMController extends Controller
             'keterangan' => 'nullable|string',
         ]);
 
-        $brix = array_map(fn ($val) => str_replace(',', '.', $val), $request->brix);
-        $ph = array_map(fn ($val) => str_replace(',', '.', $val), $request->ph);
+        $brix = array_map(fn($val) => str_replace(',', '.', $val), $request->brix);
+        $ph = array_map(fn($val) => str_replace(',', '.', $val), $request->ph);
 
-        $ka = array_map(fn ($val) => str_replace(',', '.', $val), $request->ka);
+        $ka = array_map(fn($val) => str_replace(',', '.', $val), $request->ka);
 
 
         $username = session('username');
@@ -443,14 +443,16 @@ class RMPMController extends Controller
     }
 
 
-    public function getDataRM(Request $request)
+    public function getDataRM()
     {
         $dataRM = IdentitasRM::with([
             'analisaGaramGula.disposisi',
             'analisaLongTerm',
-        ])->orderby('created_at', 'desc')->get();
+        ])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        $dataRM->transform(function ($item) {
+        $dataRM = $dataRM->transform(function ($item) {
             $status = 'progress';
 
             if (in_array($item->jenis_gula, ['Garam', 'Gula'])) {
@@ -481,6 +483,10 @@ class RMPMController extends Controller
                 'jenis_gula' => $item->jenis_gula,
             ];
         });
+
+        $dataRM = $dataRM->sortBy(function ($item) {
+            return $item['status'] === 'done' ? 1 : 0;
+        })->values();
 
         return response()->json(['data' => $dataRM]);
     }

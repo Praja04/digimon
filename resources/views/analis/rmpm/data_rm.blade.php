@@ -365,7 +365,7 @@
                     data.forEach((item, index) => {
                         const searchable =
                             `${item.nama_bahan} ${item.no_spb} ${item.suplier_manufactur}`
-                        .toLowerCase();
+                            .toLowerCase();
                         if (keyword && !searchable.includes(keyword)) return;
                         if (statusFilter && statusFilter !== 'all' && item.status !== statusFilter)
                             return;
