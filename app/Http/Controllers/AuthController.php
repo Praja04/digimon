@@ -7,10 +7,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
+
 class AuthController extends Controller
 {
     public function loginForm()
     {
+        if (Session::has('role')) {
+            return redirect()->back();
+        }
         return view('auth.login');
     }
 
@@ -142,7 +146,4 @@ class AuthController extends Controller
         $user->delete();
         return response()->json(['success' => 'User deleted successfully.']);
     }
-
-
-
 }
