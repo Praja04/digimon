@@ -548,13 +548,12 @@
                 method: "POST",
                 data: formData,
                 success: function(res) {
+                    $('#inputModal').modal('hide');
                     Swal.fire({
                         icon: 'success',
                         title: 'Berhasil',
                         text: res.message
                     }).then(() => {
-                        $('#inputModal').modal('hide');
-                        // Optionally reload data or page
                         form[0].reset();
                         location.reload();
                     });

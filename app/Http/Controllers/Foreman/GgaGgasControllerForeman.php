@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\ProductionBatch;
 use App\Models\GgaProcess;
 use App\Models\GgasProcess;
+use App\Models\ManageWarnaModel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
@@ -108,18 +109,18 @@ class GgaGgasControllerForeman extends Controller
     {
         // Ambil PO dengan GGA yang belum lengkap
         $productionBatch = ProductionBatch::with('GgaProcesses')->findOrFail($id);
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
 
-
-        return view('foreman.ggaggas.gga_detail', compact('productionBatch'));
+        return view('foreman.ggaggas.gga_detail', compact('productionBatch', 'manageWarna'));
     }
 
     public function GGAS_detail($id)
     {
         // Ambil PO dengan GGA yang belum lengkap
         $productionBatch = ProductionBatch::with('GgasProcesses')->findOrFail($id);
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
 
-
-        return view('foreman.ggaggas.ggas_detail', compact('productionBatch'));
+        return view('foreman.ggaggas.ggas_detail', compact('productionBatch', 'manageWarna'));
     }
 
     public function checkBatchNumberGGA(Request $request)
@@ -235,6 +236,7 @@ class GgaGgasControllerForeman extends Controller
             'message' => 'Data berhasil disimpan.'
         ]);
     }
+
     public function editGGA(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -259,8 +261,7 @@ class GgaGgasControllerForeman extends Controller
             ], 422);
         }
 
-        $gga = GgaProcess::findOrFail($id);
-
+        $gga = GgaProcess::findOrFail($request->id);
 
         $disposition = $request->disposition_edit;
         $remarks = $request->disposition_remarks_edit ?? null;
@@ -449,7 +450,7 @@ class GgaGgasControllerForeman extends Controller
             ], 422);
         }
 
-        $ggas = GgasProcess::findOrFail($id);
+        $ggas = GgasProcess::findOrFail($request->id);
 
 
         $disposition = $request->disposition_edit;

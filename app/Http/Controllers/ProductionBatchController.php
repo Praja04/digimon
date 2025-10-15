@@ -228,8 +228,6 @@ class ProductionBatchController extends Controller
     {
         $productionBatch = ProductionBatch::findOrFail($id);
 
-
-
         $batches = $productionBatch->batch_range_array; // Misalnya [1,2,3,4,...]
 
         $validGgaBatches = $productionBatch->GgaProcesses
