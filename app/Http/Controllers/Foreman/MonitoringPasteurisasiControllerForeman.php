@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Validator;
 
 class MonitoringPasteurisasiControllerForeman extends Controller
 {
+    public function Monitoring_Pasteurisasi_menu()
+    {
+        return view('foreman.monitoring.pasteurisasi.menu');
+    }
+
     public function Monitoring_Pasteurisasi_data()
     {
 

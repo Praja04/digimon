@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Foreman;
 
 use App\Http\Controllers\Controller;
+use App\Models\ManageWarnaModel;
 use Illuminate\Http\Request;
 use App\Models\MonitoringTurunBlending;
 use App\Models\MonitoringTurunBlendingData;
 use App\Models\ProductionBatch;
 use App\Models\MonitoringTurunBlendingRelation;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 
@@ -60,10 +62,12 @@ class MonitoringTurunBlendingControllerForeman extends Controller
             return $item;
         });
 
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
         // return response()->json($filtered->values());
         return view('foreman.monitoring.detail_data', [
             'productionBatch' => $productionBatch,
-            'filteredMonitoring' => $filtered->values()
+            'filteredMonitoring' => $filtered->values(),
+            'manageWarna' => $manageWarna
         ]);
     }
 
@@ -135,7 +139,8 @@ class MonitoringTurunBlendingControllerForeman extends Controller
             'ph' => 'nullable|numeric',
             'endapan' => 'nullable|string',
             'warna' => 'nullable|string',
-            'shift' => 'required|in:1,2,3',
+            'production_time' => 'required',
+            // 'shift' => 'required|in:1,2,3',
         ]);
 
         // Jika validasi gagal
@@ -165,6 +170,16 @@ class MonitoringTurunBlendingControllerForeman extends Controller
             ], 409); // 409 Conflict
         }
 
+        // Tentukan shift otomatis berdasarkan waktu saat ini
+        $currentHour = (int) now()->format('H');
+        if ($currentHour >= 6 && $currentHour < 14) {
+            $shift = 1;
+        } elseif ($currentHour >= 14 && $currentHour < 22) {
+            $shift = 2;
+        } else {
+            $shift = 3;
+        }
+        
         try {
             $username = session('username');
             // Simpan data ke database
@@ -180,7 +195,8 @@ class MonitoringTurunBlendingControllerForeman extends Controller
                 'ph' => $request->ph,
                 'endapan' => $request->endapan,
                 'warna' => $request->warna,
-                'shift' => $request->shift,
+                'shift' => $shift,
+                'production_time' =>  Carbon::parse($request->production_time)->format('Y-m-d H:i:s'),
                 'created_by' => $username,
             ]);
 
@@ -268,7 +284,7 @@ class MonitoringTurunBlendingControllerForeman extends Controller
 
     public function updateMonitoringBlending(Request $request)
     {
-        
+
         $validator = Validator::make($request->all(), [
             'monitoring_id' => 'required|exists:monitoring_turun_blending,id',
             'disposition' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment,Jalan Bareng,Leveling',

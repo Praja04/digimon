@@ -45,7 +45,6 @@ class BlendingAwalControllerForeman extends Controller
         // // Ambil PO dengan GGA yang belum lengkap
         // $productionBatch = ProductionBatch::with('BlendingAwal')->findOrFail($id);
 
-
         // return view('foreman.blending.blending_awal_detail', compact('productionBatch'));
 
         // Ambil data ProductionBatch beserta BlendingAwal dan BlendingBatchRelation

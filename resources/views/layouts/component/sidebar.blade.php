@@ -195,15 +195,27 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ url('foreman/blending/menu') }}">
                         <i class="mdi mdi-blender-software"></i> <span>Blending</span>
+                    </a>
+                </li> --}}
+
+                {{-- <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('foreman/monitoring/blending/menu') }}">
+                        <i class="mdi mdi-monitor-dashboard"></i> <span>Monitoring Blending</span>
+                    </a>
+                </li> --}}
+                
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ url('foreman/monitoring/pasteurisasi/menu') }}">
+                        <i class="mdi mdi-thermometer"></i> <span>Monitoring Pasteurisasi</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ url('foreman/monitoring/blending/menu') }}">
-                        <i class="mdi mdi-monitor-dashboard"></i> <span>Monitoring Blending</span>
+                        <i class="mdi mdi-bottle-wine"></i> <span>Monitoring Filling</span>
                     </a>
                 </li>
 

@@ -429,6 +429,8 @@ Route::prefix('foreman')->group(function () {
         Route::get('/detail/data/id/{id}', [MonitoringPasteurisasiControllerForeman::class, 'showInputFormMonitoringPasteurisasi']);
         Route::get('/data', [MonitoringPasteurisasiControllerForeman::class, 'Monitoring_Pasteurisasi_data']);
         Route::get('/detail/{id}', [MonitoringPasteurisasiControllerForeman::class, 'Monitoring_Pasteurisasi_detail']);
+        Route::get('/menu', [MonitoringPasteurisasiControllerForeman::class, 'Monitoring_Pasteurisasi_menu']);
+
     });
 
     Route::prefix('monitoring/storage')->group(function () {
