@@ -187,17 +187,29 @@ class SamplingControllerForeman extends Controller
 
     public function updateKemasan(Request $request, $id)
     {
-        $request->validate([
-            'kotor' => 'required',
-            'rusak' => 'required',
-            'sesuai_std' => 'required',
-            'lain_lain' => 'nullable',
-            'berair' => 'required',
-            'basah' => 'required',
-            'campuran' => 'required',
-        ]);
+        $kemasan = SamplingFisikKemasan::with('identitas')->findOrFail($id);
+        if ($kemasan->identitas->jenis_gula == 'Garam') {
+            $request->validate([
+                'kotor' => 'required',
+                'berair' => 'required',
+                'rusak' => 'required',
+                'sesuai_std' => 'required',
+                'lain_lain' => 'nullable',
+                'basah' => 'required',
+                'campuran' => 'required',
+            ]);
+        } else {
+            $request->validate([
+                'kotor' => 'required',
+                'rusak' => 'required',
+                'sesuai_std' => 'required',
+                'lain_lain' => 'nullable',
+                'berair' => 'nullable',
+                'basah' => 'nullable',
+                'campuran' => 'nullable',
+            ]);
+        }
 
-        $kemasan = SamplingFisikKemasan::findOrFail($id);
 
         $kemasan->kotor = $request->kotor;
         $kemasan->rusak = $request->rusak;

@@ -313,9 +313,6 @@ class RMPMControllerForeman extends Controller
         return response()->json($result);
     }
 
-
-    //api
-
     public function getTotalKedatangan(Request $request)
     {
         $query = IdentitasRM::query();

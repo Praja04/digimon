@@ -75,52 +75,51 @@
             <div class="card" id="demo">
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="card-header border-bottom-dashed p-4">
-                            <div class="d-flex">
-                                <div class="flex-grow-1">
-                                    <img src="{{ asset('assets/images/icon-utility/kecap.png') }}"
-                                        class="card-logo card-logo-dark" alt="logo dark" height="150">
-                                    <img src="{{ asset('assets/images/icon-utility/kecap.png') }}"
-                                        class="card-logo card-logo-light" alt="logo light" height="150">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center gap-4">
+                                    <img src="{{ asset('assets/images/icon-utility/kecap.png') }}" alt="Logo"
+                                        height="100" class="rounded-2">
+                                    <div>
+                                        <h4 class="mb-0 fw-bold text-dark">{{ $identitas->jenis_gula }}</h4>
+                                        <small class="text-muted">{{ $identitas->asal_bahan }} ·
+                                            {{ $identitas->no_spb }}</small>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <span
+                                        class="badge bg-primary fs-20">{{ \Carbon\Carbon::parse($identitas->tanggal_kedatangan)->format('d M Y') }}</span>
+                                    <div class="text-muted fs-17 mt-1">
+                                        {{ \Carbon\Carbon::parse($identitas->tanggal_kedatangan)->format('H:i') }}
+                                        WIB</div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="col-lg-12">
-                        <div class="card-body p-4">
-                            <div class="row g-3">
-                                <div class="col-lg-3 col-6">
-                                    <h6 class="text-muted text-uppercase fw-semibold">Asal Bahan</h6>
-                                    <h3 class="fs-14 mb-0">{{ $identitas->asal_bahan }}</h3>
+                            <div class="row g-2 text-center">
+                                <div class="col-6 col-lg">
+                                    <div class="border rounded p-2 bg-light">
+                                        <div class="text-muted small">Supplier</div>
+                                        <div class="fw-semibold">{{ $identitas->suplier_manufactur }}</div>
+                                    </div>
                                 </div>
-                                <div class="col-lg-3 col-6">
-                                    <h6 class="text-muted text-uppercase fw-semibold">Nomor SPB</h6>
-                                    <h3 class="fs-14 mb-0">{{ $identitas->no_spb }}</h3>
+                                <div class="col-6 col-lg">
+                                    <div class="border rounded p-2 bg-light">
+                                        <div class="text-muted small">Truck</div>
+                                        <div class="fw-semibold">{{ $identitas->no_mobil }}</div>
+                                    </div>
                                 </div>
-                                <div class="col-lg-3 col-6">
-                                    <h6 class="text-muted text-uppercase fw-semibold">Suplier/Manufacture</h6>
-                                    <h3 class="fs-14 mb-0"> {{ $identitas->suplier_manufactur }}</h3>
+                                <div class="col-6 col-lg">
+                                    <div class="border rounded p-2 bg-light">
+                                        <div class="text-muted small">SPB</div>
+                                        <div class="fw-semibold">{{ $identitas->no_spb }}</div>
+                                    </div>
                                 </div>
-                                <div class="col-lg-3 col-6">
-                                    <h6 class="text-muted text-uppercase fw-semibold">Nomor Mobil</h6>
-                                    <h3 class="fs-14 mb-0"> {{ $identitas->no_mobil }}</h3>
+                                <div class="col-6 col-lg">
+                                    <div class="border rounded p-2 bg-light">
+                                        <div class="text-muted small">Jenis</div>
+                                        <div class="fw-semibold">{{ $identitas->jenis_gula }}</div>
+                                    </div>
                                 </div>
-                                <div class="col-lg-3 col-6">
-                                    <h6 class="text-muted text-uppercase fw-semibold">Tanggal Kedatangan</h6>
-                                    <h3 class="fs-14 mb-0">
-                                        {{ \Carbon\Carbon::parse($identitas->tanggal_kedatangan)->format('d M Y') }}</h3>
-                                </div>
-                                <div class="col-lg-3 col-6">
-                                    <h6 class="text-muted text-uppercase fw-semibold">Jam Kedatangan</h6>
-                                    <h3 class="fs-14 mb-0">
-                                        {{ \Carbon\Carbon::parse($identitas->tanggal_kedatangan)->format('H:i') }}</h3>
-                                </div>
-                                <div class="col-lg-3 col-6">
-                                    <h6 class="text-muted text-uppercase fw-semibold">Jenis Gula</h6>
-                                    <h3 class="fs-14 mb-0">{{ $identitas->jenis_gula }}</h3>
-                                </div>
-
                             </div>
                         </div>
                     </div>
@@ -128,13 +127,11 @@
                     @php
                         function getBadgeClass($disposisi)
                         {
-                            if ($disposisi === 'reject') {
-                                return 'badge-soft-danger';
-                            } elseif ($disposisi === 'release') {
-                                return 'badge-soft-success';
-                            } else {
-                                return 'badge-soft-warning';
-                            }
+                            return match ($disposisi) {
+                                'reject' => 'badge-soft-danger',
+                                'release' => 'badge-soft-success',
+                                default => 'badge-soft-warning',
+                            };
                         }
                     @endphp
 
@@ -209,576 +206,627 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-12">
-                        <div class="card-body" id="tasksList">
-                            <div class="card-header border-0">
-                                <div class="d-flex align-items-center">
-                                    <h5>Sample Dokumen</h5>
-                                </div>
+                    <!-- Sample Dokumen -->
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-semibold text-muted">Dokumen Pendukung</h5>
+                                @if ($data_dokumen)
+                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#editModalDokumen">
+                                        <i class="ri-edit-box-line me-1"></i>Update
+                                    </button>
+                                @endif
                             </div>
+                            <div class="card-body p-3">
+                                @if ($data_dokumen)
+                                    <div class="row g-2">
+                                        @foreach ([
+            'coa' => 'CoA',
+            'suratjalan_vendor' => 'Surat Jalan Vendor',
+            'packing_list' => 'Packing List',
+            'identitas_kemasan' => 'Identitas Kemasan',
+            'logo_halal' => 'Logo Halal',
+            'kesesuaian_matriks_bahan' => 'Kesesuaian Matriks Bahan Baku',
+        ] as $key => $label)
+                                            <div class="col-6 col-md-4">
+                                                <div class="d-flex justify-content-start">
+                                                    <span class="fw-semibold me-2">
+                                                        @if (optional($data_dokumen)->$key === 'yes')
+                                                            <i class="ri-checkbox-circle-fill text-success"></i>
+                                                        @elseif(optional($data_dokumen)->$key === 'no')
+                                                            <i class="ri-close-circle-fill text-danger"></i>
+                                                        @else
+                                                            <i class="ri-indeterminate-circle-fill text-warning"></i>
+                                                        @endif
+                                                    </span>
+                                                    <span class="text-muted">{{ $label }}</span>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="text-center text-muted mb-0">Belum ada data</p>
+                                @endif
+                            </div>
+                        </div>
 
-                            <!--end card-body-->
-                            <div class="card-body">
-                                <div class="table-responsive table-card mb-4">
-                                    <table class="table align-middle table-nowrap mb-0" id="tasksTable">
-                                        <thead class="table-light text-muted">
-                                            <tr>
-                                                <th>COA</th>
-                                                <th>Surat Jalan</th>
-                                                <th>Packing List</th>
-                                                <th>Identitas Kemasan</th>
-                                                <th>Logo Halal</th>
-                                                <th>Kesuaian Matriks Bahan Baku</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="list form-check-all">
-                                            @if ($data_dokumen)
-                                                <tr>
-                                                    <td>{{ $data_dokumen->coa ?? 'belum input' }}</td>
-                                                    <td>{{ $data_dokumen->suratjalan_vendor ?? 'belum input' }}</td>
-                                                    <td>{{ $data_dokumen->packing_list ?? 'belum input' }}</td>
-                                                    <td>{{ $data_dokumen->identitas_kemasan ?? 'belum input' }}</td>
-                                                    <td>{{ $data_dokumen->logo_halal ?? 'belum input' }}</td>
-                                                    <td>{{ $data_dokumen->kesesuaian_matriks_bahan ?? 'belum input' }}</td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-sm btn-primary"
-                                                            data-bs-toggle="modal" data-bs-target="#editModal">
-                                                            Edit
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            @else
-                                                <tr>
-                                                    <td colspan="12" class="text-center">Belum ada data</td>
-                                                </tr>
-                                            @endif
-                                        </tbody>
-                                    </table>
-                                    <!--end table-->
-                                </div>
-                                <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <form id="editDokumenForm">
-                                            <meta name="csrf-token" content="{{ csrf_token() }}">
-                                            <input type="hidden" name="id"
-                                                value="{{ $data_dokumen->id ?? null }}">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="editModalLabel">Edit Dokumen</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Tutup"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    @foreach ([
-                                                        'coa' => 'a. CoA',
-                                                        'suratjalan_vendor' => 'b. Surat Jalan Vendor',
-                                                        'packing_list' => 'c. Packing List',
-                                                        'identitas_kemasan' => 'd. Identitas di Kemasan',
-                                                        'logo_halal' => 'e. Logo Halal di Kemasan',
-                                                        'kesesuaian_matriks_bahan' => 'f. Kesesuaian dengan Matriks Bahan Baku',
-                                                    ] as $field => $label)
-                                                        <div class="mb-3">
-                                                            <label class="form-label">{{ $label }}</label><br>
-                                                            <label><input type="radio" name="{{ $field }}"
-                                                                    value="yes"
-                                                                    {{ optional($data_dokumen)->$field == 'yes' ? 'checked' : '' }}>
-                                                                Iya</label>
-                                                            <label><input type="radio" name="{{ $field }}"
-                                                                    value="no"
-                                                                    {{ optional($data_dokumen)->$field == 'no' ? 'checked' : '' }}>
-                                                                Tidak</label>
+                        <!-- modal dokumen -->
+                        <div class="modal fade" id="editModalDokumen" tabindex="-1"
+                            aria-labelledby="editModalDokumenLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Update Dokumen Pendukung</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="form-sampling" id="editDokumenForm">
+                                            @csrf
+                                            <input type="hidden" name="id_dokumen"
+                                                value="{{ $data_dokumen->id ?? '' }}">
+                                            @foreach ([
+            'coa' => 'a. CoA',
+            'suratjalan_vendor' => 'b. Surat Jalan Vendor',
+            'packing_list' => 'c. Packing List',
+            'identitas_kemasan' => 'd. Identitas di Kemasan',
+            'logo_halal' => 'e. Logo Halal di Kemasan',
+            'kesesuaian_matriks_bahan' => 'f. Kesesuaian dengan Matriks Bahan Baku',
+        ] as $field => $label)
+                                                <div class="mb-3 d-flex justify-content-between align-items-center">
+                                                    <label class="form-label mb-0 fw-semibold">{{ $label }}</label>
+                                                    <div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="{{ $field }}" id="{{ $field }}_yes"
+                                                                value="yes"
+                                                                {{ optional($data_dokumen)->$field === 'yes' ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ $field }}_yes">Iya</label>
                                                         </div>
-                                                    @endforeach
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="{{ $field }}" id="{{ $field }}_no"
+                                                                value="no"
+                                                                {{ optional($data_dokumen)->$field === 'no' ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ $field }}_no">Tidak</label>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-success">Simpan</button>
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Batal</button>
-                                                </div>
+                                                <hr class="my-2">
+                                            @endforeach
+
+                                            <div class="d-flex justify-content-end mt-4">
+                                                <button type="submit" class="btn btn-primary"
+                                                    id="submitBtnDokumen">Simpan
+                                                    Sampling</button>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
                             </div>
-                            <!--end card-body-->
                         </div>
-                        <!--end card-->
                     </div>
-                    <hr>
-                    <div class="col-lg-12">
-                        <div class="card-body" id="tasksList">
-                            <div class="card-header border-0">
-                                <div class="d-flex align-items-center">
-                                    <h5>Sample Kondisi Mobil</h5>
-                                </div>
-                            </div>
-                            <!--end card-body-->
-                            <div class="card-body">
-                                <div class="table-responsive table-card mb-4">
-                                    <table class="table align-middle table-nowrap mb-0" id="tasksTable">
-                                        <thead class="table-light text-muted">
-                                            <tr>
-                                                <th>Bersih</th>
-                                                <th>Kering</th>
-                                                <th>Tidak ada Benda Asing</th>
-                                                <th>Tidak Cacat</th>
-                                                <th>Segel</th>
-                                                <th>Berbau</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="list form-check-all">
-                                            @if ($data_mobil)
-                                                <tr>
-                                                    <td>{{ $data_mobil->bersih ?? 'belum input' }}</td>
-                                                    <td>{{ $data_mobil->kering ?? 'belum input' }}</td>
-                                                    <td>{{ $data_mobil->benda_asing ?? 'belum input' }}</td>
-                                                    <td>{{ $data_mobil->cacat ?? 'belum input' }}</td>
-                                                    <td>{{ $data_mobil->segel ?? 'belum input' }}</td>
-                                                    <td>{{ $data_mobil->berbau ?? 'belum input' }}</td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-sm btn-primary"
-                                                            data-bs-toggle="modal" data-bs-target="#editModalMobil">
-                                                            Edit
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            @else
-                                                <tr>
-                                                    <td colspan="12" class="text-center">Belum ada data</td>
-                                                </tr>
-                                            @endif
-                                        </tbody>
-                                    </table>
-                                    <!--end table-->
 
-                                    <div class="modal fade" id="editModalMobil" tabindex="-1"
-                                        aria-labelledby="editModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <form id="editMobilForm">
-                                                <meta name="csrf-token" content="{{ csrf_token() }}">
-                                                <input type="hidden" name="id_mobil"  
-                                                    value="{{ $data_mobil->id ?? null }}">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="editModalLabel">Edit Kondisi Mobil</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Tutup"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        @foreach ([
-                                                            'bersih' => 'a. Bersih',
-                                                            'kering' => 'b. Kering',
-                                                            'benda_asing' => 'c. Benda Asing',
-                                                            'cacat' => 'd. Cacat',
-                                                            'segel' => 'e. Segel',
-                                                            'berbau' => 'f. Berbau',
-                                                        ] as $field => $label)
-                                                            <div class="mb-3">
-                                                                <label class="form-label">{{ $label }}</label><br>
-                                                                <label><input type="radio" name="{{ $field }}"
-                                                                        value="yes"
-                                                                        {{ optional($data_mobil)->$field == 'yes' ? 'checked' : '' }}>
-                                                                    Iya</label>
-                                                                <label><input type="radio" name="{{ $field }}"
-                                                                        value="no"
-                                                                        {{ optional($data_mobil)->$field == 'no' ? 'checked' : '' }}>
-                                                                    Tidak</label>
-                                                            </div>
-                                                        @endforeach
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="submit" class="btn btn-success">Simpan</button>
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Batal</button>
-                                                    </div>
+                    <!-- Sample Kondisi Mobil -->
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-semibold text-muted">Sample Kondisi Mobil</h5>
+                                @if ($data_mobil)
+                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#editModalMobil">
+                                        <i class="ri-edit-box-line me-1"></i>Update
+                                    </button>
+                                @endif
+                            </div>
+
+                            <div class="card-body p-3">
+                                @if ($data_mobil)
+                                    <div class="row g-2">
+                                        @foreach ([
+            'bersih' => 'Bersih',
+            'kering' => 'Kering',
+            'benda_asing' => 'Tidak Ada Benda Asing',
+            'cacat' => 'Tidak Cacat',
+            'segel' => 'Segel',
+            'berbau' => 'Berbau',
+        ] as $key => $label)
+                                            <div class="col-6 col-md-4">
+                                                <div class="d-flex justify-content-start">
+                                                    <span class="fw-semibold me-2">
+                                                        @if (optional($data_mobil)->$key === 'yes')
+                                                            <i class="ri-checkbox-circle-fill text-success"></i>
+                                                        @elseif(optional($data_mobil)->$key === 'no')
+                                                            <i class="ri-close-circle-fill text-danger"></i>
+                                                        @else
+                                                            <i class="ri-indeterminate-circle-fill text-warning"></i>
+                                                        @endif
+                                                    </span>
+                                                    <span class="text-muted">{{ $label }}</span>
                                                 </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <!--end card-body-->
-                        </div>
-                        <!--end card-->
-                    </div>
-                    <hr>
-                    <div class="col-lg-12">
-                        <div class="card-body" id="tasksList">
-                            <div class="card-header border-0">
-                                <div class="d-flex align-items-center">
-                                    <h5>Sample Fisik Kemasan</h5>
-
-                                </div>
-                            </div>
-                            <!--end card-body-->
-                            <div class="card-body">
-                                <div class="table-responsive table-card mb-4">
-                                    <table class="table align-middle table-nowrap mb-0" id="tasksTable">
-                                        <thead class="table-light text-muted">
-                                            <tr>
-                                                <th>Kotor</th>
-                                                <th>Rusak/Sobek</th>
-                                                <th>Sesuai STD</th>
-                                                <th>Lain-lain</th>
-                                                <th>berair</th>
-                                                <th>Basah</th>
-                                                <th>Campuran</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="list form-check-all">
-                                            @if ($data_kemasan)
-                                                <tr>
-                                                    <td>{{ $data_kemasan->kotor ?? 'belum input' }}</td>
-                                                    <td>{{ $data_kemasan->rusak ?? 'belum input' }}</td>
-                                                    <td>{{ $data_kemasan->sesuai_std ?? 'belum input' }}</td>
-                                                    <td>{{ $data_kemasan->{'lain-lain'} ?? 'belum input' }}</td>
-                                                    <td>{{ $data_kemasan->berair ?? 'belum input' }}</td>
-                                                    <td>{{ $data_kemasan->basah ?? 'belum input' }}</td>
-                                                    <td>{{ $data_kemasan->campuran ?? 'belum input' }}</td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-sm btn-primary"
-                                                            data-bs-toggle="modal" data-bs-target="#editModalKemasan">
-                                                            Edit
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            @else
-                                                <tr>
-                                                    <td colspan="12" class="text-center">Belum ada data</td>
-                                                </tr>
-                                            @endif
-                                        </tbody>
-                                    </table>
-                                    <div class="modal fade" id="editModalKemasan" tabindex="-1"
-                                        aria-labelledby="editModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <form id="editKemasanForm">
-                                                <meta name="csrf-token" content="{{ csrf_token() }}">
-                                                <input type="hidden" name="id_kemasan"
-                                                    value="{{ $data_kemasan->id ?? null }}">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="editModalLabel">Edit Dokumen</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Tutup"></button>
-                                                    </div>
-
-                                                    <div class="modal-body">
-                                                        @foreach ([
-                                                            'kotor' => 'a. Kotor',
-                                                            'rusak' => 'b. Rusak',
-                                                            'sesuai_std' => 'c. Sesuai Standar',
-                                                            'berair' => 'd. Berair',
-                                                            'basah' => 'e. Basah',
-                                                            'campuran' => 'f. Campuran',
-                                                        ] as $field => $label)
-                                                            <div class="mb-3">
-                                                                <label class="form-label">{{ $label }}</label><br>
-                                                                <label><input type="radio" name="{{ $field }}"
-                                                                        value="yes"
-                                                                        {{ optional($data_kemasan)->$field == 'yes' ? 'checked' : '' }}>
-                                                                    Iya</label>
-                                                                <label><input type="radio" name="{{ $field }}"
-                                                                        value="no"
-                                                                        {{ optional($data_kemasan)->$field == 'no' ? 'checked' : '' }}>
-                                                                    Tidak</label>
-                                                            </div>
-                                                        @endforeach
-                                                        <div class="mb-3">
-                                                            <label class="form-label">d. Lain-lain</label><br>
-                                                            <label><input type="text" class="form-control"
-                                                                    name="lain-lain"></label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="submit" class="btn btn-success">Simpan</button>
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Batal</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <!--end table-->
-                                </div>
-
-                            </div>
-                            <!--end card-body-->
-                        </div>
-                        <!--end card-->
-                    </div>
-                    <hr>
-
-                    <div class="col-lg-12">
-                        <div class="card-body" id="tasksList">
-                            <div class="card-header border-0">
-                                <div class="d-flex align-items-center">
-                                    <h5>Sample Fisik Raw</h5>
-                                </div>
-                            </div>
-                            <!--end card-body-->
-                            <div class="card-body">
-                                <div class="table-responsive table-card mb-4">
-                                    <table class="table align-middle table-nowrap mb-0" id="tasksTable">
-                                        <thead class="table-light text-muted">
-                                            <tr>
-                                                <th>Leleh</th>
-                                                <th>Warna Sesuai Std</th>
-                                                <th>Campuran</th>
-                                                <th>Aroma Sesuai Std</th>
-                                                <th>Sesuai Std</th>
-                                                <th>Aksi</th>
-
-                                            </tr>
-                                        </thead>
-                                        <tbody class="list form-check-all">
-                                            @if ($data_raw)
-                                                <tr>
-                                                    <td>{{ $data_raw->leleh ?? 'belum input' }}</td>
-                                                    <td>{{ $data_raw->warna_std ?? 'belum input' }}</td>
-                                                    <td>{{ $data_raw->campuran ?? 'belum input' }}</td>
-                                                    <td>{{ $data_raw->aroma_std ?? 'belum input' }}</td>
-                                                    <td>{{ $data_raw->sesuai_std ?? 'belum input' }}</td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-sm btn-primary"
-                                                            data-bs-toggle="modal" data-bs-target="#editModalRaw">
-                                                            Edit
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            @else
-                                                <tr>
-                                                    <td colspan="12" class="text-center">Belum ada data</td>
-                                                </tr>
-                                            @endif
-                                        </tbody>
-                                        <div class="modal fade" id="editModalRaw" tabindex="-1"
-                                            aria-labelledby="editModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <form id="editRawForm">
-                                                    <meta name="csrf-token" content="{{ csrf_token() }}">
-                                                    <input type="hidden" name="id_raw"
-                                                        value="{{ $data_raw->id ?? null }}">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="editModalLabel">Edit Raw</h5>
-                                                            <button type="button" class="btn-close"
-                                                                data-bs-dismiss="modal" aria-label="Tutup"></button>
-                                                        </div>
-
-                                                        <div class="modal-body">
-                                                            @foreach ([
-                                                                'leleh' => 'a. Leleh',
-                                                                'warna_std' => 'b. Warna Sesuai Standar',
-                                                                'aroma_std' => 'c. Aroma Sesuai Standar',
-                                                                'sesuai_std_raw' => 'd. Sesuai Standar',
-                                                            ] as $field => $label)
-                                                                    <div class="mb-3">
-                                                                    <label
-                                                                        class="form-label">{{ $label }}</label><br>
-                                                                    <label><input type="radio"
-                                                                            name="{{ $field }}" value="yes"
-                                                                            {{ optional($data_raw)->$field == 'yes' ? 'checked' : '' }}>
-                                                                        Iya</label>
-                                                                    <label><input type="radio"
-                                                                            name="{{ $field }}" value="no"
-                                                                            {{ optional($data_raw)->$field == 'no' ? 'checked' : '' }}>
-                                                                        Tidak</label>
-                                                                </div>
-                                                            @endforeach
-                                                            <div class="mb-3">
-                                                                <label class="form-label">e. Campuran</label><br>
-                                                                <label><input type="radio" name="campuran_raw"
-                                                                        value="yes"> Iya</label>
-                                                                <label><input type="radio" name="campuran_raw"
-                                                                        value="no"> Tidak</label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="submit" class="btn btn-success">Simpan</button>
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Batal</button>
-                                                        </div>
-                                                    </div>
-                                                </form>
                                             </div>
-                                        </div>
-                                    </table>
-                                    <!--end table-->
-                                </div>
-
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="text-center text-muted mb-0">Belum ada data</p>
+                                @endif
                             </div>
-                            <!--end card-body-->
                         </div>
-                        <!--end card-->
+
+                        <!-- Modal Edit Kondisi Mobil -->
+                        <div class="modal fade" id="editModalMobil" tabindex="-1" aria-labelledby="editModalMobilLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Update Kondisi Mobil</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Tutup"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="editMobilForm">
+                                            @csrf
+                                            <input type="hidden" name="id_mobil" value="{{ $data_mobil->id ?? null }}">
+
+                                            @foreach ([
+            'bersih' => 'a. Bersih',
+            'kering' => 'b. Kering',
+            'benda_asing' => 'c. Tidak Ada Benda Asing',
+            'cacat' => 'd. Tidak Cacat',
+            'segel' => 'e. Segel',
+            'berbau' => 'f. Berbau',
+        ] as $field => $label)
+                                                <div class="mb-3 d-flex justify-content-between align-items-center">
+                                                    <label class="form-label mb-0 fw-semibold">{{ $label }}</label>
+                                                    <div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="{{ $field }}" id="{{ $field }}_yes"
+                                                                value="yes"
+                                                                {{ optional($data_mobil)->$field === 'yes' ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ $field }}_yes">Iya</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="{{ $field }}" id="{{ $field }}_no"
+                                                                value="no"
+                                                                {{ optional($data_mobil)->$field === 'no' ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ $field }}_no">Tidak</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr class="my-2">
+                                            @endforeach
+
+                                            <div class="d-flex justify-content-end mt-4">
+                                                <button type="submit" class="btn btn-primary" id="submitBtnMobil">
+                                                    Simpan Kondisi Mobil
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <hr>
+
+                    <!-- Sample Fisik Kemasan -->
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-semibold text-muted">Sample Fisik Kemasan</h5>
+                                @if ($data_kemasan)
+                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#editModalKemasan">
+                                        <i class="ri-edit-box-line me-1"></i>Update
+                                    </button>
+                                @endif
+                            </div>
+
+                            <div class="card-body p-3">
+                                @if ($data_kemasan)
+                                    <div class="row g-2">
+                                        @php
+                                            $kemasanFields =
+                                                $identitas->jenis_gula === 'Garam'
+                                                    ? [
+                                                        'kotor' => 'Kotor',
+                                                        'berair' => 'Berair',
+                                                        'basah' => 'Basah',
+                                                        'campuran' => 'Campuran',
+                                                        'rusak' => 'Rusak / Robek',
+                                                        'sesuai_std' => 'Sesuai STD',
+                                                        'lain-lain' => 'Lain-lain',
+                                                    ]
+                                                    : [
+                                                        'kotor' => 'Kotor',
+                                                        'rusak' => 'Rusak / Sobek',
+                                                        'sesuai_std' => 'Sesuai STD',
+                                                        'lain-lain' => 'Lain-lain',
+                                                    ];
+                                        @endphp
+                                        @foreach ($kemasanFields as $key => $label)
+                                            <div class="col-6 col-md-4">
+                                                <div class="d-flex justify-content-start">
+                                                    <span class="fw-semibold me-2">
+                                                        @php
+                                                            $status = optional($data_kemasan)->$key ?? null;
+                                                        @endphp
+                                                        @if ($status === 'yes')
+                                                            <i class="ri-checkbox-circle-fill text-success"></i>
+                                                        @elseif($status === 'no')
+                                                            <i class="ri-close-circle-fill text-danger"></i>
+                                                        @else
+                                                            <i class="ri-indeterminate-circle-fill text-warning"></i>
+                                                        @endif
+                                                    </span>
+                                                    <span class="text-muted">{{ $label }}</span>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="text-center text-muted mb-0">Belum ada data</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Modal Edit Kemasan -->
+                        <div class="modal fade" id="editModalKemasan" tabindex="-1"
+                            aria-labelledby="editModalKemasanLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editModalKemasanLabel">Update Sample Fisik Kemasan
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <form id="editKemasanForm">
+                                            @csrf
+                                            <input type="hidden" name="id_kemasan"
+                                                value="{{ $data_kemasan->id ?? null }}">
+
+                                            @php
+                                                $modalFields =
+                                                    $identitas->jenis_gula === 'Garam'
+                                                        ? [
+                                                            'kotor' => 'a. Kotor',
+                                                            'berair' => 'b. Berair',
+                                                            'basah' => 'c. Basah',
+                                                            'campuran' => 'd. Campuran',
+                                                            'rusak' => 'e. Rusak / Robek',
+                                                            'sesuai_std' => 'f. Sesuai STD',
+                                                        ]
+                                                        : [
+                                                            'kotor' => 'a. Kotor',
+                                                            'rusak' => 'b. Rusak / Sobek',
+                                                            'sesuai_std' => 'c. Sesuai STD',
+                                                        ];
+                                            @endphp
+                                            @foreach ($modalFields as $field => $label)
+                                                <div class="mb-3 d-flex justify-content-between align-items-center">
+                                                    <label class="form-label mb-0 fw-semibold">{{ $label }}</label>
+                                                    <div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="{{ $field }}" id="{{ $field }}_yes"
+                                                                value="yes"
+                                                                {{ optional($data_kemasan)->$field === 'yes' ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ $field }}_yes">Iya</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="{{ $field }}" id="{{ $field }}_no"
+                                                                value="no"
+                                                                {{ optional($data_kemasan)->$field === 'no' ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ $field }}_no">Tidak</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr class="my-2">
+                                            @endforeach
+
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">
+                                                    {{ $identitas->jenis_gula === 'Garam' ? 'g. Lain-lain' : 'd. Lain-lain' }}
+                                                </label>
+                                                <input type="text" class="form-control" name="lain-lain"
+                                                    value="{{ $data_kemasan->{'lain-lain'} ?? '' }}"
+                                                    placeholder="Tuliskan keterangan lain...">
+                                            </div>
+
+                                            <div class="d-flex justify-content-end mt-4">
+                                                <button type="submit" class="btn btn-primary" id="submitBtnKemasan">
+                                                    Simpan Sample Fisik
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sample Fisik Raw -->
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-semibold text-muted">Sample Fisik Raw</h5>
+                                @if ($data_raw)
+                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#editModalRaw">
+                                        <i class="ri-edit-box-line me-1"></i>Update
+                                    </button>
+                                @endif
+                            </div>
+
+                            <div class="card-body p-3">
+                                @if ($data_raw)
+                                    <div class="row g-2">
+                                        @foreach ([
+            'leleh' => 'Leleh',
+            'warna_std' => 'Warna Sesuai Standar',
+            'campuran' => 'Campuran',
+            'aroma_std' => 'Aroma Tidak Sesuai Standar',
+            'sesuai_std' => 'Sesuai Standar',
+        ] as $key => $label)
+                                            <div class="col-6 col-md-4">
+                                                <div class="d-flex justify-content-start">
+                                                    <span class="fw-semibold me-2">
+                                                        @if (optional($data_raw)->$key === 'yes')
+                                                            <i class="ri-checkbox-circle-fill text-success"></i>
+                                                        @elseif(optional($data_raw)->$key === 'no')
+                                                            <i class="ri-close-circle-fill text-danger"></i>
+                                                        @else
+                                                            <i class="ri-indeterminate-circle-fill text-warning"></i>
+                                                        @endif
+                                                    </span>
+                                                    <span class="text-muted">{{ $label }}</span>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="text-center text-muted mb-0">Belum ada data</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Modal Edit Raw -->
+                        <div class="modal fade" id="editModalRaw" tabindex="-1" aria-labelledby="editModalRawLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Update Sample Fisik Raw</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <form id="editRawForm">
+                                            @csrf
+                                            <input type="hidden" name="id_raw" value="{{ $data_raw->id ?? null }}">
+
+                                            @foreach ([
+            'leleh' => 'a. Leleh',
+            'warna_std' => 'b. Warna Sesuai Standar',
+            'aroma_std' => 'c. Aroma Tidak Sesuai Standar',
+            'sesuai_std_raw' => 'd. Sesuai Standar',
+            'campuran_raw' => 'e. Campuran',
+        ] as $field => $label)
+                                                @php
+                                                    $fieldName = str_replace('_raw', '', $field);
+                                                    $value = optional($data_raw)->$fieldName;
+                                                @endphp
+
+                                                <div class="mb-3 d-flex justify-content-between align-items-center">
+                                                    <label class="form-label mb-0 fw-semibold">{{ $label }}</label>
+                                                    <div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="{{ $field }}" id="{{ $field }}_yes"
+                                                                value="yes" {{ $value === 'yes' ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ $field }}_yes">Iya</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="{{ $field }}" id="{{ $field }}_no"
+                                                                value="no" {{ $value === 'no' ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ $field }}_no">Tidak</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr class="my-2">
+                                            @endforeach
+
+
+                                            <div class="d-flex justify-content-end mt-4">
+                                                <button type="submit" class="btn btn-primary" id="submitBtnRaw">
+                                                    Simpan Sample Fisik Raw
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     @if ($identitas->jenis_gula == 'Gula Tebu' || $identitas->jenis_gula == 'Gula Kelapa')
                         <div class="col-lg-12">
-                            <div class="card-body p-4">
-                                <div class="card-header border-0">
-                                    <div class="d-flex align-items-center">
-                                        <h5>Short Term Analisa</h5>
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0 fw-semibold">Short Term Analisa</h5>
+                                </div>
+                                <div class="card-body p-3">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped align-middle mb-0">
+                                            <thead class="table-light text-muted text-uppercase small">
+                                                <tr>
+                                                    <th width="5%">#</th>
+                                                    <th>Brix</th>
+                                                    <th>pH</th>
+                                                    <th>Kotoran</th>
+                                                    <th>KA</th>
+                                                    <th>Organo</th>
+                                                    <th>Warna</th>
+                                                    <th>Aroma</th>
+                                                    <th>Disposisi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="list-detail-short">
+                                                @forelse ($analisa_short_term as $index => $short)
+                                                    <tr>
+                                                        <td>{{ $index + 1 }}</td>
+                                                        <td>{{ $short->brix ?? '-' }}</td>
+                                                        <td>{{ $short->ph ?? '-' }}</td>
+                                                        <td>{{ $short->kotoran ?? '-' }}</td>
+                                                        <td>{{ $short->ka ?? '-' }}</td>
+                                                        <td>{{ $short->organo ?? '-' }}</td>
+                                                        <td>{{ $short->warna ?? '-' }}</td>
+                                                        <td>{{ $short->aroma ?? '-' }}</td>
+                                                        <td>
+                                                            <span
+                                                                class="badge {{ getBadgeClass($short->disposisi->disposisi ?? null) }}">
+                                                                {{ $short->disposisi->disposisi ?? '-' }}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="9" class="text-center text-muted py-4">
+                                                            Belum ada data short term
+                                                        </td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
-                                <div class="table-responsive">
-                                    <table class="table align-middle table-nowrap mb-0">
-                                        <thead>
-                                            <tr class="table-light text-muted">
-                                                <th scope="col">No</th>
-                                                <th scope="col">Brix</th>
-                                                <th scope="col">pH</th>
-                                                <th scope="col">Kotoran</th>
-                                                <th scope="col">ka</th>
-                                                <th scope="col">organo</th>
-                                                <th scope="col">warna</th>
-                                                <th scope="col">aroma</th>
-                                                <th scope="col">disposisi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="list-detail-short">
-                                            @forelse ($analisa_short_term as $index => $short)
-                                                <tr>
-                                                    <td>{{ $index + 1 }}</td>
-                                                    <td>{{ $short->brix ?? 'belum input' }}</td>
-                                                    <td>{{ $short->ph ?? 'belum input' }}</td>
-                                                    <td>{{ $short->kotoran ?? 'belum input' }}</td>
-                                                    <td>{{ $short->ka ?? 'belum input' }}</td>
-                                                    <td>{{ $short->organo ?? 'belum input' }}</td>
-                                                    <td>{{ $short->warna ?? 'belum input' }}</td>
-                                                    <td>{{ $short->aroma ?? 'belum input' }}</td>
-                                                    <td>{{ $short->disposisi->disposisi ?? 'belum input' }}</td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="9" class="text-center">Belum ada data short term</td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table><!--end table-->
-                                </div>
                             </div>
-                            <!--end card-body-->
                         </div>
 
                         <div class="col-lg-12">
-                            <div class="card-body p-4">
-                                <div class="card-header border-0">
-                                    <div class="d-flex align-items-center">
-                                        <h5>Long Term Analisa</h5>
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0 fw-semibold">Long Term Analisa</h5>
+                                </div>
+                                <div class="card-body p-3">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped align-middle mb-0">
+                                            <thead class="table-light text-muted text-uppercase small">
+                                                <tr>
+                                                    <th width="5%">#</th>
+                                                    <th>Uji Kristal</th>
+                                                    <th>Disposisi</th>
+                                                    <th width="15%"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="list-detail-long">
+                                                @forelse ($analisa_long_term as $index => $long)
+                                                    <tr>
+                                                        <td>{{ $index + 1 }}</td>
+                                                        <td>{{ $long->uji_kristal ?? '-' }}</td>
+                                                        <td>
+                                                            <span class="badge {{ getBadgeClass($long->disposisi) }}">
+                                                                {{ $long->disposisi ?? '-' }}
+                                                            </span>
+                                                        </td>
+                                                        <td class="text-end">
+                                                            @if (strtolower($long->uji_kristal ?? '') === 'positif' && $long->disposisi !== 'release')
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-warning btn-edit-disposisi"
+                                                                    data-id="{{ $long->id }}"
+                                                                    data-disposisi="{{ $long->disposisi }}"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#updateDisposisiModal">
+                                                                    <i class="ri-edit-line"></i> Update
+                                                                </button>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="4" class="text-center text-muted py-4">
+                                                            Belum ada data long term
+                                                        </td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
-                                <div class="table-responsive">
-                                    <table class="table align-middle table-nowrap mb-0">
-                                        <thead>
-                                            <tr class="table-light text-muted">
-                                                <th scope="col">No</th>
-                                                <th scope="col">Uji Kristal</th>
-                                                <th scope="col">disposisi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="list-detail-long">
-                                            @forelse ($analisa_long_term as $index => $long)
-                                                <tr>
-                                                    <td>{{ $index + 1 }}</td>
-                                                    <td>{{ $long->uji_kristal ?? 'belum input' }}
-
-                                                    </td>
-                                                    <td>
-                                                        <span
-                                                            class="badge 
-                                                @if ($long->disposisi === 'reject') badge-soft-danger
-                                                @elseif($long->disposisi === 'release')
-                                                    badge-soft-success
-                                                @else
-                                                    badge-soft-warning @endif
-                                            ">
-                                                            {{ $long->disposisi ?? 'belum input' }}
-                                                        </span>
-
-                                                        @if (strtolower($long->uji_kristal) === 'positif' && $long->disposisi !== 'release')
-                                                            <br>
-                                                            <button type="button"
-                                                                class="btn btn-sm btn-warning btn-edit-disposisi"
-                                                                data-id="{{ $long->id }}"
-                                                                data-disposisi="{{ $long->disposisi }}"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#updateDisposisiModal">
-                                                                <i class="ri-edit-line"></i> Update
-                                                            </button>
-                                                        @endif
-                                                    </td>
-
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="12" class="text-center">Belum ada data long term</td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table><!--end table-->
-                                </div>
                             </div>
-                            <!--end card-body-->
                         </div>
                     @else
-                        <!-- kode jika identitas.jenis_gula false -->
                         <div class="col-lg-12">
-                            <div class="card-body p-4">
-                                <div class="card-header border-0">
-                                    <div class="d-flex align-items-center">
-                                        <h5>Hasil Analisa</h5>
-
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0 fw-semibold">Hasil Analisa</h5>
+                                </div>
+                                <div class="card-body p-3">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped align-middle mb-0">
+                                            <thead class="table-light text-muted text-uppercase small">
+                                                <tr>
+                                                    <th width="5%">#</th>
+                                                    <th>Fisik</th>
+                                                    <th>%KA</th>
+                                                    <th>Kotoran</th>
+                                                    <th>Organo</th>
+                                                    <th>Warna</th>
+                                                    <th>Aroma</th>
+                                                    <th>%NaCl</th>
+                                                    <th>Gross Weight</th>
+                                                    <th>Disposisi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="list-detail-analisa">
+                                                @forelse ($analisa_garam_gula as $index => $garamgula)
+                                                    <tr>
+                                                        <td>{{ $index + 1 }}</td>
+                                                        <td>{{ $garamgula->fisik ?? '-' }}</td>
+                                                        <td>{{ $garamgula->{'%ka'} ?? '-' }}</td>
+                                                        <td>{{ $garamgula->kotoran ?? '-' }}</td>
+                                                        <td>{{ $garamgula->organo ?? '-' }}</td>
+                                                        <td>{{ $garamgula->warna ?? '-' }}</td>
+                                                        <td>{{ $garamgula->aroma ?? '-' }}</td>
+                                                        <td>{{ $garamgula->{'%nacl'} ?? '-' }}</td>
+                                                        <td>{{ $garamgula->gross_weight ?? '-' }}</td>
+                                                        <td>
+                                                            <span
+                                                                class="badge {{ getBadgeClass($garamgula->disposisi->disposisi ?? null) }}">
+                                                                {{ $garamgula->disposisi->disposisi ?? '-' }}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="10" class="text-center text-muted py-4">
+                                                            Belum ada data analisa
+                                                        </td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
-                                <div class="table-responsive">
-                                    <table class="table align-middle table-nowrap mb-0">
-                                        <thead>
-                                            <tr class="table-light text-muted">
-                                                <th scope="col">No</th>
-                                                <th scope="col">Fisik</th>
-                                                <th scope="col">%ka</th>
-                                                <th scope="col">Kotoran</th>
-                                                <th scope="col">organo</th>
-                                                <th scope="col">warna</th>
-                                                <th scope="col">aroma</th>
-                                                <th scope="col">%nacl</th>
-                                                <th scope="col">grosweight</th>
-                                                <th scope="col">disposisi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="list-detail-analisa">
-                                            @forelse ($analisa_garam_gula as $index => $garamgula)
-                                                <tr>
-                                                    <td>{{ $index + 1 }}</td>
-                                                    <td>{{ $garamgula->fisik ?? 'belum input' }}</td>
-                                                    <td>{{ $garamgula->{'%ka'} ?? 'belum input' }}</td>
-                                                    <td>{{ $garamgula->kotoran ?? 'belum input' }}</td>
-                                                    <td>{{ $garamgula->organo ?? 'belum input' }}</td>
-                                                    <td>{{ $garamgula->warna ?? 'belum input' }}</td>
-                                                    <td>{{ $garamgula->aroma ?? 'belum input' }}</td>
-                                                    <td>{{ $garamgula->{'%nacl'} ?? 'belum input' }}</td>
-                                                    <td>{{ $garamgula->gross_weight ?? 'belum input' }}</td>
-                                                    <td>{{ $garamgula->disposisi->disposisi ?? 'belum input' }}</td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="12" class="text-center">Belum ada data analisa</td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table><!--end table-->
-                                </div>
                             </div>
-                            <!--end card-body-->
                         </div>
                     @endif
-
 
 
                     <!-- Menu Sampling & Analisa -->
@@ -803,7 +851,7 @@
     <!-- Modal Update Disposisi (static modal, dipakai semua baris) -->
     <div class="modal fade" id="updateDisposisiModal" tabindex="-1" aria-labelledby="updateDisposisiModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <form id="formUpdateDisposisi" method="POST">
                 @csrf
                 <div class="modal-content">
@@ -837,64 +885,70 @@
 
     <!-- Modal Pilihan Sampling -->
     <div class="modal fade" id="samplingModal" tabindex="-1" aria-labelledby="samplingModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="samplingModalLabel">Pilih Kategori Sampling</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Silakan pilih kategori sampling yang ingin Anda isi.</p>
-                    <div class="list-group">
-                        @if (is_null($identitas->samplingMobil))
-                            <button type="button" class="list-group-item list-group-item-action sampling-option"
-                                data-sampling="kondisi_mobil" data-title="Sampling Kondisi Mobil"
-                                data-bs-dismiss="modal">
-                                <i class="ri-truck-line me-2"></i> Sampling Kondisi Mobil
-                            </button>
-                        @endif
+                    @php
+                        $samplingComplete =
+                            !is_null($identitas->samplingMobil) &&
+                            !is_null($identitas->samplingDokumen) &&
+                            !is_null($identitas->samplingFisikKemasan) &&
+                            ($identitas->jenis_gula === 'Garam' || !is_null($identitas->samplingFisikRaw));
+                    @endphp
 
-                        @if (is_null($identitas->samplingDokumen))
-                            <button type="button" class="list-group-item list-group-item-action sampling-option"
-                                data-sampling="kondisi_dokumen" data-title="Sampling Dokumen" data-bs-dismiss="modal">
-                                <i class="ri-file-text-line me-2"></i> Sampling Dokumen
-                            </button>
-                        @endif
+                    @if ($samplingComplete)
+                        <div class="alert alert-info text-center">
+                            Anda sudah mengisi semua sampling.
+                        </div>
+                    @else
+                        <p>Silakan pilih kategori sampling yang ingin Anda isi.</p>
+                        <div class="list-group">
+                            @if (is_null($identitas->samplingMobil))
+                                <button type="button" class="list-group-item list-group-item-action sampling-option"
+                                    data-sampling="kondisi_mobil" data-title="Sampling Kondisi Mobil"
+                                    data-bs-dismiss="modal">
+                                    <i class="ri-truck-line me-2"></i> Sampling Kondisi Mobil
+                                </button>
+                            @endif
 
-                        @if (is_null($identitas->samplingFisikKemasan))
-                            <button type="button" class="list-group-item list-group-item-action sampling-option"
-                                data-sampling="kondisi_kemasan" data-title="Sampling Kemasan" data-bs-dismiss="modal">
-                                <i class="ri-inbox-line me-2"></i> Sampling Kemasan
-                            </button>
-                        @endif
+                            @if (is_null($identitas->samplingDokumen))
+                                <button type="button" class="list-group-item list-group-item-action sampling-option"
+                                    data-sampling="kondisi_dokumen" data-title="Sampling Dokumen"
+                                    data-bs-dismiss="modal">
+                                    <i class="ri-file-text-line me-2"></i> Sampling Dokumen
+                                </button>
+                            @endif
 
-                        @if ($identitas->jenis_gula !== 'Garam' && is_null($identitas->samplingFisikRaw))
-                            <button type="button" class="list-group-item list-group-item-action sampling-option"
-                                data-sampling="kondisi_raw" data-title="Sampling Raw" data-bs-dismiss="modal">
-                                <i class="ri-flask-line me-2"></i> Sampling Raw
-                            </button>
-                        @endif
-                        @if (
-                            !is_null($identitas->sampling_mobil) &&
-                                !is_null($identitas->sampling_dokumen) &&
-                                !is_null($identitas->sampling_fisik_kemasan) &&
-                                ($identitas->jenis_gula === 'Garam' || !is_null($identitas->sampling_fisik_raw)))
-                            <div class="alert alert-success text-center mt-3">
-                                Semua kategori sampling telah diisi.
-                            </div>
-                        @endif
-                    </div>
+                            @if (is_null($identitas->samplingFisikKemasan))
+                                <button type="button" class="list-group-item list-group-item-action sampling-option"
+                                    data-sampling="kondisi_kemasan" data-title="Sampling Kemasan"
+                                    data-bs-dismiss="modal">
+                                    <i class="ri-inbox-line me-2"></i> Sampling Kemasan
+                                </button>
+                            @endif
+
+                            @if ($identitas->jenis_gula !== 'Garam' && is_null($identitas->samplingFisikRaw))
+                                <button type="button" class="list-group-item list-group-item-action sampling-option"
+                                    data-sampling="kondisi_raw" data-title="Sampling Raw" data-bs-dismiss="modal">
+                                    <i class="ri-flask-line me-2"></i> Sampling Raw
+                                </button>
+                            @endif
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
-
     <!-- endmodal -->
 
     <!-- Modal Sampling Kondisi Mobil -->
     <div class="modal fade" id="modalKondisiMobil" tabindex="-1" aria-labelledby="modalKondisiMobilLabel"
         aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Sampling Kondisi Mobil - {{ $identitas->no_mobil }}</h5>
@@ -905,40 +959,105 @@
                         @csrf
                         <input type="hidden" name="id_identitas" value="{{ $identitas->id }}">
 
-                        <div class="mb-3">
-                            <label class="form-label">a. Bersih</label><br>
-                            <label><input type="radio" name="bersih" value="yes"> Iya</label>
-                            <label><input type="radio" name="bersih" value="no"> Tidak</label>
+                        <div class="mb-3 d-flex justify-content-between align-items-center">
+                            <label class="form-label mb-0 fw-semibold">a. Bersih</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="bersih" id="bersih-yes"
+                                        value="yes">
+                                    <label class="form-check-label" for="bersih-yes">Iya</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="bersih" id="bersih-no"
+                                        value="no">
+                                    <label class="form-check-label" for="bersih-no">Tidak</label>
+                                </div>
+                            </div>
                         </div>
+                        <hr class="my-2">
 
-                        <div class="mb-3">
-                            <label class="form-label">b. Kering</label><br>
-                            <label><input type="radio" name="kering" value="yes"> Iya</label>
-                            <label><input type="radio" name="kering" value="no"> Tidak</label>
+                        <div class="mb-3 d-flex justify-content-between align-items-center">
+                            <label class="form-label mb-0 fw-semibold">b. Kering</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="kering" id="kering-yes"
+                                        value="yes">
+                                    <label class="form-check-label" for="kering-yes">Iya</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="kering" id="kering-no"
+                                        value="no">
+                                    <label class="form-check-label" for="kering-no">Tidak</label>
+                                </div>
+                            </div>
                         </div>
+                        <hr class="my-2">
 
-                        <div class="mb-3">
-                            <label class="form-label">c. Tidak Ada Benda Asing</label><br>
-                            <label><input type="radio" name="benda_asing" value="yes"> Iya</label>
-                            <label><input type="radio" name="benda_asing" value="no"> Tidak</label>
+                        <div class="mb-3 d-flex justify-content-between align-items-center">
+                            <label class="form-label mb-0 fw-semibold">c. Tidak Ada Benda Asing</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="benda_asing"
+                                        id="benda_asing-yes" value="yes">
+                                    <label class="form-check-label" for="benda_asing-yes">Iya</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="benda_asing"
+                                        id="benda_asing-no" value="no">
+                                    <label class="form-check-label" for="benda_asing-no">Tidak</label>
+                                </div>
+                            </div>
                         </div>
+                        <hr class="my-2">
 
-                        <div class="mb-3">
-                            <label class="form-label">d. Tidak Cacat / Bolong</label><br>
-                            <label><input type="radio" name="cacat" value="yes"> Iya</label>
-                            <label><input type="radio" name="cacat" value="no"> Tidak</label>
+                        <div class="mb-3 d-flex justify-content-between align-items-center">
+                            <label class="form-label mb-0 fw-semibold">d. Tidak Cacat / Bolong</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="cacat" id="cacat-yes"
+                                        value="yes">
+                                    <label class="form-check-label" for="cacat-yes">Iya</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="cacat" id="cacat-no"
+                                        value="no">
+                                    <label class="form-check-label" for="cacat-no">Tidak</label>
+                                </div>
+                            </div>
                         </div>
+                        <hr class="my-2">
 
-                        <div class="mb-3">
-                            <label class="form-label">e. Segel</label><br>
-                            <label><input type="radio" name="segel" value="yes"> Iya</label>
-                            <label><input type="radio" name="segel" value="no"> Tidak</label>
+                        <div class="mb-3 d-flex justify-content-between align-items-center">
+                            <label class="form-label mb-0 fw-semibold">e. Segel</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="segel" id="segel-yes"
+                                        value="yes">
+                                    <label class="form-check-label" for="segel-yes">Iya</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="segel" id="segel-no"
+                                        value="no">
+                                    <label class="form-check-label" for="segel-no">Tidak</label>
+                                </div>
+                            </div>
                         </div>
+                        <hr class="my-2">
 
-                        <div class="mb-4">
-                            <label class="form-label">f. Tidak Berbau</label><br>
-                            <label><input type="radio" name="berbau" value="yes"> Iya</label>
-                            <label><input type="radio" name="berbau" value="no"> Tidak</label>
+                        <div class="mb-4 d-flex justify-content-between align-items-center">
+                            <label class="form-label mb-0 fw-semibold">f. Tidak Berbau</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="berbau" id="berbau-yes"
+                                        value="yes">
+                                    <label class="form-check-label" for="berbau-yes">Iya</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="berbau" id="berbau-no"
+                                        value="no">
+                                    <label class="form-check-label" for="berbau-no">Tidak</label>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="d-flex justify-content-end">
@@ -952,55 +1071,47 @@
 
     <!-- modal dokumen -->
     <div class="modal fade" id="modalDokumen" tabindex="-1" aria-labelledby="modalDokumenLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Sampling Dokumen - {{ $identitas->nama_bahan }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Form Dokumen -->
                     <form class="form-sampling" id="form-dokumen">
                         @csrf
                         <input type="hidden" name="id_identitas" value="{{ $identitas->id }}">
 
-                        <div class="mb-3">
-                            <label class="form-label">a. CoA</label><br>
-                            <label><input type="radio" name="coa" value="yes"> Iya</label>
-                            <label><input type="radio" name="coa" value="no"> Tidak</label>
-                        </div>
+                        @foreach ([
+            'coa' => 'a. CoA',
+            'suratjalan_vendor' => 'b. Surat Jalan Vendor',
+            'packing_list' => 'c. Packing List',
+            'identitas_kemasan' => 'd. Identitas di Kemasan',
+            'logo_halal' => 'e. Logo Halal di Kemasan',
+            'kesesuaian_matriks_bahan' => 'f. Kesesuaian dengan Matriks Bahan Baku',
+        ] as $field => $label)
+                            <div class="mb-3 d-flex justify-content-between align-items-center">
+                                <label class="form-label mb-0 fw-semibold">{{ $label }}</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="{{ $field }}"
+                                            id="{{ $field }}_yes" value="yes">
+                                        <label class="form-check-label" for="{{ $field }}_yes">Iya</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="{{ $field }}"
+                                            id="{{ $field }}_no" value="no">
+                                        <label class="form-check-label" for="{{ $field }}_no">Tidak</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="my-2">
+                        @endforeach
 
-                        <div class="mb-3">
-                            <label class="form-label">b. Surat Jalan Vendor</label><br>
-                            <label><input type="radio" name="suratjalan_vendor" value="yes"> Iya</label>
-                            <label><input type="radio" name="suratjalan_vendor" value="no"> Tidak</label>
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="submit" class="btn btn-primary" id="submitBtnDokumen">Simpan
+                                Sampling</button>
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">c. Packing List</label><br>
-                            <label><input type="radio" name="packing_list" value="yes"> Iya</label>
-                            <label><input type="radio" name="packing_list" value="no"> Tidak</label>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">d. Identitas di Kemasan</label><br>
-                            <label><input type="radio" name="identitas_kemasan" value="yes"> Iya</label>
-                            <label><input type="radio" name="identitas_kemasan" value="no"> Tidak</label>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">e. Logo Halal di Kemasan</label><br>
-                            <label><input type="radio" name="logo_halal" value="yes"> Iya</label>
-                            <label><input type="radio" name="logo_halal" value="no"> Tidak</label>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label">f. Kesuaian dengan Matriks Bahan Baku</label><br>
-                            <label><input type="radio" name="kesesuaian_matriks_bahan" value="yes"> Iya</label>
-                            <label><input type="radio" name="kesesuaian_matriks_bahan" value="no"> Tidak</label>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary" id="submitBtnDokumen">Simpan Sampling</button>
                     </form>
                 </div>
             </div>
@@ -1009,7 +1120,7 @@
 
     <!-- kemasan -->
     <div class="modal fade" id="modalKemasan" tabindex="-1" aria-labelledby="modalKemasanLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Sampling Kemasan - {{ $identitas->nama_bahan }}</h5>
@@ -1023,51 +1134,125 @@
                         @if ($identitas->jenis_gula == 'Garam')
                             <!-- Input untuk garam -->
                             <div class="mb-3">
-                                <label class="form-label">a. Kotor</label><br>
-                                <label><input type="radio" name="kotor" value="yes"> Iya</label>
-                                <label><input type="radio" name="kotor" value="no"> Tidak</label>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">a. Kotor</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="kotor" id="kotor-yes"
+                                                value="yes">
+                                            <label class="form-check-label" for="kotor-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="kotor" id="kotor-no"
+                                                value="no">
+                                            <label class="form-check-label" for="kotor-no">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="zak-input-wrapper mt-3" style="display:none;">
+                                    <label class="form-label small text-muted">Jumlah zak kotor?</label>
+                                    <input type="number" class="form-control form-control-sm zak-qty-input"
+                                        placeholder="Contoh: 5" min="0">
+                                </div>
+                            </div>
+                            <hr class="my-2">
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">b. Berair</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="berair"
+                                                id="berair-yes" value="yes">
+                                            <label class="form-check-label" for="berair-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="berair" id="berair-no"
+                                                value="no">
+                                            <label class="form-check-label" for="berair-no">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="my-2">
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">c. Basah</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="basah" id="basah-yes"
+                                                value="yes">
+                                            <label class="form-check-label" for="basah-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="basah" id="basah-no"
+                                                value="no">
+                                            <label class="form-check-label" for="basah-no">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="my-2">
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">d. Campuran</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="campuran"
+                                                id="campuran-yes" value="yes">
+                                            <label class="form-check-label" for="campuran-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="campuran"
+                                                id="campuran-no" value="no">
+                                            <label class="form-check-label" for="campuran-no">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="my-2">
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">e. Rusak / Sobek</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="rusak" id="rusak-yes"
+                                                value="yes">
+                                            <label class="form-check-label" for="rusak-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="rusak" id="rusak-no"
+                                                value="no">
+                                            <label class="form-check-label" for="rusak-no">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="zak-input-wrapper mt-2" style="display:none;">
-                                    <label class="form-label">Berapa zak yang tidak standar?</label>
+                                    <label class="form-label">Berapa zak yang rusak / sobek?</label>
                                     <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
                                 </div>
-
-
                             </div>
+                            <hr class="my-2">
 
                             <div class="mb-3">
-                                <label class="form-label">b. Berair</label><br>
-                                <label><input type="radio" name="berair" value="yes"> Iya</label>
-                                <label><input type="radio" name="berair" value="no"> Tidak</label>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">c. Basah</label><br>
-                                <label><input type="radio" name="basah" value="yes"> Iya</label>
-                                <label><input type="radio" name="basah" value="no"> Tidak</label>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">d. Campuran</label><br>
-                                <label><input type="radio" name="campuran" value="yes"> Iya</label>
-                                <label><input type="radio" name="campuran" value="no"> Tidak</label>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">e. Rusak Sobek</label><br>
-                                <label><input type="radio" name="rusak" value="yes"> Iya</label>
-                                <label><input type="radio" name="rusak" value="no"> Tidak</label>
-                                <div class="zak-input-wrapper mt-2" style="display:none;">
-                                    <label class="form-label">Berapa zak yang tidak standar?</label>
-                                    <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">f. Sesuai STD</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="sesuai_std"
+                                                id="sesuai_std-yes" value="yes">
+                                            <label class="form-check-label" for="sesuai_std-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="sesuai_std"
+                                                id="sesuai_std-no" value="no">
+                                            <label class="form-check-label" for="sesuai_std-no">Tidak</label>
+                                        </div>
+                                    </div>
                                 </div>
-
-
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">f. Sesuai STD</label><br>
-                                <label><input type="radio" name="sesuai_std" value="yes"> Iya</label>
-                                <label><input type="radio" name="sesuai_std" value="no"> Tidak</label>
                                 <div class="zak-input-wrapper mt-2" style="display:none;">
                                     <label class="form-label">Berapa zak yang tidak standar?</label>
                                     <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
@@ -1075,44 +1260,84 @@
                             </div>
                         @else
                             <div class="mb-3">
-                                <label class="form-label">a. Kotor</label><br>
-                                <label><input type="radio" name="kotor" value="yes"> Iya</label>
-                                <label><input type="radio" name="kotor" value="no"> Tidak</label>
-                                <div class="zak-input-wrapper mt-2" style="display:none;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">a. Kotor</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="kotor" id="kotor-yes"
+                                                value="yes">
+                                            <label class="form-check-label" for="kotor-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="kotor" id="kotor-no"
+                                                value="no">
+                                            <label class="form-check-label" for="kotor-no">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="zak-input-wrapper mt-3" style="display:none;">
+                                    <label class="form-label small text-muted">Jumlah zak kotor?</label>
+                                    <input type="number" class="form-control form-control-sm zak-qty-input"
+                                        placeholder="Contoh: 5" min="0">
+                                </div>
+                            </div>
+                            <hr class="my-2">
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">b. Rusak / Sobek</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="rusak" id="rusak-yes"
+                                                value="yes">
+                                            <label class="form-check-label" for="rusak-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="rusak" id="rusak-no"
+                                                value="no">
+                                            <label class="form-check-label" for="rusak-no">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="zak-input-wrapper mt-3" style="display:none;">
+                                    <label class="form-label small text-muted">Jumlah zak rusak / sobek?</label>
+                                    <input type="number" class="form-control form-control-sm zak-qty-input"
+                                        placeholder="Contoh: 5" min="0">
+                                </div>
+                            </div>
+                            <hr class="my-2">
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">c. Sesuai STD</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="sesuai_std"
+                                                id="sesuai_std-yes" value="yes">
+                                            <label class="form-check-label" for="sesuai_std-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="sesuai_std"
+                                                id="sesuai_std-no" value="no">
+                                            <label class="form-check-label" for="sesuai_std-no">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="zak-input-wrapper mt-3" style="display:none;">
                                     <label class="form-label">Berapa zak yang tidak standar?</label>
                                     <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
                                 </div>
-
-
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">b. Rusak Sobek</label><br>
-                                <label><input type="radio" name="rusak" value="yes"> Iya</label>
-                                <label><input type="radio" name="rusak" value="no"> Tidak</label>
-                                <div class="zak-input-wrapper mt-2" style="display:none;">
-                                    <label class="form-label">Berapa zak yang tidak standar?</label>
-                                    <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">d. Lain-lain</label>
+                                    <div>
+                                        <input class="form-control" type="text" name="lain-lain">
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">c. Sesuai STD</label><br>
-                                <label><input type="radio" name="sesuai_std" value="yes"> Iya</label>
-                                <label><input type="radio" name="sesuai_std" value="no"> Tidak</label>
-                                <div class="zak-input-wrapper mt-2" style="display:none;">
-                                    <label class="form-label">Berapa zak yang tidak standar?</label>
-                                    <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">d. Lain-lain</label><br>
-                                <label><input class="form-control" type="text" name="lain-lain"></label>
                             </div>
                         @endif
-
-
 
                         <button type="submit" class="btn btn-primary" id="submitBtnKemasan">Simpan Sampling</button>
                     </form>
@@ -1123,7 +1348,7 @@
 
     <!-- raw -->
     <div class="modal fade" id="modalRaw" tabindex="-1" aria-labelledby="modalRawLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Sampling Raw - {{ $identitas->nama_bahan }}</h5>
@@ -1136,56 +1361,123 @@
                         <input type="hidden" name="id_identitas" value="{{ $identitas->id }}">
 
                         <div class="mb-3">
-                            <label class="form-label">a. Leleh</label><br>
-                            <label><input type="radio" name="leleh" value="yes"> Iya</label>
-                            <label><input type="radio" name="leleh" value="no"> Tidak</label>
-                            <div class="zak-input-wrapper mt-2" style="display:none;">
-                                <label class="form-label">Berapa zak yang tidak standar?</label>
-                                <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <label class="form-label mb-0 fw-semibold">a. Leleh</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="leleh" id="leleh-yes"
+                                            value="yes">
+                                        <label class="form-check-label" for="leleh-yes">Iya</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="leleh" id="leleh-no"
+                                            value="no">
+                                        <label class="form-check-label" for="leleh-no">Tidak</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="zak-input-wrapper mt-3" style="display:none;">
+                                <label class="form-label small text-muted">Jumlah zak leleh?</label>
+                                <input type="number" class="form-control form-control-sm zak-qty-input"
+                                    placeholder="Contoh: 5" min="0">
                             </div>
                         </div>
+                        <hr class="my-2">
 
                         <div class="mb-3">
-                            <label class="form-label">b. Warna sesuai STD</label><br>
-                            <label><input type="radio" name="warna_std" value="yes"> Iya</label>
-                            <label><input type="radio" name="warna_std" value="no"> Tidak</label>
-                            <div class="zak-input-wrapper mt-2" style="display:none;">
-                                <label class="form-label">Berapa zak yang tidak standar?</label>
-                                <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <label class="form-label mb-0 fw-semibold">b. Warna tidak sesuai STD</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="warna_std"
+                                            id="warna_std-yes" value="yes">
+                                        <label class="form-check-label" for="warna_std-yes">Iya</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="warna_std"
+                                            id="warna_std-no" value="no">
+                                        <label class="form-check-label" for="warna_std-no">Tidak</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="zak-input-wrapper mt-3" style="display:none;">
+                                <label class="form-label small text-muted">Jumlah zak tidak standar?</label>
+                                <input type="number" class="form-control form-control-sm zak-qty-input"
+                                    placeholder="Contoh: 5" min="0">
                             </div>
                         </div>
+                        <hr class="my-2">
 
                         <div class="mb-3">
-                            <label class="form-label">c. Campuran</label><br>
-                            <label><input type="radio" name="campuran" value="yes"> Iya</label>
-                            <label><input type="radio" name="campuran" value="no"> Tidak</label>
-                            <div class="zak-input-wrapper mt-2" style="display:none;">
-                                <label class="form-label">Berapa zak yang tidak standar?</label>
-                                <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <label class="form-label mb-0 fw-semibold">c. Campuran</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="campuran" id="campuran-yes"
+                                            value="yes">
+                                        <label class="form-check-label" for="campuran-yes">Iya</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="campuran"
+                                            id="campuran-no" value="no">
+                                        <label class="form-check-label" for="campuran-no">Tidak</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="zak-input-wrapper mt-3" style="display:none;">
+                                <label class="form-label small text-muted">Jumlah zak campuran?</label>
+                                <input type="number" class="form-control form-control-sm zak-qty-input"
+                                    placeholder="Contoh: 5" min="0">
                             </div>
                         </div>
+                        <hr class="my-2">
 
                         <div class="mb-3">
-                            <label class="form-label">d. Aroma STD</label><br>
-                            <label><input type="radio" name="aroma_std" value="yes"> Iya</label>
-                            <label><input type="radio" name="aroma_std" value="no"> Tidak</label>
-                            <div class="zak-input-wrapper mt-2" style="display:none;">
-                                <label class="form-label">Berapa zak yang tidak standar?</label>
-                                <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <label class="form-label mb-0 fw-semibold">d. Aroma tidak STD</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="aroma_std"
+                                            id="aroma_std-yes" value="yes">
+                                        <label class="form-check-label" for="aroma_std-yes">Iya</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="aroma_std"
+                                            id="aroma_std-no" value="no">
+                                        <label class="form-check-label" for="aroma_std-no">Tidak</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="zak-input-wrapper mt-3" style="display:none;">
+                                <label class="form-label small text-muted">Jumlah zak tidak standar</label>
+                                <input type="number" class="form-control form-control-sm zak-qty-input"
+                                    placeholder="Contoh: 5" min="0">
                             </div>
                         </div>
+                        <hr class="my-2">
 
                         <div class="mb-3">
-                            <label class="form-label">e. Sesuai STD</label><br>
-                            <label><input type="radio" name="sesuai_std" value="yes"> Iya</label>
-                            <label><input type="radio" name="sesuai_std" value="no"> Tidak</label>
-                            <div class="zak-input-wrapper mt-2" style="display:none;">
-                                <label class="form-label">Berapa zak yang tidak standar?</label>
-                                <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <label class="form-label mb-0 fw-semibold">e. Sesuai STD</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="sesuai_std"
+                                            id="sesuai_std-yes" value="yes">
+                                        <label class="form-check-label" for="sesuai_std-yes">Iya</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="sesuai_std"
+                                            id="sesuai_std-no" value="no">
+                                        <label class="form-check-label" for="sesuai_std-no">Tidak</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="zak-input-wrapper mt-3" style="display:none;">
+                                <label class="form-label small text-muted">Jumlah zak tidak standar?</label>
+                                <input type="number" class="form-control form-control-sm zak-qty-input"
+                                    placeholder="Contoh: 5" min="0">
                             </div>
                         </div>
-
-
 
                         <button type="submit" class="btn btn-primary" id="submitBtnRaw">Simpan Sampling</button>
                     </form>
@@ -1195,45 +1487,54 @@
     </div>
 
 
-    <!-- modal analisa -->
-    <div class="modal fade" id="modalAnalisa" tabindex="-1" aria-labelledby="modalAnalisaLabel" aria-hidden="true">
+    <!-- Modal Analisa -->
+    <div class="modal fade" id="modalAnalisa" tabindex="-1" aria-labelledby="modalAnalisaLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content">
+            <div class="modal-content shadow-sm rounded-4">
                 <form id="formAnalisa">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalAnalisaLabel">Form Analisa</h5> <button type="button"
-                            class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    <div class="modal-header border-0 pb-2">
+                        <h5 class="modal-title fw-semibold" id="modalAnalisaLabel">Form Analisa</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Tutup"></button>
                     </div>
-                    <div class="modal-body"> {{-- Form dinamis berdasarkan jenis_gula --}}
+                    <div class="modal-body px-4 py-3">
+                        <!-- Hidden inputs -->
                         <input type="hidden" id="id_identitas" name="id_identitas" value="{{ $identitas->id }}">
-                        <input type="hidden" id="jenis_gula" name="jenis_gula" value="{{ $identitas->jenis_gula }}">
-                        <div id="form-analisa-content">
-                            <!-- Form fields will di-render oleh jQuery -->
-                        </div>
-                        <div id="analisa-type-select" style="display: none;">
-                            <h6 class="mb-3">Pilih Jenis Analisa</h6>
-                            <div>
-                                <label><input type="radio" name="analisa_type" value="short-term"> Short-Term</label>
-                            </div>
-                            <div>
-                                <label><input type="radio" name="analisa_type" value="long-term"> Long-Term</label>
-                            </div>
-                        </div>
-                        <div id="analisa-jumlah" style="display: none;">
-                            <h6 class="mb-3">Input Jumlah Data</h6>
-                            <div>
-                                <label>Jumlah Data</label>
-                                <input class="form-control" type="number" name="jumlah_data" id="jumlah_data">
-                            </div>
+                        <input type="hidden" id="jenis_gula" name="jenis_gula"
+                            value="{{ $identitas->jenis_gula }}">
 
+                        <!-- Dynamic form fields -->
+                        <div id="form-analisa-content" class="mb-3"></div>
+
+                        <!-- Type selection -->
+                        <div id="analisa-type-select" class="mb-3" style="display: none;">
+                            <label class="form-label fw-medium">Jenis Analisa</label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="analisa_type" id="short"
+                                    value="short-term">
+                                <label class="btn btn-outline-primary" for="short">Short-Term</label>
+
+                                <input type="radio" class="btn-check" name="analisa_type" id="long"
+                                    value="long-term">
+                                <label class="btn btn-outline-primary" for="long">Long-Term</label>
+                            </div>
+                        </div>
+
+                        <!-- Jumlah data -->
+                        <div id="analisa-jumlah" style="display: none;">
+                            <label for="jumlah_data" class="form-label fw-medium">Jumlah Data</label>
+                            <input class="form-control" type="number" name="jumlah_data" id="jumlah_data"
+                                min="1" placeholder="Masukkan jumlah data">
                         </div>
                     </div>
-                    <div class="d-flex justify-content-between mt-3">
+
+                    <!-- Navigation buttons -->
+                    <div class="modal-footer border-0 px-4 pb-3">
                         <button type="button" id="prevBtn" class="btn btn-secondary"
                             style="display: none;">Sebelumnya</button>
                         <button type="button" id="nextBtn" class="btn btn-primary">Berikutnya</button>
                     </div>
-                    <!-- <div class="modal-footer"> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button> <button type="submit" class="btn btn-primary">Simpan Analisa</button> </div> -->
                 </form>
             </div>
         </div>
@@ -1242,7 +1543,7 @@
     <!-- Modal -->
     <div class="modal fade" id="modalKonfirmasi" tabindex="-1" aria-labelledby="modalKonfirmasiLabel"
         aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalKonfirmasiLabel">Konfirmasi Jam</h5>
@@ -1252,12 +1553,28 @@
                     <div id="formKonfirmasi">
                         <div class="mb-3">
                             <label for="jamInput" class="form-label" id="labelJam">Jam Kedatangan</label>
-                            <input type="datetime-local" class="form-control" id="jamInput">
+                            <input type="datetime-local" class="form-control" id="jamInput"
+                                value="{{ now()->format('Y-m-d\TH:i') }}">
                         </div>
                     </div>
-                    <div id="statusMessage" class="text-success" style="display:none;">
-                        Data berhasil disimpan.
-                    </div>
+
+                    @php
+                        $samplingComplete =
+                            !is_null($identitas->samplingMobil) &&
+                            !is_null($identitas->samplingDokumen) &&
+                            !is_null($identitas->samplingFisikKemasan) &&
+                            !is_null($identitas->samplingFisikRaw);
+                    @endphp
+
+                    @if ($samplingComplete)
+                        <div class="alert alert-info text-center" id="pesanRequiredSampling" style="display:none;">
+                            Konfirmasi kedatangan sudah dilakukan.
+                        </div>
+                    @else
+                        <div class="alert alert-danger text-center" id="pesanRequiredSampling" style="display:none;">
+                            Silakan isi sampling terlebih dahulu.
+                        </div>
+                    @endif
                 </div>
                 <div class="modal-footer">
                     <button type="button" id="btnSimpanJam" class="btn btn-primary">Simpan</button>
@@ -1373,7 +1690,7 @@
             let formData = {
                 _token: $('meta[name="csrf-token"]').attr('content'),
                 _method: 'POST',
-                id: $('input[name="id"]').val(),
+                id: $('input[name="id_dokumen"]').val(),
                 coa: $('input[name="coa"]:checked').val(),
                 suratjalan_vendor: $('input[name="suratjalan_vendor"]:checked').val(),
                 packing_list: $('input[name="packing_list"]:checked').val(),
@@ -1387,7 +1704,7 @@
                 method: 'POST',
                 data: formData,
                 success: function(response) {
-                    $('#editModal').modal('hide');
+                    $('#editModalDokumen').modal('hide');
                     Swal.fire({
                         icon: 'success',
                         title: 'Berhasil!',
@@ -1513,7 +1830,6 @@
                 campuran: $('input[name="campuran_raw"]:checked').val(),
                 aroma_std: $('input[name="aroma_std"]:checked').val(),
                 sesuai_std: $('input[name="sesuai_std_raw"]:checked').val(),
-
             };
 
             $.ajax({
@@ -1602,12 +1918,12 @@
                     url: '{{ route('sampling.kondisi_mobil.store') }}',
                     data: data,
                     success: function(response) {
+                        $('#modalKondisiMobil').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil',
                             text: response.message || 'Data berhasil disimpan!',
                         }).then(() => {
-                            $('#modalKondisiMobil').modal('hide');
                             location.reload(); // Reload halaman untuk update data
                         });
                     },
@@ -1638,16 +1954,16 @@
                     url: url,
                     data: data,
                     success: function(response) {
+                        if (form.attr('id') === 'form-dokumen') {
+                            $('#modalDokumen').modal('hide');
+                        } else {
+                            $('#modalKemasan').modal('hide');
+                        }
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil',
                             text: response.message || 'Data berhasil disimpan!',
                         }).then(() => {
-                            if (form.attr('id') === 'form-dokumen') {
-                                $('#modalDokumen').modal('hide');
-                            } else {
-                                $('#modalKemasan').modal('hide');
-                            }
                             location.reload();
                         });
                     },
@@ -1674,12 +1990,12 @@
                     url: '{{ route('sampling.fisik_raw.store') }}', // Pastikan route ini sesuai di Laravel Anda
                     data: data,
                     success: function(response) {
+                        $('#modalFisikRaw').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil',
                             text: response.message || 'Data berhasil disimpan!',
                         }).then(() => {
-                            $('#modalFisikRaw').modal('hide');
                             location.reload(); // Reload halaman untuk update data
                         });
                     },
@@ -1705,7 +2021,6 @@
             });
 
             function Konfirmasi() {
-
                 $.ajax({
                     url: "{{ url('analis/rmpm/konfirmasi/' . $identitas->id) }}",
                     type: 'GET',
@@ -1716,11 +2031,11 @@
                             $('#modalKonfirmasi').modal('show');
                             $('#labelJam').text('Jam Analisa');
                         } else {
+                            $('#labelJam').hide();
                             $('#jamInput').hide();
                             $('#btnSimpanJam').hide();
+                            $('#pesanRequiredSampling').show();
                         }
-
-
                     },
                     error: function(xhr, status, error) {
                         console.error('Error:', error);
@@ -1750,10 +2065,16 @@
                                 $('#labelJam').text('Jam Analisa');
                                 $('#jamInput').val(''); // kosongkan input
                             } else {
-                                // Kalau sudah analisa, close modal
                                 $('#modalKonfirmasi').modal('hide');
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil',
+                                    text: response.message || 'Data berhasil disimpan!',
+                                }).then(() => {
+                                    location
+                                        .reload(); // Reload halaman untuk update data
+                                });
                             }
-                            location.reload();
                         },
                         error: function(xhr, status, error) {
                             console.error('Error:', error);
@@ -1790,10 +2111,6 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-
-
-
-
             const samplingButtons = document.querySelectorAll('.sampling-option');
 
             samplingButtons.forEach(button => {
@@ -2035,6 +2352,16 @@
                     alert('Silakan pilih jenis analisa (Short-Term / Long-Term)');
                     return;
                 }
+
+                // Jika long-term langsung render form tanpa input jumlah data
+                if (analisaType === 'long-term') {
+                    $('#analisa-type-select').hide();
+                    $('#prevBtn, #nextBtn').hide();
+                    renderAnalysisFields(1, analisaType);
+                    return;
+                }
+
+                // Jika short-term tampilkan input jumlah data
                 $('#analisa-type-select').hide();
                 $('#analisa-jumlah').show();
                 return;
@@ -2061,7 +2388,6 @@
             if (jenisGula === 'Gula' || jenisGula === 'Garam') {
                 fields = ['fisik', '%ka', 'kotoran', 'organo', 'warna', 'aroma', '%nacl', 'gross_weight', 'disposisi'];
             } else {
-                // If analisaType is not provided, try to get it from the form or draft
                 if (!analisaType) {
                     analisaType = $('input[name="analisa_type"]:checked').val();
                 }
@@ -2073,22 +2399,38 @@
                 }
             }
 
-            let navHtml = `<ul class="nav nav-tabs" id="analisaTab" role="tablist">`;
+            let navHtml = `<ul class="nav nav-tabs nav-tabs-custom" id="analisaTab" role="tablist">`;
             let tabContentHtml = `<div class="tab-content mt-3">`;
 
             fields.forEach((field, idx) => {
                 const activeClass = idx === 0 ? 'active' : '';
                 const showClass = idx === 0 ? 'show active' : '';
+                const labelMap = {
+                    fisik: 'Fisik',
+                    '%ka': '%KA',
+                    kotoran: 'Kotoran',
+                    organo: 'Organo',
+                    warna: 'Warna',
+                    aroma: 'Aroma',
+                    '%nacl': '%NaCl',
+                    gross_weight: 'Gross Weight',
+                    disposisi: 'Disposisi',
+                    brix: 'Brix',
+                    ph: 'pH',
+                    ka: 'KA',
+                    uji_kristal: 'Uji Kristal',
+                    attachment: 'Lampiran'
+                };
 
                 navHtml += `
         <li class="nav-item" role="presentation">
-            <button class="nav-link ${activeClass}" id="${field}-tab" data-bs-toggle="tab" data-bs-target="#tab-${field}" type="button" role="tab">
-                ${field.toUpperCase()}
+            <button class="nav-link ${activeClass}" id="${field}-tab" data-bs-toggle="tab" data-bs-target="#tab-${field}" type="button" role="tab" aria-controls="tab-${field}" aria-selected="${idx === 0 ? 'true' : 'false'}">
+                ${labelMap[field] || field.toUpperCase()}
             </button>
         </li>`;
 
                 tabContentHtml += `
-        <div class="tab-pane fade ${showClass}" id="tab-${field}" role="tabpanel">
+        <div class="tab-pane fade ${showClass}" id="tab-${field}" role="tabpanel" aria-labelledby="${field}-tab">
             ${renderFieldInput(field, jumlahData)}
         </div>`;
             });
@@ -2101,67 +2443,83 @@
         }
 
         function renderFieldInput(fieldName, count) {
+            const commonInput = (label, name, placeholder, extraClass = '') => `
+        <div class="mb-3">
+            <label class="form-label fw-medium">${label}</label>
+            <input type="text" class="form-control ${extraClass}" name="${name}" placeholder="${placeholder}">
+        </div>`;
+
             switch (fieldName) {
                 case 'disposisi':
                     return `
-            <div class="disposisi-wrapper" style="display: none;">
-                <label>Disposisi</label>
-                <select class="form-control mb-2" name="disposisi">
+            <div class="disposisi-wrapper" style="display:none;">
+                <label class="form-label fw-medium">Disposisi</label>
+                <select class="form-select mb-3" name="disposisi">
                     <option value="">Pilih Disposisi</option>
                     <option value="Release">Release</option>
                     <option value="Reject">Reject</option>
                 </select>
             </div>
-            <div class="disposisi-wrapper-negatif" style="display: none;">
-                <label>Disposisi</label>
-                <select class="form-control mb-2" name="disposisi">
+            <div class="disposisi-wrapper-negatif" style="display:none;">
+                <label class="form-label fw-medium">Disposisi</label>
+                <select class="form-select mb-3" name="disposisi">
                     <option value="">Pilih Disposisi</option>
                     <option value="Release">Release</option>
                 </select>
             </div>
             <div class="disposisi">
-                <label>Disposisi</label>
-                <select class="form-control mb-2" name="disposisi">
+                <label class="form-label fw-medium">Disposisi</label>
+                <select class="form-select mb-3" name="disposisi">
                     <option value="">Pilih Disposisi</option>
                     <option value="Release">Release</option>
                     <option value="Reject">Reject</option>
                 </select>
             </div>
-             <button type="submit" class="btn btn-primary mt-3">Simpan</button>
-            `;
+            <button type="submit" class="btn btn-primary w-100 mt-3">Simpan</button>`;
 
                 case 'uji_kristal':
                     return `
-            <select class="form-control mb-2" name="uji_kristal" id="select-uji-kristal">
-                <option value="">Pilih Hasil Uji</option>
-                <option value="negatif">Negatif</option>
-                <option value="positif">Positif</option>
-            </select>`;
+            <div class="mb-3">
+                <label class="form-label fw-medium">Hasil Uji Kristal</label>
+                <select class="form-select" name="uji_kristal" id="select-uji-kristal">
+                    <option value="">Pilih Hasil Uji</option>
+                    <option value="negatif">Negatif</option>
+                    <option value="positif">Positif</option>
+                </select>
+            </div>`;
 
                 case 'attachment':
-                    return `<div class="attachment-wrapper">
-            <label>Lampirkan Gambar</label>
-            <input type="file" class="form-control mb-2" name="attachment" accept="image/*">
-        </div>`;
+                    return `
+            <div class="attachment-wrapper">
+                <label class="form-label fw-medium">Lampirkan Gambar</label>
+                <input type="file" class="form-control" name="attachment" accept="image/*">
+                <div class="form-text">Format: JPG, PNG, max 2 MB</div>
+            </div>`;
 
                 case 'organo':
                 case 'warna':
                 case 'aroma':
-                    let html = '';
+                    let html = '<div class="row g-2">';
                     for (let i = 1; i <= count; i++) {
-                        html +=
-                            `<label>${i}</label>
-                <input type="text" class="form-control kapital-case" name="${fieldName}[]" placeholder="${fieldName} ke-${i}">`;
+                        html += `
+                <div class="col-md-6 col-lg-4">
+                    <label class="form-label fw-medium">Sampel ${i}</label>
+                    <input type="text" class="form-control kapital-case" name="${fieldName}[]" placeholder="${fieldName} ke-${i}">
+                </div>`;
                     }
+                    html += '</div>';
                     return html;
 
                 default:
-                    let defaultHtml = '';
+                    let defaultHtml = '<div class="row g-2">';
                     for (let i = 1; i <= count; i++) {
-                        defaultHtml +=
-                            `<label>${i}</label>
-                <input type="text" class="form-control decimal-only" name="${fieldName}[]" placeholder="${fieldName} ke-${i}">`;
+                        defaultHtml += `
+                <div class="col-md-6 col-lg-4">
+                    <label class="form-label fw-medium">Sampel ${i}</label>
+                    <input type="text" class="form-control decimal-only" name="${fieldName}[]" placeholder="${fieldName} ke-${i}">
+                </div>`;
                     }
+                    defaultHtml += '</div>';
                     return defaultHtml;
             }
         }
@@ -2400,14 +2758,15 @@
                 success: function(response) {
                     console.log('Success response:', response);
                     localStorage.removeItem('analisaDraft');
+                    $('#modalAnalisa').modal('hide');
                     Swal.fire({
                         icon: 'success',
                         title: 'Berhasil',
                         text: 'Data berhasil disimpan!',
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        $('#modalAnalisa').modal('hide');
                         $('#formAnalisa')[0].reset();
+                        location.reload();
                     });
                 },
                 error: function(xhr) {

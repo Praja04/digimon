@@ -135,11 +135,6 @@ class RMPMController extends Controller
         return response()->json(['message' => 'Data not found'], 404);
     }
 
-
-
-
-
-
     public function storeShortTerm(Request $request)
     {
         $request->validate([
@@ -369,7 +364,7 @@ class RMPMController extends Controller
         ]);
 
         // Pastikan data IdentitasRM ada
-        $identitas = IdentitasRM::findOrFail($id);
+        IdentitasRM::findOrFail($id);
 
         // Cek apakah sudah ada data konfirmasi
         $konfirmasi = KonfirmasiKedatangan::where('id_identitas', $id)->first();
