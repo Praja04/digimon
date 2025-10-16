@@ -334,6 +334,10 @@
                                                             <select name="warna" id="warnaSelect" class="form-select"
                                                                 required>
                                                                 <option value="">-- Pilih Warna --</option>
+                                                                @foreach ($manageWarna as $warna)
+                                                                    <option value="{{ $warna->nama_warna }}">
+                                                                        {{ $warna->nama_warna }}</option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                         <div class="col-md-6">
@@ -457,7 +461,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="form-label">Warna</label>
-                                                    <select name="warna_edit" id="warnaSelect" class="form-select"
+                                                    <select name="warna_edit" id="warna_edit" class="form-select"
                                                         required>
                                                         <option value="">-- Pilih Warna --</option>
                                                         @foreach ($manageWarna as $warna)

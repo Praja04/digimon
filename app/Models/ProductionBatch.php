@@ -174,6 +174,7 @@ class ProductionBatch extends Model
 
         return $isAllFilled;
     }
+    
     public function isMonitoringPasteurisasiComplete()
     {
         $monitoring = $this->MonitoringPasteurisasi;

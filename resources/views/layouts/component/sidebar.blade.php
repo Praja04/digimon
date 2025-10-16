@@ -195,11 +195,11 @@
                     </a>
                 </li>
 
-                {{-- <li class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ url('foreman/blending/menu') }}">
                         <i class="mdi mdi-blender-software"></i> <span>Blending</span>
                     </a>
-                </li> --}}
+                </li>
 
                 {{-- <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ url('foreman/monitoring/blending/menu') }}">

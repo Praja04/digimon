@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Foreman;
 
 use App\Http\Controllers\Controller;
+use App\Models\ManageWarnaModel;
 use App\Models\MonitoringPasteurisasi;
 use App\Models\MonitoringPasteurisasiData;
 use App\Models\ProductionBatch;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -18,9 +20,14 @@ class MonitoringPasteurisasiControllerForeman extends Controller
 
     public function Monitoring_Pasteurisasi_data()
     {
-
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringPasteurisasi')->has('MonitoringPasteurisasi')->get();
-
+        $productionBatches = ProductionBatch::with('MonitoringPasteurisasi')
+            ->has('MonitoringPasteurisasi')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isMonitoringPasteurisasiComplete()) ? 1 : 0;
+            })
+            ->values();
         return view('foreman.monitoring.pasteurisasi.data', compact('productionBatches'));
     }
 
@@ -45,10 +52,12 @@ class MonitoringPasteurisasiControllerForeman extends Controller
             return $item;
         });
 
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
         // return response()->json($filtered->values());
         return view('foreman.monitoring.pasteurisasi.detail_data', [
             'productionBatch' => $productionBatch,
-            'filteredMonitoring' => $filtered->values()
+            'filteredMonitoring' => $filtered->values(),
+            'manageWarna' => $manageWarna,
         ]);
     }
 
@@ -119,7 +128,7 @@ class MonitoringPasteurisasiControllerForeman extends Controller
             'ph' => 'nullable|numeric',
             'endapan' => 'nullable|string',
             'warna' => 'nullable|string',
-            'shift' => 'required|in:1,2,3',
+            // 'shift' => 'required|in:1,2,3',
         ]);
 
         // Jika validasi gagal
@@ -149,6 +158,15 @@ class MonitoringPasteurisasiControllerForeman extends Controller
             ], 409); // 409 Conflict
         }
 
+        $currentHour = (int) now()->format('H');
+        if ($currentHour >= 6 && $currentHour < 14) {
+            $shift = 1;
+        } elseif ($currentHour >= 14 && $currentHour < 22) {
+            $shift = 2;
+        } else {
+            $shift = 3;
+        }
+
         try {
             $username = session('username');
             // Simpan data ke database
@@ -164,7 +182,8 @@ class MonitoringPasteurisasiControllerForeman extends Controller
                 'ph' => $request->ph,
                 'endapan' => $request->endapan,
                 'warna' => $request->warna,
-                'shift' => $request->shift,
+                'shift' => $shift,
+                'production_time' => Carbon::parse($request->production_time)->format('Y-m-d H:i:s'),
                 'created_by' => $username,
             ]);
 

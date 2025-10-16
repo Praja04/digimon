@@ -84,47 +84,8 @@
         <div class="mb-4">
             <h6 class="text-uppercase text-muted small fw-semibold mb-3">Data Analytics</h6>
             <div class="row g-3">
-                <!-- Blending Makro -->
-                <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
-                    <div class="card border h-100">
-                        <div class="card-body p-3 text-center">
-                            <div class="mb-2">
-                                <span class="badge bg-success-subtle text-success small">Makro</span>
-                            </div>
-                            <img src="{{ asset('assets/images/blending_awal.png') }}" alt="Blending Makro" class="mb-2"
-                                height="60">
-                            <h6 class="mb-1 fw-semibold">Data Blending</h6>
-                            <p class="text-muted small mb-3">Analisis Blending - Makro</p>
-                            <div id="chart-gga" data-colors='["--vz-primary"]' style="height: 50px;" class="mb-3"></div>
-                            <a href="{{ url('foreman/blending/awal') }}" class="btn btn-sm btn-outline-secondary w-100">
-                                Lihat Detail
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Blending Mikro -->
-                <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
-                    <div class="card border h-100">
-                        <div class="card-body p-3 text-center">
-                            <div class="mb-2">
-                                <span class="badge bg-warning-subtle text-warning small">Mikro</span>
-                            </div>
-                            <img src="{{ asset('assets/images/blending_adjust.png') }}" alt="Blending Mikro" class="mb-2"
-                                height="60">
-                            <h6 class="mb-1 fw-semibold">Blending After Adjustment</h6>
-                            <p class="text-muted small mb-3">Analisis After Adjust - Mikro</p>
-                            <div id="chart-ggas" data-colors='["--vz-primary"]' style="height: 50px;" class="mb-3"></div>
-                            <a href="{{ url('foreman/blending/mikro/data') }}"
-                                class="btn btn-sm btn-outline-secondary w-100">
-                                Lihat Detail
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Turun Blending -->
-                <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-6">
                     <div class="card border h-100">
                         <div class="card-body p-3 text-center">
                             <div class="mb-2">
@@ -143,15 +104,36 @@
                     </div>
                 </div>
 
+                <!-- Pasteurisasi -->
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-6">
+                    <div class="card border h-100">
+                        <div class="card-body p-3 text-center">
+                            <div class="mb-2">
+                                <span class="badge bg-info-subtle text-info small">Pasteurisasi</span>
+                            </div>
+                            <img src="{{ asset('assets/images/blending_adjust.png') }}" alt="Pasteurisasi" class="mb-2"
+                                height="60">
+                            <h6 class="mb-1 fw-semibold">Monitoring Pasteurisasi</h6>
+                            <p class="text-muted small mb-3">Analisis Pasteurisasi</p>
+                            <div id="chart-pasteur" data-colors='["--vz-primary"]' style="height: 50px;" class="mb-3">
+                            </div>
+                            <a href="{{ url('foreman/monitoring/pasteurisasi/data') }}"
+                                class="btn btn-sm btn-outline-secondary w-100">
+                                Lihat Detail
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Storage Makro -->
-                <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-6">
                     <div class="card border h-100">
                         <div class="card-body p-3 text-center">
                             <div class="mb-2">
                                 <span class="badge bg-success-subtle text-success small">Storage Makro</span>
                             </div>
-                            <img src="{{ asset('assets/images/blending_adjust.png') }}" alt="Storage Makro"
-                                class="mb-2" height="60">
+                            <img src="{{ asset('assets/images/blending_adjust.png') }}" alt="Storage Makro" class="mb-2"
+                                height="60">
                             <h6 class="mb-1 fw-semibold">Monitoring Storage</h6>
                             <p class="text-muted small mb-3">Analisis Storage Makro</p>
                             <div id="chart-sm" data-colors='["--vz-primary"]' style="height: 50px;" class="mb-3">
@@ -165,7 +147,7 @@
                 </div>
 
                 <!-- Storage Mikro -->
-                <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-6">
                     <div class="card border h-100">
                         <div class="card-body p-3 text-center">
                             <div class="mb-2">
@@ -178,27 +160,6 @@
                             <div id="chart-sm-mikro" data-colors='["--vz-primary"]' style="height: 50px;"
                                 class="mb-3"></div>
                             <a href="{{ url('foreman/monitoring/storage/data/mikro') }}"
-                                class="btn btn-sm btn-outline-secondary w-100">
-                                Lihat Detail
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pasteurisasi -->
-                <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
-                    <div class="card border h-100">
-                        <div class="card-body p-3 text-center">
-                            <div class="mb-2">
-                                <span class="badge bg-info-subtle text-info small">Pasteurisasi</span>
-                            </div>
-                            <img src="{{ asset('assets/images/blending_adjust.png') }}" alt="Pasteurisasi"
-                                class="mb-2" height="60">
-                            <h6 class="mb-1 fw-semibold">Monitoring Pasteurisasi</h6>
-                            <p class="text-muted small mb-3">Analisis Pasteurisasi</p>
-                            <div id="chart-pasteur" data-colors='["--vz-primary"]' style="height: 50px;" class="mb-3">
-                            </div>
-                            <a href="{{ url('foreman/monitoring/pasteurisasi/data') }}"
                                 class="btn btn-sm btn-outline-secondary w-100">
                                 Lihat Detail
                             </a>

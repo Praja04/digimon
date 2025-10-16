@@ -206,6 +206,26 @@
                         </div>
                     </div>
 
+                    <div class="col-12 mb-3">
+                        <div class="alert alert-light border-0 shadow-sm">
+                            <div class="d-flex flex-wrap align-items-center gap-4">
+                                <strong class="text-muted">Keterangan Status:</strong>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="ri-checkbox-circle-fill text-success fs-4 fw-bold"></i>
+                                    <span class="text-muted fw-semibold">Ya / Tersedia</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="ri-close-circle-fill text-danger fs-4 fw-bold"></i>
+                                    <span class="text-muted fw-semibold">Tidak / Tidak Tersedia</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="ri-indeterminate-circle-fill text-warning fs-4 fw-bold"></i>
+                                    <span class="text-muted fw-semibold">Belum Diisi</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Sample Dokumen -->
                     <div class="col-12">
                         <div class="card shadow-sm">
@@ -230,17 +250,16 @@
             'kesesuaian_matriks_bahan' => 'Kesesuaian Matriks Bahan Baku',
         ] as $key => $label)
                                             <div class="col-6 col-md-4">
-                                                <div class="d-flex justify-content-start">
-                                                    <span class="fw-semibold me-2">
-                                                        @if (optional($data_dokumen)->$key === 'yes')
-                                                            <i class="ri-checkbox-circle-fill text-success"></i>
-                                                        @elseif(optional($data_dokumen)->$key === 'no')
-                                                            <i class="ri-close-circle-fill text-danger"></i>
-                                                        @else
-                                                            <i class="ri-indeterminate-circle-fill text-warning"></i>
-                                                        @endif
-                                                    </span>
-                                                    <span class="text-muted">{{ $label }}</span>
+                                                <div class="d-flex justify-content-start align-items-center gap-2">
+                                                    @if (optional($data_dokumen)->$key === 'yes')
+                                                        <i class="ri-checkbox-circle-fill text-success fs-4 fw-bold"></i>
+                                                    @elseif(optional($data_dokumen)->$key === 'no')
+                                                        <i class="ri-close-circle-fill text-danger fs-4 fw-bold"></i>
+                                                    @else
+                                                        <i
+                                                            class="ri-indeterminate-circle-fill text-warning fs-4 fw-bold"></i>
+                                                    @endif
+                                                    <span class="text-muted fw-semibold">{{ $label }}</span>
                                                 </div>
                                             </div>
                                         @endforeach
@@ -335,17 +354,16 @@
             'berbau' => 'Berbau',
         ] as $key => $label)
                                             <div class="col-6 col-md-4">
-                                                <div class="d-flex justify-content-start">
-                                                    <span class="fw-semibold me-2">
-                                                        @if (optional($data_mobil)->$key === 'yes')
-                                                            <i class="ri-checkbox-circle-fill text-success"></i>
-                                                        @elseif(optional($data_mobil)->$key === 'no')
-                                                            <i class="ri-close-circle-fill text-danger"></i>
-                                                        @else
-                                                            <i class="ri-indeterminate-circle-fill text-warning"></i>
-                                                        @endif
-                                                    </span>
-                                                    <span class="text-muted">{{ $label }}</span>
+                                                <div class="d-flex justify-content-start align-items-center gap-2">
+                                                    @if (optional($data_mobil)->$key === 'yes')
+                                                        <i class="ri-checkbox-circle-fill text-success fs-4 fw-bold"></i>
+                                                    @elseif(optional($data_mobil)->$key === 'no')
+                                                        <i class="ri-close-circle-fill text-danger fs-4 fw-bold"></i>
+                                                    @else
+                                                        <i
+                                                            class="ri-indeterminate-circle-fill text-warning fs-4 fw-bold"></i>
+                                                    @endif
+                                                    <span class="text-muted fw-semibold">{{ $label }}</span>
                                                 </div>
                                             </div>
                                         @endforeach
@@ -452,20 +470,16 @@
                                         @endphp
                                         @foreach ($kemasanFields as $key => $label)
                                             <div class="col-6 col-md-4">
-                                                <div class="d-flex justify-content-start">
-                                                    <span class="fw-semibold me-2">
-                                                        @php
-                                                            $status = optional($data_kemasan)->$key ?? null;
-                                                        @endphp
-                                                        @if ($status === 'yes')
-                                                            <i class="ri-checkbox-circle-fill text-success"></i>
-                                                        @elseif($status === 'no')
-                                                            <i class="ri-close-circle-fill text-danger"></i>
-                                                        @else
-                                                            <i class="ri-indeterminate-circle-fill text-warning"></i>
-                                                        @endif
-                                                    </span>
-                                                    <span class="text-muted">{{ $label }}</span>
+                                                <div class="d-flex justify-content-start align-items-center gap-2">
+                                                    @if (optional($data_kemasan)->$key === 'yes')
+                                                        <i class="ri-checkbox-circle-fill text-success fs-4 fw-bold"></i>
+                                                    @elseif(optional($data_kemasan)->$key === 'no')
+                                                        <i class="ri-close-circle-fill text-danger fs-4 fw-bold"></i>
+                                                    @else
+                                                        <i
+                                                            class="ri-indeterminate-circle-fill text-warning fs-4 fw-bold"></i>
+                                                    @endif
+                                                    <span class="text-muted fw-semibold">{{ $label }}</span>
                                                 </div>
                                             </div>
                                         @endforeach
@@ -581,17 +595,16 @@
             'sesuai_std' => 'Sesuai Standar',
         ] as $key => $label)
                                             <div class="col-6 col-md-4">
-                                                <div class="d-flex justify-content-start">
-                                                    <span class="fw-semibold me-2">
-                                                        @if (optional($data_raw)->$key === 'yes')
-                                                            <i class="ri-checkbox-circle-fill text-success"></i>
-                                                        @elseif(optional($data_raw)->$key === 'no')
-                                                            <i class="ri-close-circle-fill text-danger"></i>
-                                                        @else
-                                                            <i class="ri-indeterminate-circle-fill text-warning"></i>
-                                                        @endif
-                                                    </span>
-                                                    <span class="text-muted">{{ $label }}</span>
+                                                <div class="d-flex justify-content-start align-items-center gap-2">
+                                                    @if (optional($data_raw)->$key === 'yes')
+                                                        <i class="ri-checkbox-circle-fill text-success fs-4 fw-bold"></i>
+                                                    @elseif(optional($data_raw)->$key === 'no')
+                                                        <i class="ri-close-circle-fill text-danger fs-4 fw-bold"></i>
+                                                    @else
+                                                        <i
+                                                            class="ri-indeterminate-circle-fill text-warning fs-4 fw-bold"></i>
+                                                    @endif
+                                                    <span class="text-muted fw-semibold">{{ $label }}</span>
                                                 </div>
                                             </div>
                                         @endforeach
@@ -1413,8 +1426,8 @@
                                 <label class="form-label mb-0 fw-semibold">c. Campuran</label>
                                 <div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="campuran" id="campuran-yes"
-                                            value="yes">
+                                        <input class="form-check-input" type="radio" name="campuran"
+                                            id="campuran-yes" value="yes">
                                         <label class="form-check-label" for="campuran-yes">Iya</label>
                                     </div>
                                     <div class="form-check form-check-inline">
