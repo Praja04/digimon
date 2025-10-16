@@ -225,9 +225,15 @@
                                                 <button class="btn btn-sm btn-primary open-monitoring-modal"
                                                     data-id="{{ $item->id }}">Input Analisa Monitoring Storage</button>
                                             @else
-                                                <span class="text-muted">✓ Lengkap</span>
-                                                <button class="btn btn-sm btn-primary  open-modal-edit"
-                                                    data-id="{{ $item->id }}">
+                                                <button class="btn btn-sm btn-warning open-modal-edit"
+                                                    data-id="{{ $item->id }}" data-brix="{{ $item->brix }}"
+                                                    data-nacl="{{ $item->nacl }}" data-bj="{{ $item->bj }}"
+                                                    data-visco="{{ $item->visco }}" data-aw="{{ $item->aw }}"
+                                                    data-buih="{{ $item->buih }}" data-organo="{{ $item->organo }}"
+                                                    data-ph="{{ $item->ph }}" data-endapan="{{ $item->endapan }}"
+                                                    data-warna="{{ $item->warna }}"
+                                                    data-disposition="{{ $item->disposition }}"
+                                                    data-remarks="{{ $item->disposition_remarks }}">
                                                     Edit Data
                                                 </button>
                                             @endif
@@ -298,11 +304,12 @@
                                                     <div class="col-md-4">
                                                         <label class="form-label">Warna</label>
                                                         <!-- <input type="text" name="warna" class="form-control" required> -->
-                                                        <select name="warna" id="warnaSelect" class="form-select"
+                                                        <select name="warna" id="warna" class="form-select"
                                                             required>
                                                             <option value="">-- Pilih Warna --</option>
                                                             @foreach ($manageWarna as $item)
-                                                                <option value="{{ $item->nama_warna }}">{{ $item->nama_warna }}</option>
+                                                                <option value="{{ $item->nama_warna }}">
+                                                                    {{ $item->nama_warna }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -347,7 +354,7 @@
                                 </div>
                                 <div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="EditModalLabel"
                                     aria-hidden="true">
-                                    <div class="modal-dialog">
+                                    <div class="modal-dialog modal-lg">
                                         <form id="FormEdit">
                                             @csrf
                                             <div class="modal-content">
@@ -356,66 +363,70 @@
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Tutup"></button>
                                                 </div>
-                                                <div class="modal-body">
+                                                <div class="modal-body row g-3">
                                                     <div class="alert alert-danger d-none error-alert"></div>
 
-                                                    <div class="mb-3">
+                                                    <div class="col-md-4">
                                                         <label class="form-label">BRIX</label>
                                                         <input type="number" step="0.01" max="100"
                                                             min="0" name="brix_edit" class="form-control"
                                                             required>
                                                     </div>
-                                                    <div class="mb-3">
+                                                    <div class="col-md-4">
                                                         <label class="form-label">NACL</label>
                                                         <input type="number" step="0.01" max="100"
                                                             min="0" name="nacl_edit" class="form-control"
                                                             required>
                                                     </div>
-                                                    <div class="mb-3">
+                                                    <div class="col-md-4">
                                                         <label class="form-label">Bj</label>
                                                         <input type="text" name="bj_edit" class="form-control"
                                                             required>
                                                     </div>
-                                                    <div class="mb-3">
+                                                    <div class="col-md-4">
                                                         <label class="form-label">Visco</label>
                                                         <input type="text" name="visco_edit" class="form-control"
                                                             required>
                                                     </div>
-                                                    <div class="mb-3">
+                                                    <div class="col-md-4">
                                                         <label class="form-label">Aw</label>
                                                         <input type="text" name="aw_edit" class="form-control"
                                                             required>
                                                     </div>
-                                                    <div class="mb-3">
+                                                    <div class="col-md-4">
                                                         <label class="form-label">Buih</label>
                                                         <input type="text" name="buih_edit" class="form-control"
                                                             required>
                                                     </div>
-                                                    <div class="mb-3">
+                                                    <div class="col-md-4">
                                                         <label class="form-label">PH</label>
                                                         <input type="text" name="ph_edit" class="form-control"
                                                             required>
                                                     </div>
-                                                    <div class="mb-3">
+                                                    <div class="col-md-4">
                                                         <label class="form-label">Organo</label>
                                                         <input type="text" name="organo_edit" class="form-control"
                                                             required>
                                                     </div>
-                                                    <div class="mb-3">
+                                                    <div class="col-md-4">
                                                         <label class="form-label">Endapan</label>
                                                         <input type="text" name="endapan_edit" class="form-control"
                                                             required>
                                                     </div>
-                                                    <div class="mb-3">
+                                                    <div class="col-md-6">
                                                         <label class="form-label">Warna</label>
                                                         <!-- <input type="text" name="warna_edit" class="form-control" required> -->
-                                                        <select name="warna_edit" id="warnaSelect" class="form-select"
+                                                        <select name="warna_edit" id="warna_edit" class="form-select"
                                                             required>
                                                             <option value="">-- Pilih Warna --</option>
+                                                            @foreach ($manageWarna as $item)
+                                                                <option value="{{ $item->nama_warna }}">
+                                                                    {{ $item->nama_warna }}</option>
+                                                            @endforeach
                                                         </select>
 
                                                     </div>
-                                                    <div class="mb-3">
+                                                    <div class="col-md-6">
                                                         <label class="form-label">Disposition</label>
                                                         <select name="disposition_edit"
                                                             class="form-select disposition-select" required>
@@ -430,7 +441,7 @@
 
                                                         </select>
                                                     </div>
-                                                    <div class="mb-3">
+                                                    <div class="col-md-12">
                                                         <label class="form-label">Remarks</label>
                                                         <textarea name="disposition_remarks_edit" class="form-control" rows="2"
                                                             placeholder="Isi remarks jika diperlukan..."></textarea>
@@ -517,6 +528,33 @@
 
             $('.open-modal-edit').on('click', function() {
                 selectedId = $(this).data('id');
+
+                const brix = $(this).data('brix');
+                const nacl = $(this).data('nacl');
+                const bj = $(this).data('bj');
+                const visco = $(this).data('visco');
+                const aw = $(this).data('aw');
+                const buih = $(this).data('buih');
+                const organo = $(this).data('organo');
+                const ph = $(this).data('ph');
+                const endapan = $(this).data('endapan');
+                const warna = $(this).data('warna');
+                const disposition = $(this).data('disposition');
+                const remarks = $(this).data('remarks');
+
+                $('[name="brix_edit"]').val(brix);
+                $('[name="nacl_edit"]').val(nacl);
+                $('[name="bj_edit"]').val(bj);
+                $('[name="visco_edit"]').val(visco);
+                $('[name="aw_edit"]').val(aw);
+                $('[name="buih_edit"]').val(buih);
+                $('[name="ph_edit"]').val(ph);
+                $('[name="organo_edit"]').val(organo);
+                $('[name="endapan_edit"]').val(endapan);
+                $('[name="warna_edit"]').val(warna).trigger('change');
+                $('[name="disposition_edit"]').val(disposition).trigger('change');
+                $('[name="remarks_edit"]').val(remarks);
+
                 $('#EditModal').modal('show');
             });
 

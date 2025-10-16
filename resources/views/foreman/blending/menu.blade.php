@@ -52,7 +52,7 @@
 
 <div class="row mt-4">
 
-    <div class="col-xl-4 col-lg-4">
+    <div class="col-xl-6 col-lg-4">
         <div class="card ribbon-box right overflow-hidden">
             <div class="card-body text-center p-4">
                 <div class="ribbon ribbon-success ribbon-shape trending-ribbon">
@@ -101,7 +101,7 @@
         </div>
     </div> -->
 
-    <div class="col-xl-4 col-lg-4">
+    <div class="col-xl-6 col-lg-4">
         <div class="card ribbon-box right overflow-hidden">
             <div class="card-body text-center p-4">
                 <div class="ribbon ribbon-warning ribbon-shape trending-ribbon">

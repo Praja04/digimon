@@ -331,7 +331,7 @@
                                                         </div>
                                                         <div class="col-md-6">
                                                             <label class="form-label">Warna</label>
-                                                            <select name="warna" id="warnaSelect" class="form-select"
+                                                            <select name="warna" id="warna" class="form-select"
                                                                 required>
                                                                 <option value="">-- Pilih Warna --</option>
                                                                 @foreach ($manageWarna as $warna)
