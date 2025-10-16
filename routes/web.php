@@ -229,6 +229,7 @@ Route::prefix('analis')->group(function () {
         Route::get('/detail/data/id/{id}', [MonitoringPasteurisasiControllerAnalis::class, 'showInputFormMonitoringPasteurisasi']);
         Route::get('/data', [MonitoringPasteurisasiControllerAnalis::class, 'Monitoring_Pasteurisasi_data']);
         Route::get('/detail/{id}', [MonitoringPasteurisasiControllerAnalis::class, 'Monitoring_Pasteurisasi_detail']);
+        Route::get('/menu', [MonitoringPasteurisasiControllerAnalis::class, 'Monitoring_Pasteurisasi_menu']);
     });
 
     Route::prefix('monitoring/storage')->group(function () {
@@ -430,7 +431,6 @@ Route::prefix('foreman')->group(function () {
         Route::get('/data', [MonitoringPasteurisasiControllerForeman::class, 'Monitoring_Pasteurisasi_data']);
         Route::get('/detail/{id}', [MonitoringPasteurisasiControllerForeman::class, 'Monitoring_Pasteurisasi_detail']);
         Route::get('/menu', [MonitoringPasteurisasiControllerForeman::class, 'Monitoring_Pasteurisasi_menu']);
-
     });
 
     Route::prefix('monitoring/storage')->group(function () {

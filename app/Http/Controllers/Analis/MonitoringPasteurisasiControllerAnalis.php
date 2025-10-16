@@ -11,10 +11,21 @@ use Illuminate\Support\Facades\Validator;
 
 class MonitoringPasteurisasiControllerAnalis extends Controller
 {
+    public function Monitoring_Pasteurisasi_menu()
+    {
+        return view('analis.monitoring.pasteurisasi.menu');
+    }
+
     public function Monitoring_Pasteurisasi_data()
     {
-
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringPasteurisasi')->has('MonitoringPasteurisasi')->get();
+        $productionBatches = ProductionBatch::with('MonitoringPasteurisasi')
+            ->has('MonitoringPasteurisasi')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isMonitoringPasteurisasiComplete()) ? 1 : 0;
+            })
+            ->values();
 
         return view('analis.monitoring.pasteurisasi.data', compact('productionBatches'));
     }
