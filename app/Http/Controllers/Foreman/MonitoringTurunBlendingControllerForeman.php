@@ -33,8 +33,14 @@ class MonitoringTurunBlendingControllerForeman extends Controller
 
     public function Monitoring_Blending_data()
     {
-
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringTurunBlending')->has('MonitoringTurunBlending')->get();
+        $productionBatches = ProductionBatch::with('MonitoringTurunBlending')
+            ->has('MonitoringTurunBlending')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isMonitoringBlendingComplete()) ? 1 : 0;
+            })
+            ->values();
         //return json
         //return response()->json($productionBatches);
 
@@ -179,7 +185,7 @@ class MonitoringTurunBlendingControllerForeman extends Controller
         } else {
             $shift = 3;
         }
-        
+
         try {
             $username = session('username');
             // Simpan data ke database

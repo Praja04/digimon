@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MonitoringStorageModel;
 use App\Models\MonitoringStorageMikroModel;
 use App\Models\KonfirmasiMonitoringStorageMikroModel;
+use App\Models\ManageWarnaModel;
 use App\Models\ProductionBatch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -39,10 +40,13 @@ class MonitoringStorageController extends Controller
 
             $data->po_number = $productionBatch->po_number;
         }
+
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
         //    return response()->json($productionBatch->MonitoringStorage);
         return view('analis.monitoring.monitoring_storage.detail_data', [
             'productionBatch' => $productionBatch,
-            'filteredMonitoringStorage' => $productionBatch->MonitoringStorage
+            'filteredMonitoringStorage' => $productionBatch->MonitoringStorage,
+            'manageWarna' => $manageWarna,
         ]);
     }
 

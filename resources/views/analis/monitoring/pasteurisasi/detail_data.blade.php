@@ -166,7 +166,6 @@
                                     <th>Nomor Pasteurisasi</th>
                                     <th>Input Data</th>
                                     <th>Input Disposisi</th>
-                                    <th>Disposisi By</th>
                                 </tr>
                             </thead>
                             <tbody class="list form-check-all">
@@ -202,16 +201,23 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if (is_null($data->disposition))
+                                            @if (is_null($data->disposition) && $data->monitoringPasteurisasiData->count() >= 1)
                                                 <button class="btn btn-sm btn-warning btn-input-disposisi"
                                                     data-id="{{ $data->id }}">
                                                     <i class="fas fa-edit"></i> Input Disposisi
                                                 </button>
                                             @else
-                                                <span class="text-muted">{{ $data->disposition }}</span>
+                                                @if ($data->monitoringPasteurisasiData->count() < 1)
+                                                    <span class="badge bg-danger text-white">
+                                                        Belum ada data analisa
+                                                    </span>
+                                                @else
+                                                    <span class="badge bg-success text-white">
+                                                        {{ $data->disposition }}
+                                                    </span>
+                                                @endif
                                             @endif
                                         </td>
-                                        <td>{{ $data->created_by }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -289,22 +295,22 @@
                                                     id="endapan">
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <label for="warna" class="form-label">Warna</label>
-                                                <!-- <input type="text" class="form-control" name="warna" id="warna"> -->
-                                                <select name="warna" id="warnaSelect" class="form-select" required>
+                                                <select name="warna" id="warna" class="form-select" required>
                                                     <option value="">-- Pilih Warna --</option>
+                                                    @foreach ($manageWarna as $item)
+                                                        <option value="{{ $item->nama_warna }}">{{ $item->nama_warna }}
+                                                        </option>
+                                                    @endforeach
                                                 </select>
                                             </div>
 
-                                            <div class="col-md-4">
-                                                <label for="shift" class="form-label">Shift</label>
-                                                <select class="form-select" name="shift" id="shift" required>
-                                                    <option value="">-- Pilih Shift --</option>
-                                                    <option value="1">Shift 1</option>
-                                                    <option value="2">Shift 2</option>
-                                                    <option value="3">Shift 3</option>
-                                                </select>
+                                            <div class="col-md-6">
+                                                <label for="production_time" class="form-label">Waktu Produksi</label>
+                                                <input type="datetime-local" class="form-control" name="production_time"
+                                                    id="production_time" value="{{ now()->format('Y-m-d\TH:i') }}"
+                                                    required>
                                             </div>
                                         </div>
 
@@ -320,7 +326,7 @@
                         </div>
 
                         <div class="modal fade" id="modalDataMonitoring" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-xl">
+                            <div class="modal-dialog modal-lg">
                                 <div class="modal-content" id="modal-data-monitoring">
                                     <!-- Akan diisi dari AJAX -->
                                 </div>
@@ -328,7 +334,7 @@
                         </div>
 
                         <div class="modal fade" id="modalDisposisiMonitoring" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-xl">
+                            <div class="modal-dialog modal-lg">
                                 <div class="modal-content" id="modal-disposisi-monitoring">
                                     <form id="pasteurisasiForm">
                                         @csrf
@@ -518,8 +524,6 @@
                                     <th>pH</th>
                                     <th>Endapan</th>
                                     <th>Warna</th>
-                                    <th>Created By</th>
-                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>`;
@@ -539,10 +543,6 @@
                             <td>${data.ph ?? '-'}</td>
                             <td>${data.endapan ?? '-'}</td>
                             <td>${data.warna ?? '-'}</td>
-                            <td>${data.created_by ?? '-'}</td>
-                            <td>
-                              <button class="btn btn-sm btn-primary open-edit" data-id="${data.id}">Edit</button>
-                            </td>
                         </tr>`;
                             });
                         } else {
@@ -597,17 +597,16 @@
                     },
                     success: function(response) {
                         if (response.status === 'ok') {
+                            $('#modalMonitoring').modal('hide');
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Berhasil',
                                 text: response.message,
                                 timer: 2000,
                                 showConfirmButton: false
+                            }).then(() => {
+                                location.reload();
                             });
-
-                            $('#modalMonitoring').modal('hide');
-                            form.trigger('reset');
-                            // Optional: reload tabel atau data
                         }
                     },
                     error: function(xhr) {
