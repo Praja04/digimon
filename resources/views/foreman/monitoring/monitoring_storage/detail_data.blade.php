@@ -295,15 +295,27 @@
                                                         <label class="form-label">Endapan</label>
                                                         <input type="text" name="endapan" class="form-control">
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-4">
                                                         <label class="form-label">Warna</label>
                                                         <!-- <input type="text" name="warna" class="form-control" required> -->
                                                         <select name="warna" id="warnaSelect" class="form-select"
                                                             required>
                                                             <option value="">-- Pilih Warna --</option>
+                                                            @foreach ($manageWarna as $item)
+                                                                <option value="{{ $item->nama_warna }}">{{ $item->nama_warna }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-6">
+
+                                                    <div class="col-md-4">
+                                                        <label for="production_time" class="form-label">Waktu
+                                                            Produksi</label>
+                                                        <input type="datetime-local" class="form-control"
+                                                            name="production_time" id="production_time"
+                                                            value="{{ now()->format('Y-m-d\TH:i') }}" required>
+                                                    </div>
+
+                                                    <div class="col-md-4">
                                                         <label class="form-label">Disposition</label>
                                                         <select name="disposition" class="form-select disposition-select"
                                                             required>

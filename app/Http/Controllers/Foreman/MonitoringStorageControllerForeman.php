@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\MonitoringStorageModel;
 use App\Models\MonitoringStorageMikroModel;
 use App\Models\KonfirmasiMonitoringStorageMikroModel;
+use App\Models\ManageWarnaModel;
 use App\Models\ProductionBatch;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
@@ -52,10 +54,13 @@ class MonitoringStorageControllerForeman extends Controller
 
             $data->po_number = $productionBatch->po_number;
         }
+
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
         //    return response()->json($productionBatch->MonitoringStorage);
         return view('foreman.monitoring.monitoring_storage.detail_data', [
             'productionBatch' => $productionBatch,
-            'filteredMonitoringStorage' => $productionBatch->MonitoringStorage
+            'filteredMonitoringStorage' => $productionBatch->MonitoringStorage,
+            'manageWarna' => $manageWarna
         ]);
     }
 
@@ -82,7 +87,6 @@ class MonitoringStorageControllerForeman extends Controller
 
     public function Monitoring_Storage_detail_id($id)
     {
-
         $data = MonitoringStorageModel::find($id);
         return view('foreman.monitoring.monitoring_storage.analisis_data_detail_id', compact('data'));
     }
@@ -217,6 +221,7 @@ class MonitoringStorageControllerForeman extends Controller
             'warna' => $request->warna,
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
+            'production_time' => Carbon::parse($request->production_time)->format('Y-m-d H:i:s'),
             'created_by' => $username,
         ];
 
