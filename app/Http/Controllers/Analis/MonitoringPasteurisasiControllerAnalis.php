@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Analis;
 
 use App\Http\Controllers\Controller;
+use App\Models\ManageWarnaModel;
 use App\Models\MonitoringPasteurisasi;
 use App\Models\MonitoringPasteurisasiData;
 use App\Models\ProductionBatch;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -51,10 +53,13 @@ class MonitoringPasteurisasiControllerAnalis extends Controller
             return $item;
         });
 
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
+
         // return response()->json($filtered->values());
         return view('analis.monitoring.pasteurisasi.detail_data', [
             'productionBatch' => $productionBatch,
-            'filteredMonitoring' => $filtered->values()
+            'filteredMonitoring' => $filtered->values(),
+            'manageWarna' => $manageWarna,
         ]);
     }
 
@@ -125,7 +130,7 @@ class MonitoringPasteurisasiControllerAnalis extends Controller
             'ph' => 'nullable|numeric',
             'endapan' => 'nullable|string',
             'warna' => 'nullable|string',
-            'shift' => 'required|in:1,2,3',
+            // 'shift' => 'required|in:1,2,3',
         ]);
 
         // Jika validasi gagal
@@ -155,6 +160,15 @@ class MonitoringPasteurisasiControllerAnalis extends Controller
             ], 409); // 409 Conflict
         }
 
+        $currentHour = (int) now()->format('H');
+        if ($currentHour >= 6 && $currentHour < 14) {
+            $shift = 1;
+        } elseif ($currentHour >= 14 && $currentHour < 22) {
+            $shift = 2;
+        } else {
+            $shift = 3;
+        }
+
         try {
             $username = session('username');
             // Simpan data ke database
@@ -170,7 +184,8 @@ class MonitoringPasteurisasiControllerAnalis extends Controller
                 'ph' => $request->ph,
                 'endapan' => $request->endapan,
                 'warna' => $request->warna,
-                'shift' => $request->shift,
+                'shift' => $shift,
+                'production_time' =>  Carbon::parse($request->production_time)->format('Y-m-d H:i:s'),
                 'created_by' => $username,
             ]);
 

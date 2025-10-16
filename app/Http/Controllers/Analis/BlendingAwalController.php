@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\BlendingAwalModel;
+use App\Models\ManageWarnaModel;
 use App\Models\ProductionBatch;
 
 class BlendingAwalController extends Controller
@@ -132,8 +133,9 @@ class BlendingAwalController extends Controller
         }
         // return json response untuk debugging
         //return response()->json($productionBatch->BlendingAwal);
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
 
-        return view('analis.blending.blending_awal_detail', compact('productionBatch'));
+        return view('analis.blending.blending_awal_detail', compact('productionBatch', 'manageWarna'));
     }
 
     public function showInputFormBlendingAwal($id)
