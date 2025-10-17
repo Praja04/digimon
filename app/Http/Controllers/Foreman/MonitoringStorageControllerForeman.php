@@ -365,8 +365,8 @@ class MonitoringStorageControllerForeman extends Controller
             'eb' => 'nullable|numeric|min:0|max:100',
             'tpc' => 'nullable|numeric|min:0|max:100',
             'ym' => 'nullable|string|max:20',
-            'nama_analis' => 'string',
-            'shift' => 'string',
+            // 'nama_analis' => 'string',
+            // 'shift' => 'string',
         ]);
 
         if ($validator->fails()) {
@@ -375,7 +375,7 @@ class MonitoringStorageControllerForeman extends Controller
             ], 422);
         }
 
-        $data = MonitoringStorageMikroModel::findOrFail($id);
+        $data = MonitoringStorageMikroModel::findOrFail($request->id);
 
         // 🛡️ Validasi agar data tidak bisa diisi ulang
         if (
@@ -388,11 +388,20 @@ class MonitoringStorageControllerForeman extends Controller
             ], 422);
         }
 
+        $currentHour = (int) now()->format('H');
+        if ($currentHour >= 6 && $currentHour < 14) {
+            $shift = 1;
+        } elseif ($currentHour >= 14 && $currentHour < 22) {
+            $shift = 2;
+        } else {
+            $shift = 3;
+        }
+
         // 📝 Buat konfirmasi
         KonfirmasiMonitoringStorageMikroModel::create([
-            'blending_after_adjust_mikro_id' => $data->id,
-            'nama_analis' => $request->nama_analis,
-            'shift' => $request->shift,
+            'monitoring_storage_mikro_id' => $data->id,
+            'nama_analis' => Session::get('username'),
+            'shift' => $shift,
         ]);
 
         // 🔄 Update hanya field yang dikirim dan tidak null
@@ -423,7 +432,6 @@ class MonitoringStorageControllerForeman extends Controller
         }
 
         $data = MonitoringStorageMikroModel::findOrFail($id);
-
 
         $dataUpdate = [
             'eb' => $request->eb_edit,
