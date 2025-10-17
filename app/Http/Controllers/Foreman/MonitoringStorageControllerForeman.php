@@ -25,8 +25,14 @@ class MonitoringStorageControllerForeman extends Controller
     }
     public function Monitoring_Storage_data()
     {
-
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringStorage')->has('MonitoringStorage')->get();
+        $productionBatches = ProductionBatch::with('MonitoringStorage')
+            ->has('MonitoringStorage')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isMonitoringStorageComplete()) ? 1 : 0;
+            })
+            ->values();
 
         // return response()->json($productionBatches);
         return view('foreman.monitoring.monitoring_storage.monitoring_storage', compact('productionBatches'));
@@ -34,8 +40,14 @@ class MonitoringStorageControllerForeman extends Controller
 
     public function Monitoring_Storage_data_mikro()
     {
-
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringStorageMikro')->has('MonitoringStorageMikro')->get();
+        $productionBatches = ProductionBatch::with('MonitoringStorageMikro')
+            ->has('MonitoringStorageMikro')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isMonitoringStorageMikroComplete()) ? 1 : 0;
+            })
+            ->values();
 
         return view('foreman.monitoring.monitoring_storage.monitoring_storage_mikro', compact('productionBatches'));
     }

@@ -28,6 +28,7 @@ class MonitoringPasteurisasiControllerForeman extends Controller
                 return ($batch->isMonitoringPasteurisasiComplete()) ? 1 : 0;
             })
             ->values();
+            
         return view('foreman.monitoring.pasteurisasi.data', compact('productionBatches'));
     }
 

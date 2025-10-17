@@ -168,7 +168,6 @@
                         <table class="table align-middle table-nowrap mb-0 text-center" id="tasksTable">
                             <thead class="table-light text-muted">
                                 <tr>
-
                                     <th>Batch Range</th>
                                     <th>No Blending</th>
                                     <th>Volume</th>

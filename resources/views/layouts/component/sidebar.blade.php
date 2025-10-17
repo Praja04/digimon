@@ -87,18 +87,35 @@
 
                     <li class="nav-item"><a class="nav-link menu-link" href="{{ url('supervisor/rmpm/list/rm') }}"><i
                                 class="mdi mdi-format-list-bulleted-type"></i> Data RM</a></li>
+
                     <li class="nav-item"><a class="nav-link menu-link"
                             href="{{ url('analis/productionbatch/menu') }}"><i class="mdi mdi-food-fork-drink"></i>
                             Persiapan Masak</a></li>
+
                     <li class="nav-item"><a class="nav-link menu-link"
                             href="{{ url('supervisor/ggaggas/menu') }}"><i class="mdi mdi-flask-outline"></i> GGA &
                             GGAS</a></li>
+
                     <li class="nav-item"><a class="nav-link menu-link"
                             href="{{ url('supervisor/blending/menu') }}"><i class="mdi mdi-blender-software"></i>
                             Blending</a></li>
-                    <li class="nav-item"><a class="nav-link menu-link"
+
+                    {{-- <li class="nav-item"><a class="nav-link menu-link"
                             href="{{ url('supervisor/monitoring/blending/menu') }}"><i
-                                class="mdi mdi-monitor-dashboard"></i> Monitoring Blending</a></li>
+                                class="mdi mdi-monitor-dashboard"></i> Monitoring Blending</a></li> --}}
+
+                    <li class="nav-item">
+                        <a class="nav-link menu-link" href="{{ url('supervisor/monitoring/pasteurisasi/menu') }}">
+                            <i class="mdi mdi-thermometer"></i> <span>Monitoring Pasteurisasi</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link menu-link" href="{{ url('supervisor/monitoring/blending/menu') }}">
+                            <i class="mdi mdi-bottle-wine"></i> <span>Monitoring Filling</span>
+                        </a>
+                    </li>
+
                     <li class="nav-item"><a class="nav-link menu-link"
                             href="{{ url('analis/productionbatch/scan') }}"><i class="mdi mdi-qrcode-scan"></i>
                             Scan</a></li>

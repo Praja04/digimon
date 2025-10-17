@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 use App\Models\BlendingAwalModel;
+use App\Models\ManageWarnaModel;
 use App\Models\ProductionBatch;
 
 class BlendingAwalControllerSupervisor extends Controller
@@ -27,12 +28,19 @@ class BlendingAwalControllerSupervisor extends Controller
         return view('supervisor.blending.menu');
     }
     //
-   
+
 
     public function Blending_data()
     {
         // Ambil semua PO yang memiliki data GGA
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->has('BlendingAwal')->with('BlendingAwal')->get();
+        $productionBatches = ProductionBatch::with('BlendingAwal')
+            ->has('BlendingAwal')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isBlendingAwalComplete()) ? 1 : 0;
+            })
+            ->values();
 
         return view('supervisor.blending.blending_awal', compact('productionBatches'));
     }
@@ -62,8 +70,9 @@ class BlendingAwalControllerSupervisor extends Controller
         }
         // return json response untuk debugging
         //return response()->json($productionBatch->BlendingAwal);
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
 
-        return view('supervisor.blending.blending_awal_detail', compact('productionBatch'));
+        return view('supervisor.blending.blending_awal_detail', compact('productionBatch', 'manageWarna'));
     }
 
     public function showInputFormBlendingAwal($id)
@@ -106,7 +115,7 @@ class BlendingAwalControllerSupervisor extends Controller
                 'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
             ], 422);
         }
-    
+
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -142,16 +151,16 @@ class BlendingAwalControllerSupervisor extends Controller
             $dataUpdate['not_standar'] = true;
         }
         if ($disposition === 'Jalan Bareng') {
-           
+
             $dataUpdate['not_standar'] = true;
         }
         if ($disposition === 'Leveling') {
-          
+
             $dataUpdate['not_standar'] = true;
         }
 
         // Jika resampling
-        if ($disposition === 'Resampling' ) {
+        if ($disposition === 'Resampling') {
             $dataUpdate['disposition_remarks'] = $disposition;
             $dataUpdate['not_standar'] = true;
         }

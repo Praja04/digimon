@@ -103,7 +103,14 @@ class BlendingAwalController extends Controller
     public function Blending_data()
     {
         // Ambil semua PO yang memiliki data GGA
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->has('BlendingAwal')->with('BlendingAwal')->get();
+        $productionBatches = ProductionBatch::with('BlendingAwal')
+            ->has('BlendingAwal')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isBlendingAwalComplete()) ? 1 : 0;
+            })
+            ->values();
 
         return view('analis.blending.blending_awal', compact('productionBatches'));
     }

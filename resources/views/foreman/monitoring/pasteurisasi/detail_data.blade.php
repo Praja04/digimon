@@ -330,7 +330,7 @@
                         </div>
 
                         <div class="modal fade" id="modalDataMonitoring" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-xl">
+                            <div class="modal-dialog modal-lg">
                                 <div class="modal-content" id="modal-data-monitoring">
                                     <!-- Akan diisi dari AJAX -->
                                 </div>
@@ -338,7 +338,7 @@
                         </div>
 
                         <div class="modal fade" id="modalDisposisiMonitoring" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-xl">
+                            <div class="modal-dialog modal-lg">
                                 <div class="modal-content" id="modal-disposisi-monitoring">
                                     <form id="pasteurisasiForm">
                                         @csrf

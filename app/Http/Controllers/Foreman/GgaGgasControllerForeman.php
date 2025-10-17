@@ -95,12 +95,27 @@ class GgaGgasControllerForeman extends Controller
 
     public function GGA_data()
     {
-        $productionBatches = ProductionBatch::has('GgaProcesses')->with('GgaProcesses')->orderby('created_at', 'desc')->get();
+        $productionBatches = ProductionBatch::with('GgaProcesses')
+            ->has('GgaProcesses')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isGGaComplete()) ? 1 : 0;
+            })
+            ->values();
+
         return view('foreman.ggaggas.gga', compact('productionBatches'));
     }
     public function GGAS_data()
     {
-        $productionBatches = ProductionBatch::has('GgasProcesses')->with('GgasProcesses')->orderby('created_at', 'desc')->get();
+        $productionBatches = ProductionBatch::with('GgasProcesses')
+            ->has('GgasProcesses')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isGGasComplete()) ? 1 : 0;
+            })
+            ->values();
 
         return view('foreman.ggaggas.ggas', compact('productionBatches'));
     }
