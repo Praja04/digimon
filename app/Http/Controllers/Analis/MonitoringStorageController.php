@@ -9,6 +9,7 @@ use App\Models\KonfirmasiMonitoringStorageMikroModel;
 use App\Models\ManageWarnaModel;
 use App\Models\ProductionBatch;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
 class MonitoringStorageController extends Controller
@@ -257,8 +258,8 @@ class MonitoringStorageController extends Controller
             'eb' => 'nullable|numeric|min:0|max:100',
             'tpc' => 'nullable|numeric|min:0|max:100',
             'ym' => 'nullable|string|max:20',
-            'nama_analis' => 'string',
-            'shift' => 'string',
+            // 'nama_analis' => 'string',
+            // 'shift' => 'string',
         ]);
 
         if ($validator->fails()) {
@@ -280,11 +281,20 @@ class MonitoringStorageController extends Controller
             ], 422);
         }
 
+        $currentHour = (int) now()->format('H');
+        if ($currentHour >= 6 && $currentHour < 14) {
+            $shift = 1;
+        } elseif ($currentHour >= 14 && $currentHour < 22) {
+            $shift = 2;
+        } else {
+            $shift = 3;
+        }
+
         // 📝 Buat konfirmasi
         KonfirmasiMonitoringStorageMikroModel::create([
-            'blending_after_adjust_mikro_id' => $data->id,
-            'nama_analis' => $request->nama_analis,
-            'shift' => $request->shift,
+            'monitoring_storage_mikro_id' => $data->id,
+            'nama_analis' => Session::get('username'),
+            'shift' => $shift,
         ]);
 
         // 🔄 Update hanya field yang dikirim dan tidak null
