@@ -39,12 +39,11 @@
                     <li class="menu-title"><span data-key="t-menu">Dashboard</span></li>
 
                     <li class="nav-item">
-                        <a class="nav-link menu-link" href="#DashboardProses" data-bs-toggle="collapse" role="button"
-                            aria-expanded="false" aria-controls="DashboardProses">
-                            <i class="mdi mdi-chart-areaspline"></i> <span data-key="t-dashboards">Dashboard
-                                Makro</span>
+                        <a class="nav-link menu-link" href="#Dashboards" data-bs-toggle="collapse" role="button"
+                            aria-expanded="false" aria-controls="Dashboards">
+                            <i class="mdi mdi-monitor-dashboard"></i> <span data-key="t-dashboards">Dashboard</span>
                         </a>
-                        <div class="collapse menu-dropdown" id="DashboardProses">
+                        <div class="collapse menu-dropdown" id="Dashboards">
                             <ul class="nav nav-sm flex-column">
                                 <li class="nav-item"><a href="{{ url('dashboard/gga-ggas') }}" class="nav-link"><i
                                             class="mdi mdi-flask"></i> Analisis GGA & GGAS</a></li>
@@ -57,30 +56,14 @@
                                         Blending</a></li>
                                 <li class="nav-item"><a href="{{ url('dashboard/monitoring/storage') }}"
                                         class="nav-link"><i class="mdi mdi-database"></i> Monitoring Storage</a></li>
-                            </ul>
-                        </div>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link menu-link" href="#Dashboardmikro" data-bs-toggle="collapse" role="button"
-                            aria-expanded="false" aria-controls="Dashboardmikro">
-                            <i class="mdi mdi-chart-scatter-plot"></i> <span data-key="t-dashboards">Dashboard
-                                Mikro</span>
-                        </a>
-                        <div class="collapse menu-dropdown" id="Dashboardmikro">
-                            <ul class="nav nav-sm flex-column">
                                 <li class="nav-item"><a href="{{ url('dashboard/mikro/blending/after') }}"
                                         class="nav-link"><i class="mdi mdi-blender"></i> Blending After Adjust</a></li>
                                 <li class="nav-item"><a href="{{ url('dashboard/mikro/monitoring/storage') }}"
                                         class="nav-link"><i class="mdi mdi-database"></i> Monitoring Storage</a></li>
+                                <li class="nav-item"><a href="{{ url('dashboard/rm') }}" class="nav-link"><i
+                                            class="mdi mdi-chemical-weapon"></i> Dashboard RMPM</a></li>
                             </ul>
                         </div>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link menu-link" href="{{ url('dashboard/rm') }}">
-                            <i class="mdi mdi-chemical-weapon"></i> <span data-key="t-widgets">Dashboard RMPM</span>
-                        </a>
                     </li>
 
                     <li class="menu-title"><span data-key="t-menu">Menu</span></li>
@@ -92,12 +75,12 @@
                             href="{{ url('analis/productionbatch/menu') }}"><i class="mdi mdi-food-fork-drink"></i>
                             Persiapan Masak</a></li>
 
-                    <li class="nav-item"><a class="nav-link menu-link"
-                            href="{{ url('supervisor/ggaggas/menu') }}"><i class="mdi mdi-flask-outline"></i> GGA &
+                    <li class="nav-item"><a class="nav-link menu-link" href="{{ url('supervisor/ggaggas/menu') }}"><i
+                                class="mdi mdi-flask-outline"></i> GGA &
                             GGAS</a></li>
 
-                    <li class="nav-item"><a class="nav-link menu-link"
-                            href="{{ url('supervisor/blending/menu') }}"><i class="mdi mdi-blender-software"></i>
+                    <li class="nav-item"><a class="nav-link menu-link" href="{{ url('supervisor/blending/menu') }}"><i
+                                class="mdi mdi-blender-software"></i>
                             Blending</a></li>
 
                     {{-- <li class="nav-item"><a class="nav-link menu-link"
@@ -128,12 +111,11 @@
                     <li class="menu-title"><span data-key="t-menu">Dashboard</span></li>
 
                     <li class="nav-item">
-                        <a class="nav-link menu-link" href="#DashboardProses" data-bs-toggle="collapse"
-                            role="button" aria-expanded="false" aria-controls="DashboardProses">
-                            <i class="mdi mdi-chart-areaspline"></i> <span data-key="t-dashboards">Dashboard
-                                Makro</span>
+                        <a class="nav-link menu-link" href="#Dashboards" data-bs-toggle="collapse" role="button"
+                            aria-expanded="false" aria-controls="Dashboards">
+                            <i class="mdi mdi-monitor-dashboard"></i> <span>Dashboard</span>
                         </a>
-                        <div class="collapse menu-dropdown" id="DashboardProses">
+                        <div class="collapse menu-dropdown" id="Dashboards">
                             <ul class="nav nav-sm flex-column">
                                 <li class="nav-item"><a href="{{ url('dashboard/gga-ggas') }}" class="nav-link"><i
                                             class="mdi mdi-flask-outline"></i> Analisis GGA & GGAS</a></li>
@@ -149,31 +131,17 @@
                                 <li class="nav-item"><a href="{{ url('dashboard/monitoring/storage') }}"
                                         class="nav-link"><i class="mdi mdi-database-check"></i> Monitoring Storage</a>
                                 </li>
-                            </ul>
-                        </div>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link menu-link" href="#Dashboardmikro" data-bs-toggle="collapse"
-                            role="button" aria-expanded="false" aria-controls="Dashboardmikro">
-                            <i class="mdi mdi-chart-scatter-plot"></i> <span data-key="t-dashboards">Dashboard
-                                Mikro</span>
-                        </a>
-                        <div class="collapse menu-dropdown" id="Dashboardmikro">
-                            <ul class="nav nav-sm flex-column">
                                 <li class="nav-item"><a href="{{ url('dashboard/mikro/blending/after') }}"
-                                        class="nav-link"><i class="mdi mdi-blender"></i> Blending After Adjust</a>
+                                        class="nav-link"><i class="mdi mdi-blender"></i> Mikro Blending After
+                                        Adjust</a>
                                 </li>
                                 <li class="nav-item"><a href="{{ url('dashboard/mikro/monitoring/storage') }}"
-                                        class="nav-link"><i class="mdi mdi-database"></i> Monitoring Storage</a></li>
+                                        class="nav-link"><i class="mdi mdi-database"></i> Mikro Monitoring Storage</a>
+                                </li>
+                                <li class="nav-item"><a href="{{ url('dashboard/rm') }}" class="nav-link"><i
+                                            class="mdi mdi-chemical-weapon"></i> Dashboard RMPM</a></li>
                             </ul>
                         </div>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link menu-link" href="{{ url('dashboard/rm') }}">
-                            <i class="mdi mdi-chemical-weapon"></i> <span data-key="t-widgets">Dashboard RMPM</span>
-                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link menu-link" href="#ManageData" data-bs-toggle="collapse" role="button"
