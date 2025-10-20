@@ -30,7 +30,7 @@ class MonitoringStorageControllerForeman extends Controller
             ->orderBy('created_at', 'desc')
             ->get()
             ->sortBy(function ($batch) {
-                return ($batch->isMonitoringStorageComplete()) ? 1 : 0;
+                return ($batch->isMonitoringStorageMakroComplete()) ? 1 : 0;
             })
             ->values();
 

@@ -209,7 +209,8 @@ class MonitoringTurunBlendingController extends Controller
     public function showInputFormMonitoringTurunBlending($id)
     {
         $monitoring = MonitoringTurunBlending::with('monitoringData', 'productionBatch')->find($id);
-        return view('analis.monitoring.analisis_data_detail', compact('monitoring'));
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
+        return view('analis.monitoring.analisis_data_detail', compact('monitoring', 'manageWarna'));
     }
 
     public function showDataDetail($id)

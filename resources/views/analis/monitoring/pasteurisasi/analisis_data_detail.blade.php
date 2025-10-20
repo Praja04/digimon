@@ -206,7 +206,7 @@
 
         <div class="modal fade" id="inputModalDataAnalisa" tabindex="-1" aria-labelledby="inputModalLabel"
             aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <form id="form-monitoring-input"> {{-- Perbaiki ID form --}}
                     @csrf
                     <div class="modal-content">
@@ -271,22 +271,21 @@
                                 <input type="text" class="form-control" name="endapan" id="endapan">
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="warna" class="form-label">Warna</label>
                                 <!-- <input type="text" class="form-control" name="warna" id="warna"> -->
-                                <select name="warna" id="warnaSelect" class="form-select" required>
+                                <select name="warna" id="warna" class="form-select" required>
                                     <option value="">-- Pilih Warna --</option>
+                                    @foreach ($manageWarna as $item)
+                                        <option value="{{ $item->nama_warna }}">{{ $item->nama_warna }}</option>
+                                    @endforeach
                                 </select>
                             </div>
 
-                            <div class="col-md-4">
-                                <label for="shift" class="form-label">Shift</label>
-                                <select class="form-select" name="shift" id="shift" required>
-                                    <option value="">-- Pilih Shift --</option>
-                                    <option value="1">Shift 1</option>
-                                    <option value="2">Shift 2</option>
-                                    <option value="3">Shift 3</option>
-                                </select>
+                            <div class="col-md-6">
+                                <label for="production_time" class="form-label">Waktu Produksi</label>
+                                <input type="datetime-local" class="form-control" name="production_time"
+                                    id="production_time" value="{{ now()->format('Y-m-d\TH:i') }}" required>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -301,7 +300,7 @@
 
         <div class="modal fade" id="inputModalDataDisposisi" tabindex="-1" aria-labelledby="inputModalLabel"
             aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <form id="pasteurisasiForm"> {{-- Perbaiki ID form --}}
                     @csrf
                     <div class="modal-content">
@@ -417,18 +416,16 @@
                     },
                     success: function(response) {
                         if (response.status === 'ok') {
+                            $('#inputModalDataAnalisa').modal('hide'); // FIX: modal yang benar
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Berhasil',
                                 text: response.message,
                                 timer: 2000,
                                 showConfirmButton: false
+                            }).then(() => {
+                                location.reload();
                             });
-
-                            $('#inputModalDataAnalisa').modal('hide'); // FIX: modal yang benar
-                            form.trigger('reset');
-
-                            // TODO: reload tabel data jika diperlukan
                         }
                     },
                     error: function(xhr) {

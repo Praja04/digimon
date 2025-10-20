@@ -74,9 +74,9 @@ class MonitoringStorageController extends Controller
 
     public function Monitoring_Storage_detail_id($id)
     {
-
         $data = MonitoringStorageModel::find($id);
-        return view('analis.monitoring.monitoring_storage.analisis_data_detail_id', compact('data'));
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
+        return view('analis.monitoring.monitoring_storage.analisis_data_detail_id', compact('data', 'manageWarna'));
     }
 
     public function Monitoring_Storage_detail_mikro_id($id)

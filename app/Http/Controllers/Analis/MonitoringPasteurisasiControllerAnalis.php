@@ -344,6 +344,7 @@ class MonitoringPasteurisasiControllerAnalis extends Controller
     public function showInputFormMonitoringPasteurisasi($id)
     {
         $monitoring = MonitoringPasteurisasi::with('monitoringPasteurisasiData', 'productionBatch')->find($id);
-        return view('analis.monitoring.pasteurisasi.analisis_data_detail', compact('monitoring'));
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
+        return view('analis.monitoring.pasteurisasi.analisis_data_detail', compact('monitoring', 'manageWarna'));
     }
 }
