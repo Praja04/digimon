@@ -148,7 +148,8 @@ class BlendingAwalController extends Controller
     public function showInputFormBlendingAwal($id)
     {
         $blending = BlendingAwalModel::find($id);
-        return view('analis.blending.blending_awal_detail_id', compact('blending'));
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
+        return view('analis.blending.blending_awal_detail_id', compact('blending', 'manageWarna'));
     }
     public function updateAjaxBlending(Request $request, $id)
     {

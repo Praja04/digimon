@@ -302,7 +302,7 @@
                                                             required>
                                                             <option value="">-- Pilih Warna --</option>
                                                             @foreach ($manageWarna as $item)
-                                                                <option value="{{ $item->id }}">
+                                                                <option value="{{ $item->nama_warna }}">
                                                                     {{ $item->nama_warna }}</option>
                                                             @endforeach
                                                         </select>

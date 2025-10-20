@@ -258,7 +258,6 @@
                                                             <tr>
                                                                 <th>Batch Number</th>
                                                                 <th>Dissolver</th>
-
                                                                 <th>QR Code (URL)</th>
                                                                 <th>Disposisi</th>
                                                                 <th>Catatan</th>
@@ -303,7 +302,7 @@
                                                                                         id="qrPrintArea{{ $ggas->id }}">
                                                                                         <div
                                                                                             style="display: inline-block;">
-                                                                                            <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('/analis/ggaggas/gga/id/' . $ggas->id), 'QRCODE') }}"
+                                                                                            <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('/analis/ggaggas/ggas/id/' . $ggas->id), 'QRCODE') }}"
                                                                                                 alt="QR Code">
                                                                                         </div>
                                                                                         <p>GGAS/{{ $productionBatch->po_number }}/{{ $productionBatch->production_date }}/{{ $ggas->batch_number }}

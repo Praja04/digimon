@@ -337,18 +337,18 @@ class GgaGgasControllerForeman extends Controller
         ]);
     }
 
-
-
     public function showInputFormGGA($id)
     {
         $gga = GgaProcess::find($id);
-        return view('foreman.ggaggas.gga_detail_id', compact('gga'));
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
+        return view('foreman.ggaggas.gga_detail_id', compact('gga', 'manageWarna'));
     }
 
     public function showInputFormGGAS($id)
     {
         $ggas = GgasProcess::find($id);
-        return view('foreman.ggaggas.ggas_detail_id', compact('ggas'));
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
+        return view('foreman.ggaggas.ggas_detail_id', compact('ggas', 'manageWarna'));
     }
 
     public function updateAjaxGGAS(Request $request, $id)
