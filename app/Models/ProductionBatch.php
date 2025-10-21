@@ -30,6 +30,11 @@ class ProductionBatch extends Model
         return $this->hasMany(MonitoringPasteurisasi::class);
     }
 
+    public function MonitoringStorageBeforeUse()
+    {
+        return $this->hasMany(MonitoringStorageBeforeUse::class);
+    }
+
     public function MonitoringStorageMikro()
     {
         return $this->hasMany(MonitoringStorageMikroModel::class);
@@ -39,26 +44,32 @@ class ProductionBatch extends Model
     {
         return $this->hasMany(MonitoringStorageModel::class);
     }
+
     public function MonitoringTurunBlending()
     {
         return $this->hasMany(MonitoringTurunBlending::class);
     }
+
     public function BlendingAwal()
     {
         return $this->hasMany(BlendingAwalModel::class);
     }
+
     public function blendingAfterAdjust()
     {
         return $this->hasMany(BlendingAfterAdjustModel::class);
     }
+
     public function blendingAfterAdjustMikro()
     {
         return $this->hasMany(BlendingAfterAdjustMikroModel::class);
     }
+
     public function GgaProcesses()
     {
         return $this->hasMany(GgaProcess::class);
     }
+
     public function GgasProcesses()
     {
         return $this->hasMany(GgasProcess::class);
@@ -174,7 +185,7 @@ class ProductionBatch extends Model
 
         return $isAllFilled;
     }
-    
+
     public function isMonitoringPasteurisasiComplete()
     {
         $monitoring = $this->MonitoringPasteurisasi;

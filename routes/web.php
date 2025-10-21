@@ -9,6 +9,7 @@ use App\Http\Controllers\Analis\RMPMController;
 use App\Http\Controllers\Analis\SamplingController;
 use App\Http\Controllers\Analis\BlendingAwalController;
 use App\Http\Controllers\Analis\MonitoringPasteurisasiControllerAnalis;
+use App\Http\Controllers\Analis\MonitoringStorageBeforeUseController;
 use App\Http\Controllers\ProductionBatchController;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\AuthController;
@@ -32,6 +33,7 @@ use App\Http\Controllers\Supervisor\BlendingAwalControllerSupervisor;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Foreman\MonitoringPasteurisasiControllerForeman;
 use App\Http\Controllers\Supervisor\MonitoringPasteurisasiControllerSupervisor;
+use App\Models\MonitoringStorageBeforeUse;
 
 // Login & Logout
 Route::get('/', [AuthController::class, 'loginForm']);
@@ -156,6 +158,11 @@ Route::prefix('analis')->group(function () {
         Route::get('/processmonitoring/get-available-additional-batch', [ProductionBatchController::class, 'getAvailableAdditionalBatchMonitoring']);
         Route::get('/processmonitoring/get-jalan-bareng', [ProductionBatchController::class, 'getMainMonitoringJalanBareng']);
 
+        Route::post('processmonitoringpasteurisasi/generate-revisi', [ProductionBatchController::class, 'generateRevisiMonitoringPasteurisasi']);
+        Route::get('/processmonitoringpasteurisasi/get-last-revisi', [ProductionBatchController::class, 'getLastRevisiMonitoringPasteurisasi']);
+        Route::get('/processmonitoringpasteurisasi/get-available-additional-batch', [ProductionBatchController::class, 'getAvailableAdditionalBatchMonitoringPasteurisasi']);
+        Route::get('/processmonitoringpasteurisasi/get-jalan-bareng', [ProductionBatchController::class, 'getMainMonitoringPasteurisasiJalanBareng']);
+
         Route::post('processmonitoringstorage/generate-revisi', [ProductionBatchController::class, 'generateRevisiMonitoringStorage']);
         Route::get('/processmonitoringstorage/get-last-revisi', [ProductionBatchController::class, 'getLastRevisiMonitoringStorage']);
         Route::get('/processmonitoringstorage/get-available-additional-batch', [ProductionBatchController::class, 'getAvailableAdditionalMonitoringStorage']);
@@ -245,6 +252,12 @@ Route::prefix('analis')->group(function () {
         Route::get('/detail/mikro/{id}', [MonitoringStorageController::class, 'Monitoring_Storage_detail_mikro']);
         Route::get('/detail/data/mikro/{id}', [MonitoringStorageController::class, 'Monitoring_Storage_detail_mikro_id']);
         Route::post('/update/data/mikro/{id}', [MonitoringStorageController::class, 'update_monitoring_storage_mikro']);
+
+        //storage before use
+        Route::get('/data/before-use', [MonitoringStorageBeforeUseController::class, 'index']);
+        Route::get('/detail/before-use/{id}', [MonitoringStorageBeforeUseController::class, 'show']);
+        Route::get('/detail/data/before-use/{id}', [MonitoringStorageBeforeUseController::class, 'Monitoring_Storage_before_use_detail_mikro_id']);
+        Route::post('/update/data/before-use/{id}', [MonitoringStorageBeforeUseController::class, 'update']);
     });
 });
 

@@ -89,7 +89,7 @@
 
                     <li class="nav-item">
                         <a class="nav-link menu-link" href="{{ url('supervisor/monitoring/pasteurisasi/menu') }}">
-                            <i class="mdi mdi-thermometer"></i> <span>Monitoring Pasteurisasi</span>
+                            <i class="mdi mdi-thermometer"></i> <span>Monitoring Pasteurisasi & Storage</span>
                         </a>
                     </li>
 
@@ -194,7 +194,7 @@
 
                     <li class="nav-item">
                         <a class="nav-link menu-link" href="{{ url('foreman/monitoring/pasteurisasi/menu') }}">
-                            <i class="mdi mdi-thermometer"></i> <span>Monitoring Pasteurisasi</span>
+                            <i class="mdi mdi-thermometer"></i> <span>Monitoring Pasteurisasi & Storage</span>
                         </a>
                     </li>
 
@@ -248,7 +248,7 @@
 
                     <li class="nav-item">
                         <a class="nav-link menu-link" href="{{ url('analis/monitoring/pasteurisasi/menu') }}">
-                            <i class="mdi mdi-thermometer"></i> <span>Monitoring Pasteurisasi</span>
+                            <i class="mdi mdi-thermometer"></i> <span>Monitoring Pasteurisasi & Storage</span>
                         </a>
                     </li>
 

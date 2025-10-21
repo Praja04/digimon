@@ -140,13 +140,13 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @foreach ($productionBatch->MonitoringPasteurisasi as $pasterisasi)
+                                                            @foreach ($productionBatch->MonitoringPasteurisasi as $pasteurisasi)
                                                                 <tr>
-                                                                    <td>{{ $pasterisasi->batch_range }}
-                                                                        @if ($pasterisasi->has_relation == true)
+                                                                    <td>{{ $pasteurisasi->batch_range }}
+                                                                        @if ($pasteurisasi->has_relation == true)
                                                                             <span class="badge bg-info text-dark ms-2">
-                                                                                Merge {{ $pasterisasi->related_batches }}
-                                                                                {{ $pasterisasi->additional_batches }}
+                                                                                Merge {{ $pasteurisasi->related_batches }}
+                                                                                {{ $pasteurisasi->additional_batches }}
 
                                                                             </span>
                                                                         @endif
@@ -156,43 +156,44 @@
                                                                         <button type="button"
                                                                             class="btn btn-sm btn-primary"
                                                                             data-bs-toggle="modal"
-                                                                            data-bs-target="#qrModal{{ $pasterisasi->id }}">
-                                                                            QR Code {{ $pasterisasi->id }}
+                                                                            data-bs-target="#qrModal{{ $pasteurisasi->id }}">
+                                                                            QR Code {{ $pasteurisasi->id }}
                                                                         </button>
 
                                                                         <!-- Modal Besar -->
                                                                         <div class="modal fade"
-                                                                            id="qrModal{{ $pasterisasi->id }}"
+                                                                            id="qrModal{{ $pasteurisasi->id }}"
                                                                             tabindex="-1"
-                                                                            aria-labelledby="qrModalLabel{{ $pasterisasi->id }}"
+                                                                            aria-labelledby="qrModalLabel{{ $pasteurisasi->id }}"
                                                                             aria-hidden="true">
                                                                             <div
                                                                                 class="modal-dialog modal-dialog-centered modal-lg">
                                                                                 <div class="modal-content">
                                                                                     <div class="modal-header py-2">
                                                                                         <h5 class="modal-title"
-                                                                                            id="qrModalLabel{{ $pasterisasi->id }}">
-                                                                                            QR Code - Pasteurisasi {{ $pasterisasi->id }}</h5>
+                                                                                            id="qrModalLabel{{ $pasteurisasi->id }}">
+                                                                                            QR Code - Pasteurisasi
+                                                                                            {{ $pasteurisasi->id }}</h5>
                                                                                         <button type="button"
                                                                                             class="btn-close btn-sm"
                                                                                             data-bs-dismiss="modal"
                                                                                             aria-label="Close"></button>
                                                                                     </div>
                                                                                     <div class="modal-body text-center"
-                                                                                        id="qrPrintArea{{ $pasterisasi->id }}">
+                                                                                        id="qrPrintArea{{ $pasteurisasi->id }}">
                                                                                         <div
                                                                                             style="display: inline-block;">
-                                                                                            <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('analis/monitoring/pasteurisasi/detail/data/id/' . $pasterisasi->id), 'QRCODE') }}"
+                                                                                            <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('analis/monitoring/pasteurisasi/detail/data/id/' . $pasteurisasi->id), 'QRCODE') }}"
                                                                                                 alt="QR Code">
                                                                                         </div>
                                                                                         <p>Monitoring
-                                                                                            Pasteurisasi/{{ $productionBatch->po_number }}/{{ $productionBatch->production_date }}/{{ $pasterisasi->batch_range }}
+                                                                                            Pasteurisasi/{{ $productionBatch->po_number }}/{{ $productionBatch->production_date }}/{{ $pasteurisasi->batch_range }}
                                                                                         </p>
                                                                                     </div>
                                                                                     <div
                                                                                         class="modal-footer justify-content-center py-2">
                                                                                         <button
-                                                                                            onclick="printQR('qrPrintArea{{ $pasterisasi->id }}')"
+                                                                                            onclick="printQR('qrPrintArea{{ $pasteurisasi->id }}')"
                                                                                             class="btn btn-sm btn-success">Print</button>
                                                                                         <button type="button"
                                                                                             class="btn btn-sm btn-secondary"
@@ -203,16 +204,16 @@
                                                                         </div>
                                                                     </td>
                                                                     <td>
-                                                                        {{ $pasterisasi->disposition ?? '-' }}
-                                                                        @if (in_array($pasterisasi->disposition, ['Adjustment', 'Resampling', 'Leveling', 'Jalan Bareng']) &&
-                                                                                $pasterisasi->revisi == null &&
-                                                                                $pasterisasi->not_standar == true)
+                                                                        {{ $pasteurisasi->disposition ?? '-' }}
+                                                                        @if (in_array($pasteurisasi->disposition, ['Adjustment', 'Resampling', 'Leveling', 'Jalan Bareng']) &&
+                                                                                $pasteurisasi->revisi == null &&
+                                                                                $pasteurisasi->not_standard == true)
                                                                             <button
                                                                                 class="btn btn-sm btn-warning generate-revisi-btn"
-                                                                                data-id="{{ $pasterisasi->id }}"
-                                                                                data-batch="{{ $pasterisasi->batch_range }}"
-                                                                                data-po="{{ $pasterisasi->production_batch_id }}"
-                                                                                data-disposition="{{ $pasterisasi->disposition }}">
+                                                                                data-id="{{ $pasteurisasi->id }}"
+                                                                                data-batch="{{ $pasteurisasi->batch_range }}"
+                                                                                data-po="{{ $pasteurisasi->production_batch_id }}"
+                                                                                data-disposition="{{ $pasteurisasi->disposition }}">
                                                                                 ❗
                                                                             </button>
                                                                         @else
@@ -221,18 +222,19 @@
                                                                     <td>
 
                                                                         @if (
-                                                                            $pasterisasi->disposition_remarks != null &&
-                                                                                $pasterisasi->disposition_remarks != '-' &&
-                                                                                $pasterisasi->disposition != 'Adjustment')
-                                                                            {{ $pasterisasi->disposition_remarks }}
-                                                                        @elseif($pasterisasi->disposition == 'Adjustment')
+                                                                            $pasteurisasi->disposition_remarks != null &&
+                                                                                $pasteurisasi->disposition_remarks != '-' &&
+                                                                                $pasteurisasi->disposition != 'Adjustment')
+                                                                            {{ $pasteurisasi->disposition_remarks }}
+                                                                        @elseif($pasteurisasi->disposition == 'Adjustment')
                                                                             Adjustment Air:
-                                                                            {{ $pasterisasi->adjustment_qty_air }} Liter,
-                                                                            Garam: {{ $pasterisasi->adjustment_qty_garam }}
+                                                                            {{ $pasteurisasi->adjustment_qty_air }} Liter,
+                                                                            Garam:
+                                                                            {{ $pasteurisasi->adjustment_qty_garam }}
                                                                             Kg, Gula:
-                                                                            {{ $pasterisasi->adjustment_qty_gula }}
+                                                                            {{ $pasteurisasi->adjustment_qty_gula }}
                                                                             Kg
-                                                                        @elseif($pasterisasi->is_adjustment == true)
+                                                                        @elseif($pasteurisasi->is_adjustment == true)
                                                                             After Adjustment
                                                                         @else
                                                                             -
@@ -240,8 +242,8 @@
                                                                     </td>
                                                                     <td>
 
-                                                                        @if ($pasterisasi->revisi != null)
-                                                                            Revisi Ke-{{ $pasterisasi->revisi }}
+                                                                        @if ($pasteurisasi->revisi != null)
+                                                                            Revisi Ke-{{ $pasteurisasi->revisi }}
                                                                         @else
                                                                             -
                                                                         @endif
@@ -294,7 +296,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="no_pasteurisasi" class="form-label">Nomor Pasteurisasi</label>
+                            <label for="no_pasteurisasi" class="form-label">Nomor Blending</label>
                             <input type="number" name="no_pasteurisasi" class="form-control">
                         </div>
 
@@ -509,7 +511,7 @@
             $('#modal_batch').val(batch);
             $('#modal_additional_batch_po_id').val(''); // reset PO ID tambahan
 
-            $.get('{{ url('/analis/productionbatch/processmonitoring/get-last-revisi') }}', {
+            $.get('{{ url('/analis/productionbatch/processmonitoringpasteurisasi/get-last-revisi') }}', {
                 production_batch_id: poId,
                 batch_range: batch
             }, function(res) {
@@ -519,7 +521,7 @@
                     $('#additional_batch_group').removeClass('d-none');
                     $('#additional_batch').empty().append('<option value="">-- Pilih Batch --</option>');
 
-                    $.get('{{ url('/analis/productionbatch/processmonitoring/get-available-additional-batch') }}', {
+                    $.get('{{ url('/analis/productionbatch/processmonitoringpasteurisasi/get-available-additional-batch') }}', {
                         production_batch_id: poId,
                         exclude_batch: batch
                     }, function(batchRes) {
@@ -536,7 +538,7 @@
                     $('#additional_batch_group').removeClass('d-none');
                     $('#additional_batch').empty().append('<option value="">-- Pilih Batch --</option>');
 
-                    $.get('{{ url('/analis/productionbatch/processmonitoring/get-jalan-bareng') }}', {
+                    $.get('{{ url('/analis/productionbatch/processmonitoringpasteurisasi/get-jalan-bareng') }}', {
                         production_batch_id: poId,
                         exclude_batch: batch
                     }, function(batchRes) {
@@ -579,11 +581,12 @@
             let form = $('#generateRevisiForm');
             let formData = form.serialize();
 
-            $.post('{{ url('/analis/productionbatch/processmonitoring/generate-revisi') }}', formData, function(
-                res) {
-                alert('Revisi berhasil dibuat!');
-                location.reload();
-            }).fail(function(err) {
+            $.post('{{ url('/analis/productionbatch/processmonitoringpasteurisasi/generate-revisi') }}', formData,
+                function(
+                    res) {
+                    alert('Revisi berhasil dibuat!');
+                    location.reload();
+                }).fail(function(err) {
                 alert('Terjadi kesalahan: ' + (err.responseJSON?.message || 'Unknown error'));
             });
         });

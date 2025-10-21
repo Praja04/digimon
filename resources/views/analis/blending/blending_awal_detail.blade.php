@@ -202,7 +202,6 @@
                                                 @foreach ($blending->additional_batch_info as $relasi)
                                                     <span class="badge bg-info">{{ $relasi->batch }}</span>
                                                 @endforeach
-                                            @else
                                             @endif
                                         </td>
                                         <td>{{ $blending->nomor_blending }}</td>

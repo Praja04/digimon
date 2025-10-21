@@ -7,6 +7,7 @@ use App\Models\MonitoringStorageModel;
 use App\Models\MonitoringStorageMikroModel;
 use App\Models\KonfirmasiMonitoringStorageMikroModel;
 use App\Models\ManageWarnaModel;
+use App\Models\MonitoringStorageBeforeUse;
 use App\Models\ProductionBatch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -30,7 +31,6 @@ class MonitoringStorageController extends Controller
 
     public function Monitoring_Storage_detail($id)
     {
-
         $productionBatch = ProductionBatch::findOrFail($id);
 
         foreach ($productionBatch->MonitoringStorage as $data) {
@@ -124,6 +124,12 @@ class MonitoringStorageController extends Controller
             'volume_blending' => $request->volume
         ]);
         MonitoringStorageMikroModel::create([
+            'production_batch_id' => $request->production_batch_id,
+            'batch_range' => $request->batch,
+            'nomor_blending' => $request->no_blending,
+            'volume_blending' => $request->volume
+        ]);
+        MonitoringStorageBeforeUse::create([
             'production_batch_id' => $request->production_batch_id,
             'batch_range' => $request->batch,
             'nomor_blending' => $request->no_blending,

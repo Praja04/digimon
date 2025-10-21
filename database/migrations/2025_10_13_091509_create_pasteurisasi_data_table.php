@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('endapan')->nullable();
             $table->string('warna')->nullable();
             $table->string('shift')->nullable();
+            $table->dateTime('production_time')->nullable();
             $table->string('created_by')->nullable();
             $table->timestamps();
         });

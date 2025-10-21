@@ -11,6 +11,7 @@ use App\Models\GgasProcess;
 use App\Models\BlendingBatchRelation;
 use App\Models\BlendingAfterAdjustBatchRelation;
 use App\Models\MonitoringPasteurisasi;
+use App\Models\MonitoringPasteurisasiRelation;
 use App\Models\MonitoringTurunBlending;
 use App\Models\MonitoringTurunBlendingRelation;
 use App\Models\MonitoringStorageModel;
@@ -386,7 +387,36 @@ class ProductionBatchController extends Controller
             $query->with('additionalBatches');
         }])->findOrFail($id);
 
+        // Ambil semua batch dari range PO
         $batches = $productionBatch->batch_range_array; // e.g. [1, 2, 3, 4, ...]
+
+        // Ambil batch yang sudah digunakan di BlendingAwal (batch_range)
+        $usedInBlendingAwal = $productionBatch->BlendingAwal
+            ->flatMap(function ($item) {
+                if (preg_match('/(\d+)\s*-\s*(\d+)/', $item->batch_range, $matches)) {
+                    return range((int) $matches[1], (int) $matches[2]);
+                }
+                return [(int) $item->batch_range];
+            })
+            ->unique()
+            ->toArray();
+
+        // Ambil batch yang sudah digunakan di relasi tambahan (blending_batch_relations)
+        $blendingAwalIds = $productionBatch->BlendingAwal->pluck('id')->toArray();
+        $usedInRelation = \App\Models\BlendingBatchRelation::whereIn('blending_awal_id', $blendingAwalIds)
+            ->pluck('batch')
+            ->flatMap(function ($batch) {
+                if (str_contains($batch, '-')) {
+                    [$start, $end] = explode('-', $batch);
+                    return range((int) $start, (int) $end);
+                }
+                return [(int) $batch];
+            })
+            ->unique()
+            ->toArray();
+
+        // Filter hanya batch yang belum terpakai
+        $batches = array_values(array_diff($batches, $usedInBlendingAwal, $usedInRelation));
 
         // Hanya ambil disposisi tertentu dari GGAS
         $validDispositions = ['Release', 'Release Bersyarat'];
@@ -452,7 +482,6 @@ class ProductionBatchController extends Controller
 
     public function getLastRevisiBlendingAwal(Request $request)
     {
-
         $request->validate([
             'production_batch_id' => 'required|integer|exists:production_batches,id',
             'batch_range' => 'required|string',
@@ -471,13 +500,14 @@ class ProductionBatchController extends Controller
 
     public function generateRevisiBlendingAwal(Request $request)
     {
+
         $validated = $request->validate([
             'id_old_blending' => 'required|integer',
             'production_batch_id' => 'required|integer|exists:production_batches,id',
             'batch_range' => 'required|string',
             'revisi' => 'required|integer|min:1',
-            'additional_batch' => 'nullable',
-            'production_batch_id_leveling' => 'nullable',
+            'additional_batch' => 'nullable|array',
+            'production_batch_id_leveling' => 'nullable|array',
             'no_blending' => 'required|string',
             'volume' => 'required|string',
         ]);
@@ -488,8 +518,14 @@ class ProductionBatchController extends Controller
         $oldDisposition = $old->disposition;
 
         // Validasi batch tambahan
-        if (in_array($oldDisposition, ['Jalan Bareng', 'Leveling']) && empty($validated['additional_batch'])) {
-            return response()->json(['message' => 'Batch tambahan wajib diisi untuk disposisi "Jalan Bareng" atau "Leveling".'], 422);
+        if ($oldDisposition === 'Leveling') {
+            if (empty($validated['additional_batch']) || count(array_filter($validated['additional_batch'])) < 1) {
+                return response()->json(['message' => 'Minimal 1 batch tambahan wajib diisi untuk disposisi "Leveling".'], 422);
+            }
+        } elseif ($oldDisposition === 'Jalan Bareng') {
+            if (empty($validated['additional_batch']) || count(array_filter($validated['additional_batch'])) < 1) {
+                return response()->json(['message' => 'Batch tambahan wajib diisi untuk disposisi "Jalan Bareng".'], 422);
+            }
         }
 
         // Cek apakah revisi sudah ada
@@ -503,8 +539,8 @@ class ProductionBatchController extends Controller
         }
 
         // Normalisasi tambahan batch dan production_batch_id_leveling jadi array
-        $additionalBatches = is_array($validated['additional_batch']) ? $validated['additional_batch'] : [$validated['additional_batch']];
-        $poLevelings = is_array($validated['production_batch_id_leveling']) ? $validated['production_batch_id_leveling'] : [$validated['production_batch_id_leveling']];
+        $additionalBatches = is_array($validated['additional_batch']) ? array_filter($validated['additional_batch']) : [];
+        $poLevelings = is_array($validated['production_batch_id_leveling']) ? array_filter($validated['production_batch_id_leveling']) : [];
 
         // Loop untuk Leveling atau Jalan Bareng
         if (in_array($oldDisposition, ['Leveling'])) {
@@ -513,7 +549,7 @@ class ProductionBatchController extends Controller
                     'production_batch_id' => $validated['production_batch_id'],
                     'batch_range' => $validated['batch_range'],
                     'nomor_blending' => $validated['no_blending'],
-                    'volume_blending' => $validated['volume'],
+                    'volume' => $validated['volume'],
                     'brix' => null,
                     'nacl' => null,
                     'bj' => null,
@@ -709,8 +745,7 @@ class ProductionBatchController extends Controller
             foreach ($otherPOs as $po) {
                 $result = $getAvailableBatchesByPo($po);
                 if (!empty($result)) {
-                    $available = $result;
-                    break;
+                    $available = array_merge($available, $result);
                 }
             }
         }
@@ -941,8 +976,6 @@ class ProductionBatchController extends Controller
 
     public function getMainBlendingAdjustJalanBareng(Request $request)
     {
-
-
         $request->validate([
             'production_batch_id' => 'required|exists:production_batches,id'
         ]);
@@ -1301,12 +1334,8 @@ class ProductionBatchController extends Controller
         return response()->json(['data' => $available]);
     }
 
-
-
     public function getMainMonitoringJalanBareng(Request $request)
     {
-
-
         $request->validate([
             'production_batch_id' => 'required|exists:production_batches,id'
         ]);
@@ -1421,7 +1450,201 @@ class ProductionBatchController extends Controller
         return response()->json(['message' => 'Revisi Blending Awal berhasil dibuat.']);
     }
 
+    public function generateRevisiMonitoringPasteurisasi(Request $request)
+    {
+        $validated = $request->validate([
+            'id_old_blending' => 'required|integer',
+            'production_batch_id' => 'required|integer|exists:production_batches,id',
+            'batch_range' => 'required|string',
+            'revisi' => 'required|integer|min:1',
+            'additional_batch' => 'nullable',
+            'no_blending' => 'required',
+            'volume' => 'required',
+        ]);
 
+        $old = MonitoringPasteurisasi::findOrFail($validated['id_old_blending']);
+        $old->update([
+            'not_standar' => false, // atau logika lain sesuai kebutuhanmu
+        ]);
+        // Ambil disposisi data lama
+        $oldDisposition = $old->disposition;
+
+        // Hanya jika disposisi Jalan Bareng atau Leveling, additional_batch wajib dan diproses
+        if (in_array($oldDisposition, ['Jalan Bareng', 'Leveling'])) {
+            if (empty($validated['additional_batch'])) {
+                return response()->json([
+                    'message' => 'Batch tambahan wajib diisi untuk disposisi "Jalan Bareng" atau "Leveling".'
+                ], 422);
+            }
+        } else {
+            // Jika bukan kedua disposisi tsb, pastikan additional_batch tidak diproses
+            $validated['additional_batch'] = null;
+        }
+
+        // Cek revisi sudah ada atau belum
+        $exists = MonitoringPasteurisasi::where('production_batch_id', $validated['production_batch_id'])
+            ->where('batch_range', $validated['batch_range'])
+            ->where('revisi', $validated['revisi'])
+            ->exists();
+
+        if ($exists) {
+            return response()->json([
+                'message' => 'Data revisi sudah ada, coba generate ulang.'
+            ], 422);
+        }
+
+        // Tandai data lama sebagai tidak standar (not_standar = true)
+        //$old->update(['not_standar' => true]);
+
+        // Buat revisi baru
+        $new = MonitoringPasteurisasi::create([
+            'production_batch_id' => $validated['production_batch_id'],
+            'batch_range' => $validated['batch_range'],
+            'nomor_blending' => $validated['no_blending'],
+            'volume_blending' => $validated['volume'],
+            'disposition' => null,
+            'disposition_remarks' => null,
+            'adjusment_qty' => null,
+            'is_adjustment' => false,
+            'revisi' => $validated['revisi'],
+            'not_standard' => false
+        ]);
+
+        // Simpan batch tambahan hanya jika disposisi Jalan Bareng atau Leveling dan ada input tambahan_batch
+        if (in_array($oldDisposition, ['Jalan Bareng', 'Leveling']) && !empty($validated['additional_batch'])) {
+            DB::table('monitoring_pasteurisasi_relations')->insert([
+                'monitoring_turun_blending_id' => $new->id,
+                'batch' => $validated['additional_batch'],
+                'created_at' => now(),
+                'updated_at' => now(),
+                'production_batch_id' => $validated['production_batch_id']
+            ]);
+        }
+
+        return response()->json(['message' => 'Revisi Blending Awal berhasil dibuat.']);
+    }
+
+    public function getLastRevisiMonitoringPasteurisasi(Request $request)
+    {
+
+        $request->validate([
+            'production_batch_id' => 'required|integer|exists:production_batches,id',
+            'batch_range' => 'required|string',
+        ]);
+
+        $lastRevisi = MonitoringPasteurisasi::where('production_batch_id', $request->production_batch_id)
+            ->where('batch_range', $request->batch_range)
+            ->max('revisi');
+
+        // Jika belum ada, revisi dimulai dari 1
+        $nextRevisi = is_null($lastRevisi) ? 1 : $lastRevisi + 1;
+
+        return response()->json(['revisi' => $nextRevisi]);
+    }
+
+    public function getAvailableAdditionalBatchMonitoringPasteurisasi(Request $request)
+    {
+        $request->validate([
+            'production_batch_id' => 'required|integer|exists:production_batches,id',
+            'exclude_batch' => 'required|string'
+        ]);
+
+        $productionBatch = ProductionBatch::findOrFail($request->production_batch_id);
+
+        $validDispositions = ['Release', 'Release Bersyarat', 'Adjustment', 'Resampling'];
+
+        // Fungsi ambil batch valid beserta PO id-nya
+        $getAvailableBatchesByPo = function ($poId, $exclude) use ($validDispositions) {
+            $po = ProductionBatch::findOrFail($poId);
+
+            // $validGgasBatches = $po->GgasProcesses()
+            //     ->whereIn('disposition', $validDispositions)
+            //     ->pluck('batch_number')
+            //     ->map(fn ($b) => (int)$b)
+            //     ->unique()
+            //     ->toArray();
+
+            $usedInBlending = $po->MonitoringPasteurisasi->flatMap(function ($item) {
+                if (preg_match('/(\d+)\s*-\s*(\d+)/', $item->batch_range, $matches)) {
+                    return range((int)$matches[1], (int)$matches[2]);
+                }
+                return [(int)$item->batch_range];
+            })->toArray();
+
+            $usedInRelation = DB::table('monitoring_pasteurisasi_relations')
+                ->join('monitoring_turun_blending', 'monitoring_pasteurisasi_relations.monitoring_turun_blending_id', '=', 'monitoring_turun_blending_id')
+                ->where('monitoring_turun_blending.production_batch_id', $po->id)
+                ->pluck('batch')
+                ->map(fn($b) => (int)$b)
+                ->toArray();
+
+            $availableBatches = array_values(array_diff($usedInBlending, $usedInRelation, $exclude));
+
+            // Return array dengan struktur: ['po_id' => ..., 'batch_number' => ...]
+            return array_map(fn($batch) => ['po_id' => $poId, 'batch_number' => $batch, 'po_number' => $po->po_number,], $availableBatches);
+        };
+
+        $exclude = explode('-', $request->exclude_batch);
+        $exclude = array_map('intval', $exclude);
+
+        $available = $getAvailableBatchesByPo($productionBatch->id, $exclude);
+
+        if (empty($available)) {
+            $otherPOs = ProductionBatch::where('id', '!=', $productionBatch->id)->get();
+
+            foreach ($otherPOs as $otherPO) {
+                $batchesFromOtherPo = $getAvailableBatchesByPo($otherPO->id, $exclude);
+                if (!empty($batchesFromOtherPo)) {
+                    $available = $batchesFromOtherPo;
+                    break;
+                }
+            }
+        }
+
+        return response()->json(['data' => $available]);
+    }
+
+    public function getMainMonitoringPasteurisasiJalanBareng(Request $request)
+    {
+        $request->validate([
+            'production_batch_id' => 'required|exists:production_batches,id'
+        ]);
+
+        $productionBatchId = $request->production_batch_id;
+        $excludedDispositions = ['Resampling', 'Reject', 'Repro', 'Adjustment', 'Jalan Bareng', 'Leveling'];
+
+        $usedBatchIds = MonitoringPasteurisasiRelation::pluck('monitoring_pasteurisasi_id')->toArray();
+
+        // Ambil dulu dari PO yang sama
+        $mainBlending = MonitoringPasteurisasi::where('production_batch_id', $productionBatchId)
+            ->whereNotIn('disposition', $excludedDispositions)
+            ->whereNotIn('id', $usedBatchIds)
+            ->with('productionBatch')
+            ->orderByDesc('id') // atau 'nomor_blending' kalau itu numeric
+            ->get();
+
+        // Kalau kosong, ambil dari PO lain
+        if ($mainBlending->isEmpty()) {
+            $mainBlending = MonitoringPasteurisasi::where('production_batch_id', '!=', $productionBatchId)
+                ->whereNotIn('disposition', $excludedDispositions)
+                ->whereNotIn('id', $usedBatchIds)
+                ->with('productionBatch')
+                ->orderByDesc('id') // atau 'nomor_blending'
+                ->get();
+        }
+
+        $result = $mainBlending->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'batch_range' => $item->batch_range,
+                'po_id' => $item->production_batch_id,
+                'po_number' => $item->productionBatch?->po_number ?? null,
+                'nomor_blending' => $item->nomor_blending,
+            ];
+        });
+
+        return response()->json(['data' => $result]);
+    }
 
     public function show_monitoring_storage($id)
     {
