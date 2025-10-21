@@ -40,7 +40,7 @@
                                             <div class="text-end">
                                                 <button class="btn btn-primary" data-bs-toggle="modal"
                                                     data-bs-target="#inputModal">
-                                                    Input Monitoring Blending
+                                                    Input Monitoring Turun Blending
                                                 </button>
                                             </div>
 
@@ -52,7 +52,7 @@
 
 
                                 <div class="row mt-4">
-                                    <div class="col-lg-4 col-sm-6">
+                                    <div class="col-lg-6 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -68,7 +68,7 @@
                                         </div>
                                     </div>
                                     <!-- end col -->
-                                    <div class="col-lg-4 col-sm-6">
+                                    <div class="col-lg-6 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -84,7 +84,7 @@
                                         </div>
                                     </div>
                                     <!-- end col -->
-                                    <div class="col-lg-4 col-sm-6">
+                                    {{-- <div class="col-lg-4 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -98,7 +98,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <!-- end col -->
 
                                     <!-- end col -->
@@ -119,7 +119,7 @@
                                             <li class="nav-item">
                                                 <a class="nav-link active" id="nav-speci-tab" data-bs-toggle="tab"
                                                     href="#nav-speci" role="tab" aria-controls="nav-speci"
-                                                    aria-selected="true">Blending Makro</a>
+                                                    aria-selected="true">Blending Kimia</a>
                                             </li>
                                         </ul>
                                     </nav>
@@ -134,6 +134,7 @@
                                                             <tr>
                                                                 <th>Batch Range</th>
                                                                 <th>QR Code (URL)</th>
+                                                                <th>Storage</th>
                                                                 <th>Disposisi</th>
                                                                 <th>Keterangan</th>
                                                                 <th>Catatan</th>
@@ -171,7 +172,7 @@
                                                                                     <div class="modal-header py-2">
                                                                                         <h5 class="modal-title"
                                                                                             id="qrModalLabel{{ $blending->id }}">
-                                                                                            QR Code - Makro</h5>
+                                                                                            QR Code - Kimia</h5>
                                                                                         <button type="button"
                                                                                             class="btn-close btn-sm"
                                                                                             data-bs-dismiss="modal"
@@ -179,8 +180,7 @@
                                                                                     </div>
                                                                                     <div class="modal-body text-center"
                                                                                         id="qrPrintArea{{ $blending->id }}">
-                                                                                        <div
-                                                                                            style="display: inline-block;">
+                                                                                        <div style="display: inline-block;">
                                                                                             <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('analis/monitoring/blending/detail/data/id/' . $blending->id), 'QRCODE') }}"
                                                                                                 alt="QR Code">
                                                                                         </div>
@@ -201,6 +201,7 @@
                                                                             </div>
                                                                         </div>
                                                                     </td>
+                                                                    <td>{{ $blending->storage ?? '-' }}</td>
                                                                     <td>
                                                                         {{ $blending->disposition ?? '-' }}
                                                                         @if (in_array($blending->disposition, ['Adjustment', 'Resampling', 'Leveling', 'Jalan Bareng']) &&
@@ -251,15 +252,9 @@
                                                 @else
                                                     <p class="text-muted">Belum ada data Monitoring.</p>
                                                 @endif
-
-
-
                                             </div>
                                         </div>
                                     </div>
-
-
-
                                 </div>
                             </div>
                         </div>
@@ -283,7 +278,7 @@
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Input Monitoring</h5>
+                        <h5 class="modal-title">Input Monitoring Turun Blending</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
@@ -293,8 +288,6 @@
                             <label for="batch" class="form-label">Batch</label>
                             <select name="batch" class="form-select" id="batch_start" required></select>
                         </div>
-
-
 
                         <div class="mb-3">
                             <label for="no_blending" class="form-label">Nomor Blending</label>
@@ -398,8 +391,6 @@
             </form>
         </div>
     </div>
-
-
 
     <script>
         const allBatches = JSON.parse('{!! addslashes(json_encode($filteredBatchGroups)) !!}');
@@ -531,7 +522,7 @@
                             let value = `${batchItem.batch_number}`;
                             $('#additional_batch').append(
                                 `<option value="${value}">Batch ${batchItem.batch_number} (PO ${batchItem.po_number})</option>`
-                                );
+                            );
                         });
                     });
 
@@ -548,7 +539,7 @@
                             let value = `${batchItem.batch_range}`;
                             $('#additional_batch').append(
                                 `<option value="${value}">Batch ${batchItem.batch_range} (PO ${batchItem.po_number})</option>`
-                                );
+                            );
                         });
                     });
                 } else {

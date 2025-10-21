@@ -72,17 +72,12 @@
                                             <div class="text-muted">Tanggal Produksi : <span
                                                     class="text-body fw-medium">{{ $productionBatch->production_date }}</span>
                                             </div>
-
-
                                         </div>
                                     </div>
-
                                 </div>
 
-
-
                                 <div class="row mt-4">
-                                    <div class="col-lg-4 col-sm-6">
+                                    <div class="col-lg-6 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -98,7 +93,7 @@
                                         </div>
                                     </div>
                                     <!-- end col -->
-                                    <div class="col-lg-4 col-sm-6">
+                                    <div class="col-lg-6 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -114,7 +109,7 @@
                                         </div>
                                     </div>
                                     <!-- end col -->
-                                    <div class="col-lg-4 col-sm-6">
+                                    {{-- <div class="col-lg-4 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -128,7 +123,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <!-- end col -->
 
                                     <!-- end col -->
@@ -169,6 +164,7 @@
                                 <tr>
 
                                     <th>Batch Range</th>
+                                    <th>Storage</th>
                                     <th>No Blending</th>
                                     <th>Volume</th>
                                     <th>BRIX</th>
@@ -203,8 +199,9 @@
                                             @else
                                             @endif
                                         </td>
+                                        <td>{{ $item->storage }}</td>
                                         <td>{{ $item->nomor_blending }}</td>
-                                        <td>{{ $item->volume }}</td>
+                                        <td>{{ $item->volume_blending }}</td>
                                         <td>{{ $item->brix ?? '-' }}</td>
                                         <td>{{ $item->nacl ?? '-' }}</td>
                                         <td>{{ $item->bj ?? '-' }}</td>
@@ -295,7 +292,7 @@
                                                             <option value="">-- Pilih Warna --</option>
                                                             @foreach ($manageWarna as $item)
                                                                 <option value="{{ $item->nama_warna }}">
-                                                                    {{ $item->nama_warna }}</option>
+                                                                    {{ $item->nama_warna }} ({{ $item->code_warna }})</option>
                                                             @endforeach
                                                         </select>
                                                     </div>

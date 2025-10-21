@@ -24,7 +24,7 @@ class MonitoringTurunBlendingData extends Model
         'endapan',
         'warna',
         'shift',
-        'production_time',
+        'scan_time',
         'created_by',
     ];
 

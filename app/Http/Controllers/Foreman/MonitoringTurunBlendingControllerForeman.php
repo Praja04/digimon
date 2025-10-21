@@ -113,15 +113,9 @@ class MonitoringTurunBlendingControllerForeman extends Controller
             'production_batch_id' => $request->production_batch_id,
             'batch_range' => $request->batch,
             'nomor_blending' => $request->no_blending,
-            'volume_blending' => $request->volume
+            'volume_blending' => $request->volume,
+            'storage' => $request->storage,
         ]);
-
-        // Jika ada input 'storage', update di tabel ProductionBatch
-        if ($request->filled('storage')) {
-            $productionBatch = ProductionBatch::find($request->production_batch_id);
-            $productionBatch->storage = $request->storage;
-            $productionBatch->save();
-        }
 
         return response()->json([
             'status' => 'ok',

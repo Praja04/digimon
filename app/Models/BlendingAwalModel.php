@@ -31,6 +31,7 @@ class BlendingAwalModel extends Model
         'adjustment_qty_garam',
         'adjustment_qty_gula',
         'is_adjustment',
+        'storage',
         'revisi',
         'not_standar',
         'created_by',

@@ -67,6 +67,7 @@ class MonitoringTurunBlendingController extends Controller
 
     public function store(Request $request)
     {
+        dd($request->all());
         $validator = Validator::make($request->all(), [
             'production_batch_id' => 'required|exists:production_batches,id',
             'batch' => 'required',
@@ -101,15 +102,9 @@ class MonitoringTurunBlendingController extends Controller
             'production_batch_id' => $request->production_batch_id,
             'batch_range' => $request->batch,
             'nomor_blending' => $request->no_blending,
-            'volume_blending' => $request->volume
+            'volume_blending' => $request->volume,
+            'storage' => $request->storage,
         ]);
-
-        // Jika ada input 'storage', update di tabel ProductionBatch
-        if ($request->filled('storage')) {
-            $productionBatch = ProductionBatch::find($request->production_batch_id);
-            $productionBatch->storage = $request->storage;
-            $productionBatch->save();
-        }
 
         return response()->json([
             'status' => 'ok',
@@ -133,6 +128,7 @@ class MonitoringTurunBlendingController extends Controller
             'ph' => 'nullable|numeric',
             'endapan' => 'nullable|string',
             'warna' => 'nullable|string',
+            'storage' => 'nullable|string',
             // 'shift' => 'required|in:1,2,3',
         ]);
 
@@ -188,7 +184,6 @@ class MonitoringTurunBlendingController extends Controller
                 'endapan' => $request->endapan,
                 'warna' => $request->warna,
                 'shift' => $shift,
-                'production_time' => $request->production_time,
                 'created_by' => $username,
             ]);
 

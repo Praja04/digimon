@@ -180,13 +180,13 @@
                         <div class="mb-4">
                             <div
                                 class="avatar-xl bg-light border rounded-4 mx-auto d-flex align-items-center justify-content-center mb-3">
-                                <img src="{{ asset('assets/images/blending_adjust.png') }}" alt="Monitoring Storage"
+                                <img src="{{ asset('assets/images/blending_adjust.png') }}" alt="Monitoring Storage Kimia"
                                     class="rounded-3" height="80" style="object-fit: cover;">
                             </div>
                             <h5 class="mb-2 fw-semibold">
                                 <a href="{{ url('analis/productionbatch/data_po/monitoring/storage') }}"
                                     class="link-secondary text-decoration-none">
-                                    Monitoring Storage
+                                    Monitoring Storage Kimia
                                 </a>
                             </h5>
                             <p class="text-muted mb-3 fs-14">Monitoring sistem penyimpanan</p>

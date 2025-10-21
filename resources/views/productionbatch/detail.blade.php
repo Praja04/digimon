@@ -46,13 +46,10 @@
 
                                         </div>
                                     </div>
-
                                 </div>
 
-
-
                                 <div class="row mt-4">
-                                    <div class="col-lg-4 col-sm-6">
+                                    <div class="col-lg-6 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -68,7 +65,7 @@
                                         </div>
                                     </div>
                                     <!-- end col -->
-                                    <div class="col-lg-4 col-sm-6">
+                                    <div class="col-lg-6 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -83,7 +80,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- end col -->
+                                    {{-- <!-- end col -->
                                     <div class="col-lg-4 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
@@ -99,7 +96,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- end col -->
+                                    <!-- end col --> --}}
 
                                     <!-- end col -->
                                 </div>

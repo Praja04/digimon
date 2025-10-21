@@ -72,17 +72,12 @@
                                             <div class="text-muted">Tanggal Produksi : <span
                                                     class="text-body fw-medium">{{ $productionBatch->production_date }}</span>
                                             </div>
-
-
                                         </div>
                                     </div>
-
                                 </div>
 
-
-
                                 <div class="row mt-4">
-                                    <div class="col-lg-4 col-sm-6">
+                                    <div class="col-lg-6 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -98,7 +93,7 @@
                                         </div>
                                     </div>
                                     <!-- end col -->
-                                    <div class="col-lg-4 col-sm-6">
+                                    <div class="col-lg-6 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -114,7 +109,7 @@
                                         </div>
                                     </div>
                                     <!-- end col -->
-                                    <div class="col-lg-4 col-sm-6">
+                                    {{-- <div class="col-lg-4 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -128,7 +123,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <!-- end col -->
 
                                     <!-- end col -->
@@ -169,6 +164,7 @@
                                     <th>PO</th>
                                     <th>Batch</th>
                                     <th>Nomor Blending</th>
+                                    <th>Storage</th>
                                     <th>Input Data</th>
                                     <th>Input Disposisi</th>
                                 </tr>
@@ -192,6 +188,7 @@
                                             @endif
                                         </td>
                                         <td>{{ $data->nomor_blending }}</td>
+                                        <td>{{ $data->storage }}</td>
                                         <td>
                                             <button class="btn btn-sm btn-primary btn-lihat" data-id="{{ $data->id }}">
                                                 <i class="fas fa-eye"></i> Lihat Data
@@ -237,7 +234,7 @@
                                         @csrf
                                         @method('POST') {{-- Atau gunakan PUT jika kamu pakai update --}}
                                         <div class="modal-header">
-                                            <h5 class="modal-title">Input Monitoring Blending</h5>
+                                            <h5 class="modal-title">Input Monitoring Turun Blending</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
@@ -246,55 +243,55 @@
                                             <input type="hidden" id="monitoring_turun_blending_id"
                                                 name="monitoring_turun_blending_id">
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <label for="brix" class="form-label">Brix</label>
                                                 <input type="number" step="0.01" class="form-control" name="brix"
                                                     id="brix" required>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <label for="nacl" class="form-label">NaCl</label>
                                                 <input type="number" step="0.01" class="form-control" name="nacl"
                                                     id="nacl" required>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <label for="bj" class="form-label">BJ</label>
                                                 <input type="number" step="0.01" class="form-control" name="bj"
                                                     id="bj" required>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <label for="visco" class="form-label">Visco</label>
                                                 <input type="number" step="0.01" class="form-control" name="visco"
                                                     id="visco">
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <label for="aw" class="form-label">AW</label>
                                                 <input type="number" step="0.01" class="form-control" name="aw"
                                                     id="aw">
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <label for="buih" class="form-label">Buih</label>
                                                 <input type="number" step="0.01" class="form-control" name="buih"
                                                     id="buih">
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <label for="organo" class="form-label">Organo</label>
                                                 <input type="text" class="form-control" name="organo" id="organo"
                                                     oninput="this.value = this.value.toUpperCase();">
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <label for="ph" class="form-label">pH</label>
                                                 <input type="number" step="0.01" class="form-control" name="ph"
                                                     id="ph">
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <label for="endapan" class="form-label">Endapan</label>
                                                 <input type="text" class="form-control" name="endapan" id="endapan"
                                                     oninput="this.value = this.value.toUpperCase();">
@@ -307,16 +304,10 @@
                                                     <option value="">-- Pilih Warna --</option>
                                                     @foreach ($manageWarna as $item)
                                                         <option value="{{ $item->nama_warna }}">{{ $item->nama_warna }}
+                                                            ({{ $item->code_warna }})
                                                         </option>
                                                     @endforeach
                                                 </select>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <label for="production_time" class="form-label">Waktu Produksi</label>
-                                                <input type="datetime-local" class="form-control" name="production_time"
-                                                    id="production_time" value="{{ now()->format('Y-m-d\TH:i') }}"
-                                                    required>
                                             </div>
                                         </div>
 
@@ -326,7 +317,6 @@
                                                 data-bs-dismiss="modal">Tutup</button>
                                         </div>
                                     </form>
-
                                 </div>
                             </div>
                         </div>
@@ -346,7 +336,7 @@
                                         @csrf
                                         @method('POST') {{-- Atau gunakan PUT jika kamu pakai update --}}
                                         <div class="modal-header">
-                                            <h5 class="modal-title">Input Disposisi Monitoring Blending</h5>
+                                            <h5 class="modal-title">Input Disposisi Monitoring Turun Blending</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>

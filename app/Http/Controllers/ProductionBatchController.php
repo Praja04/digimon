@@ -155,8 +155,6 @@ class ProductionBatchController extends Controller
             'variant' => 'required|string|max:255',
             'production_date' => 'required|date',
             'batch_range' => 'required|string|max:255',
-            'storage' => 'required|array',
-            'storage.*' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
         ]);
 
@@ -171,13 +169,12 @@ class ProductionBatchController extends Controller
         $batches = range($start, $end);
         $chunks = array_chunk($batches, 10);
 
-        foreach ($chunks as $i => $group) {
+        foreach ($chunks as $group) {
             ProductionBatch::create([
                 'po_number' => $validatedData['po_number'],
                 'variant' => $validatedData['variant'],
                 'production_date' => $validatedData['production_date'],
                 'batch_range' => min($group) . '-' . max($group),
-                'storage' => $validatedData['storage'][$i] ?? 'STORAGE ' . ($i + 1),
                 'description' => $validatedData['description'] ?? null,
             ]);
         }

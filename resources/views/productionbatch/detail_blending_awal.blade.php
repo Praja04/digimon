@@ -43,16 +43,12 @@
                                                     Input Blending Awal
                                                 </button>
                                             </div>
-
                                         </div>
                                     </div>
-
                                 </div>
 
-
-
                                 <div class="row mt-4">
-                                    <div class="col-lg-4 col-sm-6">
+                                    <div class="col-lg-6 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -68,7 +64,7 @@
                                         </div>
                                     </div>
                                     <!-- end col -->
-                                    <div class="col-lg-4 col-sm-6">
+                                    <div class="col-lg-6 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -84,7 +80,7 @@
                                         </div>
                                     </div>
                                     <!-- end col -->
-                                    <div class="col-lg-4 col-sm-6">
+                                    {{-- <div class="col-lg-4 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -98,7 +94,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <!-- end col -->
 
                                     <!-- end col -->
@@ -139,6 +135,7 @@
                                                             <tr>
                                                                 <th>Batch Range</th>
                                                                 <th>QR Code (URL)</th>
+                                                                <th>Storage</th>
                                                                 <th>Disposisi</th>
                                                                 <th>Keterangan</th>
                                                                 <th>Revisi</th>
@@ -185,8 +182,7 @@
                                                                                     </div>
                                                                                     <div class="modal-body text-center"
                                                                                         id="qrPrintArea{{ $blending->id }}">
-                                                                                        <div
-                                                                                            style="display: inline-block;">
+                                                                                        <div style="display: inline-block;">
                                                                                             <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('analis/blending/awal/detail/form/' . $blending->id), 'QRCODE') }}"
                                                                                                 alt="QR Code">
                                                                                         </div>
@@ -209,6 +205,7 @@
                                                                             </div>
                                                                         </div>
                                                                     </td>
+                                                                    <td>{{ $blending->storage ?? '-' }}</td>
                                                                     <td>
                                                                         {{ $blending->disposition }}
                                                                         @if (in_array($blending->disposition, ['Adjustment', 'Resampling', 'Leveling', 'Jalan Bareng']) &&
@@ -256,9 +253,6 @@
                                                 @else
                                                     <p class="text-muted">Belum ada data Blending.</p>
                                                 @endif
-
-
-
                                             </div>
                                         </div>
 
@@ -395,7 +389,7 @@
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Input Blending</h5>
+                        <h5 class="modal-title">Input Blending Awal</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
@@ -410,8 +404,6 @@
                             <label for="batch_end" class="form-label">Batch Kedua</label>
                             <select name="batch_end" class="form-select" id="batch_end" required></select>
                         </div>
-
-
 
                         <div class="mb-3">
                             <label for="no_blending" class="form-label">Nomor Blending</label>

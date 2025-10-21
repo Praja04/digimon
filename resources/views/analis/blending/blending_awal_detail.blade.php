@@ -81,7 +81,7 @@
 
 
                                 <div class="row mt-4">
-                                    <div class="col-lg-4 col-sm-6">
+                                    <div class="col-lg-6 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -97,7 +97,7 @@
                                         </div>
                                     </div>
                                     <!-- end col -->
-                                    <div class="col-lg-4 col-sm-6">
+                                    <div class="col-lg-6 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -113,7 +113,7 @@
                                         </div>
                                     </div>
                                     <!-- end col -->
-                                    <div class="col-lg-4 col-sm-6">
+                                    {{-- <div class="col-lg-4 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -127,7 +127,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <!-- end col -->
 
                                     <!-- end col -->
@@ -180,6 +180,7 @@
                                     <th>pH</th>
                                     <th>Endapan</th>
                                     <th>Warna</th>
+                                    <th>Storage</th>
                                     <th>Disposisi</th>
                                     <th>Keterangan</th>
                                     <th>Action</th>
@@ -216,6 +217,7 @@
                                         <td>{{ $blending->ph ?? '-' }}</td>
                                         <td>{{ $blending->endapan ?? '-' }}</td>
                                         <td>{{ $blending->warna ?? '-' }}</td>
+                                        <td>{{ $blending->storage ?? '-' }}</td>
                                         <td>{{ $blending->disposition ?? '-' }}</td>
                                         <td>{{ $blending->disposition_remarks ?? '-' }}</td>
                                         <td>
@@ -302,7 +304,8 @@
                                                             <option value="">-- Pilih Warna --</option>
                                                             @foreach ($manageWarna as $item)
                                                                 <option value="{{ $item->nama_warna }}">
-                                                                    {{ $item->nama_warna }}</option>
+                                                                    {{ $item->nama_warna }} ({{ $item->code_warna }})
+                                                                </option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -389,35 +392,6 @@
     </div>
     <!--end row-->
     <script>
-        const warnaUrl = "{{ url('/data/warna') }}";
-
-        function loadWarnaOptions() {
-            $.ajax({
-                url: warnaUrl,
-                method: 'GET',
-                dataType: 'json',
-                success: function(res) {
-                    if (res.success && res.data.length > 0) {
-                        const select = $('#warnaSelect');
-                        select.empty().append('<option value="">-- Pilih Warna --</option>');
-                        res.data.forEach(item => {
-                            const option = $('<option></option>')
-                                .val(item.code_warna)
-                                .text(item.nama_warna + ' (' + item.code_warna + ')');
-
-                            select.append(option);
-                        });
-                    }
-                },
-                error: function() {
-                    console.warn('Gagal mengambil data warna');
-                }
-            });
-        }
-
-        // Load saat modal dibuka
-        loadWarnaOptions();
-
         $(document).ready(function() {
             $.ajaxSetup({
                 headers: {

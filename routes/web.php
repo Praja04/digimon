@@ -435,7 +435,7 @@ Route::prefix('foreman')->group(function () {
     Route::prefix('monitoring/pasteurisasi')->group(function () {
         Route::get('/dashboard', [MonitoringPasteurisasiControllerForeman::class, 'dashboard']);
         Route::get('/menu', [MonitoringPasteurisasiControllerForeman::class, 'menu']);
-        Route::post('/store', [MonitoringPasteurisasiControllerForeman::class, 'store'])->name('monitoring_pasteurisasi.store');
+        Route::post('/store', [MonitoringPasteurisasiControllerForeman::class, 'store'])->name('monitoring_pasteurisasi_foreman.store');
         Route::post('/update/data', [MonitoringPasteurisasiControllerForeman::class, 'updateMonitoringPasteurisasi']);
         Route::post('/detail/data', [MonitoringPasteurisasiControllerForeman::class, 'store_data_pasteurisasi']);
         Route::post('/detail/edit', [MonitoringPasteurisasiControllerForeman::class, 'edit_data']);
@@ -448,7 +448,7 @@ Route::prefix('foreman')->group(function () {
 
     Route::prefix('monitoring/storage')->group(function () {
         Route::get('/dashboard', [MonitoringStorageControllerForeman::class, 'dashboard']);
-        Route::post('/store', [MonitoringStorageControllerForeman::class, 'store'])->name('monitoring_storage.store');
+        Route::post('/store', [MonitoringStorageControllerForeman::class, 'store'])->name('monitoring_storage_foreman.store');
         Route::get('/data', [MonitoringStorageControllerForeman::class, 'Monitoring_Storage_data']);
         Route::get('/detail/{id}', [MonitoringStorageControllerForeman::class, 'Monitoring_Storage_detail']);
         Route::get('/detail/data/{id}', [MonitoringStorageControllerForeman::class, 'Monitoring_Storage_detail_id']);

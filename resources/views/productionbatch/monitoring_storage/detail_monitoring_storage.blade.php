@@ -40,19 +40,15 @@
                                             <div class="text-end">
                                                 <button class="btn btn-primary" data-bs-toggle="modal"
                                                     data-bs-target="#inputModal">
-                                                    Input Monitoring
+                                                    Input Monitoring Kimia
                                                 </button>
                                             </div>
-
                                         </div>
                                     </div>
-
                                 </div>
 
-
-
                                 <div class="row mt-4">
-                                    <div class="col-lg-4 col-sm-6">
+                                    <div class="col-lg-6 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -68,7 +64,7 @@
                                         </div>
                                     </div>
                                     <!-- end col -->
-                                    <div class="col-lg-4 col-sm-6">
+                                    <div class="col-lg-6 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -84,7 +80,7 @@
                                         </div>
                                     </div>
                                     <!-- end col -->
-                                    <div class="col-lg-4 col-sm-6">
+                                    {{-- <div class="col-lg-4 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -98,7 +94,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <!-- end col -->
 
                                     <!-- end col -->
@@ -131,13 +127,13 @@
                                         <div class="tab-pane fade show active" id="nav-speci" role="tabpanel"
                                             aria-labelledby="nav-speci-tab">
                                             <div class="table-responsive">
-
                                                 @if ($productionBatch->MonitoringStorage->count() > 0)
                                                     <table class="table mb-0">
                                                         <thead>
                                                             <tr>
                                                                 <th>Batch Range</th>
                                                                 <th>QR Code (URL)</th>
+                                                                <th>Storage</th>
                                                                 <th>Disposisi</th>
                                                                 <th>Keterangan</th>
                                                             </tr>
@@ -204,6 +200,7 @@
                                                                             </div>
                                                                         </div>
                                                                     </td>
+                                                                    <td>{{ $blending->storage }}</td>
                                                                     <td>
                                                                         {{ $blending->disposition ?? '-' }}
                                                                         @if (in_array($blending->disposition, ['Adjustment', 'Resampling', 'Leveling', 'Jalan Bareng']) &&
@@ -235,16 +232,12 @@
                                                 @else
                                                     <p class="text-muted">Belum ada data Monitoring.</p>
                                                 @endif
-
-
-
                                             </div>
                                         </div>
 
                                         <div class="tab-pane fade" id="nav-detail" role="tabpanel"
                                             aria-labelledby="nav-detail-tab">
                                             <div class="table-responsive">
-
                                                 @if ($productionBatch->MonitoringStorageMikro->count() > 0)
                                                     <table class="table mb-0">
                                                         <thead>
@@ -384,7 +377,7 @@
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Input Monitoring</h5>
+                        <h5 class="modal-title">Input Monitoring Kimia</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
@@ -547,7 +540,7 @@
             let formData = form.serialize();
 
             $.ajax({
-                url: "{{ route('monitoring_storage.store') }}",
+                url: "{{ route('monitoring_storage_foreman.store') }}",
                 method: "POST",
                 data: formData,
                 success: function(res) {

@@ -85,7 +85,6 @@
                                     <th class="sort" data-sort="po">PO</th>
                                     <th class="sort" data-sort="varian">Varian</th>
                                     <th class="sort" data-sort="tanggal_produksi">Tanggal Produksi</th>
-                                    <th class="sort" data-sort="stora' '">Storage</th>
                                     <th class="sort" data-sort="description">Keterangan</th>
                                     <th>Status</th>
                                     <th>Detail</th>
@@ -100,7 +99,6 @@
                                     <td>{{ $productionBatch->po_number }}</td>
                                     <td>{{ $productionBatch->variant }}</td>
                                     <td>{{ $productionBatch->production_date }}</td>
-                                    <td>{{ $productionBatch->storage }}</td>
                                     <td>{{ $productionBatch->description }}</td>
                                     <td>{{ $productionBatch->isBlendingAwalComplete() ? '✅ Complete' : '⌛ Progress' }}</td>
                                     <td>

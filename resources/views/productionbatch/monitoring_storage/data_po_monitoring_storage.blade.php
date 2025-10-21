@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0">Monitoring Storage</h4>
+                <h4 class="mb-sm-0">Monitoring Storage Kimia</h4>
 
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
@@ -89,7 +89,6 @@
                                         <th class="sort" data-sort="po">PO</th>
                                         <th class="sort" data-sort="varian">Varian</th>
                                         <th class="sort" data-sort="tanggal_produksi">Tanggal Produksi</th>
-                                        <th class="sort" data-sort="storage">Storage</th>
                                         <th class="sort" data-sort="description">Keterangan</th>
                                         <th>Status</th>
                                         <th>Detail</th>
@@ -104,7 +103,6 @@
                                             <td>{{ $productionBatch->po_number }}</td>
                                             <td>{{ $productionBatch->variant }}</td>
                                             <td>{{ $productionBatch->production_date }}</td>
-                                            <td>{{ $productionBatch->storage }}</td>
                                             <td>{{ $productionBatch->description }}</td>
                                             <td>{{ $productionBatch->isMonitoringStorageMakroComplete() ? '✅ Complete' : '⌛ Progress' }}
                                             </td>

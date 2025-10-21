@@ -43,16 +43,12 @@
                                                     Input Monitoring Pasteurisasi
                                                 </button>
                                             </div>
-
                                         </div>
                                     </div>
-
                                 </div>
 
-
-
                                 <div class="row mt-4">
-                                    <div class="col-lg-4 col-sm-6">
+                                    <div class="col-lg-6 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -68,7 +64,7 @@
                                         </div>
                                     </div>
                                     <!-- end col -->
-                                    <div class="col-lg-4 col-sm-6">
+                                    <div class="col-lg-6 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -84,7 +80,7 @@
                                         </div>
                                     </div>
                                     <!-- end col -->
-                                    <div class="col-lg-4 col-sm-6">
+                                    {{-- <div class="col-lg-4 col-sm-6">
                                         <div class="p-2 border border-dashed rounded">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-sm me-2">
@@ -98,7 +94,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <!-- end col -->
 
                                     <!-- end col -->
@@ -106,7 +102,6 @@
 
 
                                 <!-- end row -->
-
                                 <div class="mt-4 text-muted">
                                     <h5 class="fs-14">Description :</h5>
                                     <p>{{ $productionBatch->description }}</p>
@@ -119,7 +114,7 @@
                                             <li class="nav-item">
                                                 <a class="nav-link active" id="nav-speci-tab" data-bs-toggle="tab"
                                                     href="#nav-speci" role="tab" aria-controls="nav-speci"
-                                                    aria-selected="true">Blending Makro</a>
+                                                    aria-selected="true">Pasteurisasi</a>
                                             </li>
                                         </ul>
                                     </nav>
@@ -134,6 +129,7 @@
                                                             <tr>
                                                                 <th>Batch Range</th>
                                                                 <th>QR Code (URL)</th>
+                                                                <th>Storage</th>
                                                                 <th>Disposisi</th>
                                                                 <th>Keterangan</th>
                                                                 <th>Catatan</th>
@@ -181,8 +177,7 @@
                                                                                     </div>
                                                                                     <div class="modal-body text-center"
                                                                                         id="qrPrintArea{{ $pasteurisasi->id }}">
-                                                                                        <div
-                                                                                            style="display: inline-block;">
+                                                                                        <div style="display: inline-block;">
                                                                                             <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('analis/monitoring/pasteurisasi/detail/data/id/' . $pasteurisasi->id), 'QRCODE') }}"
                                                                                                 alt="QR Code">
                                                                                         </div>
@@ -203,6 +198,7 @@
                                                                             </div>
                                                                         </div>
                                                                     </td>
+                                                                    <td>{{ $pasteurisasi->storage ?? '-' }}</td>
                                                                     <td>
                                                                         {{ $pasteurisasi->disposition ?? '-' }}
                                                                         @if (in_array($pasteurisasi->disposition, ['Adjustment', 'Resampling', 'Leveling', 'Jalan Bareng']) &&
@@ -258,9 +254,6 @@
                                             </div>
                                         </div>
                                     </div>
-
-
-
                                 </div>
                             </div>
                         </div>
@@ -447,7 +440,7 @@
             let formData = form.serialize();
 
             $.ajax({
-                url: "{{ route('monitoring_pasteurisasi.store') }}",
+                url: "{{ route('monitoring_pasteurisasi_foreman.store') }}",
                 method: "POST",
                 data: formData,
                 success: function(res) {

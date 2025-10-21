@@ -25,6 +25,7 @@ class MonitoringStorageModel extends Model
         'ph',
         'endapan',
         'warna',
+        'storage',
         'disposition',
         'disposition_remarks',
         'adjusment_qty',

@@ -85,14 +85,9 @@ class BlendingAwalController extends Controller
             'production_batch_id' => $request->production_batch_id,
             'batch_range' => $batchRange,
             'nomor_blending' => $request->no_blending,
-            'volume' => $request->volume
+            'volume' => $request->volume,
+            'storage' => $request->storage,
         ]);
-
-        if ($request->filled('storage')) {
-            $productionBatch = ProductionBatch::find($request->production_batch_id);
-            $productionBatch->storage = $request->storage;
-            $productionBatch->save();
-        }
 
         return response()->json([
             'status' => 'ok',

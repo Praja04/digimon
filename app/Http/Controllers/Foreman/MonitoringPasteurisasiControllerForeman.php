@@ -28,7 +28,7 @@ class MonitoringPasteurisasiControllerForeman extends Controller
                 return ($batch->isMonitoringPasteurisasiComplete()) ? 1 : 0;
             })
             ->values();
-            
+
         return view('foreman.monitoring.pasteurisasi.data', compact('productionBatches'));
     }
 
@@ -98,15 +98,9 @@ class MonitoringPasteurisasiControllerForeman extends Controller
             'production_batch_id' => $request->production_batch_id,
             'batch_range' => $request->batch,
             'nomor_pasteurisasi' => $request->no_pasteurisasi,
-            'volume_pasteurisasi' => $request->volume
+            'volume_pasteurisasi' => $request->volume,
+            'storage' => $request->storage,
         ]);
-
-        // Jika ada input 'storage', update di tabel ProductionBatch
-        if ($request->filled('storage')) {
-            $productionBatch = ProductionBatch::find($request->production_batch_id);
-            $productionBatch->storage = $request->storage;
-            $productionBatch->save();
-        }
 
         return response()->json([
             'status' => 'ok',
