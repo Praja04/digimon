@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\MonitoringStorageModel;
 use App\Models\MonitoringStorageMikroModel;
 use App\Models\KonfirmasiMonitoringStorageMikroModel;
+use App\Models\ManageWarnaModel;
+use App\Models\MonitoringStorageBeforeUse;
 use App\Models\ProductionBatch;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
@@ -21,10 +24,17 @@ class MonitoringStorageControllerSupervisor extends Controller
         }
         return view('supervisor.monitoring.monitoring_storage.dashboard_storage');
     }
+
     public function Monitoring_Storage_data()
     {
-
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringStorage')->has('MonitoringStorage')->get();
+        $productionBatches = ProductionBatch::with('MonitoringStorage')
+            ->has('MonitoringStorage')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isMonitoringStorageMakroComplete()) ? 1 : 0;
+            })
+            ->values();
 
         // return response()->json($productionBatches);
         return view('supervisor.monitoring.monitoring_storage.monitoring_storage', compact('productionBatches'));
@@ -32,12 +42,17 @@ class MonitoringStorageControllerSupervisor extends Controller
 
     public function Monitoring_Storage_data_mikro()
     {
-
-        $productionBatches = ProductionBatch::with('MonitoringStorageMikro')->has('MonitoringStorageMikro')->get();
+        $productionBatches = ProductionBatch::with('MonitoringStorageMikro')
+            ->has('MonitoringStorageMikro')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isMonitoringStorageMikroComplete()) ? 1 : 0;
+            })
+            ->values();
 
         return view('supervisor.monitoring.monitoring_storage.monitoring_storage_mikro', compact('productionBatches'));
     }
-
 
     public function Monitoring_Storage_detail($id)
     {
@@ -53,9 +68,11 @@ class MonitoringStorageControllerSupervisor extends Controller
             $data->po_number = $productionBatch->po_number;
         }
         //    return response()->json($productionBatch->MonitoringStorage);
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
         return view('supervisor.monitoring.monitoring_storage.detail_data', [
             'productionBatch' => $productionBatch,
-            'filteredMonitoringStorage' => $productionBatch->MonitoringStorage
+            'filteredMonitoringStorage' => $productionBatch->MonitoringStorage,
+            'manageWarna' => $manageWarna
         ]);
     }
 
@@ -82,7 +99,6 @@ class MonitoringStorageControllerSupervisor extends Controller
 
     public function Monitoring_Storage_detail_id($id)
     {
-
         $data = MonitoringStorageModel::find($id);
         return view('supervisor.monitoring.monitoring_storage.analisis_data_detail_id', compact('data'));
     }
@@ -132,6 +148,12 @@ class MonitoringStorageControllerSupervisor extends Controller
             'volume_blending' => $request->volume
         ]);
         MonitoringStorageMikroModel::create([
+            'production_batch_id' => $request->production_batch_id,
+            'batch_range' => $request->batch,
+            'nomor_blending' => $request->no_blending,
+            'volume_blending' => $request->volume
+        ]);
+        MonitoringStorageBeforeUse::create([
             'production_batch_id' => $request->production_batch_id,
             'batch_range' => $request->batch,
             'nomor_blending' => $request->no_blending,
@@ -216,6 +238,7 @@ class MonitoringStorageControllerSupervisor extends Controller
             'endapan' => $request->endapan,
             'warna' => $request->warna,
             'disposition' => $disposition,
+            'production_time' => Carbon::parse($request->production_time)->format('Y-m-d H:i:s'),
             'disposition_remarks' => $remarks,
         ];
 
@@ -261,7 +284,7 @@ class MonitoringStorageControllerSupervisor extends Controller
             'warna_edit' => 'required|string|max:20',
             'disposition_edit' => 'required',
             'disposition_remarks_edit' => 'nullable|string|max:255',
-           ], [
+        ], [
             'brix.max' => 'Nilai brix melebihi batas input yaitu 100.',
             'nacl.max' => 'Nilai NaCl melebihi batas input yaitu 100.',
             'brix.min' => 'Nilai brix tidak boleh negatif.',
@@ -305,7 +328,7 @@ class MonitoringStorageControllerSupervisor extends Controller
         ];
 
         // Jika adjustment
-       
+
         if ($disposition === 'Jalan Bareng') {
 
             $dataUpdate['not_standar'] = true;
@@ -394,7 +417,7 @@ class MonitoringStorageControllerSupervisor extends Controller
         }
 
         $data = MonitoringStorageMikroModel::findOrFail($id);
-       
+
 
         $dataUpdate = [
             'eb' => $request->eb_edit,
@@ -411,4 +434,3 @@ class MonitoringStorageControllerSupervisor extends Controller
         ]);
     }
 }
-

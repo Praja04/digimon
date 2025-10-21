@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Supervisor;
 
 use App\Http\Controllers\Controller;
+use App\Models\ManageWarnaModel;
 use Illuminate\Http\Request;
 use App\Models\MonitoringTurunBlending;
 use App\Models\MonitoringTurunBlendingData;
@@ -29,18 +30,23 @@ class MonitoringTurunBlendingControllerSupervisor extends Controller
     }
     public function Monitoring_Blending_data()
     {
+        $productionBatches = ProductionBatch::with('MonitoringTurunBlending')
+            ->has('MonitoringTurunBlending')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isMonitoringBlendingComplete()) ? 1 : 0;
+            })
+            ->values();
 
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringTurunBlending')->has('MonitoringTurunBlending')->get();
-        //return json
-        //return response()->json($productionBatches);
-
-         return view('supervisor.monitoring.turun_blending', compact('productionBatches'));
+        return view('supervisor.monitoring.turun_blending', compact('productionBatches'));
     }
 
     public function Monitoring_Blending_detail($id)
     {
         $productionBatch = ProductionBatch::with([
-            'MonitoringTurunBlending.additionalBatches', 'MonitoringTurunBlending.monitoringData',
+            'MonitoringTurunBlending.additionalBatches',
+            'MonitoringTurunBlending.monitoringData',
         ])->findOrFail($id);
 
         // Kelompokkan berdasarkan batch_range
@@ -57,14 +63,16 @@ class MonitoringTurunBlendingControllerSupervisor extends Controller
             return $item;
         });
 
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
         // return response()->json($filtered->values());
         return view('supervisor.monitoring.detail_data', [
             'productionBatch' => $productionBatch,
-            'filteredMonitoring' => $filtered->values()
+            'filteredMonitoring' => $filtered->values(),
+            'manageWarna' => $manageWarna,
         ]);
     }
 
-  
+
 
     public function store(Request $request)
     {
@@ -134,7 +142,7 @@ class MonitoringTurunBlendingControllerSupervisor extends Controller
             'ph' => 'nullable|numeric',
             'endapan' => 'nullable|string',
             'warna' => 'nullable|string',
-            'shift' => 'required|in:1,2,3',
+            // 'shift' => 'required|in:1,2,3',
         ]);
 
         // Jika validasi gagal
@@ -164,6 +172,15 @@ class MonitoringTurunBlendingControllerSupervisor extends Controller
             ], 409); // 409 Conflict
         }
 
+        $currentHour = (int) now()->format('H');
+        if ($currentHour >= 6 && $currentHour < 14) {
+            $shift = 1;
+        } elseif ($currentHour >= 14 && $currentHour < 22) {
+            $shift = 2;
+        } else {
+            $shift = 3;
+        }
+
         try {
             // Simpan data ke database
             MonitoringTurunBlendingData::create([
@@ -178,7 +195,7 @@ class MonitoringTurunBlendingControllerSupervisor extends Controller
                 'ph' => $request->ph,
                 'endapan' => $request->endapan,
                 'warna' => $request->warna,
-                'shift' => $request->shift,
+                'shift' => $shift,
             ]);
 
             return response()->json([
@@ -193,7 +210,7 @@ class MonitoringTurunBlendingControllerSupervisor extends Controller
             ], 500);
         }
     }
-    
+
     public function edit_data(Request $request)
     {
         // Validasi input
@@ -209,7 +226,7 @@ class MonitoringTurunBlendingControllerSupervisor extends Controller
             'ph_edit' => 'nullable|numeric',
             'endapan_edit' => 'nullable|string',
             'warna_edit' => 'nullable|string',
-           
+
         ]);
         $Data = MonitoringTurunBlendingData::findOrFail($request->id_edit);
 
@@ -284,8 +301,8 @@ class MonitoringTurunBlendingControllerSupervisor extends Controller
                 'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
             ], 422);
         }
-    
-    
+
+
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -301,7 +318,7 @@ class MonitoringTurunBlendingControllerSupervisor extends Controller
         }
 
         $dataUpdate = [
-           
+
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
         ];
@@ -335,5 +352,4 @@ class MonitoringTurunBlendingControllerSupervisor extends Controller
             'message' => 'Data berhasil disimpan.'
         ]);
     }
-
 }

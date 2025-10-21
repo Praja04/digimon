@@ -20,2365 +20,2790 @@
 </style>
 @section('content')
 
-</style>
-<div class="row">
-    <div class="col-12">
-        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0">Identitas RM - Detail</h4>
-            <div class="page-title-right">
-                <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item">
-                        <a href="javascript: void(0);">Identitas</a>
-                    </li>
-                    <li class="breadcrumb-item active">
-                        {{ $identitas->jenis_gula }}
-                    </li>
-                </ol>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-lg-3">
-        <a class="btn btn-danger" href="{{url('foreman/rmpm/list/rm')}}">Back</a>
-    </div>
-    <div class="col-lg-12">
-        <div class="card" id="leadsList">
-            <div class="card-header border-0">
-                <div class="row g-4 align-items-center">
-                    <div class="col-sm-3">
-                        <div class="search-box">
-                            <input type="text" class="form-control " placeholder="{{ $identitas->nama_bahan }}" disabled />
-                            <i class="ri-search-line search-icon"></i>
-                        </div>
-                    </div>
-                    <div class="col-sm-auto ms-auto">
-                        <div class="hstack gap-2">
-                            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalAnalisa"> <i class="ri-filter-3-line align-bottom me-1"></i> Analisa </button>
-                            <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" data-bs-target="#samplingModal">
-                                <i class="ri-add-line align-bottom me-1"></i> Sampling
-                            </button>
-                            <button class="btn btn-soft-danger" id="remove-actions" onClick="deleteMultiple()">
-                                <i class="ri-delete-bin-2-line"></i>
-                            </button>
-                            <button type="button" class="btn btn-warning" id="btnBukaModalKonfirmasi">
-                                Konfirmasi
-                            </button>
-                        </div>
-                    </div>
+    </style>
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                <h4 class="mb-sm-0">Identitas RM - Detail</h4>
+                <div class="page-title-right">
+                    <ol class="breadcrumb m-0">
+                        <li class="breadcrumb-item">
+                            <a href="javascript: void(0);">Identitas</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            {{ $identitas->jenis_gula }}
+                        </li>
+                    </ol>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-
-
-
-
-<div class="row justify-content-center">
-    <div class="col-xxl-12">
-        <div class="card" id="demo">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card-header border-bottom-dashed p-4">
-                        <div class="d-flex">
-                            <div class="flex-grow-1">
-                                <img src="{{ asset('assets/images/icon-utility/kecap.png') }}" class="card-logo card-logo-dark" alt="logo dark" height="150">
-                                <img src="{{ asset('assets/images/icon-utility/kecap.png') }}" class="card-logo card-logo-light" alt="logo light" height="150">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card" id="leadsList">
+                <div class="card-header border-0">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-sm-3">
+                            <a class="btn btn-danger" href="{{ url('foreman/rmpm/list/rm') }}">Kembali</a>
+                        </div>
+                        <div class="col-sm-auto ms-auto">
+                            <div class="hstack gap-2">
+                                <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal"
+                                    data-bs-target="#samplingModal">
+                                    <i class="ri-add-line align-bottom me-1"></i> Sampling
+                                </button>
+                                <button type="button" class="btn btn-warning" id="btnBukaModalKonfirmasi">
+                                    Konfirmasi
+                                </button>
+                                <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                                    data-bs-target="#modalAnalisa"> <i class="ri-filter-3-line align-bottom me-1"></i>
+                                    Analisa </button>
+                                <button class="btn btn-danger" id="remove-actions" onClick="deleteMultiple()">
+                                    <i class="ri-delete-bin-2-line"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <div class="col-lg-12">
-                    <div class="card-body p-4">
-                        <div class="row g-3">
-                            <div class="col-lg-3 col-6">
-                                <h6 class="text-muted text-uppercase fw-semibold">Asal Bahan</h6>
-                                <h3 class="fs-14 mb-0">{{ $identitas->asal_bahan }}</h3>
-                            </div>
-                            <div class="col-lg-3 col-6">
-                                <h6 class="text-muted text-uppercase fw-semibold">Nomor SPB</h6>
-                                <h3 class="fs-14 mb-0">{{ $identitas->no_spb }}</h3>
-                            </div>
-                            <div class="col-lg-3 col-6">
-                                <h6 class="text-muted text-uppercase fw-semibold">Suplier/Manufacture</h6>
-                                <h3 class="fs-14 mb-0"> {{ $identitas->suplier_manufactur }}</h3>
-                            </div>
-                            <div class="col-lg-3 col-6">
-                                <h6 class="text-muted text-uppercase fw-semibold">Nomor Mobil</h6>
-                                <h3 class="fs-14 mb-0"> {{ $identitas->no_mobil }}</h3>
-                            </div>
-                            <div class="col-lg-3 col-6">
-                                <h6 class="text-muted text-uppercase fw-semibold">Tanggal Kedatangan</h6>
-                                <h3 class="fs-14 mb-0">{{ \Carbon\Carbon::parse($identitas->tanggal_kedatangan)->format('d M Y') }}</h3>
-                            </div>
-                            <div class="col-lg-3 col-6">
-                                <h6 class="text-muted text-uppercase fw-semibold">Jam Kedatangan</h6>
-                                <h3 class="fs-14 mb-0">{{ \Carbon\Carbon::parse($identitas->tanggal_kedatangan)->format('H:i') }}</h3>
-                            </div>
-                            <div class="col-lg-3 col-6">
-                                <h6 class="text-muted text-uppercase fw-semibold">Jenis Gula</h6>
-                                <h3 class="fs-14 mb-0">{{ $identitas->jenis_gula }}</h3>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                @php
-                function getBadgeClass($disposisi) {
-                if ($disposisi === 'reject') {
-                return 'badge-soft-danger';
-                } elseif ($disposisi === 'release') {
-                return 'badge-soft-success';
-                } else {
-                return 'badge-soft-warning';
-                }
-                }
-                @endphp
-
-                <div class="col-lg-12">
-                    <div class="card-body p-4">
-                        <div class="row g-3">
-                            <div class="col-lg-3 col-6">
-                                <p class="text-muted mb-2 text-uppercase fw-semibold">Nama Bahan</p>
-                                <h5 class="fs-14 mb-0">{{ $identitas->nama_bahan }}</h5>
-                            </div>
-                            <div class="col-lg-3 col-6">
-                                <p class="text-muted mb-2 text-uppercase fw-semibold">Jumlah Kedatangan</p>
-                                <h5 class="fs-14 mb-0">{{ $identitas->jumlah_kedatangan }} kg</h5>
-                            </div>
-                            <div class="col-lg-3 col-6">
-                                <p class="text-muted mb-2 text-uppercase fw-semibold">Lot / Batch</p>
-                                <h5 class="fs-14 mb-0">{{ $identitas->lot_batch }}</h5>
-                            </div>
-                            <div class="col-lg-3 col-6">
-                                <p class="text-muted mb-2 text-uppercase fw-semibold">Disposisi</p>
-
-                                @if ($identitas->jenis_gula == 'Gula Tebu' || $identitas->jenis_gula == 'Gula Kelapa' )
-                                @php
-                                $disposisi_short_term = $disposisi->disposisi ?? null;
-                                $disposisi_long_term = $analisa_long_term->first()->disposisi ?? null;
-                                $attachment_analisa = $analisa_long_term->first()->attachment ?? null;
-                                @endphp
-
-                                <h6><span class="badge {{ getBadgeClass($disposisi_short_term) }} badge-border">
-                                        Short Term : {{ $disposisi_short_term ?? 'belum input' }}
-                                    </span></h6> <br>
-
-                                <h6><span class="badge {{ getBadgeClass($disposisi_long_term) }} badge-border">
-                                        Long Term : {{ $disposisi_long_term ?? 'belum input' }}
-                                    </span></h6>
-
-
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal">
-                                    <i class="mdi mdi-panorama-outline text-primary" style="font-size: 36px;"></i> <!-- icon gambar -->
-                                    <p>Attachment Kristal</p>
-                                </a>
-
-                                <!-- Modal untuk menampilkan gambar -->
-                                <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="imageModalLabel">Lampiran Gambar</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                                            </div>
-                                            <div class="modal-body text-center">
-                                                <img src="{{ asset('storage/uploads/attachment_analisa/' . $attachment_analisa) }}" alt="Lampiran Analisa" class="img-fluid rounded">
-                                            </div>
-                                        </div>
+    <div class="row justify-content-center">
+        <div class="col-xxl-12">
+            <div class="card" id="demo">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center gap-4">
+                                    <img src="{{ asset('assets/images/icon-utility/kecap.png') }}" alt="Logo"
+                                        height="100" class="rounded-2">
+                                    <div>
+                                        <h4 class="mb-0 fw-bold text-dark">{{ $identitas->jenis_gula }}</h4>
+                                        <small class="text-muted">{{ $identitas->asal_bahan }} ·
+                                            {{ $identitas->no_spb }}</small>
                                     </div>
                                 </div>
-                                @else
-                                @php
-                                $disposisi_gula_garam = $disposisi->disposisi ?? null;
-                                @endphp
+                                <div class="text-end">
+                                    <span
+                                        class="badge bg-primary fs-20">{{ \Carbon\Carbon::parse($identitas->tanggal_kedatangan)->format('d M Y') }}</span>
+                                    <div class="text-muted fs-17 mt-1">
+                                        {{ \Carbon\Carbon::parse($identitas->tanggal_kedatangan)->format('H:i') }}
+                                        WIB</div>
+                                </div>
+                            </div>
 
-                                <h6><span class="badge {{ getBadgeClass($disposisi_gula_garam) }} badge-border">
-                                        {{ $disposisi_gula_garam ?? 'belum input' }}
-                                    </span></h6>
+                            <div class="row g-2 text-center">
+                                <div class="col-6 col-lg">
+                                    <div class="border rounded p-2 bg-light">
+                                        <div class="text-muted small">Supplier</div>
+                                        <div class="fw-semibold">{{ $identitas->suplier_manufactur }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg">
+                                    <div class="border rounded p-2 bg-light">
+                                        <div class="text-muted small">Truck</div>
+                                        <div class="fw-semibold">{{ $identitas->no_mobil }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg">
+                                    <div class="border rounded p-2 bg-light">
+                                        <div class="text-muted small">SPB</div>
+                                        <div class="fw-semibold">{{ $identitas->no_spb }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg">
+                                    <div class="border rounded p-2 bg-light">
+                                        <div class="text-muted small">Jenis</div>
+                                        <div class="fw-semibold">{{ $identitas->jenis_gula }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @php
+                        function getBadgeClass($disposisi)
+                        {
+                            return match ($disposisi) {
+                                'reject' => 'badge-soft-danger',
+                                'release' => 'badge-soft-success',
+                                default => 'badge-soft-warning',
+                            };
+                        }
+                    @endphp
+
+                    <div class="col-lg-12">
+                        <div class="card-body p-4">
+                            <div class="row g-3">
+                                <div class="col-lg-3 col-6">
+                                    <p class="text-muted mb-2 text-uppercase fw-semibold">Nama Bahan</p>
+                                    <h5 class="fs-14 mb-0">{{ $identitas->nama_bahan }}</h5>
+                                </div>
+                                <div class="col-lg-3 col-6">
+                                    <p class="text-muted mb-2 text-uppercase fw-semibold">Jumlah Kedatangan</p>
+                                    <h5 class="fs-14 mb-0">{{ $identitas->jumlah_kedatangan }} kg</h5>
+                                </div>
+                                <div class="col-lg-3 col-6">
+                                    <p class="text-muted mb-2 text-uppercase fw-semibold">Lot / Batch</p>
+                                    <h5 class="fs-14 mb-0">{{ $identitas->lot_batch }}</h5>
+                                </div>
+                                <div class="col-lg-3 col-6">
+                                    <p class="text-muted mb-2 text-uppercase fw-semibold">Disposisi</p>
+
+                                    @if ($identitas->jenis_gula == 'Gula Tebu' || $identitas->jenis_gula == 'Gula Kelapa')
+                                        @php
+                                            $disposisi_short_term = $disposisi->disposisi ?? null;
+                                            $disposisi_long_term = $analisa_long_term->first()->disposisi ?? null;
+                                            $attachment_analisa = $analisa_long_term->first()->attachment ?? null;
+                                        @endphp
+
+                                        <h6><span class="badge {{ getBadgeClass($disposisi_short_term) }} badge-border">
+                                                Short Term : {{ $disposisi_short_term ?? 'belum input' }}
+                                            </span></h6> <br>
+
+                                        <h6><span class="badge {{ getBadgeClass($disposisi_long_term) }} badge-border">
+                                                Long Term : {{ $disposisi_long_term ?? 'belum input' }}
+                                            </span></h6>
+
+
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal">
+                                            <i class="mdi mdi-panorama-outline text-primary" style="font-size: 36px;"></i>
+                                            <!-- icon gambar -->
+                                            <p>Attachment Kristal</p>
+                                        </a>
+
+                                        <!-- Modal untuk menampilkan gambar -->
+                                        <div class="modal fade" id="imageModal" tabindex="-1"
+                                            aria-labelledby="imageModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="imageModalLabel">Lampiran Gambar</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Tutup"></button>
+                                                    </div>
+                                                    <div class="modal-body text-center">
+                                                        <img src="{{ asset('storage/uploads/attachment_analisa/' . $attachment_analisa) }}"
+                                                            alt="Lampiran Analisa" class="img-fluid rounded">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @else
+                                        @php
+                                            $disposisi_gula_garam = $disposisi->disposisi ?? null;
+                                        @endphp
+
+                                        <h6><span class="badge {{ getBadgeClass($disposisi_gula_garam) }} badge-border">
+                                                {{ $disposisi_gula_garam ?? 'belum input' }}
+                                            </span></h6>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <div class="alert alert-light border-0 shadow-sm">
+                            <div class="d-flex flex-wrap align-items-center gap-4">
+                                <strong class="text-muted">Keterangan Status:</strong>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="ri-checkbox-circle-fill text-success fs-4 fw-bold"></i>
+                                    <span class="text-muted fw-semibold">Ya / Tersedia</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="ri-close-circle-fill text-danger fs-4 fw-bold"></i>
+                                    <span class="text-muted fw-semibold">Tidak / Tidak Tersedia</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="ri-indeterminate-circle-fill text-warning fs-4 fw-bold"></i>
+                                    <span class="text-muted fw-semibold">Belum Diisi</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sample Dokumen -->
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-semibold text-muted">Dokumen Pendukung</h5>
+                                @if ($data_dokumen)
+                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#editModalDokumen">
+                                        <i class="ri-edit-box-line me-1"></i>Update
+                                    </button>
+                                @endif
+                            </div>
+                            <div class="card-body p-3">
+                                @if ($data_dokumen)
+                                    <div class="row g-2">
+                                        @foreach ([
+            'coa' => 'CoA',
+            'suratjalan_vendor' => 'Surat Jalan Vendor',
+            'packing_list' => 'Packing List',
+            'identitas_kemasan' => 'Identitas Kemasan',
+            'logo_halal' => 'Logo Halal',
+            'kesesuaian_matriks_bahan' => 'Kesesuaian Matriks Bahan Baku',
+        ] as $key => $label)
+                                            <div class="col-6 col-md-4">
+                                                <div class="d-flex justify-content-start align-items-center gap-2">
+                                                    @if (optional($data_dokumen)->$key === 'yes')
+                                                        <i class="ri-checkbox-circle-fill text-success fs-4 fw-bold"></i>
+                                                    @elseif(optional($data_dokumen)->$key === 'no')
+                                                        <i class="ri-close-circle-fill text-danger fs-4 fw-bold"></i>
+                                                    @else
+                                                        <i
+                                                            class="ri-indeterminate-circle-fill text-warning fs-4 fw-bold"></i>
+                                                    @endif
+                                                    <span class="text-muted fw-semibold">{{ $label }}</span>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="text-center text-muted mb-0">Belum ada data</p>
                                 @endif
                             </div>
                         </div>
-                    </div>
-                </div>
 
-
-                <div class="col-lg-12">
-                    <div class="card-body" id="tasksList">
-                        <div class="card-header border-0">
-                            <div class="d-flex align-items-center">
-                                <h5>Sample Dokumen</h5>
-
-                            </div>
-                        </div>
-
-                        <!--end card-body-->
-                        <div class="card-body">
-                            <div class="table-responsive table-card mb-4">
-                                <table class="table align-middle table-nowrap mb-0" id="tasksTable">
-                                    <thead class="table-light text-muted">
-                                        <tr>
-
-                                            <th>COA</th>
-                                            <th>Surat Jalan</th>
-                                            <th>Packing List</th>
-                                            <th>Identitas Kemasan</th>
-                                            <th>Logo Halal</th>
-                                            <th>Kesuaian Matriks Bahan Baku</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="list form-check-all">
-                                        @if ($data_dokumen)
-                                        <tr>
-                                            <td>{{ $data_dokumen->coa ?? 'belum input'}}</td>
-                                            <td>{{ $data_dokumen->suratjalan_vendor ?? 'belum input'}}</td>
-                                            <td>{{ $data_dokumen->packing_list ?? 'belum input'}}</td>
-                                            <td>{{ $data_dokumen->identitas_kemasan ?? 'belum input'}}</td>
-                                            <td>{{ $data_dokumen->logo_halal ?? 'belum input'}}</td>
-                                            <td>{{ $data_dokumen->kesesuaian_matriks_bahan ?? 'belum input'}}</td>
-                                            <td>
-                                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal">
-                                                    Edit
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        @else
-                                        <tr>
-                                            <td colspan="12" class="text-center">Belum ada data</td>
-                                        </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
-                                <!--end table-->
-                            </div>
-                            <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <form id="editDokumenForm">
-                                        <meta name="csrf-token" content="{{ csrf_token() }}">
-                                        <input type="hidden" name="id" value="{{ $data_dokumen->id ?? null }}">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="editModalLabel">Edit Dokumen</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                @foreach ([
-                                                'coa' => 'a. CoA',
-                                                'suratjalan_vendor' => 'b. Surat Jalan Vendor',
-                                                'packing_list' => 'c. Packing List',
-                                                'identitas_kemasan' => 'd. Identitas di Kemasan',
-                                                'logo_halal' => 'e. Logo Halal di Kemasan',
-                                                'kesesuaian_matriks_bahan' => 'f. Kesesuaian dengan Matriks Bahan Baku'
-                                                ] as $field => $label)
-                                                <div class="mb-3">
-                                                    <label class="form-label">{{ $label }}</label><br>
-                                                    <label><input type="radio" name="{{ $field }}" value="yes" {{ optional($data_dokumen)->$field == 'yes' ? 'checked' : '' }}> Iya</label>
-                                                    <label><input type="radio" name="{{ $field }}" value="no" {{ optional($data_dokumen)->$field == 'no' ? 'checked' : '' }}> Tidak</label>
+                        <!-- modal dokumen -->
+                        <div class="modal fade" id="editModalDokumen" tabindex="-1"
+                            aria-labelledby="editModalDokumenLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Update Dokumen Pendukung</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="form-sampling" id="editDokumenForm">
+                                            @csrf
+                                            <input type="hidden" name="id_dokumen"
+                                                value="{{ $data_dokumen->id ?? '' }}">
+                                            @foreach ([
+            'coa' => 'a. CoA',
+            'suratjalan_vendor' => 'b. Surat Jalan Vendor',
+            'packing_list' => 'c. Packing List',
+            'identitas_kemasan' => 'd. Identitas di Kemasan',
+            'logo_halal' => 'e. Logo Halal di Kemasan',
+            'kesesuaian_matriks_bahan' => 'f. Kesesuaian dengan Matriks Bahan Baku',
+        ] as $field => $label)
+                                                <div class="mb-3 d-flex justify-content-between align-items-center">
+                                                    <label class="form-label mb-0 fw-semibold">{{ $label }}</label>
+                                                    <div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="{{ $field }}" id="{{ $field }}_yes"
+                                                                value="yes"
+                                                                {{ optional($data_dokumen)->$field === 'yes' ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ $field }}_yes">Iya</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="{{ $field }}" id="{{ $field }}_no"
+                                                                value="no"
+                                                                {{ optional($data_dokumen)->$field === 'no' ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ $field }}_no">Tidak</label>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                @endforeach
+                                                <hr class="my-2">
+                                            @endforeach
+
+                                            <div class="d-flex justify-content-end mt-4">
+                                                <button type="submit" class="btn btn-primary"
+                                                    id="submitBtnDokumen">Simpan
+                                                    Sampling</button>
                                             </div>
-                                            <div class="modal-footer">
-                                                <button type="submit" class="btn btn-success">Simpan</button>
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                            </div>
-                                        </div>
-                                    </form>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <!--end card-body-->
                     </div>
-                    <!--end card-->
-                </div>
-                <hr>
-                <div class="col-lg-12">
-                    <div class="card-body" id="tasksList">
-                        <div class="card-header border-0">
-                            <div class="d-flex align-items-center">
-                                <h5>Sample Kondisi Mobil</h5>
 
+                    <!-- Sample Kondisi Mobil -->
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-semibold text-muted">Sample Kondisi Mobil</h5>
+                                @if ($data_mobil)
+                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#editModalMobil">
+                                        <i class="ri-edit-box-line me-1"></i>Update
+                                    </button>
+                                @endif
+                            </div>
+
+                            <div class="card-body p-3">
+                                @if ($data_mobil)
+                                    <div class="row g-2">
+                                        @foreach ([
+            'bersih' => 'Bersih',
+            'kering' => 'Kering',
+            'benda_asing' => 'Tidak Ada Benda Asing',
+            'cacat' => 'Tidak Cacat',
+            'segel' => 'Segel',
+            'berbau' => 'Berbau',
+        ] as $key => $label)
+                                            <div class="col-6 col-md-4">
+                                                <div class="d-flex justify-content-start align-items-center gap-2">
+                                                    @if (optional($data_mobil)->$key === 'yes')
+                                                        <i class="ri-checkbox-circle-fill text-success fs-4 fw-bold"></i>
+                                                    @elseif(optional($data_mobil)->$key === 'no')
+                                                        <i class="ri-close-circle-fill text-danger fs-4 fw-bold"></i>
+                                                    @else
+                                                        <i
+                                                            class="ri-indeterminate-circle-fill text-warning fs-4 fw-bold"></i>
+                                                    @endif
+                                                    <span class="text-muted fw-semibold">{{ $label }}</span>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="text-center text-muted mb-0">Belum ada data</p>
+                                @endif
                             </div>
                         </div>
-                        <!--end card-body-->
-                        <div class="card-body">
-                            <div class="table-responsive table-card mb-4">
-                                <table class="table align-middle table-nowrap mb-0" id="tasksTable">
-                                    <thead class="table-light text-muted">
-                                        <tr>
-                                            <th>Bersih</th>
-                                            <th>Kering</th>
-                                            <th>Tidak ada Benda Asing</th>
-                                            <th>Tidak Cacat</th>
-                                            <th>Segel</th>
-                                            <th>Berbau</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="list form-check-all">
-                                        @if ($data_mobil)
-                                        <tr>
-                                            <td>{{ $data_mobil->bersih ?? 'belum input'}}</td>
-                                            <td>{{ $data_mobil->kering ?? 'belum input'}}</td>
-                                            <td>{{ $data_mobil->benda_asing ?? 'belum input'}}</td>
-                                            <td>{{ $data_mobil->cacat ?? 'belum input'}}</td>
-                                            <td>{{ $data_mobil->segel ?? 'belum input'}}</td>
-                                            <td>{{ $data_mobil->berbau ?? 'belum input'}}</td>
-                                            <td>
-                                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModalMobil">
-                                                    Edit
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        @else
-                                        <tr>
-                                            <td colspan="12" class="text-center">Belum ada data</td>
-                                        </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
-                                <!--end table-->
 
-                                <div class="modal fade" id="editModalMobil" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
+                        <!-- Modal Edit Kondisi Mobil -->
+                        <div class="modal fade" id="editModalMobil" tabindex="-1" aria-labelledby="editModalMobilLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Update Kondisi Mobil</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Tutup"></button>
+                                    </div>
+                                    <div class="modal-body">
                                         <form id="editMobilForm">
-                                            <meta name="csrf-token" content="{{ csrf_token() }}">
-                                            <input type="hidden" name="id" value="{{ $data_mobil->id ?? null }}">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="editModalLabel">Edit Dokumen</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    @foreach ([
-                                                    'bersih' => 'a. Bersih',
-                                                    'kering' => 'b. Kering',
-                                                    'benda_asing' => 'c. Benda Asing',
-                                                    'cacat' => 'd. Cacat',
-                                                    'segel' => 'e. Segel',
-                                                    'berbau' => 'f. Berbau'
-                                                    ] as $field => $label)
-                                                    <div class="mb-3">
-                                                        <label class="form-label">{{ $label }}</label><br>
-                                                        <label><input type="radio" name="{{ $field }}" value="yes" {{ optional($data_mobil)->$field == 'yes' ? 'checked' : '' }}> Iya</label>
-                                                        <label><input type="radio" name="{{ $field }}" value="no" {{ optional($data_mobil)->$field == 'no' ? 'checked' : '' }}> Tidak</label>
+                                            @csrf
+                                            <input type="hidden" name="id_mobil" value="{{ $data_mobil->id ?? null }}">
+
+                                            @foreach ([
+            'bersih' => 'a. Bersih',
+            'kering' => 'b. Kering',
+            'benda_asing' => 'c. Tidak Ada Benda Asing',
+            'cacat' => 'd. Tidak Cacat',
+            'segel' => 'e. Segel',
+            'berbau' => 'f. Berbau',
+        ] as $field => $label)
+                                                <div class="mb-3 d-flex justify-content-between align-items-center">
+                                                    <label class="form-label mb-0 fw-semibold">{{ $label }}</label>
+                                                    <div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="{{ $field }}" id="{{ $field }}_yes"
+                                                                value="yes"
+                                                                {{ optional($data_mobil)->$field === 'yes' ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ $field }}_yes">Iya</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="{{ $field }}" id="{{ $field }}_no"
+                                                                value="no"
+                                                                {{ optional($data_mobil)->$field === 'no' ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ $field }}_no">Tidak</label>
+                                                        </div>
                                                     </div>
-                                                    @endforeach
                                                 </div>
-                                                <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-success">Simpan</button>
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                </div>
+                                                <hr class="my-2">
+                                            @endforeach
+
+                                            <div class="d-flex justify-content-end mt-4">
+                                                <button type="submit" class="btn btn-primary" id="submitBtnMobil">
+                                                    Simpan Kondisi Mobil
+                                                </button>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-                        <!--end card-body-->
                     </div>
-                    <!--end card-->
-                </div>
-                <hr>
-                <div class="col-lg-12">
-                    <div class="card-body" id="tasksList">
-                        <div class="card-header border-0">
-                            <div class="d-flex align-items-center">
-                                <h5>Sample Fisik Kemasan</h5>
 
+                    <!-- Sample Fisik Kemasan -->
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-semibold text-muted">Sample Fisik Kemasan</h5>
+                                @if ($data_kemasan)
+                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#editModalKemasan">
+                                        <i class="ri-edit-box-line me-1"></i>Update
+                                    </button>
+                                @endif
+                            </div>
+
+                            <div class="card-body p-3">
+                                @if ($data_kemasan)
+                                    <div class="row g-2">
+                                        @php
+                                            $kemasanFields =
+                                                $identitas->jenis_gula === 'Garam'
+                                                    ? [
+                                                        'kotor' => 'Kotor',
+                                                        'berair' => 'Berair',
+                                                        'basah' => 'Basah',
+                                                        'campuran' => 'Campuran',
+                                                        'rusak' => 'Rusak / Robek',
+                                                        'sesuai_std' => 'Sesuai STD',
+                                                        'lain-lain' => 'Lain-lain',
+                                                    ]
+                                                    : [
+                                                        'kotor' => 'Kotor',
+                                                        'rusak' => 'Rusak / Sobek',
+                                                        'sesuai_std' => 'Sesuai STD',
+                                                        'lain-lain' => 'Lain-lain',
+                                                    ];
+                                        @endphp
+                                        @foreach ($kemasanFields as $key => $label)
+                                            <div class="col-6 col-md-4">
+                                                <div class="d-flex justify-content-start align-items-center gap-2">
+                                                    @if (optional($data_kemasan)->$key === 'yes')
+                                                        <i class="ri-checkbox-circle-fill text-success fs-4 fw-bold"></i>
+                                                    @elseif(optional($data_kemasan)->$key === 'no')
+                                                        <i class="ri-close-circle-fill text-danger fs-4 fw-bold"></i>
+                                                    @else
+                                                        <i
+                                                            class="ri-indeterminate-circle-fill text-warning fs-4 fw-bold"></i>
+                                                    @endif
+                                                    <span class="text-muted fw-semibold">{{ $label }}</span>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="text-center text-muted mb-0">Belum ada data</p>
+                                @endif
                             </div>
                         </div>
-                        <!--end card-body-->
-                        <div class="card-body">
-                            <div class="table-responsive table-card mb-4">
-                                <table class="table align-middle table-nowrap mb-0" id="tasksTable">
-                                    <thead class="table-light text-muted">
-                                        <tr>
 
-                                            <th>Kotor</th>
-                                            <th>Rusak/Sobek</th>
-                                            <th>Sesuai STD</th>
-                                            <th>Lain-lain</th>
-                                            <th>berair</th>
-                                            <th>Basah</th>
-                                            <th>Campuran</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="list form-check-all">
-                                        @if ($data_kemasan)
-                                        <tr>
-                                            <td>{{ $data_kemasan->kotor ?? 'belum input'}}</td>
-                                            <td>{{ $data_kemasan->rusak ?? 'belum input'}}</td>
-                                            <td>{{ $data_kemasan->sesuai_std ?? 'belum input'}}</td>
-                                            <td>{{ $data_kemasan->{'lain-lain'} ?? 'belum input'}}</td>
-                                            <td>{{ $data_kemasan->berair ?? 'belum input'}}</td>
-                                            <td>{{ $data_kemasan->basah ?? 'belum input'}}</td>
-                                            <td>{{ $data_kemasan->campuran ?? 'belum input'}}</td>
-                                            <td>
-                                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModalKemasan">
-                                                    Edit
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        @else
-                                        <tr>
-                                            <td colspan="12" class="text-center">Belum ada data</td>
-                                        </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
-                                <div class="modal fade" id="editModalKemasan" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
+                        <!-- Modal Edit Kemasan -->
+                        <div class="modal fade" id="editModalKemasan" tabindex="-1"
+                            aria-labelledby="editModalKemasanLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editModalKemasanLabel">Update Sample Fisik Kemasan
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+
+                                    <div class="modal-body">
                                         <form id="editKemasanForm">
-                                            <meta name="csrf-token" content="{{ csrf_token() }}">
-                                            <input type="hidden" name="id" value="{{ $data_kemasan->id ?? null }}">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="editModalLabel">Edit Dokumen</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                                                </div>
+                                            @csrf
+                                            <input type="hidden" name="id_kemasan"
+                                                value="{{ $data_kemasan->id ?? null }}">
 
-                                                <div class="modal-body">
-                                                    @foreach ([
-                                                    'kotor' => 'a. Kotor',
-                                                    'rusak' => 'b. Rusak',
-                                                    'sesuai_std' => 'c. Sesuai Standar',
-
-                                                    'berair' => 'd. Berair',
-                                                    'basah' => 'e. Basah',
-                                                    'campuran' => 'f. Campuran'
-                                                    ] as $field => $label)
-                                                    <div class="mb-3">
-                                                        <label class="form-label">{{ $label }}</label><br>
-                                                        <label><input type="radio" name="{{ $field }}" value="yes" {{ optional($data_kemasan)->$field == 'yes' ? 'checked' : '' }}> Iya</label>
-                                                        <label><input type="radio" name="{{ $field }}" value="no" {{ optional($data_kemasan)->$field == 'no' ? 'checked' : '' }}> Tidak</label>
+                                            @php
+                                                $modalFields =
+                                                    $identitas->jenis_gula === 'Garam'
+                                                        ? [
+                                                            'kotor' => 'a. Kotor',
+                                                            'berair' => 'b. Berair',
+                                                            'basah' => 'c. Basah',
+                                                            'campuran' => 'd. Campuran',
+                                                            'rusak' => 'e. Rusak / Robek',
+                                                            'sesuai_std' => 'f. Sesuai STD',
+                                                        ]
+                                                        : [
+                                                            'kotor' => 'a. Kotor',
+                                                            'rusak' => 'b. Rusak / Sobek',
+                                                            'sesuai_std' => 'c. Sesuai STD',
+                                                        ];
+                                            @endphp
+                                            @foreach ($modalFields as $field => $label)
+                                                <div class="mb-3 d-flex justify-content-between align-items-center">
+                                                    <label class="form-label mb-0 fw-semibold">{{ $label }}</label>
+                                                    <div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="{{ $field }}" id="{{ $field }}_yes"
+                                                                value="yes"
+                                                                {{ optional($data_kemasan)->$field === 'yes' ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ $field }}_yes">Iya</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="{{ $field }}" id="{{ $field }}_no"
+                                                                value="no"
+                                                                {{ optional($data_kemasan)->$field === 'no' ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ $field }}_no">Tidak</label>
+                                                        </div>
                                                     </div>
+                                                </div>
+                                                <hr class="my-2">
+                                            @endforeach
 
-                                                    @endforeach
-                                                    <div class="mb-3">
-                                                        <label class="form-label">d. Lain-lain</label><br>
-                                                        <label><input type="text" class="form-control" name="lain-lain"></label>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-success">Simpan</button>
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">
+                                                    {{ $identitas->jenis_gula === 'Garam' ? 'g. Lain-lain' : 'd. Lain-lain' }}
+                                                </label>
+                                                <input type="text" class="form-control" name="lain-lain"
+                                                    value="{{ $data_kemasan->{'lain-lain'} ?? '' }}"
+                                                    placeholder="Tuliskan keterangan lain...">
+                                            </div>
+
+                                            <div class="d-flex justify-content-end mt-4">
+                                                <button type="submit" class="btn btn-primary" id="submitBtnKemasan">
+                                                    Simpan Sample Fisik
+                                                </button>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
-                                <!--end table-->
                             </div>
-
                         </div>
-                        <!--end card-body-->
                     </div>
-                    <!--end card-->
-                </div>
-                <hr>
 
-                <div class="col-lg-12">
-                    <div class="card-body" id="tasksList">
-                        <div class="card-header border-0">
-                            <div class="d-flex align-items-center">
-                                <h5>Sample Fisik Raw</h5>
+                    <!-- Sample Fisik Raw -->
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-semibold text-muted">Sample Fisik Raw</h5>
+                                @if ($data_raw)
+                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#editModalRaw">
+                                        <i class="ri-edit-box-line me-1"></i>Update
+                                    </button>
+                                @endif
+                            </div>
 
+                            <div class="card-body p-3">
+                                @if ($data_raw)
+                                    <div class="row g-2">
+                                        @foreach ([
+            'leleh' => 'Leleh',
+            'warna_std' => 'Warna Sesuai Standar',
+            'campuran' => 'Campuran',
+            'aroma_std' => 'Aroma Tidak Sesuai Standar',
+            'sesuai_std' => 'Sesuai Standar',
+        ] as $key => $label)
+                                            <div class="col-6 col-md-4">
+                                                <div class="d-flex justify-content-start align-items-center gap-2">
+                                                    @if (optional($data_raw)->$key === 'yes')
+                                                        <i class="ri-checkbox-circle-fill text-success fs-4 fw-bold"></i>
+                                                    @elseif(optional($data_raw)->$key === 'no')
+                                                        <i class="ri-close-circle-fill text-danger fs-4 fw-bold"></i>
+                                                    @else
+                                                        <i
+                                                            class="ri-indeterminate-circle-fill text-warning fs-4 fw-bold"></i>
+                                                    @endif
+                                                    <span class="text-muted fw-semibold">{{ $label }}</span>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="text-center text-muted mb-0">Belum ada data</p>
+                                @endif
                             </div>
                         </div>
-                        <!--end card-body-->
-                        <div class="card-body">
-                            <div class="table-responsive table-card mb-4">
-                                <table class="table align-middle table-nowrap mb-0" id="tasksTable">
-                                    <thead class="table-light text-muted">
-                                        <tr>
-                                            <th>Leleh</th>
-                                            <th>Warna Sesuai Std</th>
-                                            <th>Campuran</th>
-                                            <th>Aroma Sesuai Std</th>
-                                            <th>Sesuai Std</th>
-                                            <th>Aksi</th>
 
-                                        </tr>
-                                    </thead>
-                                    <tbody class="list form-check-all">
-                                        @if ($data_raw)
-                                        <tr>
-                                            <td>{{ $data_raw->leleh ?? 'belum input' }}</td>
-                                            <td>{{ $data_raw->warna_std ?? 'belum input' }}</td>
-                                            <td>{{ $data_raw->campuran ?? 'belum input' }}</td>
-                                            <td>{{ $data_raw->aroma_std ?? 'belum input' }}</td>
-                                            <td>{{ $data_raw->sesuai_std ?? 'belum input' }}</td>
-                                            <td>
-                                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModalRaw">
-                                                    Edit
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        @else
-                                        <tr>
-                                            <td colspan="12" class="text-center">Belum ada data</td>
-                                        </tr>
-                                        @endif
-                                    </tbody>
-                                    <div class="modal fade" id="editModalRaw" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <form id="editRawForm">
-                                                <meta name="csrf-token" content="{{ csrf_token() }}">
-                                                <input type="hidden" name="id" value="{{ $data_raw->id ?? null }}">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="editModalLabel">Edit Raw</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                                                    </div>
+                        <!-- Modal Edit Raw -->
+                        <div class="modal fade" id="editModalRaw" tabindex="-1" aria-labelledby="editModalRawLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Update Sample Fisik Raw</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
 
-                                                    <div class="modal-body">
-                                                        @foreach ([
-                                                        'leleh' => 'a. Leleh',
-                                                        'warna_std' => 'b. Warna Sesuai Standar',
-                                                        'aroma_std' => 'c. Aroma Sesuai Standar',
-                                                        'sesuai_std_raw' => 'd. Sesuai Standar',
+                                    <div class="modal-body">
+                                        <form id="editRawForm">
+                                            @csrf
+                                            <input type="hidden" name="id_raw" value="{{ $data_raw->id ?? null }}">
 
-                                                        ] as $field => $label)
-                                                        <div class="mb-3">
-                                                            <label class="form-label">{{ $label }}</label><br>
-                                                            <label><input type="radio" name="{{ $field }}" value="yes" {{ optional($data_raw)->$field == 'yes' ? 'checked' : '' }}> Iya</label>
-                                                            <label><input type="radio" name="{{ $field }}" value="no" {{ optional($data_raw)->$field == 'no' ? 'checked' : '' }}> Tidak</label>
+                                            @foreach ([
+            'leleh' => 'a. Leleh',
+            'warna_std' => 'b. Warna Sesuai Standar',
+            'aroma_std' => 'c. Aroma Tidak Sesuai Standar',
+            'sesuai_std_raw' => 'd. Sesuai Standar',
+            'campuran_raw' => 'e. Campuran',
+        ] as $field => $label)
+                                                @php
+                                                    $fieldName = str_replace('_raw', '', $field);
+                                                    $value = optional($data_raw)->$fieldName;
+                                                @endphp
+
+                                                <div class="mb-3 d-flex justify-content-between align-items-center">
+                                                    <label class="form-label mb-0 fw-semibold">{{ $label }}</label>
+                                                    <div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="{{ $field }}" id="{{ $field }}_yes"
+                                                                value="yes" {{ $value === 'yes' ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ $field }}_yes">Iya</label>
                                                         </div>
-                                                        @endforeach
-                                                        <div class="mb-3">
-                                                            <label class="form-label">e. Campuran</label><br>
-                                                            <label><input type="radio" name="campuran_raw" value="yes"> Iya</label>
-                                                            <label><input type="radio" name="campuran_raw" value="no"> Tidak</label>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="{{ $field }}" id="{{ $field }}_no"
+                                                                value="no" {{ $value === 'no' ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ $field }}_no">Tidak</label>
                                                         </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="submit" class="btn btn-success">Simpan</button>
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                                                     </div>
                                                 </div>
-                                            </form>
-                                        </div>
+                                                <hr class="my-2">
+                                            @endforeach
+
+
+                                            <div class="d-flex justify-content-end mt-4">
+                                                <button type="submit" class="btn btn-primary" id="submitBtnRaw">
+                                                    Simpan Sample Fisik Raw
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
-                                </table>
-                                <!--end table-->
-                            </div>
-
-                        </div>
-                        <!--end card-body-->
-                    </div>
-                    <!--end card-->
-                </div>
-                <hr>
-                @if ($identitas->jenis_gula == 'Gula Tebu' || $identitas->jenis_gula == 'Gula Kelapa' )
-                <div class="col-lg-12">
-                    <div class="card-body p-4">
-                        <div class="card-header border-0">
-                            <div class="d-flex align-items-center">
-                                <h5>Short Term Analisa</h5>
-
+                                </div>
                             </div>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table align-middle table-nowrap mb-0">
-                                <thead>
-                                    <tr class="table-light text-muted">
-                                        <th scope="col">No</th>
-                                        <th scope="col">Brix</th>
-                                        <th scope="col">pH</th>
-                                        <th scope="col">Kotoran</th>
-                                        <th scope="col">ka</th>
-                                        <th scope="col">organo</th>
-                                        <th scope="col">warna</th>
-                                        <th scope="col">aroma</th>
-                                        <th scope="col">disposisi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="list-detail-short">
-                                    @forelse ($analisa_short_term as $index => $short)
-                                    <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>{{ $short->brix ?? 'belum input'}}</td>
-                                        <td>{{ $short->ph ?? 'belum input'}}</td>
-                                        <td>{{ $short->kotoran ?? 'belum input'}}</td>
-                                        <td>{{ $short->ka ?? 'belum input'}}</td>
-                                        <td>{{ $short->organo ?? 'belum input'}}</td>
-                                        <td>{{ $short->warna ?? 'belum input'}}</td>
-                                        <td>{{ $short->aroma ?? 'belum input'}}</td>
-                                        <td>{{ $short->disposisi->disposisi ?? 'belum input'}}</td>
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="9" class="text-center">Belum ada data short term</td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-                            </table><!--end table-->
-                        </div>
                     </div>
-                    <!--end card-body-->
-                </div>
 
-                <div class="col-lg-12">
-                    <div class="card-body p-4">
-                        <div class="card-header border-0">
-                            <div class="d-flex align-items-center">
-                                <h5>Long Term Analisa</h5>
-
+                    @if ($identitas->jenis_gula == 'Gula Tebu' || $identitas->jenis_gula == 'Gula Kelapa')
+                        <div class="col-lg-12">
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0 fw-semibold">Short Term Analisa</h5>
+                                </div>
+                                <div class="card-body p-3">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped align-middle mb-0">
+                                            <thead class="table-light text-muted text-uppercase small">
+                                                <tr>
+                                                    <th width="5%">#</th>
+                                                    <th>Brix</th>
+                                                    <th>pH</th>
+                                                    <th>Kotoran</th>
+                                                    <th>KA</th>
+                                                    <th>Organo</th>
+                                                    <th>Warna</th>
+                                                    <th>Aroma</th>
+                                                    <th>Disposisi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="list-detail-short">
+                                                @forelse ($analisa_short_term as $index => $short)
+                                                    <tr>
+                                                        <td>{{ $index + 1 }}</td>
+                                                        <td>{{ $short->brix ?? '-' }}</td>
+                                                        <td>{{ $short->ph ?? '-' }}</td>
+                                                        <td>{{ $short->kotoran ?? '-' }}</td>
+                                                        <td>{{ $short->ka ?? '-' }}</td>
+                                                        <td>{{ $short->organo ?? '-' }}</td>
+                                                        <td>{{ $short->warna ?? '-' }}</td>
+                                                        <td>{{ $short->aroma ?? '-' }}</td>
+                                                        <td>
+                                                            <span
+                                                                class="badge {{ getBadgeClass($short->disposisi->disposisi ?? null) }}">
+                                                                {{ $short->disposisi->disposisi ?? '-' }}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="9" class="text-center text-muted py-4">
+                                                            Belum ada data short term
+                                                        </td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table align-middle table-nowrap mb-0">
-                                <thead>
-                                    <tr class="table-light text-muted">
-                                        <th scope="col">No</th>
-                                        <th scope="col">Uji Kristal</th>
-                                        <th scope="col">disposisi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="list-detail-long">
-                                    @forelse ($analisa_long_term as $index => $long)
-                                    <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>{{ $long->uji_kristal ?? 'belum input'}}
 
-                                        </td>
-                                        <td>
-                                            <span class="badge 
-                                                @if($long->disposisi === 'reject')
-                                                    badge-soft-danger
-                                                @elseif($long->disposisi === 'release')
-                                                    badge-soft-success
-                                                @else
-                                                    badge-soft-warning
-                                                @endif
-                                            ">
-                                                {{ $long->disposisi ?? 'belum input' }}
-                                            </span>
-
-                                            @if(strtolower($long->uji_kristal) === 'positif' && $long->disposisi !== 'release')
-                                            <br>
-                                            <button type="button" class="btn btn-sm btn-warning btn-edit-disposisi" data-id="{{ $long->id}}" data-disposisi="{{ $long->disposisi }}" data-bs-toggle="modal" data-bs-target="#updateDisposisiModal">
-                                                <i class="ri-edit-line"></i> Update
-                                            </button>
-                                            @endif
-                                        </td>
-
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="12" class="text-center">Belum ada data long term</td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-                            </table><!--end table-->
-                        </div>
-                    </div>
-                    <!--end card-body-->
-                </div>
-                @else
-                <!-- kode jika identitas.jenis_gula false -->
-                <div class="col-lg-12">
-                    <div class="card-body p-4">
-                        <div class="card-header border-0">
-                            <div class="d-flex align-items-center">
-                                <h5>Hasil Analisa</h5>
-
+                        <div class="col-lg-12">
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0 fw-semibold">Long Term Analisa</h5>
+                                </div>
+                                <div class="card-body p-3">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped align-middle mb-0">
+                                            <thead class="table-light text-muted text-uppercase small">
+                                                <tr>
+                                                    <th width="5%">#</th>
+                                                    <th>Uji Kristal</th>
+                                                    <th>Disposisi</th>
+                                                    <th width="15%"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="list-detail-long">
+                                                @forelse ($analisa_long_term as $index => $long)
+                                                    <tr>
+                                                        <td>{{ $index + 1 }}</td>
+                                                        <td>{{ $long->uji_kristal ?? '-' }}</td>
+                                                        <td>
+                                                            <span class="badge {{ getBadgeClass($long->disposisi) }}">
+                                                                {{ $long->disposisi ?? '-' }}
+                                                            </span>
+                                                        </td>
+                                                        <td class="text-end">
+                                                            @if (strtolower($long->uji_kristal ?? '') === 'positif' && $long->disposisi !== 'release')
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-warning btn-edit-disposisi"
+                                                                    data-id="{{ $long->id }}"
+                                                                    data-disposisi="{{ $long->disposisi }}"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#updateDisposisiModal">
+                                                                    <i class="ri-edit-line"></i> Update
+                                                                </button>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="4" class="text-center text-muted py-4">
+                                                            Belum ada data long term
+                                                        </td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table align-middle table-nowrap mb-0">
-                                <thead>
-                                    <tr class="table-light text-muted">
-                                        <th scope="col">No</th>
-                                        <th scope="col">Fisik</th>
-                                        <th scope="col">%ka</th>
-                                        <th scope="col">Kotoran</th>
-                                        <th scope="col">organo</th>
-                                        <th scope="col">warna</th>
-                                        <th scope="col">aroma</th>
-                                        <th scope="col">%nacl</th>
-                                        <th scope="col">grosweight</th>
-                                        <th scope="col">disposisi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="list-detail-analisa">
-                                    @forelse ($analisa_garam_gula as $index => $garamgula)
-                                    <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>{{ $garamgula->fisik ?? 'belum input'}}</td>
-                                        <td>{{ $garamgula->{'%ka'} ?? 'belum input'}}</td>
-                                        <td>{{ $garamgula->kotoran ?? 'belum input'}}</td>
-                                        <td>{{ $garamgula->organo ?? 'belum input'}}</td>
-                                        <td>{{ $garamgula->warna ?? 'belum input'}}</td>
-                                        <td>{{ $garamgula->aroma ?? 'belum input'}}</td>
-                                        <td>{{ $garamgula->{'%nacl'} ?? 'belum input'}}</td>
-                                        <td>{{ $garamgula->gross_weight?? 'belum input'}}</td>
-                                        <td>{{ $garamgula->disposisi->disposisi ?? 'belum input'}}</td>
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="12" class="text-center">Belum ada data analisa</td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-                            </table><!--end table-->
-                        </div>
-                    </div>
-                    <!--end card-body-->
-                </div>
-                @endif
-
-
-
-                <!-- Menu Sampling & Analisa -->
-                <div class="col-lg-12">
-                    <div class="card-body p-4 border-top border-top-dashed">
-                        <div class="hstack gap-2 justify-content-end d-print-none mt-4">
-
-                            <a href="javascript:window.print()" class="btn btn-warning">
-                                <i class="ri-printer-line align-bottom me-1"></i> Print
-                            </a>
-                            <a class="btn btn-secondary" id="downloadBtn">
-                                <i class="ri-download-2-line align-bottom me-1"></i> Download
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div> <!-- end row -->
-        </div> <!-- end card -->
-    </div> <!-- end col -->
-</div> <!-- end row -->
-
-<!-- Modal Update Disposisi (static modal, dipakai semua baris) -->
-<div class="modal fade" id="updateDisposisiModal" tabindex="-1" aria-labelledby="updateDisposisiModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <form id="formUpdateDisposisi" method="POST">
-            @csrf
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="updateDisposisiModalLabel">Update Disposisi</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="id_disposisi" id="disposisi_id">
-                    <div class="mb-3">
-                        <label for="disposisi" class="form-label">Disposisi</label>
-                        <select name="disposisi" id="disposisi" class="form-select" required>
-                            <option value="">-- Pilih Disposisi --</option>
-                            <option value="release">Release</option>
-                            <option value="reject">Reject</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
-
-
-<!-- modal -->
-
-<!-- Modal Pilihan Sampling -->
-<div class="modal fade" id="samplingModal" tabindex="-1" aria-labelledby="samplingModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="samplingModalLabel">Pilih Kategori Sampling</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Silakan pilih kategori sampling yang ingin Anda isi.</p>
-                <div class="list-group">
-                    @if(is_null($identitas->samplingMobil))
-                    <button type="button" class="list-group-item list-group-item-action sampling-option" data-sampling="kondisi_mobil" data-title="Sampling Kondisi Mobil" data-bs-dismiss="modal">
-                        <i class="ri-truck-line me-2"></i> Sampling Kondisi Mobil
-                    </button>
-                    @endif
-
-                    @if(is_null($identitas->samplingDokumen))
-                    <button type="button" class="list-group-item list-group-item-action sampling-option" data-sampling="kondisi_dokumen" data-title="Sampling Dokumen" data-bs-dismiss="modal">
-                        <i class="ri-file-text-line me-2"></i> Sampling Dokumen
-                    </button>
-                    @endif
-
-                    @if(is_null($identitas->samplingFisikKemasan))
-                    <button type="button" class="list-group-item list-group-item-action sampling-option" data-sampling="kondisi_kemasan" data-title="Sampling Kemasan" data-bs-dismiss="modal">
-                        <i class="ri-inbox-line me-2"></i> Sampling Kemasan
-                    </button>
-                    @endif
-
-                    @if($identitas->jenis_gula !== 'Garam' && is_null($identitas->samplingFisikRaw))
-                    <button type="button" class="list-group-item list-group-item-action sampling-option" data-sampling="kondisi_raw" data-title="Sampling Raw" data-bs-dismiss="modal">
-                        <i class="ri-flask-line me-2"></i> Sampling Raw
-                    </button>
-                    @endif
-                    @if(
-                    !is_null($identitas->sampling_mobil) &&
-                    !is_null($identitas->sampling_dokumen) &&
-                    !is_null($identitas->sampling_fisik_kemasan) &&
-                    ($identitas->jenis_gula === 'Garam' || !is_null($identitas->sampling_fisik_raw))
-                    )
-                    <div class="alert alert-success text-center mt-3">
-                        Semua kategori sampling telah diisi.
-                    </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- endmodal -->
-
-<!-- Modal Sampling Kondisi Mobil -->
-<div class="modal fade" id="modalKondisiMobil" tabindex="-1" aria-labelledby="modalKondisiMobilLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Sampling Kondisi Mobil - {{ $identitas->no_mobil }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form class="form-sampling" id="form-kondisi-mobil">
-                    @csrf
-                    <input type="hidden" name="id_identitas" value="{{ $identitas->id }}">
-
-                    <div class="mb-3">
-                        <label class="form-label">a. Bersih</label><br>
-                        <label><input type="radio" name="bersih" value="yes"> Iya</label>
-                        <label><input type="radio" name="bersih" value="no"> Tidak</label>
-
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">b. Kering</label><br>
-                        <label><input type="radio" name="kering" value="yes"> Iya</label>
-                        <label><input type="radio" name="kering" value="no"> Tidak</label>
-
-
-
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">c. Tidak Ada Benda Asing</label><br>
-                        <label><input type="radio" name="benda_asing" value="yes"> Iya</label>
-                        <label><input type="radio" name="benda_asing" value="no"> Tidak</label>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">d. Tidak Cacat / Bolong</label><br>
-                        <label><input type="radio" name="cacat" value="yes"> Iya</label>
-                        <label><input type="radio" name="cacat" value="no"> Tidak</label>
-
-
-
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">e. Segel</label><br>
-                        <label><input type="radio" name="segel" value="yes"> Iya</label>
-                        <label><input type="radio" name="segel" value="no"> Tidak</label>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label">f. Tidak Berbau</label><br>
-                        <label><input type="radio" name="berbau" value="yes"> Iya</label>
-                        <label><input type="radio" name="berbau" value="no"> Tidak</label>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary" id="submitBtn">Simpan Sampling</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- modal dokumen -->
-<div class="modal fade" id="modalDokumen" tabindex="-1" aria-labelledby="modalDokumenLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Sampling Dokumen - {{ $identitas->nama_bahan }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Form Dokumen -->
-                <form class="form-sampling" id="form-dokumen">
-                    @csrf
-                    <input type="hidden" name="id_identitas" value="{{ $identitas->id }}">
-
-                    <div class="mb-3">
-                        <label class="form-label">a. CoA</label><br>
-                        <label><input type="radio" name="coa" value="yes"> Iya</label>
-                        <label><input type="radio" name="coa" value="no"> Tidak</label>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">b. Surat Jalan Vendor</label><br>
-                        <label><input type="radio" name="suratjalan_vendor" value="yes"> Iya</label>
-                        <label><input type="radio" name="suratjalan_vendor" value="no"> Tidak</label>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">c. Packing List</label><br>
-                        <label><input type="radio" name="packing_list" value="yes"> Iya</label>
-                        <label><input type="radio" name="packing_list" value="no"> Tidak</label>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">d. Identitas di Kemasan</label><br>
-                        <label><input type="radio" name="identitas_kemasan" value="yes"> Iya</label>
-                        <label><input type="radio" name="identitas_kemasan" value="no"> Tidak</label>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">e. Logo Halal di Kemasan</label><br>
-                        <label><input type="radio" name="logo_halal" value="yes"> Iya</label>
-                        <label><input type="radio" name="logo_halal" value="no"> Tidak</label>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label">f. Kesuaian dengan Matriks Bahan Baku</label><br>
-                        <label><input type="radio" name="kesesuaian_matriks_bahan" value="yes"> Iya</label>
-                        <label><input type="radio" name="kesesuaian_matriks_bahan" value="no"> Tidak</label>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary" id="submitBtnDokumen">Simpan Sampling</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- kemasan -->
-<div class="modal fade" id="modalKemasan" tabindex="-1" aria-labelledby="modalKemasanLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Sampling Kemasan - {{ $identitas->nama_bahan }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Form Kemasan -->
-                <form class="form-sampling" id="form-kemasan">
-                    @csrf
-                    <input type="hidden" name="id_identitas" value="{{ $identitas->id }}">
-                    @if($identitas->jenis_gula == 'Garam')
-                    <!-- Input untuk garam -->
-                    <div class="mb-3">
-                        <label class="form-label">a. Kotor</label><br>
-                        <label><input type="radio" name="kotor" value="yes"> Iya</label>
-                        <label><input type="radio" name="kotor" value="no"> Tidak</label>
-                        <div class="zak-input-wrapper mt-2" style="display:none;">
-                            <label class="form-label">Berapa zak yang tidak standar?</label>
-                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
-                        </div>
-
-
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">b. Berair</label><br>
-                        <label><input type="radio" name="berair" value="yes"> Iya</label>
-                        <label><input type="radio" name="berair" value="no"> Tidak</label>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">c. Basah</label><br>
-                        <label><input type="radio" name="basah" value="yes"> Iya</label>
-                        <label><input type="radio" name="basah" value="no"> Tidak</label>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">d. Campuran</label><br>
-                        <label><input type="radio" name="campuran" value="yes"> Iya</label>
-                        <label><input type="radio" name="campuran" value="no"> Tidak</label>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">e. Rusak Sobek</label><br>
-                        <label><input type="radio" name="rusak" value="yes"> Iya</label>
-                        <label><input type="radio" name="rusak" value="no"> Tidak</label>
-                        <div class="zak-input-wrapper mt-2" style="display:none;">
-                            <label class="form-label">Berapa zak yang tidak standar?</label>
-                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
-                        </div>
-
-
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">f. Sesuai STD</label><br>
-                        <label><input type="radio" name="sesuai_std" value="yes"> Iya</label>
-                        <label><input type="radio" name="sesuai_std" value="no"> Tidak</label>
-                        <div class="zak-input-wrapper mt-2" style="display:none;">
-                            <label class="form-label">Berapa zak yang tidak standar?</label>
-                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
-                        </div>
-                    </div>
-
                     @else
-                    <div class="mb-3">
-                        <label class="form-label">a. Kotor</label><br>
-                        <label><input type="radio" name="kotor" value="yes"> Iya</label>
-                        <label><input type="radio" name="kotor" value="no"> Tidak</label>
-                        <div class="zak-input-wrapper mt-2" style="display:none;">
-                            <label class="form-label">Berapa zak yang tidak standar?</label>
-                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                        <div class="col-lg-12">
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0 fw-semibold">Hasil Analisa</h5>
+                                </div>
+                                <div class="card-body p-3">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped align-middle mb-0">
+                                            <thead class="table-light text-muted text-uppercase small">
+                                                <tr>
+                                                    <th width="5%">#</th>
+                                                    <th>Fisik</th>
+                                                    <th>%KA</th>
+                                                    <th>Kotoran</th>
+                                                    <th>Organo</th>
+                                                    <th>Warna</th>
+                                                    <th>Aroma</th>
+                                                    <th>%NaCl</th>
+                                                    <th>Gross Weight</th>
+                                                    <th>Disposisi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="list-detail-analisa">
+                                                @forelse ($analisa_garam_gula as $index => $garamgula)
+                                                    <tr>
+                                                        <td>{{ $index + 1 }}</td>
+                                                        <td>{{ $garamgula->fisik ?? '-' }}</td>
+                                                        <td>{{ $garamgula->{'%ka'} ?? '-' }}</td>
+                                                        <td>{{ $garamgula->kotoran ?? '-' }}</td>
+                                                        <td>{{ $garamgula->organo ?? '-' }}</td>
+                                                        <td>{{ $garamgula->warna ?? '-' }}</td>
+                                                        <td>{{ $garamgula->aroma ?? '-' }}</td>
+                                                        <td>{{ $garamgula->{'%nacl'} ?? '-' }}</td>
+                                                        <td>{{ $garamgula->gross_weight ?? '-' }}</td>
+                                                        <td>
+                                                            <span
+                                                                class="badge {{ getBadgeClass($garamgula->disposisi->disposisi ?? null) }}">
+                                                                {{ $garamgula->disposisi->disposisi ?? '-' }}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="10" class="text-center text-muted py-4">
+                                                            Belum ada data analisa
+                                                        </td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
-
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">b. Rusak Sobek</label><br>
-                        <label><input type="radio" name="rusak" value="yes"> Iya</label>
-                        <label><input type="radio" name="rusak" value="no"> Tidak</label>
-                        <div class="zak-input-wrapper mt-2" style="display:none;">
-                            <label class="form-label">Berapa zak yang tidak standar?</label>
-                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">c. Sesuai STD</label><br>
-                        <label><input type="radio" name="sesuai_std" value="yes"> Iya</label>
-                        <label><input type="radio" name="sesuai_std" value="no"> Tidak</label>
-                        <div class="zak-input-wrapper mt-2" style="display:none;">
-                            <label class="form-label">Berapa zak yang tidak standar?</label>
-                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">d. Lain-lain</label><br>
-                        <label><input class="form-control" type="text" name="lain-lain"></label>
-                    </div>
                     @endif
 
 
+                    <!-- Menu Sampling & Analisa -->
+                    <div class="col-lg-12">
+                        <div class="card-body p-4 border-top border-top-dashed">
+                            <div class="hstack gap-2 justify-content-end d-print-none mt-4">
 
-                    <button type="submit" class="btn btn-primary" id="submitBtnKemasan">Simpan Sampling</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- raw -->
-<div class="modal fade" id="modalRaw" tabindex="-1" aria-labelledby="modalRawLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Sampling Raw - {{ $identitas->nama_bahan }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Form Raw -->
-                <form class="form-sampling" id="form-raw">
-                    @csrf
-                    <input type="hidden" name="id_identitas" value="{{ $identitas->id }}">
-
-                    <div class="mb-3">
-                        <label class="form-label">a. Leleh</label><br>
-                        <label><input type="radio" name="leleh" value="yes"> Iya</label>
-                        <label><input type="radio" name="leleh" value="no"> Tidak</label>
-                        <div class="zak-input-wrapper mt-2" style="display:none;">
-                            <label class="form-label">Berapa zak yang tidak standar?</label>
-                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                                <a href="javascript:window.print()" class="btn btn-warning">
+                                    <i class="ri-printer-line align-bottom me-1"></i> Print
+                                </a>
+                                <a class="btn btn-secondary" id="downloadBtn">
+                                    <i class="ri-download-2-line align-bottom me-1"></i> Download
+                                </a>
+                            </div>
                         </div>
                     </div>
+                </div> <!-- end row -->
+            </div> <!-- end card -->
+        </div> <!-- end col -->
+    </div> <!-- end row -->
 
-                    <div class="mb-3">
-                        <label class="form-label">b. Warna sesuai STD</label><br>
-                        <label><input type="radio" name="warna_std" value="yes"> Iya</label>
-                        <label><input type="radio" name="warna_std" value="no"> Tidak</label>
-                        <div class="zak-input-wrapper mt-2" style="display:none;">
-                            <label class="form-label">Berapa zak yang tidak standar?</label>
-                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+    <!-- Modal Update Disposisi (static modal, dipakai semua baris) -->
+    <div class="modal fade" id="updateDisposisiModal" tabindex="-1" aria-labelledby="updateDisposisiModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <form id="formUpdateDisposisi" method="POST">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateDisposisiModalLabel">Update Disposisi</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id_disposisi" id="disposisi_id">
+                        <div class="mb-3">
+                            <label for="disposisi" class="form-label">Disposisi</label>
+                            <select name="disposisi" id="disposisi" class="form-select" required>
+                                <option value="">-- Pilih Disposisi --</option>
+                                <option value="release">Release</option>
+                                <option value="reject">Reject</option>
+                            </select>
                         </div>
                     </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">c. Campuran</label><br>
-                        <label><input type="radio" name="campuran" value="yes"> Iya</label>
-                        <label><input type="radio" name="campuran" value="no"> Tidak</label>
-                        <div class="zak-input-wrapper mt-2" style="display:none;">
-                            <label class="form-label">Berapa zak yang tidak standar?</label>
-                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">d. Aroma STD</label><br>
-                        <label><input type="radio" name="aroma_std" value="yes"> Iya</label>
-                        <label><input type="radio" name="aroma_std" value="no"> Tidak</label>
-                        <div class="zak-input-wrapper mt-2" style="display:none;">
-                            <label class="form-label">Berapa zak yang tidak standar?</label>
-                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">e. Sesuai STD</label><br>
-                        <label><input type="radio" name="sesuai_std" value="yes"> Iya</label>
-                        <label><input type="radio" name="sesuai_std" value="no"> Tidak</label>
-                        <div class="zak-input-wrapper mt-2" style="display:none;">
-                            <label class="form-label">Berapa zak yang tidak standar?</label>
-                            <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
-                        </div>
-                    </div>
-
-
-
-                    <button type="submit" class="btn btn-primary" id="submitBtnRaw">Simpan Sampling</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- modal analisa -->
-<div class="modal fade" id="modalAnalisa" tabindex="-1" aria-labelledby="modalAnalisaLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form id="formAnalisa">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalAnalisaLabel">Form Analisa</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                </div>
-                <div class="modal-body"> {{-- Form dinamis berdasarkan jenis_gula --}}
-                    <input type="hidden" id="id_identitas" name="id_identitas" value="{{ $identitas->id }}">
-                    <input type="hidden" id="jenis_gula" name="jenis_gula" value="{{ $identitas->jenis_gula }}">
-                    <div id="form-analisa-content">
-                        <!-- Form fields will di-render oleh jQuery -->
-                    </div>
-                    <div id="analisa-type-select" style="display: none;">
-                        <h6 class="mb-3">Pilih Jenis Analisa</h6>
-                        <div>
-                            <label><input type="radio" name="analisa_type" value="short-term"> Short-Term</label>
-                        </div>
-                        <div>
-                            <label><input type="radio" name="analisa_type" value="long-term"> Long-Term</label>
-                        </div>
-                    </div>
-                    <div id="analisa-jumlah" style="display: none;">
-                        <h6 class="mb-3">Input Jumlah Data</h6>
-                        <div>
-                            <label>Jumlah Data</label>
-                            <input class="form-control" type="number" name="jumlah_data" id="jumlah_data">
-                        </div>
-
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
                 </div>
-                <div class="d-flex justify-content-between mt-3">
-                    <button type="button" id="prevBtn" class="btn btn-secondary" style="display: none;">Sebelumnya</button>
-                    <button type="button" id="nextBtn" class="btn btn-primary" >Berikutnya</button>
-                </div>
-                <!-- <div class="modal-footer"> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button> <button type="submit" class="btn btn-primary">Simpan Analisa</button> </div> -->
             </form>
         </div>
     </div>
-</div>
 
-<!-- Modal -->
-<div class="modal fade" id="modalKonfirmasi" tabindex="-1" aria-labelledby="modalKonfirmasiLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalKonfirmasiLabel">Konfirmasi Jam</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-            </div>
-            <div class="modal-body">
-                <div id="formKonfirmasi">
-                    <div class="mb-3">
-                        <label for="jamInput" class="form-label" id="labelJam">Jam Kedatangan</label>
-                        <input type="datetime-local" class="form-control" id="jamInput">
-                    </div>
+
+
+    <!-- modal -->
+
+    <!-- Modal Pilihan Sampling -->
+    <div class="modal fade" id="samplingModal" tabindex="-1" aria-labelledby="samplingModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="samplingModalLabel">Pilih Kategori Sampling</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div id="statusMessage" class="text-success" style="display:none;">
-                    Data berhasil disimpan.
+                <div class="modal-body">
+                    @php
+                        $samplingComplete =
+                            !is_null($identitas->samplingMobil) &&
+                            !is_null($identitas->samplingDokumen) &&
+                            !is_null($identitas->samplingFisikKemasan) &&
+                            ($identitas->jenis_gula === 'Garam' || !is_null($identitas->samplingFisikRaw));
+                    @endphp
+
+                    @if ($samplingComplete)
+                        <div class="alert alert-info text-center">
+                            Anda sudah mengisi semua sampling.
+                        </div>
+                    @else
+                        <p>Silakan pilih kategori sampling yang ingin Anda isi.</p>
+                        <div class="list-group">
+                            @if (is_null($identitas->samplingMobil))
+                                <button type="button" class="list-group-item list-group-item-action sampling-option"
+                                    data-sampling="kondisi_mobil" data-title="Sampling Kondisi Mobil"
+                                    data-bs-dismiss="modal">
+                                    <i class="ri-truck-line me-2"></i> Sampling Kondisi Mobil
+                                </button>
+                            @endif
+
+                            @if (is_null($identitas->samplingDokumen))
+                                <button type="button" class="list-group-item list-group-item-action sampling-option"
+                                    data-sampling="kondisi_dokumen" data-title="Sampling Dokumen"
+                                    data-bs-dismiss="modal">
+                                    <i class="ri-file-text-line me-2"></i> Sampling Dokumen
+                                </button>
+                            @endif
+
+                            @if (is_null($identitas->samplingFisikKemasan))
+                                <button type="button" class="list-group-item list-group-item-action sampling-option"
+                                    data-sampling="kondisi_kemasan" data-title="Sampling Kemasan"
+                                    data-bs-dismiss="modal">
+                                    <i class="ri-inbox-line me-2"></i> Sampling Kemasan
+                                </button>
+                            @endif
+
+                            @if ($identitas->jenis_gula !== 'Garam' && is_null($identitas->samplingFisikRaw))
+                                <button type="button" class="list-group-item list-group-item-action sampling-option"
+                                    data-sampling="kondisi_raw" data-title="Sampling Raw" data-bs-dismiss="modal">
+                                    <i class="ri-flask-line me-2"></i> Sampling Raw
+                                </button>
+                            @endif
+                        </div>
+                    @endif
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="btnSimpanJam" class="btn btn-primary">Simpan</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>
-</div>
+    <!-- endmodal -->
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer">
-</script>
-<script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
+    <!-- Modal Sampling Kondisi Mobil -->
+    <div class="modal fade" id="modalKondisiMobil" tabindex="-1" aria-labelledby="modalKondisiMobilLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sampling Kondisi Mobil - {{ $identitas->no_mobil }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-sampling" id="form-kondisi-mobil">
+                        @csrf
+                        <input type="hidden" name="id_identitas" value="{{ $identitas->id }}">
 
-<script>
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-    document.getElementById('downloadBtn').addEventListener('click', function() {
-        var element = document.getElementById('demo');
+                        <div class="mb-3 d-flex justify-content-between align-items-center">
+                            <label class="form-label mb-0 fw-semibold">a. Bersih</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="bersih" id="bersih-yes"
+                                        value="yes">
+                                    <label class="form-check-label" for="bersih-yes">Iya</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="bersih" id="bersih-no"
+                                        value="no">
+                                    <label class="form-check-label" for="bersih-no">Tidak</label>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-2">
 
-        var opt = {
-            margin: 0.5,
-            filename: 'data-kedatangan.pdf',
-            image: {
-                type: 'jpeg',
-                quality: 0.98
-            },
-            html2canvas: {
-                scale: 1
-            },
-            jsPDF: {
-                unit: 'in',
-                format: 'letter',
-                orientation: 'portrait'
+                        <div class="mb-3 d-flex justify-content-between align-items-center">
+                            <label class="form-label mb-0 fw-semibold">b. Kering</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="kering" id="kering-yes"
+                                        value="yes">
+                                    <label class="form-check-label" for="kering-yes">Iya</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="kering" id="kering-no"
+                                        value="no">
+                                    <label class="form-check-label" for="kering-no">Tidak</label>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+
+                        <div class="mb-3 d-flex justify-content-between align-items-center">
+                            <label class="form-label mb-0 fw-semibold">c. Tidak Ada Benda Asing</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="benda_asing"
+                                        id="benda_asing-yes" value="yes">
+                                    <label class="form-check-label" for="benda_asing-yes">Iya</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="benda_asing"
+                                        id="benda_asing-no" value="no">
+                                    <label class="form-check-label" for="benda_asing-no">Tidak</label>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+
+                        <div class="mb-3 d-flex justify-content-between align-items-center">
+                            <label class="form-label mb-0 fw-semibold">d. Tidak Cacat / Bolong</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="cacat" id="cacat-yes"
+                                        value="yes">
+                                    <label class="form-check-label" for="cacat-yes">Iya</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="cacat" id="cacat-no"
+                                        value="no">
+                                    <label class="form-check-label" for="cacat-no">Tidak</label>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+
+                        <div class="mb-3 d-flex justify-content-between align-items-center">
+                            <label class="form-label mb-0 fw-semibold">e. Segel</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="segel" id="segel-yes"
+                                        value="yes">
+                                    <label class="form-check-label" for="segel-yes">Iya</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="segel" id="segel-no"
+                                        value="no">
+                                    <label class="form-check-label" for="segel-no">Tidak</label>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+
+                        <div class="mb-4 d-flex justify-content-between align-items-center">
+                            <label class="form-label mb-0 fw-semibold">f. Tidak Berbau</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="berbau" id="berbau-yes"
+                                        value="yes">
+                                    <label class="form-check-label" for="berbau-yes">Iya</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="berbau" id="berbau-no"
+                                        value="no">
+                                    <label class="form-check-label" for="berbau-no">Tidak</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">Simpan Sampling</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal dokumen -->
+    <div class="modal fade" id="modalDokumen" tabindex="-1" aria-labelledby="modalDokumenLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sampling Dokumen - {{ $identitas->nama_bahan }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-sampling" id="form-dokumen">
+                        @csrf
+                        <input type="hidden" name="id_identitas" value="{{ $identitas->id }}">
+
+                        @foreach ([
+            'coa' => 'a. CoA',
+            'suratjalan_vendor' => 'b. Surat Jalan Vendor',
+            'packing_list' => 'c. Packing List',
+            'identitas_kemasan' => 'd. Identitas di Kemasan',
+            'logo_halal' => 'e. Logo Halal di Kemasan',
+            'kesesuaian_matriks_bahan' => 'f. Kesesuaian dengan Matriks Bahan Baku',
+        ] as $field => $label)
+                            <div class="mb-3 d-flex justify-content-between align-items-center">
+                                <label class="form-label mb-0 fw-semibold">{{ $label }}</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="{{ $field }}"
+                                            id="{{ $field }}_yes" value="yes">
+                                        <label class="form-check-label" for="{{ $field }}_yes">Iya</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="{{ $field }}"
+                                            id="{{ $field }}_no" value="no">
+                                        <label class="form-check-label" for="{{ $field }}_no">Tidak</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="my-2">
+                        @endforeach
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="submit" class="btn btn-primary" id="submitBtnDokumen">Simpan
+                                Sampling</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- kemasan -->
+    <div class="modal fade" id="modalKemasan" tabindex="-1" aria-labelledby="modalKemasanLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sampling Kemasan - {{ $identitas->nama_bahan }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form Kemasan -->
+                    <form class="form-sampling" id="form-kemasan">
+                        @csrf
+                        <input type="hidden" name="id_identitas" value="{{ $identitas->id }}">
+                        @if ($identitas->jenis_gula == 'Garam')
+                            <!-- Input untuk garam -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">a. Kotor</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="kotor" id="kotor-yes"
+                                                value="yes">
+                                            <label class="form-check-label" for="kotor-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="kotor" id="kotor-no"
+                                                value="no">
+                                            <label class="form-check-label" for="kotor-no">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="zak-input-wrapper mt-3" style="display:none;">
+                                    <label class="form-label small text-muted">Jumlah zak kotor?</label>
+                                    <input type="number" class="form-control form-control-sm zak-qty-input"
+                                        placeholder="Contoh: 5" min="0">
+                                </div>
+                            </div>
+                            <hr class="my-2">
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">b. Berair</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="berair"
+                                                id="berair-yes" value="yes">
+                                            <label class="form-check-label" for="berair-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="berair" id="berair-no"
+                                                value="no">
+                                            <label class="form-check-label" for="berair-no">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="my-2">
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">c. Basah</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="basah" id="basah-yes"
+                                                value="yes">
+                                            <label class="form-check-label" for="basah-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="basah" id="basah-no"
+                                                value="no">
+                                            <label class="form-check-label" for="basah-no">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="my-2">
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">d. Campuran</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="campuran"
+                                                id="campuran-yes" value="yes">
+                                            <label class="form-check-label" for="campuran-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="campuran"
+                                                id="campuran-no" value="no">
+                                            <label class="form-check-label" for="campuran-no">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="my-2">
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">e. Rusak / Sobek</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="rusak" id="rusak-yes"
+                                                value="yes">
+                                            <label class="form-check-label" for="rusak-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="rusak" id="rusak-no"
+                                                value="no">
+                                            <label class="form-check-label" for="rusak-no">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="zak-input-wrapper mt-2" style="display:none;">
+                                    <label class="form-label">Berapa zak yang rusak / sobek?</label>
+                                    <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                                </div>
+                            </div>
+                            <hr class="my-2">
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">f. Sesuai STD</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="sesuai_std"
+                                                id="sesuai_std-yes" value="yes">
+                                            <label class="form-check-label" for="sesuai_std-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="sesuai_std"
+                                                id="sesuai_std-no" value="no">
+                                            <label class="form-check-label" for="sesuai_std-no">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="zak-input-wrapper mt-2" style="display:none;">
+                                    <label class="form-label">Berapa zak yang tidak standar?</label>
+                                    <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                                </div>
+                            </div>
+                        @else
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">a. Kotor</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="kotor" id="kotor-yes"
+                                                value="yes">
+                                            <label class="form-check-label" for="kotor-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="kotor" id="kotor-no"
+                                                value="no">
+                                            <label class="form-check-label" for="kotor-no">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="zak-input-wrapper mt-3" style="display:none;">
+                                    <label class="form-label small text-muted">Jumlah zak kotor?</label>
+                                    <input type="number" class="form-control form-control-sm zak-qty-input"
+                                        placeholder="Contoh: 5" min="0">
+                                </div>
+                            </div>
+                            <hr class="my-2">
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">b. Rusak / Sobek</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="rusak" id="rusak-yes"
+                                                value="yes">
+                                            <label class="form-check-label" for="rusak-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="rusak" id="rusak-no"
+                                                value="no">
+                                            <label class="form-check-label" for="rusak-no">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="zak-input-wrapper mt-3" style="display:none;">
+                                    <label class="form-label small text-muted">Jumlah zak rusak / sobek?</label>
+                                    <input type="number" class="form-control form-control-sm zak-qty-input"
+                                        placeholder="Contoh: 5" min="0">
+                                </div>
+                            </div>
+                            <hr class="my-2">
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">c. Sesuai STD</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="sesuai_std"
+                                                id="sesuai_std-yes" value="yes">
+                                            <label class="form-check-label" for="sesuai_std-yes">Iya</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="sesuai_std"
+                                                id="sesuai_std-no" value="no">
+                                            <label class="form-check-label" for="sesuai_std-no">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="zak-input-wrapper mt-3" style="display:none;">
+                                    <label class="form-label">Berapa zak yang tidak standar?</label>
+                                    <input type="text" class="form-control zak-qty-input" placeholder="Contoh: 5 zak">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label mb-0 fw-semibold">d. Lain-lain</label>
+                                    <div>
+                                        <input class="form-control" type="text" name="lain-lain">
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <button type="submit" class="btn btn-primary" id="submitBtnKemasan">Simpan Sampling</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- raw -->
+    <div class="modal fade" id="modalRaw" tabindex="-1" aria-labelledby="modalRawLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sampling Raw - {{ $identitas->nama_bahan }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form Raw -->
+                    <form class="form-sampling" id="form-raw">
+                        @csrf
+                        <input type="hidden" name="id_identitas" value="{{ $identitas->id }}">
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <label class="form-label mb-0 fw-semibold">a. Leleh</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="leleh" id="leleh-yes"
+                                            value="yes">
+                                        <label class="form-check-label" for="leleh-yes">Iya</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="leleh" id="leleh-no"
+                                            value="no">
+                                        <label class="form-check-label" for="leleh-no">Tidak</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="zak-input-wrapper mt-3" style="display:none;">
+                                <label class="form-label small text-muted">Jumlah zak leleh?</label>
+                                <input type="number" class="form-control form-control-sm zak-qty-input"
+                                    placeholder="Contoh: 5" min="0">
+                            </div>
+                        </div>
+                        <hr class="my-2">
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <label class="form-label mb-0 fw-semibold">b. Warna tidak sesuai STD</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="warna_std"
+                                            id="warna_std-yes" value="yes">
+                                        <label class="form-check-label" for="warna_std-yes">Iya</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="warna_std"
+                                            id="warna_std-no" value="no">
+                                        <label class="form-check-label" for="warna_std-no">Tidak</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="zak-input-wrapper mt-3" style="display:none;">
+                                <label class="form-label small text-muted">Jumlah zak tidak standar?</label>
+                                <input type="number" class="form-control form-control-sm zak-qty-input"
+                                    placeholder="Contoh: 5" min="0">
+                            </div>
+                        </div>
+                        <hr class="my-2">
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <label class="form-label mb-0 fw-semibold">c. Campuran</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="campuran"
+                                            id="campuran-yes" value="yes">
+                                        <label class="form-check-label" for="campuran-yes">Iya</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="campuran"
+                                            id="campuran-no" value="no">
+                                        <label class="form-check-label" for="campuran-no">Tidak</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="zak-input-wrapper mt-3" style="display:none;">
+                                <label class="form-label small text-muted">Jumlah zak campuran?</label>
+                                <input type="number" class="form-control form-control-sm zak-qty-input"
+                                    placeholder="Contoh: 5" min="0">
+                            </div>
+                        </div>
+                        <hr class="my-2">
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <label class="form-label mb-0 fw-semibold">d. Aroma tidak STD</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="aroma_std"
+                                            id="aroma_std-yes" value="yes">
+                                        <label class="form-check-label" for="aroma_std-yes">Iya</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="aroma_std"
+                                            id="aroma_std-no" value="no">
+                                        <label class="form-check-label" for="aroma_std-no">Tidak</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="zak-input-wrapper mt-3" style="display:none;">
+                                <label class="form-label small text-muted">Jumlah zak tidak standar</label>
+                                <input type="number" class="form-control form-control-sm zak-qty-input"
+                                    placeholder="Contoh: 5" min="0">
+                            </div>
+                        </div>
+                        <hr class="my-2">
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <label class="form-label mb-0 fw-semibold">e. Sesuai STD</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="sesuai_std"
+                                            id="sesuai_std-yes" value="yes">
+                                        <label class="form-check-label" for="sesuai_std-yes">Iya</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="sesuai_std"
+                                            id="sesuai_std-no" value="no">
+                                        <label class="form-check-label" for="sesuai_std-no">Tidak</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="zak-input-wrapper mt-3" style="display:none;">
+                                <label class="form-label small text-muted">Jumlah zak tidak standar?</label>
+                                <input type="number" class="form-control form-control-sm zak-qty-input"
+                                    placeholder="Contoh: 5" min="0">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="submitBtnRaw">Simpan Sampling</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal Analisa -->
+    <div class="modal fade" id="modalAnalisa" tabindex="-1" aria-labelledby="modalAnalisaLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content shadow-sm rounded-4">
+                <form id="formAnalisa">
+                    <div class="modal-header border-0 pb-2">
+                        <h5 class="modal-title fw-semibold" id="modalAnalisaLabel">Form Analisa</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Tutup"></button>
+                    </div>
+                    <div class="modal-body px-4 py-3">
+                        <!-- Hidden inputs -->
+                        <input type="hidden" id="id_identitas" name="id_identitas" value="{{ $identitas->id }}">
+                        <input type="hidden" id="jenis_gula" name="jenis_gula"
+                            value="{{ $identitas->jenis_gula }}">
+
+                        <!-- Dynamic form fields -->
+                        <div id="form-analisa-content" class="mb-3"></div>
+
+                        <!-- Type selection -->
+                        <div id="analisa-type-select" class="mb-3" style="display: none;">
+                            <label class="form-label fw-medium">Jenis Analisa</label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="analisa_type" id="short"
+                                    value="short-term">
+                                <label class="btn btn-outline-primary" for="short">Short-Term</label>
+
+                                <input type="radio" class="btn-check" name="analisa_type" id="long"
+                                    value="long-term">
+                                <label class="btn btn-outline-primary" for="long">Long-Term</label>
+                            </div>
+                        </div>
+
+                        <!-- Jumlah data -->
+                        <div id="analisa-jumlah" style="display: none;">
+                            <label for="jumlah_data" class="form-label fw-medium">Jumlah Data</label>
+                            <input class="form-control" type="number" name="jumlah_data" id="jumlah_data"
+                                min="1" placeholder="Masukkan jumlah data">
+                        </div>
+                    </div>
+
+                    <!-- Navigation buttons -->
+                    <div class="modal-footer border-0 px-4 pb-3">
+                        <button type="button" id="prevBtn" class="btn btn-secondary"
+                            style="display: none;">Sebelumnya</button>
+                        <button type="button" id="nextBtn" class="btn btn-primary">Berikutnya</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalKonfirmasi" tabindex="-1" aria-labelledby="modalKonfirmasiLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalKonfirmasiLabel">Konfirmasi Jam</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="formKonfirmasi">
+                        <div class="mb-3">
+                            <label for="jamInput" class="form-label" id="labelJam">Jam Kedatangan</label>
+                            <input type="datetime-local" class="form-control" id="jamInput"
+                                value="{{ now()->format('Y-m-d\TH:i') }}">
+                        </div>
+                    </div>
+
+                    @php
+                        $samplingComplete =
+                            !is_null($identitas->samplingMobil) &&
+                            !is_null($identitas->samplingDokumen) &&
+                            !is_null($identitas->samplingFisikKemasan) &&
+                            !is_null($identitas->samplingFisikRaw);
+                    @endphp
+
+                    @if ($samplingComplete)
+                        <div class="alert alert-info text-center" id="pesanRequiredSampling" style="display:none;">
+                            Konfirmasi kedatangan sudah dilakukan.
+                        </div>
+                    @else
+                        <div class="alert alert-danger text-center" id="pesanRequiredSampling" style="display:none;">
+                            Silakan isi sampling terlebih dahulu.
+                        </div>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnSimpanJam" class="btn btn-primary">Simpan</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
+
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
-        };
+        });
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            var element = document.getElementById('demo');
 
-        html2pdf().set(opt).from(element).save();
-    });
+            var opt = {
+                margin: 0.5,
+                filename: 'data-kedatangan.pdf',
+                image: {
+                    type: 'jpeg',
+                    quality: 0.98
+                },
+                html2canvas: {
+                    scale: 1
+                },
+                jsPDF: {
+                    unit: 'in',
+                    format: 'letter',
+                    orientation: 'portrait'
+                }
+            };
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const samplingButtons = document.querySelectorAll('.sampling-option');
+            html2pdf().set(opt).from(element).save();
+        });
 
-        samplingButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const samplingType = this.getAttribute('data-sampling');
+        document.addEventListener('DOMContentLoaded', function() {
+            const samplingButtons = document.querySelectorAll('.sampling-option');
 
-                setTimeout(() => {
-                    let modalId = '';
+            samplingButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const samplingType = this.getAttribute('data-sampling');
 
-                    switch (samplingType) {
-                        case 'kondisi_mobil':
-                            modalId = 'modalKondisiMobil';
-                            break;
-                        case 'kondisi_dokumen':
-                            modalId = 'modalDokumen';
-                            break;
-                        case 'kondisi_kemasan':
-                            modalId = 'modalKemasan';
-                            break;
-                        case 'kondisi_raw':
-                            modalId = 'modalRaw';
-                            break;
-                    }
+                    setTimeout(() => {
+                        let modalId = '';
 
-                    if (modalId) {
-                        const modal = new bootstrap.Modal(document.getElementById(modalId));
-                        modal.show();
-                    }
-                }, 500);
+                        switch (samplingType) {
+                            case 'kondisi_mobil':
+                                modalId = 'modalKondisiMobil';
+                                break;
+                            case 'kondisi_dokumen':
+                                modalId = 'modalDokumen';
+                                break;
+                            case 'kondisi_kemasan':
+                                modalId = 'modalKemasan';
+                                break;
+                            case 'kondisi_raw':
+                                modalId = 'modalRaw';
+                                break;
+                        }
+
+                        if (modalId) {
+                            const modal = new bootstrap.Modal(document.getElementById(
+                                modalId));
+                            modal.show();
+                        }
+                    }, 500);
+                });
             });
         });
-    });
 
-    // Buat template URL dengan placeholder
-    const updateDisposisiUrlTemplate = "{{ route('rmpm_foreman.updateDisposisiLong', ['id' => '__ID__']) }}";
+        // Buat template URL dengan placeholder
+        const updateDisposisiUrlTemplate = "{{ route('rmpm_foreman.updateDisposisiLong', ['id' => '__ID__']) }}";
 
-    // Ketika tombol Edit diklik
-    $(document).on('click', '.btn-edit-disposisi', function() {
-        const id = $(this).data('id');
-        const currentDisposisi = $(this).data('disposisi');
+        // Ketika tombol Edit diklik
+        $(document).on('click', '.btn-edit-disposisi', function() {
+            const id = $(this).data('id');
+            const currentDisposisi = $(this).data('disposisi');
 
-        $('#disposisi').val(currentDisposisi);
-        $('#disposisi_id').val(id); // hidden input
-        $('#updateDisposisiModal').modal('show');
-    });
-
-    // Submit form update disposisi
-    $('#formUpdateDisposisi').on('submit', function(e) {
-        e.preventDefault();
-
-        const id = $('#disposisi_id').val();
-        const url = updateDisposisiUrlTemplate.replace('__ID__', id);
-        const data = $(this).serialize();
-
-        $.post(url, data, function(res) {
-            $('#updateDisposisiModal').modal('hide');
-            Swal.fire('Sukses', 'Disposisi berhasil diperbarui', 'success').then(() => {
-                location.reload(); // atau update baris tanpa reload
-            });
-        }).fail(function(xhr) {
-            Swal.fire('Gagal', 'Terjadi kesalahan saat mengirim data.', 'error');
-        });
-    });
-
-    $('#editDokumenForm').on('submit', function(e) {
-        e.preventDefault();
-
-        let formData = {
-            _token: $('meta[name="csrf-token"]').attr('content'),
-            _method: 'POST',
-            id: $('input[name="id"]').val(),
-            coa: $('input[name="coa"]:checked').val(),
-            suratjalan_vendor: $('input[name="suratjalan_vendor"]:checked').val(),
-            packing_list: $('input[name="packing_list"]:checked').val(),
-            identitas_kemasan: $('input[name="identitas_kemasan"]:checked').val(),
-            logo_halal: $('input[name="logo_halal"]:checked').val(),
-            kesesuaian_matriks_bahan: $('input[name="kesesuaian_matriks_bahan"]:checked').val()
-        };
-
-        $.ajax({
-            url: "{{url('/foreman/sampling/edit/dokumen')}}/" + formData.id,
-            method: 'POST',
-            data: formData,
-            success: function(response) {
-                $('#editModal').modal('hide');
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: 'Data dokumen berhasil diperbarui',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    location.reload();
-                });
-            },
-            error: function(xhr) {
-                let msg = 'Terjadi kesalahan saat menyimpan data';
-                if (xhr.responseJSON?.errors) {
-                    msg = Object.values(xhr.responseJSON.errors).flat().join('\n');
-                }
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal!',
-                    text: msg
-                });
-            }
-        });
-    });
-
-    $('#editKemasanForm').on('submit', function(e) {
-        e.preventDefault();
-
-        let formData = {
-            _token: $('meta[name="csrf-token"]').attr('content'),
-            _method: 'POST',
-            id: $('input[name="id"]').val(),
-            coa: $('input[name="coa"]:checked').val(),
-            kotor: $('input[name="kotor"]:checked').val(),
-            rusak: $('input[name="rusak"]:checked').val(),
-            sesuai_std: $('input[name="sesuai_std"]:checked').val(),
-            lain_lain: $('input[name="lain-lain"]').val(),
-            berair: $('input[name="berair"]:checked').val(),
-            basah: $('input[name="basah"]:checked').val(),
-            campuran: $('input[name="campuran"]:checked').val(),
-        };
-
-        $.ajax({
-            url: "{{url('/foreman/sampling/edit/fisik-kemasan')}}/" + formData.id,
-            method: 'POST',
-            data: formData,
-            success: function(response) {
-                $('#editModalKemasan').modal('hide');
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: 'Data dokumen berhasil diperbarui',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    location.reload();
-                });
-            },
-            error: function(xhr) {
-                let msg = 'Terjadi kesalahan saat menyimpan data';
-                if (xhr.responseJSON?.errors) {
-                    msg = Object.values(xhr.responseJSON.errors).flat().join('\n');
-                }
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal!',
-                    text: msg
-                });
-            }
-        });
-    });
-
-    $('#editMobilForm').on('submit', function(e) {
-        e.preventDefault();
-
-        let formData = {
-            _token: $('meta[name="csrf-token"]').attr('content'),
-            _method: 'POST',
-            id: $('input[name="id"]').val(),
-            bersih: $('input[name="bersih"]:checked').val(),
-            kering: $('input[name="kering"]:checked').val(),
-            benda_asing: $('input[name="benda_asing"]:checked').val(),
-            cacat: $('input[name="cacat"]:checked').val(),
-            segel: $('input[name="segel"]:checked').val(),
-            berbau: $('input[name="berbau"]:checked').val()
-        };
-
-        $.ajax({
-            url: "{{url('/foreman/sampling/edit/kondisi-mobil')}}/" + formData.id,
-            method: 'POST',
-            data: formData,
-            success: function(response) {
-                $('#editModalMobil').modal('hide');
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: 'Data dokumen berhasil diperbarui',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    location.reload();
-                });
-            },
-            error: function(xhr) {
-                let msg = 'Terjadi kesalahan saat menyimpan data';
-                if (xhr.responseJSON?.errors) {
-                    msg = Object.values(xhr.responseJSON.errors).flat().join('\n');
-                }
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal!',
-                    text: msg
-                });
-            }
-        });
-    });
-
-    $('#editRawForm').on('submit', function(e) {
-        e.preventDefault();
-
-        let formData = {
-            _token: $('meta[name="csrf-token"]').attr('content'),
-            _method: 'POST',
-            id: $('input[name="id"]').val(),
-            leleh: $('input[name="leleh"]:checked').val(),
-            warna_std: $('input[name="warna_std"]:checked').val(),
-            campuran: $('input[name="campuran_raw"]:checked').val(),
-            aroma_std: $('input[name="aroma_std"]:checked').val(),
-            sesuai_std: $('input[name="sesuai_std_raw"]:checked').val(),
-
-        };
-
-        $.ajax({
-            url: "{{url('/foreman/sampling/edit/fisik-raw')}}/" + formData.id,
-            method: 'POST',
-            data: formData,
-            success: function(response) {
-                $('#editModalRaw').modal('hide');
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: 'Data dokumen berhasil diperbarui',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    location.reload();
-                });
-            },
-            error: function(xhr) {
-                let msg = 'Terjadi kesalahan saat menyimpan data';
-                if (xhr.responseJSON?.errors) {
-                    msg = Object.values(xhr.responseJSON.errors).flat().join('\n');
-                }
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal!',
-                    text: msg
-                });
-            }
-        });
-    });
-
-
-    $(document).ready(function() {
-        // Tampilkan atau sembunyikan input tambahan
-        $('form.form-sampling input[type=radio]').on('change', function() {
-            const parent = $(this).closest('.mb-3');
-            const wrapper = parent.find('.zak-input-wrapper');
-            const value = $(this).val();
-            const name = $(this).attr('name'); // ambil nama input (misalnya: sesuai_std, kotor, dll)
-
-            // Default hide dulu
-            wrapper.hide();
-            wrapper.find('.zak-qty-input').val('');
-
-            if (name === 'sesuai_std') {
-                // KHUSUS untuk Sesuai STD
-                if (value === 'no') {
-                    wrapper.show();
-                }
-            } else {
-                // Untuk field lain
-                if (value === 'yes') {
-                    wrapper.show();
-                }
-            }
+            $('#disposisi').val(currentDisposisi);
+            $('#disposisi_id').val(id); // hidden input
+            $('#updateDisposisiModal').modal('show');
         });
 
-        $('.modal').on('hidden.bs.modal', function() {
-            $('body').removeClass('modal-open');
-            $('.modal-backdrop').remove();
-        });
-
-
-        // Fungsi untuk memproses value radio sebelum submit
-        function prepareRadioValues(form) {
-            form.find('.mb-3').each(function() {
-                const parent = $(this);
-                const radio = parent.find('input[type=radio]:checked');
-                const zakInput = parent.find('.zak-qty-input').val()?.trim();
-
-                if (radio.val() === 'yes' && zakInput) {
-                    radio.val(`no, karena ${zakInput}`);
-                }
-            });
-        }
-
-        $('#form-kondisi-mobil').on('submit', function(e) {
+        // Submit form update disposisi
+        $('#formUpdateDisposisi').on('submit', function(e) {
             e.preventDefault();
 
-            const form = $(this);
-            prepareRadioValues(form);
-            let data = form.serialize();
+            const id = $('#disposisi_id').val();
+            const url = updateDisposisiUrlTemplate.replace('__ID__', id);
+            const data = $(this).serialize();
+
+            $.post(url, data, function(res) {
+                $('#updateDisposisiModal').modal('hide');
+                Swal.fire('Sukses', 'Disposisi berhasil diperbarui', 'success').then(() => {
+                    location.reload(); // atau update baris tanpa reload
+                });
+            }).fail(function(xhr) {
+                Swal.fire('Gagal', 'Terjadi kesalahan saat mengirim data.', 'error');
+            });
+        });
+
+        $('#editDokumenForm').on('submit', function(e) {
+            e.preventDefault();
+
+            let formData = {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                _method: 'POST',
+                id: $('input[name="id_dokumen"]').val(),
+                coa: $('input[name="coa"]:checked').val(),
+                suratjalan_vendor: $('input[name="suratjalan_vendor"]:checked').val(),
+                packing_list: $('input[name="packing_list"]:checked').val(),
+                identitas_kemasan: $('input[name="identitas_kemasan"]:checked').val(),
+                logo_halal: $('input[name="logo_halal"]:checked').val(),
+                kesesuaian_matriks_bahan: $('input[name="kesesuaian_matriks_bahan"]:checked').val()
+            };
 
             $.ajax({
-                type: 'POST',
-                url: '{{ route("sampling.kondisi_mobil.store") }}',
-                data: data,
+                url: "{{ url('/foreman/sampling/edit/dokumen') }}/" + formData.id,
+                method: 'POST',
+                data: formData,
                 success: function(response) {
+                    $('#editModalDokumen').modal('hide');
                     Swal.fire({
                         icon: 'success',
-                        title: 'Berhasil',
-                        text: response.message || 'Data berhasil disimpan!',
+                        title: 'Berhasil!',
+                        text: 'Data dokumen berhasil diperbarui',
+                        confirmButtonText: 'OK'
                     }).then(() => {
-                        $('#modalKondisiMobil').modal('hide');
-                        location.reload(); // Reload halaman untuk update data
+                        location.reload();
                     });
                 },
-                error: function(err) {
-                    console.error(err);
+                error: function(xhr) {
+                    let msg = 'Terjadi kesalahan saat menyimpan data';
+                    if (xhr.responseJSON?.errors) {
+                        msg = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                    }
                     Swal.fire({
                         icon: 'error',
-                        title: 'Gagal',
-                        text: err.responseJSON?.message || 'Terjadi kesalahan!',
+                        title: 'Gagal!',
+                        text: msg
                     });
                 }
             });
         });
 
-        $('#form-dokumen, #form-kemasan').on('submit', function(e) {
+        $('#editKemasanForm').on('submit', function(e) {
             e.preventDefault();
 
-            const form = $(this);
-            prepareRadioValues(form);
-            let data = form.serialize();
-
-            const url = form.attr('id') === 'form-dokumen' ?
-                '{{ route("sampling.dokumen.store") }}' :
-                '{{ route("sampling.fisik_kemasan.store") }}';
+            let formData = {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                _method: 'POST',
+                id: $('input[name="id_kemasan"]').val(),
+                coa: $('input[name="coa"]:checked').val(),
+                kotor: $('input[name="kotor"]:checked').val(),
+                rusak: $('input[name="rusak"]:checked').val(),
+                sesuai_std: $('input[name="sesuai_std"]:checked').val(),
+                lain_lain: $('input[name="lain-lain"]').val(),
+                berair: $('input[name="berair"]:checked').val(),
+                basah: $('input[name="basah"]:checked').val(),
+                campuran: $('input[name="campuran"]:checked').val(),
+            };
 
             $.ajax({
-                type: 'POST',
-                url: url,
-                data: data,
+                url: "{{ url('/foreman/sampling/edit/fisik-kemasan') }}/" + formData.id,
+                method: 'POST',
+                data: formData,
                 success: function(response) {
+                    $('#editModalKemasan').modal('hide');
                     Swal.fire({
                         icon: 'success',
-                        title: 'Berhasil',
-                        text: response.message || 'Data berhasil disimpan!',
+                        title: 'Berhasil!',
+                        text: 'Data dokumen berhasil diperbarui',
+                        confirmButtonText: 'OK'
                     }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function(xhr) {
+                    let msg = 'Terjadi kesalahan saat menyimpan data';
+                    if (xhr.responseJSON?.errors) {
+                        msg = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: msg
+                    });
+                }
+            });
+        });
+
+        $('#editMobilForm').on('submit', function(e) {
+            e.preventDefault();
+
+            let formData = {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                _method: 'POST',
+                id: $('input[name="id_mobil"]').val(),
+                bersih: $('input[name="bersih"]:checked').val(),
+                kering: $('input[name="kering"]:checked').val(),
+                benda_asing: $('input[name="benda_asing"]:checked').val(),
+                cacat: $('input[name="cacat"]:checked').val(),
+                segel: $('input[name="segel"]:checked').val(),
+                berbau: $('input[name="berbau"]:checked').val()
+            };
+
+            $.ajax({
+                url: "{{ url('/foreman/sampling/edit/kondisi-mobil') }}/" + formData.id,
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    $('#editModalMobil').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Data dokumen berhasil diperbarui',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function(xhr) {
+                    let msg = 'Terjadi kesalahan saat menyimpan data';
+                    if (xhr.responseJSON?.errors) {
+                        msg = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: msg
+                    });
+                }
+            });
+        });
+
+        $('#editRawForm').on('submit', function(e) {
+            e.preventDefault();
+
+            let formData = {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                _method: 'POST',
+                id: $('input[name="id_raw"]').val(),
+                leleh: $('input[name="leleh"]:checked').val(),
+                warna_std: $('input[name="warna_std"]:checked').val(),
+                campuran: $('input[name="campuran_raw"]:checked').val(),
+                aroma_std: $('input[name="aroma_std"]:checked').val(),
+                sesuai_std: $('input[name="sesuai_std_raw"]:checked').val(),
+            };
+
+            $.ajax({
+                url: "{{ url('/foreman/sampling/edit/fisik-raw') }}/" + formData.id,
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    $('#editModalRaw').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Data dokumen berhasil diperbarui',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function(xhr) {
+                    let msg = 'Terjadi kesalahan saat menyimpan data';
+                    if (xhr.responseJSON?.errors) {
+                        msg = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: msg
+                    });
+                }
+            });
+        });
+
+
+        $(document).ready(function() {
+            // Tampilkan atau sembunyikan input tambahan
+            $('form.form-sampling input[type=radio]').on('change', function() {
+                const parent = $(this).closest('.mb-3');
+                const wrapper = parent.find('.zak-input-wrapper');
+                const value = $(this).val();
+                const name = $(this).attr('name'); // ambil nama input (misalnya: sesuai_std, kotor, dll)
+
+                // Default hide dulu
+                wrapper.hide();
+                wrapper.find('.zak-qty-input').val('');
+
+                if (name === 'sesuai_std') {
+                    // KHUSUS untuk Sesuai STD
+                    if (value === 'no') {
+                        wrapper.show();
+                    }
+                } else {
+                    // Untuk field lain
+                    if (value === 'yes') {
+                        wrapper.show();
+                    }
+                }
+            });
+
+            $('.modal').on('hidden.bs.modal', function() {
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
+            });
+
+
+            // Fungsi untuk memproses value radio sebelum submit
+            function prepareRadioValues(form) {
+                form.find('.mb-3').each(function() {
+                    const parent = $(this);
+                    const radio = parent.find('input[type=radio]:checked');
+                    const zakInput = parent.find('.zak-qty-input').val()?.trim();
+
+                    if (radio.val() === 'yes' && zakInput) {
+                        radio.val(`no, karena ${zakInput}`);
+                    }
+                });
+            }
+
+            $('#form-kondisi-mobil').on('submit', function(e) {
+                e.preventDefault();
+
+                const form = $(this);
+                prepareRadioValues(form);
+                let data = form.serialize();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('sampling.kondisi_mobil.store') }}',
+                    data: data,
+                    success: function(response) {
+                        $('#modalKondisiMobil').modal('hide');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: response.message || 'Data berhasil disimpan!',
+                        }).then(() => {
+                            location.reload(); // Reload halaman untuk update data
+                        });
+                    },
+                    error: function(err) {
+                        console.error(err);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: err.responseJSON?.message || 'Terjadi kesalahan!',
+                        });
+                    }
+                });
+            });
+
+            $('#form-dokumen, #form-kemasan').on('submit', function(e) {
+                e.preventDefault();
+
+                const form = $(this);
+                prepareRadioValues(form);
+                let data = form.serialize();
+
+                const url = form.attr('id') === 'form-dokumen' ?
+                    '{{ route('sampling.dokumen.store') }}' :
+                    '{{ route('sampling.fisik_kemasan.store') }}';
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: data,
+                    success: function(response) {
                         if (form.attr('id') === 'form-dokumen') {
                             $('#modalDokumen').modal('hide');
                         } else {
                             $('#modalKemasan').modal('hide');
                         }
-                        location.reload();
-                    });
-                },
-                error: function(err) {
-                    console.error(err);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal',
-                        text: err.responseJSON?.message || 'Terjadi kesalahan!',
-                    });
-                }
-            });
-        });
-
-        $('#form-raw').on('submit', function(e) {
-            e.preventDefault();
-
-            const form = $(this);
-            prepareRadioValues(form);
-            let data = form.serialize();
-
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("sampling.fisik_raw.store") }}', // Pastikan route ini sesuai di Laravel Anda
-                data: data,
-                success: function(response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil',
-                        text: response.message || 'Data berhasil disimpan!',
-                    }).then(() => {
-                        $('#modalFisikRaw').modal('hide');
-                        location.reload(); // Reload halaman untuk update data
-                    });
-                },
-                error: function(err) {
-                    console.error(err);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal',
-                        text: err.responseJSON?.message || 'Terjadi kesalahan!',
-                    });
-                }
-            });
-        });
-
-    });
-
-
-    $(document).ready(function() {
-        var tipeInput = 'kedatangan';
-
-        $('#btnBukaModalKonfirmasi').click(function() {
-            $('#modalKonfirmasi').modal('show');
-        });
-
-        function Konfirmasi() {
-
-            $.ajax({
-                url: "{{ url('analis/rmpm/konfirmasi/' . $identitas->id) }}",
-                type: 'GET',
-                dataType: 'json',
-                success: function(response) {
-                    if (response.sampling_complete && !response.jam_analisa_exists) {
-                        tipeInput = 'analisa';
-                        $('#modalKonfirmasi').modal('show');
-                        $('#labelJam').text('Jam Analisa');
-                    } else {
-                        $('#jamInput').hide();
-                        $('#btnSimpanJam').hide();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: response.message || 'Data berhasil disimpan!',
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function(err) {
+                        console.error(err);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: err.responseJSON?.message || 'Terjadi kesalahan!',
+                        });
                     }
-
-
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error:', error);
-                }
+                });
             });
 
+            $('#form-raw').on('submit', function(e) {
+                e.preventDefault();
 
-            $('#btnSimpanJam').click(function() {
-                var jam = $('#jamInput').val();
+                const form = $(this);
+                prepareRadioValues(form);
+                let data = form.serialize();
 
                 $.ajax({
-                    url: "{{ url('analis/rmpm/simpan/konfirmasi/' . $identitas->id) }}",
                     type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        tipe: tipeInput,
-                        jam: jam,
-                        _token: '{{ csrf_token() }}' // jangan lupa CSRF token
-                    },
+                    url: '{{ route('sampling.fisik_raw.store') }}', // Pastikan route ini sesuai di Laravel Anda
+                    data: data,
                     success: function(response) {
-                        console.log('Response simpan:', response);
-                        $('#statusMessage').show().text(response.message);
+                        $('#modalFisikRaw').modal('hide');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: response.message || 'Data berhasil disimpan!',
+                        }).then(() => {
+                            location.reload(); // Reload halaman untuk update data
+                        });
+                    },
+                    error: function(err) {
+                        console.error(err);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: err.responseJSON?.message || 'Terjadi kesalahan!',
+                        });
+                    }
+                });
+            });
 
-                        // Kalau baru input kedatangan, sekarang lanjut analisa
-                        if (tipeInput === 'kedatangan') {
+        });
+
+
+        $(document).ready(function() {
+            var tipeInput = 'kedatangan';
+
+            $('#btnBukaModalKonfirmasi').click(function() {
+                $('#modalKonfirmasi').modal('show');
+            });
+
+            function Konfirmasi() {
+                $.ajax({
+                    url: "{{ url('analis/rmpm/konfirmasi/' . $identitas->id) }}",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.sampling_complete && !response.jam_analisa_exists) {
                             tipeInput = 'analisa';
+                            $('#modalKonfirmasi').modal('show');
                             $('#labelJam').text('Jam Analisa');
-                            $('#jamInput').val(''); // kosongkan input
                         } else {
-                            // Kalau sudah analisa, close modal
-                            $('#modalKonfirmasi').modal('hide');
+                            $('#labelJam').hide();
+                            $('#jamInput').hide();
+                            $('#btnSimpanJam').hide();
+                            $('#pesanRequiredSampling').show();
                         }
-                        location.reload();
                     },
                     error: function(xhr, status, error) {
                         console.error('Error:', error);
                     }
                 });
-            });
-        }
 
-        // Update setiap detik
-        Konfirmasi();
-    });
 
-    document.getElementById('downloadBtn').addEventListener('click', function() {
-        var element = document.getElementById('demo');
+                $('#btnSimpanJam').click(function() {
+                    var jam = $('#jamInput').val();
 
-        var opt = {
-            margin: 0.5,
-            filename: 'data-kedatangan.pdf',
-            image: {
-                type: 'jpeg',
-                quality: 0.98
-            },
-            html2canvas: {
-                scale: 1
-            },
-            jsPDF: {
-                unit: 'in',
-                format: 'letter',
-                orientation: 'portrait'
+                    $.ajax({
+                        url: "{{ url('analis/rmpm/simpan/konfirmasi/' . $identitas->id) }}",
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            tipe: tipeInput,
+                            jam: jam,
+                            _token: '{{ csrf_token() }}' // jangan lupa CSRF token
+                        },
+                        success: function(response) {
+                            console.log('Response simpan:', response);
+                            $('#statusMessage').show().text(response.message);
+
+                            // Kalau baru input kedatangan, sekarang lanjut analisa
+                            if (tipeInput === 'kedatangan') {
+                                tipeInput = 'analisa';
+                                $('#labelJam').text('Jam Analisa');
+                                $('#jamInput').val(''); // kosongkan input
+                            } else {
+                                $('#modalKonfirmasi').modal('hide');
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil',
+                                    text: response.message || 'Data berhasil disimpan!',
+                                }).then(() => {
+                                    location
+                                        .reload(); // Reload halaman untuk update data
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error:', error);
+                        }
+                    });
+                });
             }
-        };
 
-        html2pdf().set(opt).from(element).save();
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-
-
-
-
-        const samplingButtons = document.querySelectorAll('.sampling-option');
-
-        samplingButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const samplingType = this.getAttribute('data-sampling');
-
-                setTimeout(() => {
-                    let modalId = '';
-
-                    switch (samplingType) {
-                        case 'kondisi_mobil':
-                            modalId = 'modalKondisiMobil';
-                            break;
-                        case 'kondisi_dokumen':
-                            modalId = 'modalDokumen';
-                            break;
-                        case 'kondisi_kemasan':
-                            modalId = 'modalKemasan';
-                            break;
-                        case 'kondisi_raw':
-                            modalId = 'modalRaw';
-                            break;
-                    }
-
-                    if (modalId) {
-                        const modal = new bootstrap.Modal(document.getElementById(modalId));
-                        modal.show();
-                    }
-                }, 500);
-            });
+            // Update setiap detik
+            Konfirmasi();
         });
 
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            var element = document.getElementById('demo');
 
-    });
-</script>
+            var opt = {
+                margin: 0.5,
+                filename: 'data-kedatangan.pdf',
+                image: {
+                    type: 'jpeg',
+                    quality: 0.98
+                },
+                html2canvas: {
+                    scale: 1
+                },
+                jsPDF: {
+                    unit: 'in',
+                    format: 'letter',
+                    orientation: 'portrait'
+                }
+            };
 
-<script>
-    const formContent = $('#form-analisa-content');
-    let jenisGula = $('#jenis_gula').val();
-
-    // Initialize when document is ready
-    $(document).ready(function() {
-        // Event handlers setup
-        setupEventHandlers();
-    });
-
-    function setupEventHandlers() {
-        // Image compression handler
-        $(document).on('change', 'input[name="attachment"]', handleImageCompression);
-
-        // Input formatting handlers
-        $(document).on('input', '.decimal-only', formatDecimalInput);
-        $(document).on('input', '.kapital-case', formatCapitalCase);
-
-        // Dynamic crystal test handling
-        $(document).on('change', '#select-uji-kristal', handleCrystalTestChange);
-
-        // Enter key navigation
-        $(document).on('keydown', 'input', handleEnterKey);
-
-        // Modal handlers
-        $('#modalAnalisa')
-            .on('show.bs.modal', initializeModal)
-            .on('shown.bs.modal', function() {
-                // Load draft setelah modal sepenuhnya terbuka
-                setTimeout(loadDraft, 100);
-            });
-
-        // Form submission
-        $('#formAnalisa').on('submit', handleFormSubmit);
-
-        // Next button
-        $('#nextBtn').click(handleNextButton);
-
-        // Auto-save changes
-        $(document).on('input change', '#form-analisa-content input, #form-analisa-content select, #form-analisa-content textarea', function() {
-            saveDraft();
+            html2pdf().set(opt).from(element).save();
         });
-    }
 
-    async function handleImageCompression(event) {
-        const file = event.target.files[0];
-        if (!file) return;
+        document.addEventListener('DOMContentLoaded', function() {
+            const samplingButtons = document.querySelectorAll('.sampling-option');
 
-        if (file.size <= 2 * 1024 * 1024) return;
+            samplingButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const samplingType = this.getAttribute('data-sampling');
 
-        const options = {
-            maxSizeMB: 2,
-            maxWidthOrHeight: 1920,
-            useWebWorker: true
-        };
+                    setTimeout(() => {
+                        let modalId = '';
 
-        try {
-            const compressedFile = await imageCompression(file, options);
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(compressedFile);
-            event.target.files = dataTransfer.files;
-            console.log('Gambar berhasil dikompres:', compressedFile.size / 1024, 'KB');
-        } catch (error) {
-            console.error('Error saat kompres gambar:', error);
-        }
-    }
+                        switch (samplingType) {
+                            case 'kondisi_mobil':
+                                modalId = 'modalKondisiMobil';
+                                break;
+                            case 'kondisi_dokumen':
+                                modalId = 'modalDokumen';
+                                break;
+                            case 'kondisi_kemasan':
+                                modalId = 'modalKemasan';
+                                break;
+                            case 'kondisi_raw':
+                                modalId = 'modalRaw';
+                                break;
+                        }
 
-    function formatDecimalInput() {
-        let val = $(this).val();
-        val = val.replace(/[^0-9,]/g, '');
-        val = val.replace(/(,.*),/, '$1');
-        $(this).val(val);
-    }
-
-    function formatCapitalCase() {
-        let value = $(this).val().toUpperCase().replace(/[^A-Z\s]/g, '');
-        $(this).val(value);
-    }
-
-    function handleCrystalTestChange() {
-        const value = $(this).val();
-        console.log('Crystal test changed to:', value);
-
-        // Hide all sections first
-        $('.attachment-wrapper, .disposisi-wrapper, .disposisi-wrapper-negatif, .disposisi').hide();
-
-        if (value === 'negatif') {
-            console.log('Showing disposisi-wrapper-negatif');
-            $('.disposisi-wrapper-negatif').show();
-
-            // Auto-set disposisi to Release for negatif
-            $('.disposisi-wrapper-negatif select[name="disposisi"]').val('Release');
-
-            // Trigger save draft
-            saveDraft();
-
-        } else if (value === 'positif') {
-            console.log('Showing attachment-wrapper');
-            $('.attachment-wrapper').show();
-
-            // Clear disposisi for positif (backend will handle)
-            $('select[name="disposisi"]').val('');
-
-            // Trigger save draft
-            saveDraft();
-
-        } else {
-            console.log('Showing default disposisi');
-            $('.disposisi').show();
-
-            // Clear disposisi when no selection
-            $('.disposisi select[name="disposisi"]').val('');
-
-            // Trigger save draft
-            saveDraft();
-        }
-    }
-
-    function handleEnterKey(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const inputs = $('input:visible');
-            const currentIndex = inputs.index(this);
-            const nextInput = inputs.get(currentIndex + 1);
-            if (nextInput) nextInput.focus();
-        }
-    }
-
-    function initializeModal() {
-        formContent.html('');
-        $('#analisa-type-select, #analisa-jumlah').hide();
-        $(' #nextBtn').show().text('Berikutnya');
-
-        const draft = localStorage.getItem('analisaDraft');
-        console.log('Draft analisa:', draft);
-
-        if (draft) {
-            const draftData = JSON.parse(draft);
-
-            // Check if there's actual analysis data (not just analisaType and jumlahData)
-            const hasOtherData = Object.keys(draftData).some(key => {
-                const cleanKey = key.replace(/\[\]$/, '');
-                // Skip analisaType and jumlahData
-                if (['analisaType', 'jumlahData'].includes(cleanKey)) {
-                    return false;
-                }
-
-                // Check if this field has meaningful data
-                const value = draftData[key];
-                if (Array.isArray(value)) {
-                    // For arrays, check if at least one element is not empty
-                    return value.some(item => item && item.toString().trim() !== '');
-                } else {
-                    // For non-arrays, check if not empty
-                    return value && value.toString().trim() !== '';
-                }
+                        if (modalId) {
+                            const modal = new bootstrap.Modal(document.getElementById(
+                                modalId));
+                            modal.show();
+                        }
+                    }, 500);
+                });
             });
 
-            console.log('Has other data:', hasOtherData);
-            console.log('Draft data keys:', Object.keys(draftData));
 
-            if (hasOtherData && draftData.jumlahData && draftData.analisaType) {
-                console.log('Loading existing draft data...');
+        });
+    </script>
 
-                // Update jenisGula if available in draft
-                if (draftData.jenisGula) {
-                    jenisGula = draftData.jenisGula;
+    <script>
+        const formContent = $('#form-analisa-content');
+        let jenisGula = $('#jenis_gula').val();
+
+        // Initialize when document is ready
+        $(document).ready(function() {
+            // Event handlers setup
+            setupEventHandlers();
+        });
+
+        function setupEventHandlers() {
+            // Image compression handler
+            $(document).on('change', 'input[name="attachment"]', handleImageCompression);
+
+            // Input formatting handlers
+            $(document).on('input', '.decimal-only', formatDecimalInput);
+            $(document).on('input', '.kapital-case', formatCapitalCase);
+
+            // Dynamic crystal test handling
+            $(document).on('change', '#select-uji-kristal', handleCrystalTestChange);
+
+            // Enter key navigation
+            $(document).on('keydown', 'input', handleEnterKey);
+
+            // Modal handlers
+            $('#modalAnalisa')
+                .on('show.bs.modal', initializeModal)
+                .on('shown.bs.modal', function() {
+                    // Load draft setelah modal sepenuhnya terbuka
+                    setTimeout(loadDraft, 100);
+                });
+
+            // Form submission
+            $('#formAnalisa').on('submit', handleFormSubmit);
+
+            // Next button
+            $('#nextBtn').click(handleNextButton);
+
+            // Auto-save changes
+            $(document).on('input change',
+                '#form-analisa-content input, #form-analisa-content select, #form-analisa-content textarea',
+                function() {
+                    saveDraft();
+                });
+        }
+
+        async function handleImageCompression(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.size <= 2 * 1024 * 1024) return;
+
+            const options = {
+                maxSizeMB: 2,
+                maxWidthOrHeight: 1920,
+                useWebWorker: true
+            };
+
+            try {
+                const compressedFile = await imageCompression(file, options);
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(compressedFile);
+                event.target.files = dataTransfer.files;
+                console.log('Gambar berhasil dikompres:', compressedFile.size / 1024, 'KB');
+            } catch (error) {
+                console.error('Error saat kompres gambar:', error);
+            }
+        }
+
+        function formatDecimalInput() {
+            let val = $(this).val();
+            val = val.replace(/[^0-9,]/g, '');
+            val = val.replace(/(,.*),/, '$1');
+            $(this).val(val);
+        }
+
+        function formatCapitalCase() {
+            let value = $(this).val().toUpperCase().replace(/[^A-Z\s]/g, '');
+            $(this).val(value);
+        }
+
+        function handleCrystalTestChange() {
+            const value = $(this).val();
+            console.log('Crystal test changed to:', value);
+
+            // Hide all sections first
+            $('.attachment-wrapper, .disposisi-wrapper, .disposisi-wrapper-negatif, .disposisi').hide();
+
+            if (value === 'negatif') {
+                console.log('Showing disposisi-wrapper-negatif');
+                $('.disposisi-wrapper-negatif').show();
+
+                // Auto-set disposisi to Release for negatif
+                $('.disposisi-wrapper-negatif select[name="disposisi"]').val('Release');
+
+                // Trigger save draft
+                saveDraft();
+
+            } else if (value === 'positif') {
+                console.log('Showing attachment-wrapper');
+                $('.attachment-wrapper').show();
+
+                // Clear disposisi for positif (backend will handle)
+                $('select[name="disposisi"]').val('');
+
+                // Trigger save draft
+                saveDraft();
+
+            } else {
+                console.log('Showing default disposisi');
+                $('.disposisi').show();
+
+                // Clear disposisi when no selection
+                $('.disposisi select[name="disposisi"]').val('');
+
+                // Trigger save draft
+                saveDraft();
+            }
+        }
+
+        function handleEnterKey(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const inputs = $('input:visible');
+                const currentIndex = inputs.index(this);
+                const nextInput = inputs.get(currentIndex + 1);
+                if (nextInput) nextInput.focus();
+            }
+        }
+
+        function initializeModal() {
+            formContent.html('');
+            $('#analisa-type-select, #analisa-jumlah').hide();
+            $(' #nextBtn').show().text('Berikutnya');
+
+            const draft = localStorage.getItem('analisaDraft');
+            console.log('Draft analisa:', draft);
+
+            if (draft) {
+                const draftData = JSON.parse(draft);
+
+                // Check if there's actual analysis data (not just analisaType and jumlahData)
+                const hasOtherData = Object.keys(draftData).some(key => {
+                    const cleanKey = key.replace(/\[\]$/, '');
+                    // Skip analisaType and jumlahData
+                    if (['analisaType', 'jumlahData'].includes(cleanKey)) {
+                        return false;
+                    }
+
+                    // Check if this field has meaningful data
+                    const value = draftData[key];
+                    if (Array.isArray(value)) {
+                        // For arrays, check if at least one element is not empty
+                        return value.some(item => item && item.toString().trim() !== '');
+                    } else {
+                        // For non-arrays, check if not empty
+                        return value && value.toString().trim() !== '';
+                    }
+                });
+
+                console.log('Has other data:', hasOtherData);
+                console.log('Draft data keys:', Object.keys(draftData));
+
+                if (hasOtherData && draftData.jumlahData && draftData.analisaType) {
+                    console.log('Loading existing draft data...');
+
+                    // Update jenisGula if available in draft
+                    if (draftData.jenisGula) {
+                        jenisGula = draftData.jenisGula;
+                    }
+
+                    const jumlahData = parseInt(draftData.jumlahData);
+                    const analisaType = draftData.analisaType;
+
+                    // Render analysis fields immediately
+                    renderAnalysisFields(jumlahData, analisaType);
+
+                    // Hide the navigation buttons since we're going directly to the analysis form
+                    $('#prevBtn, #nextBtn').hide();
+
+                    return; // Exit early, loadDraft will be called in shown.bs.modal
+                }
+            }
+
+            // Fallback - show initial selection screens
+            if (jenisGula === 'Gula Kelapa' || jenisGula === 'Gula Tebu') {
+                $('#analisa-type-select').show();
+            } else if (jenisGula === 'Gula' || jenisGula === 'Garam') {
+                $('#analisa-jumlah').show();
+            } else {
+                formContent.html(
+                    `<div class="alert alert-warning">Jenis gula tidak dikenali: ${jenisGula}</div>`
+                );
+                $('#prevBtn, #nextBtn').hide();
+            }
+        }
+
+        function handleNextButton() {
+            if ($('#analisa-type-select').is(':visible')) {
+                const analisaType = $('input[name="analisa_type"]:checked').val();
+                if (!analisaType) {
+                    alert('Silakan pilih jenis analisa (Short-Term / Long-Term)');
+                    return;
                 }
 
-                const jumlahData = parseInt(draftData.jumlahData);
-                const analisaType = draftData.analisaType;
+                // Jika long-term langsung render form tanpa input jumlah data
+                if (analisaType === 'long-term') {
+                    $('#analisa-type-select').hide();
+                    $('#prevBtn, #nextBtn').hide();
+                    renderAnalysisFields(1, analisaType);
+                    return;
+                }
 
-                // Render analysis fields immediately
-                renderAnalysisFields(jumlahData, analisaType);
+                // Jika short-term tampilkan input jumlah data
+                $('#analisa-type-select').hide();
+                $('#analisa-jumlah').show();
+                return;
+            }
 
-                // Hide the navigation buttons since we're going directly to the analysis form
+            if ($('#analisa-jumlah').is(':visible')) {
+                const jumlahData = parseInt($('#jumlah_data').val());
+                if (isNaN(jumlahData) || jumlahData <= 0) {
+                    alert('Masukkan jumlah data yang valid!');
+                    return;
+                }
+
+                $('#analisa-jumlah').hide();
                 $('#prevBtn, #nextBtn').hide();
 
-                return; // Exit early, loadDraft will be called in shown.bs.modal
+                const analisaType = $('input[name="analisa_type"]:checked').val();
+                renderAnalysisFields(jumlahData, analisaType);
             }
         }
 
-        // Fallback - show initial selection screens
-        if (jenisGula === 'Gula Kelapa' || jenisGula === 'Gula Tebu') {
-            $('#analisa-type-select').show();
-        } else if (jenisGula === 'Gula' || jenisGula === 'Garam') {
-            $('#analisa-jumlah').show();
-        } else {
-            formContent.html(
-                `<div class="alert alert-warning">Jenis gula tidak dikenali: ${jenisGula}</div>`
-            );
-            $('#prevBtn, #nextBtn').hide();
-        }
-    }
+        function renderAnalysisFields(jumlahData, analisaType = null) {
+            let fields = [];
 
-    function handleNextButton() {
-        if ($('#analisa-type-select').is(':visible')) {
-            const analisaType = $('input[name="analisa_type"]:checked').val();
-            if (!analisaType) {
-                alert('Silakan pilih jenis analisa (Short-Term / Long-Term)');
-                return;
-            }
-            $('#analisa-type-select').hide();
-            $('#analisa-jumlah').show();
-            return;
-        }
+            if (jenisGula === 'Gula' || jenisGula === 'Garam') {
+                fields = ['fisik', '%ka', 'kotoran', 'organo', 'warna', 'aroma', '%nacl', 'gross_weight', 'disposisi'];
+            } else {
+                if (!analisaType) {
+                    analisaType = $('input[name="analisa_type"]:checked').val();
+                }
 
-        if ($('#analisa-jumlah').is(':visible')) {
-            const jumlahData = parseInt($('#jumlah_data').val());
-            if (isNaN(jumlahData) || jumlahData <= 0) {
-                alert('Masukkan jumlah data yang valid!');
-                return;
+                if (analisaType === 'short-term') {
+                    fields = ['brix', 'ph', 'kotoran', 'ka', 'organo', 'warna', 'aroma', 'disposisi'];
+                } else if (analisaType === 'long-term') {
+                    fields = ['uji_kristal', 'attachment', 'disposisi'];
+                }
             }
 
-            $('#analisa-jumlah').hide();
-            $('#prevBtn, #nextBtn').hide();
+            let navHtml = `<ul class="nav nav-tabs nav-tabs-custom" id="analisaTab" role="tablist">`;
+            let tabContentHtml = `<div class="tab-content mt-3">`;
 
-            const analisaType = $('input[name="analisa_type"]:checked').val();
-            renderAnalysisFields(jumlahData, analisaType);
-        }
-    }
+            fields.forEach((field, idx) => {
+                const activeClass = idx === 0 ? 'active' : '';
+                const showClass = idx === 0 ? 'show active' : '';
+                const labelMap = {
+                    fisik: 'Fisik',
+                    '%ka': '%KA',
+                    kotoran: 'Kotoran',
+                    organo: 'Organo',
+                    warna: 'Warna',
+                    aroma: 'Aroma',
+                    '%nacl': '%NaCl',
+                    gross_weight: 'Gross Weight',
+                    disposisi: 'Disposisi',
+                    brix: 'Brix',
+                    ph: 'pH',
+                    ka: 'KA',
+                    uji_kristal: 'Uji Kristal',
+                    attachment: 'Lampiran'
+                };
 
-    function renderAnalysisFields(jumlahData, analisaType = null) {
-        let fields = [];
-
-        if (jenisGula === 'Gula' || jenisGula === 'Garam') {
-            fields = ['fisik', '%ka', 'kotoran', 'organo', 'warna', 'aroma', '%nacl', 'gross_weight', 'disposisi'];
-        } else {
-            // If analisaType is not provided, try to get it from the form or draft
-            if (!analisaType) {
-                analisaType = $('input[name="analisa_type"]:checked').val();
-            }
-
-            if (analisaType === 'short-term') {
-                fields = ['brix', 'ph', 'kotoran', 'ka', 'organo', 'warna', 'aroma', 'disposisi'];
-            } else if (analisaType === 'long-term') {
-                fields = ['uji_kristal', 'attachment', 'disposisi'];
-            }
-        }
-
-        let navHtml = `<ul class="nav nav-tabs" id="analisaTab" role="tablist">`;
-        let tabContentHtml = `<div class="tab-content mt-3">`;
-
-        fields.forEach((field, idx) => {
-            const activeClass = idx === 0 ? 'active' : '';
-            const showClass = idx === 0 ? 'show active' : '';
-
-            navHtml += `
+                navHtml += `
         <li class="nav-item" role="presentation">
-            <button class="nav-link ${activeClass}" id="${field}-tab" data-bs-toggle="tab" data-bs-target="#tab-${field}" type="button" role="tab">
-                ${field.toUpperCase()}
+            <button class="nav-link ${activeClass}" id="${field}-tab" data-bs-toggle="tab" data-bs-target="#tab-${field}" type="button" role="tab" aria-controls="tab-${field}" aria-selected="${idx === 0 ? 'true' : 'false'}">
+                ${labelMap[field] || field.toUpperCase()}
             </button>
         </li>`;
 
-            tabContentHtml += `
-        <div class="tab-pane fade ${showClass}" id="tab-${field}" role="tabpanel">
+                tabContentHtml += `
+        <div class="tab-pane fade ${showClass}" id="tab-${field}" role="tabpanel" aria-labelledby="${field}-tab">
             ${renderFieldInput(field, jumlahData)}
         </div>`;
-        });
+            });
 
-        navHtml += `</ul>`;
-        tabContentHtml += `</div>`;
+            navHtml += `</ul>`;
+            tabContentHtml += `</div>`;
 
-        formContent.html(navHtml + tabContentHtml);
-        console.log('Analysis fields rendered');
-    }
+            formContent.html(navHtml + tabContentHtml);
+            console.log('Analysis fields rendered');
+        }
 
-    function renderFieldInput(fieldName, count) {
-        switch (fieldName) {
-            case 'disposisi':
-                return `
-            <div class="disposisi-wrapper" style="display: none;">
-                <label>Disposisi</label>
-                <select class="form-control mb-2" name="disposisi">
+        function renderFieldInput(fieldName, count) {
+            const commonInput = (label, name, placeholder, extraClass = '') => `
+        <div class="mb-3">
+            <label class="form-label fw-medium">${label}</label>
+            <input type="text" class="form-control ${extraClass}" name="${name}" placeholder="${placeholder}">
+        </div>`;
+
+            switch (fieldName) {
+                case 'disposisi':
+                    return `
+            <div class="disposisi-wrapper" style="display:none;">
+                <label class="form-label fw-medium">Disposisi</label>
+                <select class="form-select mb-3" name="disposisi">
                     <option value="">Pilih Disposisi</option>
                     <option value="Release">Release</option>
                     <option value="Reject">Reject</option>
                 </select>
             </div>
-            <div class="disposisi-wrapper-negatif" style="display: none;">
-                <label>Disposisi</label>
-                <select class="form-control mb-2" name="disposisi">
+            <div class="disposisi-wrapper-negatif" style="display:none;">
+                <label class="form-label fw-medium">Disposisi</label>
+                <select class="form-select mb-3" name="disposisi">
                     <option value="">Pilih Disposisi</option>
                     <option value="Release">Release</option>
                 </select>
             </div>
             <div class="disposisi">
-                <label>Disposisi</label>
-                <select class="form-control mb-2" name="disposisi">
+                <label class="form-label fw-medium">Disposisi</label>
+                <select class="form-select mb-3" name="disposisi">
                     <option value="">Pilih Disposisi</option>
                     <option value="Release">Release</option>
                     <option value="Reject">Reject</option>
                 </select>
             </div>
-             <button type="submit" class="btn btn-primary mt-3">Simpan</button>
-            `;
+            <button type="submit" class="btn btn-primary w-100 mt-3">Simpan</button>`;
 
-            case 'uji_kristal':
-                return `
-            <select class="form-control mb-2" name="uji_kristal" id="select-uji-kristal">
-                <option value="">Pilih Hasil Uji</option>
-                <option value="negatif">Negatif</option>
-                <option value="positif">Positif</option>
-            </select>`;
+                case 'uji_kristal':
+                    return `
+            <div class="mb-3">
+                <label class="form-label fw-medium">Hasil Uji Kristal</label>
+                <select class="form-select" name="uji_kristal" id="select-uji-kristal">
+                    <option value="">Pilih Hasil Uji</option>
+                    <option value="negatif">Negatif</option>
+                    <option value="positif">Positif</option>
+                </select>
+            </div>`;
 
-            case 'attachment':
-                return `<div class="attachment-wrapper">
-            <label>Lampirkan Gambar</label>
-            <input type="file" class="form-control mb-2" name="attachment" accept="image/*">
-        </div>`;
+                case 'attachment':
+                    return `
+            <div class="attachment-wrapper">
+                <label class="form-label fw-medium">Lampirkan Gambar</label>
+                <input type="file" class="form-control" name="attachment" accept="image/*">
+                <div class="form-text">Format: JPG, PNG, max 2 MB</div>
+            </div>`;
 
-            case 'organo':
-            case 'warna':
-            case 'aroma':
-                let html = '';
-                for (let i = 1; i <= count; i++) {
-                    html += `<label>${i}</label>
-                <input type="text" class="form-control kapital-case" name="${fieldName}[]" placeholder="${fieldName} ke-${i}">`;
-                }
-                return html;
+                case 'organo':
+                case 'warna':
+                case 'aroma':
+                    let html = '<div class="row g-2">';
+                    for (let i = 1; i <= count; i++) {
+                        html += `
+                <div class="col-md-6 col-lg-4">
+                    <label class="form-label fw-medium">Sampel ${i}</label>
+                    <input type="text" class="form-control kapital-case" name="${fieldName}[]" placeholder="${fieldName} ke-${i}">
+                </div>`;
+                    }
+                    html += '</div>';
+                    return html;
 
-            default:
-                let defaultHtml = '';
-                for (let i = 1; i <= count; i++) {
-                    defaultHtml += `<label>${i}</label>
-                <input type="text" class="form-control decimal-only" name="${fieldName}[]" placeholder="${fieldName} ke-${i}">`;
-                }
-                return defaultHtml;
-        }
-    }
-
-    function saveDraft() {
-        let draftData = {};
-
-        // Get existing draft first to preserve analisaType and jumlahData
-        const existingDraft = localStorage.getItem('analisaDraft');
-        if (existingDraft) {
-            try {
-                const existing = JSON.parse(existingDraft);
-                // Preserve important meta fields
-                if (existing.analisaType) draftData.analisaType = existing.analisaType;
-                if (existing.jumlahData) draftData.jumlahData = existing.jumlahData;
-                if (existing.jenisGula) draftData.jenisGula = existing.jenisGula;
-            } catch (e) {
-                console.log('Error parsing existing draft:', e);
+                default:
+                    let defaultHtml = '<div class="row g-2">';
+                    for (let i = 1; i <= count; i++) {
+                        defaultHtml += `
+                <div class="col-md-6 col-lg-4">
+                    <label class="form-label fw-medium">Sampel ${i}</label>
+                    <input type="text" class="form-control decimal-only" name="${fieldName}[]" placeholder="${fieldName} ke-${i}">
+                </div>`;
+                    }
+                    defaultHtml += '</div>';
+                    return defaultHtml;
             }
         }
 
-        // Collect current form data
-        $('#form-analisa-content').find('input, select, textarea').each(function() {
-            let name = $(this).attr('name');
-            let value = $(this).val();
+        function saveDraft() {
+            let draftData = {};
 
-            if (name && value !== undefined) {
-                if (name.endsWith('[]')) {
-                    if (!draftData[name]) draftData[name] = [];
-                    draftData[name].push(value);
-                } else {
-                    draftData[name] = value;
+            // Get existing draft first to preserve analisaType and jumlahData
+            const existingDraft = localStorage.getItem('analisaDraft');
+            if (existingDraft) {
+                try {
+                    const existing = JSON.parse(existingDraft);
+                    // Preserve important meta fields
+                    if (existing.analisaType) draftData.analisaType = existing.analisaType;
+                    if (existing.jumlahData) draftData.jumlahData = existing.jumlahData;
+                    if (existing.jenisGula) draftData.jenisGula = existing.jenisGula;
+                } catch (e) {
+                    console.log('Error parsing existing draft:', e);
                 }
             }
-        });
 
-        // Try to get analysis type and jumlah data from current form state
-        const analisaTypeFromForm = $('input[name="analisa_type"]:checked').val();
-        const jumlahDataFromForm = $('#jumlah_data').val();
+            // Collect current form data
+            $('#form-analisa-content').find('input, select, textarea').each(function() {
+                let name = $(this).attr('name');
+                let value = $(this).val();
 
-        // Update with current form values if available
-        if (analisaTypeFromForm) draftData.analisaType = analisaTypeFromForm;
-        if (jumlahDataFromForm) draftData.jumlahData = jumlahDataFromForm;
+                if (name && value !== undefined) {
+                    if (name.endsWith('[]')) {
+                        if (!draftData[name]) draftData[name] = [];
+                        draftData[name].push(value);
+                    } else {
+                        draftData[name] = value;
+                    }
+                }
+            });
 
-        // Always save jenisGula for context
-        draftData.jenisGula = jenisGula;
+            // Try to get analysis type and jumlah data from current form state
+            const analisaTypeFromForm = $('input[name="analisa_type"]:checked').val();
+            const jumlahDataFromForm = $('#jumlah_data').val();
 
-        localStorage.setItem('analisaDraft', JSON.stringify(draftData));
-        console.log('Draft saved:', draftData);
-    }
+            // Update with current form values if available
+            if (analisaTypeFromForm) draftData.analisaType = analisaTypeFromForm;
+            if (jumlahDataFromForm) draftData.jumlahData = jumlahDataFromForm;
 
-    function loadDraft(draftData = null) {
-        if (!draftData) {
-            const draft = localStorage.getItem('analisaDraft');
-            if (!draft) return;
-            draftData = JSON.parse(draft);
+            // Always save jenisGula for context
+            draftData.jenisGula = jenisGula;
+
+            localStorage.setItem('analisaDraft', JSON.stringify(draftData));
+            console.log('Draft saved:', draftData);
         }
 
-        console.log('Loading draft:', draftData);
-
-        // Load form values
-        for (const name in draftData) {
-            if (['analisaType', 'jumlahData', 'jenisGula'].includes(name)) {
-                continue; // Skip meta fields
+        function loadDraft(draftData = null) {
+            if (!draftData) {
+                const draft = localStorage.getItem('analisaDraft');
+                if (!draft) return;
+                draftData = JSON.parse(draft);
             }
 
-            const elements = $(`[name="${name}"]`);
-            if (elements.length > 0) {
-                if (Array.isArray(draftData[name])) {
-                    elements.each(function(index) {
-                        if (draftData[name][index] !== undefined) {
-                            $(this).val(draftData[name][index]);
-                        }
-                    });
-                } else {
-                    elements.val(draftData[name]);
+            console.log('Loading draft:', draftData);
+
+            // Load form values
+            for (const name in draftData) {
+                if (['analisaType', 'jumlahData', 'jenisGula'].includes(name)) {
+                    continue; // Skip meta fields
+                }
+
+                const elements = $(`[name="${name}"]`);
+                if (elements.length > 0) {
+                    if (Array.isArray(draftData[name])) {
+                        elements.each(function(index) {
+                            if (draftData[name][index] !== undefined) {
+                                $(this).val(draftData[name][index]);
+                            }
+                        });
+                    } else {
+                        elements.val(draftData[name]);
+                    }
                 }
             }
-        }
 
-        // Handle crystal test change if uji_kristal exists
-        if (draftData.uji_kristal) {
+            // Handle crystal test change if uji_kristal exists
+            if (draftData.uji_kristal) {
+                setTimeout(() => {
+                    $('#select-uji-kristal').trigger('change');
+                }, 100);
+            }
+
+            // Show the first tab (usually BRIX for short-term)
             setTimeout(() => {
-                $('#select-uji-kristal').trigger('change');
-            }, 100);
-        }
-
-        // Show the first tab (usually BRIX for short-term)
-        setTimeout(() => {
-            const firstTab = $('.nav-tabs a').first();
-            if (firstTab.length) {
-                firstTab.tab('show');
-            }
-        }, 200);
-
-        console.log('Draft loaded successfully');
-    }
-
-    function handleFormSubmit(e) {
-        e.preventDefault();
-
-        // Convert comma decimals to dots
-        $('.decimal-only').each(function() {
-            const val = $(this).val().replace(',', '.');
-            $(this).val(val);
-        });
-
-        const jenis = $('#jenis_gula').val();
-
-        // Get analisaType from multiple sources - prioritas dari draft
-        let analisaType = null;
-
-        // 1. Try to get from checked radio button
-        analisaType = $('input[name="analisa_type"]:checked').val();
-
-        // 2. If not found, try to get from localStorage draft
-        if (!analisaType) {
-            const draft = localStorage.getItem('analisaDraft');
-            if (draft) {
-                const draftData = JSON.parse(draft);
-                analisaType = draftData.analisaType;
-            }
-        }
-
-        console.log('jenis:', jenis);
-        console.log('analisaType:', analisaType);
-
-        let url = '';
-
-        // Create FormData FIRST
-        const token = $('meta[name="csrf-token"]').attr('content');
-        const formData = new FormData(this);
-        formData.append('_token', token);
-
-        // Add analisaType to formData if available
-        if (analisaType) {
-            formData.append('analisa_type', analisaType);
-        }
-
-        if (jenis === 'Gula Kelapa' || jenis === 'Gula Tebu') {
-            if (analisaType === 'long-term') {
-                url = '/analis/analisa/long-term';
-
-                const kristalVal = $('select[name="uji_kristal"]').val();
-                console.log('kristalVal:', kristalVal);
-
-                // Validasi wajib uji_kristal untuk long-term
-                if (!kristalVal) {
-                    alert('Silakan pilih hasil uji kristal.');
-                    return;
+                const firstTab = $('.nav-tabs a').first();
+                if (firstTab.length) {
+                    firstTab.tab('show');
                 }
+            }, 200);
 
-                // Jika uji kristal negatif, disposisi wajib Release dan attachment dihapus
-                if (kristalVal === 'negatif') {
-                    console.log('Kristal negatif - setting disposisi to Release');
+            console.log('Draft loaded successfully');
+        }
 
-                    // Set disposisi ke Release di form dan formData
-                    $('.disposisi-wrapper-negatif select[name="disposisi"]').val('Release');
-                    formData.set('disposisi', 'Release');
+        function handleFormSubmit(e) {
+            e.preventDefault();
 
-                    // Hapus attachment dari formData jika ada
-                    formData.delete('attachment');
+            // Convert comma decimals to dots
+            $('.decimal-only').each(function() {
+                const val = $(this).val().replace(',', '.');
+                $(this).val(val);
+            });
+
+            const jenis = $('#jenis_gula').val();
+
+            // Get analisaType from multiple sources - prioritas dari draft
+            let analisaType = null;
+
+            // 1. Try to get from checked radio button
+            analisaType = $('input[name="analisa_type"]:checked').val();
+
+            // 2. If not found, try to get from localStorage draft
+            if (!analisaType) {
+                const draft = localStorage.getItem('analisaDraft');
+                if (draft) {
+                    const draftData = JSON.parse(draft);
+                    analisaType = draftData.analisaType;
                 }
+            }
 
-                // Jika positif, wajib lampirkan gambar dan hapus disposisi (biar backend handle)
-                if (kristalVal === 'positif') {
-                    console.log('Kristal positif - checking attachment');
+            console.log('jenis:', jenis);
+            console.log('analisaType:', analisaType);
 
-                    const attachment = $('input[name="attachment"]')[0];
-                    if (!attachment || !attachment.files || !attachment.files[0]) {
-                        alert('Silakan lampirkan gambar karena hasil uji kristal positif.');
+            let url = '';
+
+            // Create FormData FIRST
+            const token = $('meta[name="csrf-token"]').attr('content');
+            const formData = new FormData(this);
+            formData.append('_token', token);
+
+            // Add analisaType to formData if available
+            if (analisaType) {
+                formData.append('analisa_type', analisaType);
+            }
+
+            if (jenis === 'Gula Kelapa' || jenis === 'Gula Tebu') {
+                if (analisaType === 'long-term') {
+                    url = '/analis/analisa/long-term';
+
+                    const kristalVal = $('select[name="uji_kristal"]').val();
+                    console.log('kristalVal:', kristalVal);
+
+                    // Validasi wajib uji_kristal untuk long-term
+                    if (!kristalVal) {
+                        alert('Silakan pilih hasil uji kristal.');
                         return;
                     }
 
-                    // Hapus disposisi dari formData (biar backend yang handle)
-                    formData.delete('disposisi');
-                    console.log('Attachment found, disposisi removed from formData');
+                    // Jika uji kristal negatif, disposisi wajib Release dan attachment dihapus
+                    if (kristalVal === 'negatif') {
+                        console.log('Kristal negatif - setting disposisi to Release');
+
+                        // Set disposisi ke Release di form dan formData
+                        $('.disposisi-wrapper-negatif select[name="disposisi"]').val('Release');
+                        formData.set('disposisi', 'Release');
+
+                        // Hapus attachment dari formData jika ada
+                        formData.delete('attachment');
+                    }
+
+                    // Jika positif, wajib lampirkan gambar dan hapus disposisi (biar backend handle)
+                    if (kristalVal === 'positif') {
+                        console.log('Kristal positif - checking attachment');
+
+                        const attachment = $('input[name="attachment"]')[0];
+                        if (!attachment || !attachment.files || !attachment.files[0]) {
+                            alert('Silakan lampirkan gambar karena hasil uji kristal positif.');
+                            return;
+                        }
+
+                        // Hapus disposisi dari formData (biar backend yang handle)
+                        formData.delete('disposisi');
+                        console.log('Attachment found, disposisi removed from formData');
+                    }
+
+                } else if (analisaType === 'short-term') {
+                    // short-term
+                    url = '/analis/analisa/short-term';
+
+                    // Ambil disposisi dari form - cari yang visible/active untuk short-term
+                    const disposisiVal = $('.disposisi select[name="disposisi"]:visible').val();
+                    console.log('Short-term disposisiVal:', disposisiVal);
+
+                    if (!disposisiVal || disposisiVal.trim() === '') {
+                        alert('Silakan pilih disposisi.');
+                        return;
+                    }
+
+                } else {
+                    alert('Jenis analisa tidak diketahui. Silakan refresh halaman dan pilih ulang.');
+                    return;
                 }
+            } else if (jenis === 'Gula' || jenis === 'Garam') {
+                url = '/analis/analisa/garam-gula';
 
-            } else if (analisaType === 'short-term') {
-                // short-term
-                url = '/analis/analisa/short-term';
-
-                // Ambil disposisi dari form - cari yang visible/active untuk short-term
+                // Untuk Gula/Garam, cek disposisi - cari yang visible/active
                 const disposisiVal = $('.disposisi select[name="disposisi"]:visible').val();
-                console.log('Short-term disposisiVal:', disposisiVal);
+                console.log('Gula/Garam disposisiVal:', disposisiVal);
 
                 if (!disposisiVal || disposisiVal.trim() === '') {
                     alert('Silakan pilih disposisi.');
                     return;
                 }
-
             } else {
-                alert('Jenis analisa tidak diketahui. Silakan refresh halaman dan pilih ulang.');
+                alert('Jenis gula tidak dikenali: ' + jenis);
                 return;
             }
-        } else if (jenis === 'Gula' || jenis === 'Garam') {
-            url = '/analis/analisa/garam-gula';
 
-            // Untuk Gula/Garam, cek disposisi - cari yang visible/active
-            const disposisiVal = $('.disposisi select[name="disposisi"]:visible').val();
-            console.log('Gula/Garam disposisiVal:', disposisiVal);
+            // Log formData contents for debugging
+            console.log('FormData contents:');
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
+            }
 
-            if (!disposisiVal || disposisiVal.trim() === '') {
-                alert('Silakan pilih disposisi.');
+            // Build proper URL
+            const baseUrl = "{{ url('/') }}";
+            const fullUrl = baseUrl + url;
+            console.log('Submitting to URL:', fullUrl);
+
+            // Final validation
+            if (!url) {
+                alert('URL tidak dapat dibentuk. Silakan refresh halaman dan coba lagi.');
                 return;
             }
-        } else {
-            alert('Jenis gula tidak dikenali: ' + jenis);
-            return;
-        }
 
-        // Log formData contents for debugging
-        console.log('FormData contents:');
-        for (let pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
-        }
-
-        // Build proper URL
-        const baseUrl = "{{ url('/') }}";
-        const fullUrl = baseUrl + url;
-        console.log('Submitting to URL:', fullUrl);
-
-        // Final validation
-        if (!url) {
-            alert('URL tidak dapat dibentuk. Silakan refresh halaman dan coba lagi.');
-            return;
-        }
-
-        $.ajax({
-            url: fullUrl,
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                console.log('Success response:', response);
-                localStorage.removeItem('analisaDraft');
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: 'Data berhasil disimpan!',
-                    confirmButtonText: 'OK'
-                }).then(() => {
+            $.ajax({
+                url: fullUrl,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    console.log('Success response:', response);
+                    localStorage.removeItem('analisaDraft');
                     $('#modalAnalisa').modal('hide');
-                    $('#formAnalisa')[0].reset();
-                });
-            },
-            error: function(xhr) {
-                console.log('Error response:', xhr);
-                console.log('Status:', xhr.status);
-                console.log('Response Text:', xhr.responseText);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: 'Data berhasil disimpan!',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        $('#formAnalisa')[0].reset();
+                        location.reload();
+                    });
+                },
+                error: function(xhr) {
+                    console.log('Error response:', xhr);
+                    console.log('Status:', xhr.status);
+                    console.log('Response Text:', xhr.responseText);
 
-                let errMsg = 'Gagal menyimpan data!';
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    errMsg = xhr.responseJSON.message;
-                } else if (xhr.status === 404) {
-                    errMsg = 'Endpoint tidak ditemukan. Periksa routing Laravel.';
-                } else if (xhr.status === 405) {
-                    errMsg = 'Method tidak diizinkan. Periksa routing Laravel.';
+                    let errMsg = 'Gagal menyimpan data!';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errMsg = xhr.responseJSON.message;
+                    } else if (xhr.status === 404) {
+                        errMsg = 'Endpoint tidak ditemukan. Periksa routing Laravel.';
+                    } else if (xhr.status === 405) {
+                        errMsg = 'Method tidak diizinkan. Periksa routing Laravel.';
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: errMsg,
+                        confirmButtonText: 'Tutup'
+                    });
                 }
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: errMsg,
-                    confirmButtonText: 'Tutup'
-                });
-            }
-        });
-    }
-</script>
+            });
+        }
+    </script>
 @endsection

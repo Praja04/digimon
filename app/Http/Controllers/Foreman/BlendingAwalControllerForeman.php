@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 use App\Models\BlendingAwalModel;
+use App\Models\ManageWarnaModel;
 use App\Models\ProductionBatch;
 
 class BlendingAwalControllerForeman extends Controller
@@ -33,7 +34,14 @@ class BlendingAwalControllerForeman extends Controller
     public function Blending_data()
     {
         // Ambil semua PO yang memiliki data GGA
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->has('BlendingAwal')->with('BlendingAwal')->get();
+        $productionBatches = ProductionBatch::with('BlendingAwal')
+            ->has('BlendingAwal')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isBlendingAwalComplete()) ? 1 : 0;
+            })
+            ->values();
 
         return view('foreman.blending.blending_awal', compact('productionBatches'));
     }
@@ -43,7 +51,6 @@ class BlendingAwalControllerForeman extends Controller
     {
         // // Ambil PO dengan GGA yang belum lengkap
         // $productionBatch = ProductionBatch::with('BlendingAwal')->findOrFail($id);
-
 
         // return view('foreman.blending.blending_awal_detail', compact('productionBatch'));
 
@@ -64,7 +71,10 @@ class BlendingAwalControllerForeman extends Controller
         // return json response untuk debugging
         //return response()->json($productionBatch->BlendingAwal);
 
-        return view('foreman.blending.blending_awal_detail', compact('productionBatch'));
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
+
+
+        return view('foreman.blending.blending_awal_detail', compact('productionBatch', 'manageWarna'));
     }
 
     public function showInputFormBlendingAwal($id)
@@ -201,7 +211,7 @@ class BlendingAwalControllerForeman extends Controller
             ], 422);
         }
 
-        $blending = BlendingAwalModel::findOrFail($id);
+        $blending = BlendingAwalModel::findOrFail($request->id_edit);
         $disposition = $request->disposition_edit;
         $remarks = $request->disposition_remarks_edit ?? null;
 

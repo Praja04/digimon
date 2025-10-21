@@ -75,8 +75,7 @@ class SamplingControllerForeman extends Controller
             'berbau' => 'required|in:yes,no',
         ]);
 
-        $mobil = SamplingKondisiMobil::findOrFail($id);
-
+        $mobil = SamplingKondisiMobil::find($id);
         $mobil->update($request->all());
 
         return response()->json([
@@ -188,17 +187,29 @@ class SamplingControllerForeman extends Controller
 
     public function updateKemasan(Request $request, $id)
     {
-        $request->validate([
-            'kotor' => 'required',
-            'rusak' => 'required',
-            'sesuai_std' => 'required',
-            'lain_lain' => 'nullable',
-            'berair' => 'required',
-            'basah' => 'required',
-            'campuran' => 'required',
-        ]);
+        $kemasan = SamplingFisikKemasan::with('identitas')->findOrFail($id);
+        if ($kemasan->identitas->jenis_gula == 'Garam') {
+            $request->validate([
+                'kotor' => 'required',
+                'berair' => 'required',
+                'rusak' => 'required',
+                'sesuai_std' => 'required',
+                'lain_lain' => 'nullable',
+                'basah' => 'required',
+                'campuran' => 'required',
+            ]);
+        } else {
+            $request->validate([
+                'kotor' => 'required',
+                'rusak' => 'required',
+                'sesuai_std' => 'required',
+                'lain_lain' => 'nullable',
+                'berair' => 'nullable',
+                'basah' => 'nullable',
+                'campuran' => 'nullable',
+            ]);
+        }
 
-        $kemasan = SamplingFisikKemasan::findOrFail($id);
 
         $kemasan->kotor = $request->kotor;
         $kemasan->rusak = $request->rusak;
@@ -211,9 +222,9 @@ class SamplingControllerForeman extends Controller
         $kemasan->save();
 
         return response()->json([
-                'message' => 'Berhasil update',
-                'data' => $kemasan
-            ]);
+            'message' => 'Berhasil update',
+            'data' => $kemasan
+        ]);
     }
 
     // 🟢 FORM & STORE SAMPLING FISIK RAW (Hanya untuk Gula, Tidak untuk Garam)
@@ -242,22 +253,22 @@ class SamplingControllerForeman extends Controller
             'campuran' => 'required',
             'aroma_std' => 'required',
             'sesuai_std' => 'required',
-            
+
         ]);
-         // Tambahkan user ke data yang akan disimpan
-         $validated['created_by_user'] = $username;
-         // Cek apakah data dengan id_identitas sudah ada
-         $existing = SamplingFisikRaw::where('id_identitas', $validated['id_identitas'])->first();
- 
-         if ($existing) {
-             return response()->json([
-                 'status' => 'error',
-                 'message' => 'Sampling Raw sudah pernah disimpan untuk ID ini.'
-             ], 409); // 409 = Conflict
-         }
+        // Tambahkan user ke data yang akan disimpan
+        $validated['created_by_user'] = $username;
+        // Cek apakah data dengan id_identitas sudah ada
+        $existing = SamplingFisikRaw::where('id_identitas', $validated['id_identitas'])->first();
+
+        if ($existing) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Sampling Raw sudah pernah disimpan untuk ID ini.'
+            ], 409); // 409 = Conflict
+        }
 
         SamplingFisikRaw::create($validated);
-        
+
 
         return redirect()->route('rmpm.detailIdentitas', $request->id_identitas)->with('success', 'Sampling Fisik Raw berhasil disimpan.');
     }

@@ -29,6 +29,7 @@ class MonitoringStorageModel extends Model
         'disposition_remarks',
         'adjusment_qty',
         'is_adjustment',
+        'production_time',
         'revisi',
         'not_standar',
         'created_by',

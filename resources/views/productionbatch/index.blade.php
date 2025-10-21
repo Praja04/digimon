@@ -53,7 +53,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="production_date" class="form-label">Tanggal Produksi</label>
-                            <input type="date" name="production_date" class="form-control" required />
+                            <input type="date" name="production_date" class="form-control" required value="{{ now()->format('Y-m-d') }}" />
                         </div>
                         <div class="mb-3">
                             <label for="batch_range" class="form-label">Rentang Batch Masak</label>
@@ -70,7 +70,7 @@
                         </div>
 
                         <div class="text-end">
-                            <button type="submit" class="btn btn-success" id="submitBtn">Simpan Sampling</button>
+                            <button type="submit" class="btn btn-success" id="submitBtn">Simpan</button>
                         </div>
                     </form>
 
@@ -197,7 +197,7 @@
                     (handlers[xhr.status] || handlers.default)(); // panggil handler sesuai status
                 },
                 complete: function() {
-                    submitBtn.prop('disabled', false).text('Simpan Sampling');
+                    submitBtn.prop('disabled', false).text('Simpan');
                 }
             });
         });

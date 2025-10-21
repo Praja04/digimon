@@ -22,7 +22,7 @@ class RMPMControllerForeman extends Controller
         if (!Session::has('role')) {
             return redirect('/login')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
         }
-       
+
 
         return view('foreman.rmpm.dashboard');
     }
@@ -34,6 +34,7 @@ class RMPMControllerForeman extends Controller
         }
         return view('foreman.rmpm.data_rm');
     }
+
     public function menu()
     {
         if (!Session::has('role')) {
@@ -90,7 +91,7 @@ class RMPMControllerForeman extends Controller
 
     public function list_data($jenis)
     {
-        $identitasList = IdentitasRM::where('jenis_gula', $jenis)->orderby('tanggal_kedatangan','DESC')->get();
+        $identitasList = IdentitasRM::where('jenis_gula', $jenis)->orderby('tanggal_kedatangan', 'DESC')->get();
         $identitasIds = $identitasList->pluck('id');
         $dataSummary = [];
 
@@ -98,11 +99,11 @@ class RMPMControllerForeman extends Controller
             $analisaLT = AnalisaLongTermGKT::whereIn('id_identitas', $identitasIds)->whereNotNull('disposisi')->get();
             $analisaST = AnalisaShortTermGKT::with('disposisi')->whereIn('id_identitas', $identitasIds)->get();
 
-            $summaryST = $analisaST->groupBy(fn ($item) => optional($item->disposisi)->disposisi ?? 'Undefined')
-                ->map(fn ($group) => $group->count());
+            $summaryST = $analisaST->groupBy(fn($item) => optional($item->disposisi)->disposisi ?? 'Undefined')
+                ->map(fn($group) => $group->count());
 
             $summaryLT = $analisaLT->groupBy('disposisi')
-                ->map(fn ($group) => $group->count());
+                ->map(fn($group) => $group->count());
 
             $dataSummary = $summaryST->mergeRecursive($summaryLT)->map(function ($item) {
                 return is_array($item) ? array_sum($item) : $item;
@@ -121,11 +122,11 @@ class RMPMControllerForeman extends Controller
             $analisaLT = AnalisaLongTermGKT::whereIn('id_identitas', $identitasIds)->whereNotNull('disposisi')->get();
             $analisaST = AnalisaShortTermGKT::with('disposisi')->whereIn('id_identitas', $identitasIds)->get();
 
-            $summaryST = $analisaST->groupBy(fn ($item) => optional($item->disposisi)->disposisi ?? 'Undefined')
-                ->map(fn ($group) => $group->count());
+            $summaryST = $analisaST->groupBy(fn($item) => optional($item->disposisi)->disposisi ?? 'Undefined')
+                ->map(fn($group) => $group->count());
 
             $summaryLT = $analisaLT->groupBy('disposisi')
-                ->map(fn ($group) => $group->count());
+                ->map(fn($group) => $group->count());
 
             $dataSummary = $summaryST->mergeRecursive($summaryLT)->map(function ($item) {
                 return is_array($item) ? array_sum($item) : $item;
@@ -143,8 +144,8 @@ class RMPMControllerForeman extends Controller
         if ($jenis === 'Gula') {
             $analisaGG = AnalisaGaramGula::with('disposisi')->whereIn('id_identitas', $identitasIds)->get();
 
-            $dataSummary = $analisaGG->groupBy(fn ($item) => optional($item->disposisi)->disposisi ?? 'Undefined')
-                ->map(fn ($group) => $group->count());
+            $dataSummary = $analisaGG->groupBy(fn($item) => optional($item->disposisi)->disposisi ?? 'Undefined')
+                ->map(fn($group) => $group->count());
 
             return view('foreman.rmpm.list_data', [
                 'identitasList' => $identitasList,
@@ -157,8 +158,8 @@ class RMPMControllerForeman extends Controller
         if ($jenis === 'Garam') {
             $analisaGG = AnalisaGaramGula::with('disposisi')->whereIn('id_identitas', $identitasIds)->get();
 
-            $dataSummary = $analisaGG->groupBy(fn ($item) => optional($item->disposisi)->disposisi ?? 'Undefined')
-                ->map(fn ($group) => $group->count());
+            $dataSummary = $analisaGG->groupBy(fn($item) => optional($item->disposisi)->disposisi ?? 'Undefined')
+                ->map(fn($group) => $group->count());
 
             return view('foreman.rmpm.list_data', [
                 'identitasList' => $identitasList,
@@ -170,9 +171,9 @@ class RMPMControllerForeman extends Controller
 
         abort(404, 'Jenis tidak valid');
     }
-    
 
-    
+
+
 
     //4.detail identitas
     public function detail_data($id)
@@ -213,9 +214,9 @@ class RMPMControllerForeman extends Controller
         $data->save();
 
         return response()->json([
-                'message' => 'Disposisi berhasil diperbarui.',
-                'data' => $data
-            ]);
+            'message' => 'Disposisi berhasil diperbarui.',
+            'data' => $data
+        ]);
     }
 
     public function summary()
@@ -237,13 +238,14 @@ class RMPMControllerForeman extends Controller
     public function kedatangan(Request $request)
     {
         $query = IdentitasRM::with(['samplingMobil', 'samplingDokumen', 'konfirmasi'])
-        ->orderBy('tanggal_kedatangan', 'desc');
+            ->orderBy('tanggal_kedatangan', 'desc');
 
         if ($request->filter === 'today') {
             $query->whereDate('tanggal_kedatangan', Carbon::today());
         } elseif ($request->filter === 'week') {
             $query->whereBetween('tanggal_kedatangan', [
-                Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()
+                Carbon::now()->startOfWeek(),
+                Carbon::now()->endOfWeek()
             ]);
         }
 
@@ -253,8 +255,8 @@ class RMPMControllerForeman extends Controller
     public function grafikKedatangan()
     {
         $data = IdentitasRM::selectRaw('DATE(tanggal_kedatangan) as tanggal, COUNT(*) as total')
-        ->groupByRaw('DATE(tanggal_kedatangan)')
-        ->orderBy('tanggal')
+            ->groupByRaw('DATE(tanggal_kedatangan)')
+            ->orderBy('tanggal')
             ->get();
 
         return response()->json($data);
@@ -263,9 +265,9 @@ class RMPMControllerForeman extends Controller
     public function disposisiPie()
     {
         $data = DB::table('disposisi_rm')
-        ->select('disposisi', DB::raw('count(*) as total'))
-        ->join('analisa_short_term_gkt', 'disposisi_rm.id', '=', 'analisa_short_term_gkt.id_disposisi')
-        ->groupBy('disposisi')
+            ->select('disposisi', DB::raw('count(*) as total'))
+            ->join('analisa_short_term_gkt', 'disposisi_rm.id', '=', 'analisa_short_term_gkt.id_disposisi')
+            ->groupBy('disposisi')
             ->get();
 
         return response()->json($data);
@@ -274,7 +276,7 @@ class RMPMControllerForeman extends Controller
     public function kristalPositif()
     {
         $data = AnalisaLongTermGKT::with('identitasRmMaster')
-        ->where('uji_kristal', 'like', '%positif%')
+            ->where('uji_kristal', 'like', '%positif%')
             ->latest()
             ->get();
 
@@ -284,8 +286,12 @@ class RMPMControllerForeman extends Controller
     public function progressSampling()
     {
         $data = IdentitasRM::with([
-            'samplingMobil', 'samplingDokumen', 'samplingFisikKemasan',
-            'samplingFisikRaw', 'analisaShortTerm', 'analisaLongTerm'
+            'samplingMobil',
+            'samplingDokumen',
+            'samplingFisikKemasan',
+            'samplingFisikRaw',
+            'analisaShortTerm',
+            'analisaLongTerm'
         ])->latest()->get();
 
         $result = $data->map(function ($item) {
@@ -306,9 +312,6 @@ class RMPMControllerForeman extends Controller
 
         return response()->json($result);
     }
-
-
-    //api
 
     public function getTotalKedatangan(Request $request)
     {
@@ -458,6 +461,4 @@ class RMPMControllerForeman extends Controller
 
         return response()->json($data->get());
     }
-
-    
 }

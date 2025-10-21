@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Analis;
 
 use App\Http\Controllers\Controller;
+use App\Models\ManageWarnaModel;
 use Illuminate\Http\Request;
 use App\Models\MonitoringTurunBlending;
 use App\Models\MonitoringTurunBlendingData;
@@ -20,18 +21,22 @@ class MonitoringTurunBlendingController extends Controller
     }
     public function Monitoring_Blending_data()
     {
-
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringTurunBlending')->has('MonitoringTurunBlending')->get();
-        //return json
-        //return response()->json($productionBatches);
-
+        $productionBatches = ProductionBatch::with('MonitoringTurunBlending')
+            ->has('MonitoringTurunBlending')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isMonitoringBlendingComplete()) ? 1 : 0;
+            })
+            ->values();
         return view('analis.monitoring.turun_blending', compact('productionBatches'));
     }
 
     public function Monitoring_Blending_detail($id)
     {
         $productionBatch = ProductionBatch::with([
-            'MonitoringTurunBlending.additionalBatches', 'MonitoringTurunBlending.monitoringData',
+            'MonitoringTurunBlending.additionalBatches',
+            'MonitoringTurunBlending.monitoringData',
         ])->findOrFail($id);
 
         // Kelompokkan berdasarkan batch_range
@@ -48,10 +53,13 @@ class MonitoringTurunBlendingController extends Controller
             return $item;
         });
 
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
+
         // return response()->json($filtered->values());
         return view('analis.monitoring.detail_data', [
             'productionBatch' => $productionBatch,
-            'filteredMonitoring' => $filtered->values()
+            'filteredMonitoring' => $filtered->values(),
+            'manageWarna' => $manageWarna
         ]);
     }
 
@@ -125,7 +133,7 @@ class MonitoringTurunBlendingController extends Controller
             'ph' => 'nullable|numeric',
             'endapan' => 'nullable|string',
             'warna' => 'nullable|string',
-            'shift' => 'required|in:1,2,3',
+            // 'shift' => 'required|in:1,2,3',
         ]);
 
         // Jika validasi gagal
@@ -155,6 +163,15 @@ class MonitoringTurunBlendingController extends Controller
             ], 409); // 409 Conflict
         }
 
+        $currentHour = (int) now()->format('H');
+        if ($currentHour >= 6 && $currentHour < 14) {
+            $shift = 1;
+        } elseif ($currentHour >= 14 && $currentHour < 22) {
+            $shift = 2;
+        } else {
+            $shift = 3;
+        }
+
         try {
             // Simpan data ke database
             $username = session('username');
@@ -170,7 +187,8 @@ class MonitoringTurunBlendingController extends Controller
                 'ph' => $request->ph,
                 'endapan' => $request->endapan,
                 'warna' => $request->warna,
-                'shift' => $request->shift,
+                'shift' => $shift,
+                'production_time' => $request->production_time,
                 'created_by' => $username,
             ]);
 
@@ -191,7 +209,8 @@ class MonitoringTurunBlendingController extends Controller
     public function showInputFormMonitoringTurunBlending($id)
     {
         $monitoring = MonitoringTurunBlending::with('monitoringData', 'productionBatch')->find($id);
-        return view('analis.monitoring.analisis_data_detail', compact('monitoring'));
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
+        return view('analis.monitoring.analisis_data_detail', compact('monitoring', 'manageWarna'));
     }
 
     public function showDataDetail($id)

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\ProductionBatch;
 use App\Models\GgaProcess;
 use App\Models\GgasProcess;
+use App\Models\ManageWarnaModel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 
@@ -83,20 +84,31 @@ class GgaGgasController extends Controller
         ]);
     }
 
-
-
-
     public function GGA_data()
     {
         // Ambil semua PO yang memiliki data GGA
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->has('GgaProcesses')->with('GgaProcesses')->orderby('created_at','desc')->get();
+        $productionBatches = ProductionBatch::with('GgaProcesses')
+            ->has('GgaProcesses')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isGGaComplete()) ? 1 : 0;
+            })
+            ->values();
 
         return view('analis.ggaggas.gga', compact('productionBatches'));
     }
     public function GGAS_data()
     {
         // Ambil semua PO yang memiliki data GGA
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->has('GgasProcesses')->with('GgasProcesses')->orderby('created_at','desc')->get();
+        $productionBatches = ProductionBatch::with('GgasProcesses')
+            ->has('GgasProcesses')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isGGasComplete()) ? 1 : 0;
+            })
+            ->values();
 
         return view('analis.ggaggas.ggas', compact('productionBatches'));
     }
@@ -105,18 +117,18 @@ class GgaGgasController extends Controller
     {
         // Ambil PO dengan GGA yang belum lengkap
         $productionBatch = ProductionBatch::with('GgaProcesses')->findOrFail($id);
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
 
-
-        return view('analis.ggaggas.gga_detail', compact('productionBatch'));
+        return view('analis.ggaggas.gga_detail', compact('productionBatch', 'manageWarna'));
     }
 
     public function GGAS_detail($id)
     {
         // Ambil PO dengan GGA yang belum lengkap
         $productionBatch = ProductionBatch::with('GgasProcesses')->findOrFail($id);
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
 
-
-        return view('analis.ggaggas.ggas_detail', compact('productionBatch'));
+        return view('analis.ggaggas.ggas_detail', compact('productionBatch', 'manageWarna'));
     }
 
     public function checkBatchNumberGGA(Request $request)
@@ -143,7 +155,7 @@ class GgaGgasController extends Controller
 
         return response()->json(['status' => 'ok']);
     }
-    
+
     public function updateAjaxGGA(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -174,7 +186,7 @@ class GgaGgasController extends Controller
                 'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
             ], 422);
         }
-    
+
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -200,7 +212,7 @@ class GgaGgasController extends Controller
 
         // Jika disposition Adjustment, update adjustment_qty pada data adjustment yang sudah ada
         if ($disposition === 'Adjustment') {
-         
+
             $gga->update([
                 'brix' => $request->brix,
                 'nacl' => $request->nacl,
@@ -238,13 +250,15 @@ class GgaGgasController extends Controller
     public function showInputFormGGA($id)
     {
         $gga = GgaProcess::find($id);
-        return view('analis.ggaggas.gga_detail_id', compact('gga'));
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
+        return view('analis.ggaggas.gga_detail_id', compact('gga', 'manageWarna'));
     }
 
     public function showInputFormGGAS($id)
     {
         $ggas = GgasProcess::find($id);
-        return view('analis.ggaggas.ggas_detail_id', compact('ggas'));
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
+        return view('analis.ggaggas.ggas_detail_id', compact('ggas', 'manageWarna'));
     }
 
     public function updateAjaxGGAS(Request $request, $id)
@@ -277,7 +291,7 @@ class GgaGgasController extends Controller
                 'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
             ], 422);
         }
-    
+
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -303,7 +317,7 @@ class GgaGgasController extends Controller
 
         // Jika disposition Adjustment, update adjustment_qty pada data adjustment yang sudah ada
         if ($disposition === 'Adjustment') {
-          
+
 
             $ggas->update([
                 'brix' => $request->brix,

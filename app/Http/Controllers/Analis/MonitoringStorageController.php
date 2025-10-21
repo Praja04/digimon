@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\MonitoringStorageModel;
 use App\Models\MonitoringStorageMikroModel;
 use App\Models\KonfirmasiMonitoringStorageMikroModel;
+use App\Models\ManageWarnaModel;
+use App\Models\MonitoringStorageBeforeUse;
 use App\Models\ProductionBatch;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
 class MonitoringStorageController extends Controller
@@ -15,25 +18,19 @@ class MonitoringStorageController extends Controller
     //
     public function Monitoring_Storage_data()
     {
-
         $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringStorage')->has('MonitoringStorage')->get();
-
-        // return response()->json($productionBatches);
         return view('analis.monitoring.monitoring_storage.monitoring_storage', compact('productionBatches'));
     }
 
     public function Monitoring_Storage_data_mikro()
     {
-
         $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringStorageMikro')->has('MonitoringStorageMikro')->get();
-
         return view('analis.monitoring.monitoring_storage.monitoring_storage_mikro', compact('productionBatches'));
     }
 
 
     public function Monitoring_Storage_detail($id)
     {
-
         $productionBatch = ProductionBatch::findOrFail($id);
 
         foreach ($productionBatch->MonitoringStorage as $data) {
@@ -44,10 +41,13 @@ class MonitoringStorageController extends Controller
 
             $data->po_number = $productionBatch->po_number;
         }
+
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
         //    return response()->json($productionBatch->MonitoringStorage);
         return view('analis.monitoring.monitoring_storage.detail_data', [
             'productionBatch' => $productionBatch,
-            'filteredMonitoringStorage' => $productionBatch->MonitoringStorage
+            'filteredMonitoringStorage' => $productionBatch->MonitoringStorage,
+            'manageWarna' => $manageWarna,
         ]);
     }
 
@@ -74,9 +74,9 @@ class MonitoringStorageController extends Controller
 
     public function Monitoring_Storage_detail_id($id)
     {
-
         $data = MonitoringStorageModel::find($id);
-        return view('analis.monitoring.monitoring_storage.analisis_data_detail_id', compact('data'));
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
+        return view('analis.monitoring.monitoring_storage.analisis_data_detail_id', compact('data', 'manageWarna'));
     }
 
     public function Monitoring_Storage_detail_mikro_id($id)
@@ -124,6 +124,12 @@ class MonitoringStorageController extends Controller
             'volume_blending' => $request->volume
         ]);
         MonitoringStorageMikroModel::create([
+            'production_batch_id' => $request->production_batch_id,
+            'batch_range' => $request->batch,
+            'nomor_blending' => $request->no_blending,
+            'volume_blending' => $request->volume
+        ]);
+        MonitoringStorageBeforeUse::create([
             'production_batch_id' => $request->production_batch_id,
             'batch_range' => $request->batch,
             'nomor_blending' => $request->no_blending,
@@ -258,8 +264,8 @@ class MonitoringStorageController extends Controller
             'eb' => 'nullable|numeric|min:0|max:100',
             'tpc' => 'nullable|numeric|min:0|max:100',
             'ym' => 'nullable|string|max:20',
-            'nama_analis' => 'string',
-            'shift' => 'string',
+            // 'nama_analis' => 'string',
+            // 'shift' => 'string',
         ]);
 
         if ($validator->fails()) {
@@ -281,11 +287,20 @@ class MonitoringStorageController extends Controller
             ], 422);
         }
 
+        $currentHour = (int) now()->format('H');
+        if ($currentHour >= 6 && $currentHour < 14) {
+            $shift = 1;
+        } elseif ($currentHour >= 14 && $currentHour < 22) {
+            $shift = 2;
+        } else {
+            $shift = 3;
+        }
+
         // 📝 Buat konfirmasi
         KonfirmasiMonitoringStorageMikroModel::create([
-            'blending_after_adjust_mikro_id' => $data->id,
-            'nama_analis' => $request->nama_analis,
-            'shift' => $request->shift,
+            'monitoring_storage_mikro_id' => $data->id,
+            'nama_analis' => Session::get('username'),
+            'shift' => $shift,
         ]);
 
         // 🔄 Update hanya field yang dikirim dan tidak null

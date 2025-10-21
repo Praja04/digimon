@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\MonitoringStorageModel;
 use App\Models\MonitoringStorageMikroModel;
 use App\Models\KonfirmasiMonitoringStorageMikroModel;
+use App\Models\ManageWarnaModel;
+use App\Models\MonitoringStorageBeforeUse;
 use App\Models\ProductionBatch;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
@@ -23,8 +26,14 @@ class MonitoringStorageControllerForeman extends Controller
     }
     public function Monitoring_Storage_data()
     {
-
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringStorage')->has('MonitoringStorage')->get();
+        $productionBatches = ProductionBatch::with('MonitoringStorage')
+            ->has('MonitoringStorage')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isMonitoringStorageMakroComplete()) ? 1 : 0;
+            })
+            ->values();
 
         // return response()->json($productionBatches);
         return view('foreman.monitoring.monitoring_storage.monitoring_storage', compact('productionBatches'));
@@ -32,8 +41,14 @@ class MonitoringStorageControllerForeman extends Controller
 
     public function Monitoring_Storage_data_mikro()
     {
-
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->with('MonitoringStorageMikro')->has('MonitoringStorageMikro')->get();
+        $productionBatches = ProductionBatch::with('MonitoringStorageMikro')
+            ->has('MonitoringStorageMikro')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isMonitoringStorageMikroComplete()) ? 1 : 0;
+            })
+            ->values();
 
         return view('foreman.monitoring.monitoring_storage.monitoring_storage_mikro', compact('productionBatches'));
     }
@@ -52,10 +67,13 @@ class MonitoringStorageControllerForeman extends Controller
 
             $data->po_number = $productionBatch->po_number;
         }
+
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
         //    return response()->json($productionBatch->MonitoringStorage);
         return view('foreman.monitoring.monitoring_storage.detail_data', [
             'productionBatch' => $productionBatch,
-            'filteredMonitoringStorage' => $productionBatch->MonitoringStorage
+            'filteredMonitoringStorage' => $productionBatch->MonitoringStorage,
+            'manageWarna' => $manageWarna
         ]);
     }
 
@@ -82,7 +100,6 @@ class MonitoringStorageControllerForeman extends Controller
 
     public function Monitoring_Storage_detail_id($id)
     {
-
         $data = MonitoringStorageModel::find($id);
         return view('foreman.monitoring.monitoring_storage.analisis_data_detail_id', compact('data'));
     }
@@ -132,6 +149,12 @@ class MonitoringStorageControllerForeman extends Controller
             'volume_blending' => $request->volume
         ]);
         MonitoringStorageMikroModel::create([
+            'production_batch_id' => $request->production_batch_id,
+            'batch_range' => $request->batch,
+            'nomor_blending' => $request->no_blending,
+            'volume_blending' => $request->volume
+        ]);
+        MonitoringStorageBeforeUse::create([
             'production_batch_id' => $request->production_batch_id,
             'batch_range' => $request->batch,
             'nomor_blending' => $request->no_blending,
@@ -217,6 +240,7 @@ class MonitoringStorageControllerForeman extends Controller
             'warna' => $request->warna,
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
+            'production_time' => Carbon::parse($request->production_time)->format('Y-m-d H:i:s'),
             'created_by' => $username,
         ];
 
@@ -360,8 +384,8 @@ class MonitoringStorageControllerForeman extends Controller
             'eb' => 'nullable|numeric|min:0|max:100',
             'tpc' => 'nullable|numeric|min:0|max:100',
             'ym' => 'nullable|string|max:20',
-            'nama_analis' => 'string',
-            'shift' => 'string',
+            // 'nama_analis' => 'string',
+            // 'shift' => 'string',
         ]);
 
         if ($validator->fails()) {
@@ -370,7 +394,7 @@ class MonitoringStorageControllerForeman extends Controller
             ], 422);
         }
 
-        $data = MonitoringStorageMikroModel::findOrFail($id);
+        $data = MonitoringStorageMikroModel::findOrFail($request->id);
 
         // 🛡️ Validasi agar data tidak bisa diisi ulang
         if (
@@ -383,11 +407,20 @@ class MonitoringStorageControllerForeman extends Controller
             ], 422);
         }
 
+        $currentHour = (int) now()->format('H');
+        if ($currentHour >= 6 && $currentHour < 14) {
+            $shift = 1;
+        } elseif ($currentHour >= 14 && $currentHour < 22) {
+            $shift = 2;
+        } else {
+            $shift = 3;
+        }
+
         // 📝 Buat konfirmasi
         KonfirmasiMonitoringStorageMikroModel::create([
-            'blending_after_adjust_mikro_id' => $data->id,
-            'nama_analis' => $request->nama_analis,
-            'shift' => $request->shift,
+            'monitoring_storage_mikro_id' => $data->id,
+            'nama_analis' => Session::get('username'),
+            'shift' => $shift,
         ]);
 
         // 🔄 Update hanya field yang dikirim dan tidak null
@@ -418,7 +451,6 @@ class MonitoringStorageControllerForeman extends Controller
         }
 
         $data = MonitoringStorageMikroModel::findOrFail($id);
-
 
         $dataUpdate = [
             'eb' => $request->eb_edit,

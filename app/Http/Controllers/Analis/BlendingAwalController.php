@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\BlendingAwalModel;
+use App\Models\ManageWarnaModel;
 use App\Models\ProductionBatch;
 
 class BlendingAwalController extends Controller
@@ -102,7 +103,14 @@ class BlendingAwalController extends Controller
     public function Blending_data()
     {
         // Ambil semua PO yang memiliki data GGA
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->has('BlendingAwal')->with('BlendingAwal')->get();
+        $productionBatches = ProductionBatch::with('BlendingAwal')
+            ->has('BlendingAwal')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isBlendingAwalComplete()) ? 1 : 0;
+            })
+            ->values();
 
         return view('analis.blending.blending_awal', compact('productionBatches'));
     }
@@ -132,14 +140,16 @@ class BlendingAwalController extends Controller
         }
         // return json response untuk debugging
         //return response()->json($productionBatch->BlendingAwal);
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
 
-        return view('analis.blending.blending_awal_detail', compact('productionBatch'));
+        return view('analis.blending.blending_awal_detail', compact('productionBatch', 'manageWarna'));
     }
 
     public function showInputFormBlendingAwal($id)
     {
         $blending = BlendingAwalModel::find($id);
-        return view('analis.blending.blending_awal_detail_id', compact('blending'));
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
+        return view('analis.blending.blending_awal_detail_id', compact('blending', 'manageWarna'));
     }
     public function updateAjaxBlending(Request $request, $id)
     {

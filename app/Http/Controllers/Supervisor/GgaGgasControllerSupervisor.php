@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\ProductionBatch;
 use App\Models\GgaProcess;
 use App\Models\GgasProcess;
+use App\Models\ManageWarnaModel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
@@ -92,20 +93,31 @@ class GgaGgasControllerSupervisor extends Controller
         ]);
     }
 
-
-
-
     public function GGA_data()
     {
         // Ambil semua PO yang memiliki data GGA
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->has('GgaProcesses')->with('GgaProcesses')->get();
+        $productionBatches = ProductionBatch::with('GgaProcesses')
+            ->has('GgaProcesses')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isGGaComplete()) ? 1 : 0;
+            })
+            ->values();
 
         return view('supervisor.ggaggas.gga', compact('productionBatches'));
     }
     public function GGAS_data()
     {
         // Ambil semua PO yang memiliki data GGA
-        $productionBatches = ProductionBatch::orderby('created_at', 'desc')->has('GgasProcesses')->with('GgasProcesses')->get();
+        $productionBatches = ProductionBatch::with('GgasProcesses')
+            ->has('GgasProcesses')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return ($batch->isGGasComplete()) ? 1 : 0;
+            })
+            ->values();
 
         return view('supervisor.ggaggas.ggas', compact('productionBatches'));
     }
@@ -114,18 +126,18 @@ class GgaGgasControllerSupervisor extends Controller
     {
         // Ambil PO dengan GGA yang belum lengkap
         $productionBatch = ProductionBatch::with('GgaProcesses')->findOrFail($id);
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
 
-
-        return view('supervisor.ggaggas.gga_detail', compact('productionBatch'));
+        return view('supervisor.ggaggas.gga_detail', compact('productionBatch', 'manageWarna'));
     }
 
     public function GGAS_detail($id)
     {
         // Ambil PO dengan GGA yang belum lengkap
         $productionBatch = ProductionBatch::with('GgasProcesses')->findOrFail($id);
+        $manageWarna = ManageWarnaModel::orderBy('nama_warna', 'asc')->get();
 
-
-        return view('supervisor.ggaggas.ggas_detail', compact('productionBatch'));
+        return view('supervisor.ggaggas.ggas_detail', compact('productionBatch', 'manageWarna'));
     }
 
     public function checkBatchNumberGGA(Request $request)
@@ -152,7 +164,7 @@ class GgaGgasControllerSupervisor extends Controller
 
         return response()->json(['status' => 'ok']);
     }
-    
+
     public function updateAjaxGGA(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -183,7 +195,7 @@ class GgaGgasControllerSupervisor extends Controller
                 'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
             ], 422);
         }
-    
+
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -217,7 +229,7 @@ class GgaGgasControllerSupervisor extends Controller
                 'disposition_remarks' => $remarks,
                 'adjustment_qty_air' => $request->adjustment_qty_air,
                 'adjustment_qty_garam' => $request->adjustment_qty_garam,
-                'adjustment_qty_gula' => $request->adjustment_qty_gula, 
+                'adjustment_qty_gula' => $request->adjustment_qty_gula,
                 'not_standar' => true,
             ]);
         }
@@ -262,7 +274,7 @@ class GgaGgasControllerSupervisor extends Controller
         }
 
         $gga = GgaProcess::findOrFail($id);
-      
+
 
         $disposition = $request->disposition_edit;
         $remarks = $request->disposition_remarks_edit ?? null;
@@ -363,7 +375,7 @@ class GgaGgasControllerSupervisor extends Controller
                 'errors' => ['Data dengan ID ini sudah memiliki disposisi .']
             ], 422);
         }
-    
+
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -443,7 +455,7 @@ class GgaGgasControllerSupervisor extends Controller
         }
 
         $ggas = GgasProcess::findOrFail($id);
-       
+
 
         $disposition = $request->disposition_edit;
         $remarks = $request->disposition_remarks_edit ?? null;
