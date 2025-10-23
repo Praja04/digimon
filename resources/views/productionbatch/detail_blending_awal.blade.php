@@ -528,7 +528,7 @@
                             </select>
                         </div>
 
-                        <div class="col-lg-6 d-none" id="additional_batch_group">
+                        <div class="col-lg-12 d-none" id="additional_batch_group">
                             <label>Pilih Batch Tambahan 1</label>
                             <select name="additional_batch[]" id="additional_batch" class="form-control">
                                 <option value="">-- Pilih Batch --</option>
@@ -662,7 +662,6 @@
             }, function(res) {
                 //console.log(res);
                 $('#modal_revisi_display').val(res.revisi);
-
                 if (disposition === 'Leveling') {
                     $('#additional_batch_group, #additional_batch_group_2').removeClass('d-none');
                     $('#additional_batch').empty().append('<option value="">-- Pilih Batch --</option>');

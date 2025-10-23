@@ -752,7 +752,6 @@ class ProductionBatchController extends Controller
 
 
     public function getMainBlendingAwalJalanBareng(Request $request)
-
     {
         $request->validate([
             'production_batch_id' => 'required|exists:production_batches,id'
@@ -763,21 +762,23 @@ class ProductionBatchController extends Controller
 
         $usedBatchIds = BlendingBatchRelation::pluck('blending_awal_id')->toArray();
 
-        // Ambil dulu dari PO yang sama
-        $mainBlending = BlendingAwalModel::where('production_batch_id', $productionBatchId)
+        // Ambil dari PO yang sama dulu
+        $mainSame = BlendingAwalModel::where('production_batch_id', $productionBatchId)
             ->whereNotIn('disposition', $excludedDispositions)
             ->whereNotIn('id', $usedBatchIds)
             ->with('productionBatch')
-            ->orderByDesc('id') // atau 'nomor_blending' kalau itu numeric
+            ->orderByDesc('id')
             ->get();
 
-        // Kalau kosong, ambil dari PO lain
-        if ($mainBlending->isEmpty()) {
+        if ($mainSame->isNotEmpty()) {
+            $mainBlending = $mainSame;
+        } else {
+            // Jika tidak ada di PO yang sama, ambil dari PO lain
             $mainBlending = BlendingAwalModel::where('production_batch_id', '!=', $productionBatchId)
                 ->whereNotIn('disposition', $excludedDispositions)
                 ->whereNotIn('id', $usedBatchIds)
                 ->with('productionBatch')
-                ->orderByDesc('id') // atau 'nomor_blending'
+                ->orderByDesc('id')
                 ->get();
         }
 
@@ -789,7 +790,7 @@ class ProductionBatchController extends Controller
                 'po_number' => $item->productionBatch?->po_number ?? null,
                 'nomor_blending' => $item->nomor_blending,
             ];
-        });
+        })->values();
 
         return response()->json(['data' => $result]);
     }
@@ -1109,6 +1110,10 @@ class ProductionBatchController extends Controller
             ->whereIn('disposition', $validDispositions)
             ->get();
 
+        // $adjustmentBlending = BlendingAfterAdjustModel::where('production_batch_id', $id)
+        // ->whereIn('disposition', $validDispositions)
+        // ->get();
+
         $all = $blendingAwal;
 
         $grouped = $all->groupBy('batch_range');
@@ -1116,102 +1121,39 @@ class ProductionBatchController extends Controller
 
         foreach ($grouped as $batchRange => $items) {
             $chosen = $items->sortByDesc(
-                fn($item) => is_numeric($item->revisi) ? (int)$item->revisi : 0
+                fn($item) =>
+                is_numeric($item->revisi) ? (int)$item->revisi : 0
             )->first();
 
-            if (! $chosen) continue;
+            $fullRange = $chosen->batch_range;
 
-            $numbers = [];
-
-            // expand main batch_range
-            if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $chosen->batch_range, $m)) {
-                $numbers = range((int)$m[1], (int)$m[2]);
-            } else {
-                $numbers = [(int) filter_var($chosen->batch_range, FILTER_SANITIZE_NUMBER_INT)];
-            }
-
-            // expand related batches from blending_batch_relations
             $relatedBatches = DB::table('blending_batch_relations')
                 ->where('blending_awal_id', $chosen->id)
-                ->pluck('batch')
-                ->toArray();
+                ->pluck('batch');
 
             foreach ($relatedBatches as $relRange) {
-                $relRange = trim($relRange);
-                if ($relRange === '') continue;
-                if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $relRange, $rm)) {
-                    $numbers = array_merge($numbers, range((int)$rm[1], (int)$rm[2]));
-                } else {
-                    $numbers[] = (int) filter_var($relRange, FILTER_SANITIZE_NUMBER_INT);
-                }
+                $fullRange .= '-' . $relRange;
             }
 
-            $numbers = array_values(array_unique($numbers));
-            sort($numbers, SORT_NUMERIC);
-
-            if (!empty($numbers)) {
-                $rawBatchGroups[] = [
-                    'numbers' => $numbers,
-                    'source_id' => $chosen->id,
-                    'production_batch_id' => $chosen->production_batch_id,
-                ];
-            }
+            $rawBatchGroups[] = $fullRange;
         }
 
-        // Collect numbers already used in MonitoringTurunBlending (for this production batch)
-        $usedMonitoringNumbers = [];
-        foreach ($productionBatch->MonitoringTurunBlending as $mEntry) {
-            // expand main range
-            if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $mEntry->batch_range, $mm)) {
-                $usedMonitoringNumbers = array_merge($usedMonitoringNumbers, range((int)$mm[1], (int)$mm[2]));
-            } else {
-                $usedMonitoringNumbers[] = (int) filter_var($mEntry->batch_range, FILTER_SANITIZE_NUMBER_INT);
-            }
-
-            // expand related monitoring_turun_blending_relations
-            $mRelated = DB::table('monitoring_turun_blending_relations')
-                ->where('monitoring_turun_blending_id', $mEntry->id)
-                ->pluck('batch')
-                ->toArray();
-
-            foreach ($mRelated as $mr) {
-                $mr = trim($mr);
-                if ($mr === '') continue;
-                if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $mr, $rmr)) {
-                    $usedMonitoringNumbers = array_merge($usedMonitoringNumbers, range((int)$rmr[1], (int)$rmr[2]));
-                } else {
-                    $usedMonitoringNumbers[] = (int) filter_var($mr, FILTER_SANITIZE_NUMBER_INT);
-                }
-            }
-        }
-        $usedMonitoringNumbers = array_values(array_unique($usedMonitoringNumbers));
-
-        // Filter candidates: remove any candidate that overlaps with already used numbers
-        $candidates = array_filter($rawBatchGroups, function ($grp) use ($usedMonitoringNumbers) {
-            if (empty($grp['numbers'])) return false;
-            return empty(array_intersect($grp['numbers'], $usedMonitoringNumbers));
-        });
-
-        // Remove candidates that are subsets of another candidate (keep only maximal groups)
-        $finalCandidates = [];
-        foreach ($candidates as $i => $cand) {
+        // Hilangkan batch-range yang merupakan bagian dari string lain
+        $filteredBatchGroups = [];
+        foreach ($rawBatchGroups as $i => $range) {
             $isSubset = false;
-            foreach ($candidates as $j => $other) {
-                if ($i === $j) continue;
-                if (empty(array_diff($cand['numbers'], $other['numbers']))) {
+            foreach ($rawBatchGroups as $j => $compare) {
+                if (
+                    $i !== $j && strpos($compare, $range) !== false
+                ) {
                     $isSubset = true;
                     break;
                 }
             }
             if (!$isSubset) {
-                $finalCandidates[] = $cand;
+                $filteredBatchGroups[] = $range;
             }
         }
-
-        // Convert to strings for view (e.g. "1-2-3" or "5")
-        $filteredBatchGroups = array_map(function ($grp) {
-            return implode('-', $grp['numbers']);
-        }, $finalCandidates);
 
         foreach ($productionBatch->MonitoringTurunBlending as $data) {
             $data->has_relation = $data->additionalBatches && $data->additionalBatches->isNotEmpty();
@@ -1254,25 +1196,23 @@ class ProductionBatchController extends Controller
                 fn($item) => is_numeric($item->revisi) ? (int)$item->revisi : 0
             )->first();
 
-            if (!$chosen) {
+            if (! $chosen) {
                 continue;
             }
 
             $numbers = [];
 
-            // robustly parse main batch_range:
-            // - if it's exactly "start-end" (two tokens) treat as range
-            // - otherwise split on '-' and treat each token as an individual number
-            $tokens = preg_split('/\s*-\s*/', trim($chosen->batch_range), -1, PREG_SPLIT_NO_EMPTY);
-            if (count($tokens) === 2 && preg_match('/^\d+$/', $tokens[0]) && preg_match('/^\d+$/', $tokens[1])) {
-                $numbers = range((int)$tokens[0], (int)$tokens[1]);
+            // expand main batch_range
+            $br = trim($chosen->batch_range ?? '');
+            if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $br, $m)) {
+                // classic range "1-4" => [1,2,3,4]
+                $numbers = range((int)$m[1], (int)$m[2]);
+            } elseif (strpos($br, '-') !== false) {
+                // chained list like "1-2-3-4" => [1,2,3,4]
+                $parts = array_filter(array_map('trim', explode('-', $br)), fn($p) => $p !== '');
+                $numbers = array_map(fn($p) => (int) filter_var($p, FILTER_SANITIZE_NUMBER_INT), $parts);
             } else {
-                foreach ($tokens as $t) {
-                    $n = (int) filter_var($t, FILTER_SANITIZE_NUMBER_INT);
-                    if ($n !== 0 || $t === '0') {
-                        $numbers[] = $n;
-                    }
-                }
+                $numbers = [(int) filter_var($br, FILTER_SANITIZE_NUMBER_INT)];
             }
 
             // expand related batches from monitoring_turun_blending_relations
@@ -1284,8 +1224,13 @@ class ProductionBatchController extends Controller
             foreach ($relatedBatches as $relRange) {
                 $relRange = trim($relRange);
                 if ($relRange === '') continue;
+
                 if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $relRange, $rm)) {
                     $numbers = array_merge($numbers, range((int)$rm[1], (int)$rm[2]));
+                } elseif (strpos($relRange, '-') !== false) {
+                    $parts = array_filter(array_map('trim', explode('-', $relRange)), fn($p) => $p !== '');
+                    $partsNums = array_map(fn($p) => (int) filter_var($p, FILTER_SANITIZE_NUMBER_INT), $parts);
+                    $numbers = array_merge($numbers, $partsNums);
                 } else {
                     $numbers[] = (int) filter_var($relRange, FILTER_SANITIZE_NUMBER_INT);
                 }
@@ -1304,11 +1249,15 @@ class ProductionBatchController extends Controller
         // Collect numbers already used in MonitoringPasteurisasi (for this production batch)
         $usedMonitoringNumbers = [];
         foreach ($productionBatch->MonitoringPasteurisasi as $mEntry) {
+            $mbr = trim($mEntry->batch_range ?? '');
             // expand main range
-            if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $mEntry->batch_range, $mm)) {
+            if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $mbr, $mm)) {
                 $usedMonitoringNumbers = array_merge($usedMonitoringNumbers, range((int)$mm[1], (int)$mm[2]));
+            } elseif (strpos($mbr, '-') !== false) {
+                $parts = array_filter(array_map('trim', explode('-', $mbr)), fn($p) => $p !== '');
+                $usedMonitoringNumbers = array_merge($usedMonitoringNumbers, array_map(fn($p) => (int) filter_var($p, FILTER_SANITIZE_NUMBER_INT), $parts));
             } else {
-                $usedMonitoringNumbers[] = (int) filter_var($mEntry->batch_range, FILTER_SANITIZE_NUMBER_INT);
+                $usedMonitoringNumbers[] = (int) filter_var($mbr, FILTER_SANITIZE_NUMBER_INT);
             }
 
             // expand related monitoring_pasteurisasi_relations
@@ -1322,6 +1271,9 @@ class ProductionBatchController extends Controller
                 if ($mr === '') continue;
                 if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $mr, $rmr)) {
                     $usedMonitoringNumbers = array_merge($usedMonitoringNumbers, range((int)$rmr[1], (int)$rmr[2]));
+                } elseif (strpos($mr, '-') !== false) {
+                    $parts = array_filter(array_map('trim', explode('-', $mr)), fn($p) => $p !== '');
+                    $usedMonitoringNumbers = array_merge($usedMonitoringNumbers, array_map(fn($p) => (int) filter_var($p, FILTER_SANITIZE_NUMBER_INT), $parts));
                 } else {
                     $usedMonitoringNumbers[] = (int) filter_var($mr, FILTER_SANITIZE_NUMBER_INT);
                 }
@@ -1352,7 +1304,7 @@ class ProductionBatchController extends Controller
             }
         }
 
-        // Convert to strings for view (e.g. "1-2-3" or "5" depending on numbers)
+        // Convert to strings for view (e.g. "1-2-3-4" or "5" depending on numbers)
         $filteredBatchGroups = array_map(function ($grp) {
             return implode('-', $grp['numbers']);
         }, $finalCandidates);
@@ -2125,6 +2077,7 @@ class ProductionBatchController extends Controller
             'additional_batch' => 'nullable',
             'no_blending' => 'required',
             'volume' => 'required',
+            'storage' => 'nullable|string',
         ]);
 
         $old = MonitoringStorageModel::findOrFail($validated['id_old_blending']);
@@ -2167,6 +2120,7 @@ class ProductionBatchController extends Controller
             'batch_range' => $validated['batch_range'],
             'nomor_blending' => $validated['no_blending'],
             'volume_blending' => $validated['volume'],
+            'storage' => $validated['storage'],
             'brix' => null,
             'nacl' => null,
             'bj' => null,
@@ -2179,7 +2133,6 @@ class ProductionBatchController extends Controller
             'warna' => null,
             'disposition' => null,
             'disposition_remarks' => null,
-            'adjusment_qty' => null,
             'is_adjustment' => false,
             'revisi' => $validated['revisi'],
             'not_standar' => false
