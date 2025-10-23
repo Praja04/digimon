@@ -272,11 +272,20 @@ class BlendingAdjustController extends Controller
             ], 422);
         }
 
+        $currentHour = (int) now()->format('H');
+        if ($currentHour >= 6 && $currentHour < 14) {
+            $shift = 1;
+        } elseif ($currentHour >= 14 && $currentHour < 22) {
+            $shift = 2;
+        } else {
+            $shift = 3;
+        }
+
         // 📝 Buat konfirmasi
         KonfirmasiBlendingAdjustMikroModel::create([
             'blending_after_adjust_mikro_id' => $blending->id,
-            'nama_analis' => $request->nama_analis,
-            'shift' => $request->shift,
+            'nama_analis' => session('username'),
+            'shift' => $shift,
         ]);
 
         // 🔄 Update hanya field yang dikirim dan tidak null

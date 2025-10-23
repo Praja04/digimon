@@ -115,7 +115,7 @@
                                             <li class="nav-item">
                                                 <a class="nav-link active" id="nav-speci-tab" data-bs-toggle="tab"
                                                     href="#nav-speci" role="tab" aria-controls="nav-speci"
-                                                    aria-selected="true">Blending</a>
+                                                    aria-selected="true">Blending Awal</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a class="nav-link" id="nav-detail-tab" data-bs-toggle="tab"

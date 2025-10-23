@@ -191,7 +191,7 @@ Route::prefix('analis')->group(function () {
     });
 
     Route::prefix('blending')->group(function () {
-        Route::get('/menu', [BlendingAwalController::class, 'menu'])->name('blending.menu');
+        Route::get('/menu', [BlendingAwalController::class, 'menu'])->name('blending_analis.menu');
         Route::get('/awal/detail/{id}', [BlendingAwalController::class, 'Blending_detail']);
         Route::get('/awal/detail/form/{id}', [BlendingAwalController::class, 'showInputFormBlendingAwal']);
         Route::post('/store', [BlendingAwalController::class, 'store'])->name('blending.store');

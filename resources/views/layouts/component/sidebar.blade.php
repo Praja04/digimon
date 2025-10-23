@@ -229,7 +229,7 @@
                     </li>
                 @elseif(Session::get('role') === 'analis' && Session::get('role_group') === 'field')
                     <li class="nav-item"><a class="nav-link menu-link"
-                            href="{{ url('supervisor/blending/menu') }}"><i class="mdi mdi-blender-software"></i>
+                            href="{{ route('blending_analis.menu')}}"><i class="mdi mdi-blender-software"></i>
                             Blending</a></li>
                 @elseif(
                     (Session::get('role') === 'analis' && Session::get('role_group') === 'mikro') ||

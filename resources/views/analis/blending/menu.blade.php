@@ -57,54 +57,56 @@
 
     <div class="row mt-4">
 
-        <div class="col-xl-6 col-lg-4">
-            <div class="card ribbon-box right overflow-hidden">
-                <div class="card-body text-center p-4">
-                    <div class="ribbon ribbon-success ribbon-shape trending-ribbon">
-                        <i class="ri-hand-heart-fill text-white align-bottom"></i>
-                        <span class="trending-ribbon-text">Kimia</span>
-                    </div>
-                    <img src="{{ asset('assets/images/blending_awal.png') }}" alt="gambar" height="100">
-                    <h5 class="mb-1 mt-4"><a href="" class="link-primary">Data Blending</a></h5>
-                    <p class="text-muted mb-4">Analisis Blending - Kimia</p>
-                    <div class="row justify-content-center">
-                        <div class="col-lg-8">
-                            <div id="chart-gga" data-colors='["--vz-danger"]'></div>
+        @if (Session::get('role') === 'analis' && Session::get('role_group') === 'makro')
+            <div class="col-xl-6 col-lg-4">
+                <div class="card ribbon-box right overflow-hidden">
+                    <div class="card-body text-center p-4">
+                        <div class="ribbon ribbon-success ribbon-shape trending-ribbon">
+                            <i class="ri-hand-heart-fill text-white align-bottom"></i>
+                            <span class="trending-ribbon-text">Kimia</span>
                         </div>
-                    </div>
+                        <img src="{{ asset('assets/images/blending_awal.png') }}" alt="gambar" height="100">
+                        <h5 class="mb-1 mt-4"><a href="" class="link-primary">Data Blending</a></h5>
+                        <p class="text-muted mb-4">Analisis Blending - Kimia</p>
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div id="chart-gga" data-colors='["--vz-danger"]'></div>
+                            </div>
+                        </div>
 
-                    <div class="mt-4">
-                        <a href="{{ url('analis/blending/awal') }}" class="btn btn-light w-100">Lihat Detail</a>
+                        <div class="mt-4">
+                            <a href="{{ url('analis/blending/awal') }}" class="btn btn-light w-100">Lihat Detail</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @endif
 
         <!-- <div class="col-xl-4 col-lg-4">
-            <div class="card ribbon-box right overflow-hidden">
-                <div class="card-body text-center p-4">
-                    <div class="ribbon ribbon-success ribbon-shape trending-ribbon">
-                        <i class="ri-hand-heart-fill text-white align-bottom"></i>
-                        <span class="trending-ribbon-text">Makro</span>
-                    </div>
-                    <img src="{{ asset('assets/images/blending_adjust.png') }}" alt="gambar" height="100">
-                    <h5 class="mb-1 mt-4"><a href="" class="link-primary">Data Blending After Adjustment</a></h5>
-                    <p class="text-muted mb-4">Analisis Blending After Adjust - Makro</p>
-                    <div class="row justify-content-center">
-                        <div class="col-lg-8">
-                            <div id="chart-ggas" data-colors='["--vz-danger"]'></div>
+                    <div class="card ribbon-box right overflow-hidden">
+                        <div class="card-body text-center p-4">
+                            <div class="ribbon ribbon-success ribbon-shape trending-ribbon">
+                                <i class="ri-hand-heart-fill text-white align-bottom"></i>
+                                <span class="trending-ribbon-text">Makro</span>
+                            </div>
+                            <img src="{{ asset('assets/images/blending_adjust.png') }}" alt="gambar" height="100">
+                            <h5 class="mb-1 mt-4"><a href="" class="link-primary">Data Blending After Adjustment</a></h5>
+                            <p class="text-muted mb-4">Analisis Blending After Adjust - Makro</p>
+                            <div class="row justify-content-center">
+                                <div class="col-lg-8">
+                                    <div id="chart-ggas" data-colors='["--vz-danger"]'></div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <div class="mt-4">
+                                    <a href="{{ url('analis/blending/adjust/data') }}" class="btn btn-light w-100">Lihat Detail</a>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
-
-                    <div class="mt-4">
-                        <div class="mt-4">
-                            <a href="{{ url('analis/blending/adjust/data') }}" class="btn btn-light w-100">Lihat Detail</a>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>-->
+                </div>-->
 
         @if (Session::get('role') === 'analis' && Session::get('role_group') === 'field')
             <div class="col-xl-6 col-lg-4">

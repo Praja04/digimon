@@ -702,30 +702,29 @@
 
 
         $('#submit_generate').click(function(e) {
-            e.preventDefault(); // cegah tombol submit reload page
+        e.preventDefault(); // cegah tombol submit reload page
 
-            let form = $('#generateRevisiForm');
-            let formData = form.serialize();
+        let form = $('#generateRevisiForm');
+        let formData = form.serialize();
 
-            $.post('{{ url('/analis/productionbatch/processmonitoringstorage/generate-revisi') }}', formData)
-                .done(function(res) {
-                    $('#generateRevisiModal').modal('hide');
+        $.post('{{ url('/analis/productionbatch/processmonitoringstorage/generate-revisi') }}', formData)
+            .done(function(res) {
+                $('#generateRevisiModal').modal('hide');
 
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil',
-                        text: "Revisi berhasil dibuat!"
-                    }).then(function() {
-                        location.reload();
-                    });
-                })
-                .fail(function(err) {
-                    const msg = err.responseJSON?.message || 'Unknown error';
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Terjadi kesalahan: ' + msg
-                    });
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: "Revisi berhasil dibuat!"
+                }).then(function() {
+                    location.reload();
+                });
+            })
+            .fail(function(err) {
+                const msg = err.responseJSON?.message || 'Unknown error';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Terjadi kesalahan: ' + msg
                 });
             });
         });
