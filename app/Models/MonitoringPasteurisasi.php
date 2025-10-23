@@ -11,7 +11,7 @@ class MonitoringPasteurisasi extends Model
     protected $fillable = [
         'production_batch_id',
         'batch_range',
-        'nomor_pasteurisasi',
+        'nomor_blending',
         'volume_pasteurisasi',
         'storage',
         'disposition',

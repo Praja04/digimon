@@ -69,7 +69,7 @@ class MonitoringPasteurisasiControllerForeman extends Controller
             'batch' => 'required',
             // 'batch_end' => 'required',
             'storage' => 'nullable|string', // ← ubah jadi nullable
-            'no_pasteurisasi' => 'required',
+            'no_blending' => 'required',
             //required colume harus decimal
             'volume' => 'required|numeric',
         ]);
@@ -97,7 +97,7 @@ class MonitoringPasteurisasiControllerForeman extends Controller
         MonitoringPasteurisasi::create([
             'production_batch_id' => $request->production_batch_id,
             'batch_range' => $request->batch,
-            'nomor_pasteurisasi' => $request->no_pasteurisasi,
+            'nomor_blending' => $request->no_blending,
             'volume_pasteurisasi' => $request->volume,
             'storage' => $request->storage,
         ]);

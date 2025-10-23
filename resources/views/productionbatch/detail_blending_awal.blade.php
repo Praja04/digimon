@@ -146,8 +146,8 @@
                                                                 <tr>
                                                                     <td>{{ $blending->batch_range }}
                                                                         @if ($blending->has_relation == true)
-                                                                            <span class="badge bg-info text-white ms-2">
-                                                                                - {{ $blending->related_batches }}
+                                                                            <span class="badge bg-info ms-2">
+                                                                                -{{ $blending->related_batches }}
                                                                                 {{ $blending->additional_batches }}
 
                                                                             </span>
@@ -459,14 +459,14 @@
 
     <!-- Modal Generate Ulang -->
     <div class="modal fade" id="generateRevisiModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <form id="generateRevisiForm">
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Generate Revisi Batch</h5>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body row g-3">
                         <input type="hidden" name="id_old_blending" id="modal_id_blending">
                         <input type="hidden" name="production_batch_id" id="modal_po_id">
                         <input type="hidden" name="production_batch_id_leveling[]" id="po_id_leveling_1">
@@ -476,25 +476,59 @@
                         <input type="hidden" id="modal_additional_batch_po_id" name="additional_batch_po_id">
 
                         <!-- <input type="hidden" name="revisi" id="modal_revisi" readonly> -->
-                        <div class="mb-3">
+                        <div class="col-lg-12">
                             <label>Batch</label>
                             <input type="text" class="form-control" id="modal_batch" name="batch_range" readonly>
                         </div>
-                        <div class="mb-3">
+                        <div class="col-lg-6">
                             <label>Revisi Ke-</label>
                             <input type="text" class="form-control" id="modal_revisi_display" name="revisi"
                                 readonly>
                         </div>
-                        <div class="mb-3">
+                        <div class="col-lg-6">
                             <label>Nomor Blending</label>
                             <input type="text" class="form-control" name="no_blending">
                         </div>
-                        <div class="mb-3">
+                        <div class="col-lg-6">
                             <label>Volume After</label>
                             <input type="text" class="form-control" name="volume">
                         </div>
+                        <div class="col-lg-6">
+                            <label for="storage" class="form-label">Storage (Optional)</label>
+                            <select name="storage" class="form-select">
+                                <option value="">-- Pilih Storage --</option>
+                                <optgroup label="A">
+                                    <option value="A1">A1</option>
+                                    <option value="A2">A2</option>
+                                    <option value="A3">A3</option>
+                                    <option value="A4">A4</option>
+                                    <option value="A5">A5</option>
+                                </optgroup>
+                                <optgroup label="B">
+                                    <option value="B1">B1</option>
+                                    <option value="B2">B2</option>
+                                    <option value="B3">B3</option>
+                                    <option value="B4">B4</option>
+                                    <option value="B5">B5</option>
+                                </optgroup>
+                                <optgroup label="C">
+                                    <option value="C1">C1</option>
+                                    <option value="C2">C2</option>
+                                    <option value="C3">C3</option>
+                                    <option value="C4">C4</option>
+                                    <option value="C5">C5</option>
+                                </optgroup>
+                                <optgroup label="D">
+                                    <option value="D1">D1</option>
+                                    <option value="D2">D2</option>
+                                    <option value="D3">D3</option>
+                                    <option value="D4">D4</option>
+                                    <option value="D5">D5</option>
+                                </optgroup>
+                            </select>
+                        </div>
 
-                        <div class="mb-3 d-none" id="additional_batch_group">
+                        <div class="col-lg-6 d-none" id="additional_batch_group">
                             <label>Pilih Batch Tambahan 1</label>
                             <select name="additional_batch[]" id="additional_batch" class="form-control">
                                 <option value="">-- Pilih Batch --</option>
@@ -502,15 +536,13 @@
                             <input type="hidden" name="production_batch_id_leveling[]" id="po_id_leveling_1">
                         </div>
 
-                        <div class="mb-3 d-none" id="additional_batch_group_2">
+                        <div class="col-lg-6 d-none" id="additional_batch_group_2">
                             <label>Pilih Batch Tambahan 2</label>
                             <select name="additional_batch[]" id="additional_batch_2" class="form-control">
                                 <option value="">-- Pilih Batch --</option>
                             </select>
                             <input type="hidden" name="production_batch_id_leveling[]" id="po_id_leveling_2">
                         </div>
-
-
 
                     </div>
                     <div class="modal-footer">
@@ -697,10 +729,7 @@
                 $('#modal_additional_batch').val('');
                 $('#modal_additional_batch_po_id').val('');
             }
-
         });
-
-
 
         $('#additional_batch_2').on('change', function() {
             const selectedOption = $(this).find('option:selected');
@@ -713,19 +742,26 @@
             let form = $('#generateRevisiForm');
             let formData = form.serialize();
 
-            $.post('{{ url('/analis/productionbatch/processblending/generate-revisi') }}', formData, function(
-                res) {
-                $('#generateRevisiForm').modal('hide');
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: "Revisi berhasil dibuat!"
-                }).then(function() {
-                    location.reload();
+            $.post('{{ url('/analis/productionbatch/processblending/generate-revisi') }}', formData)
+                .done(function(res) {
+                    $('#generateRevisiModal').modal('hide');
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: "Revisi berhasil dibuat!"
+                    }).then(function() {
+                        location.reload();
+                    });
+                })
+                .fail(function(err) {
+                    const msg = err.responseJSON?.message || 'Unknown error';
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Terjadi kesalahan: ' + msg
+                    });
                 });
-            }).fail(function(err) {
-                alert('Terjadi kesalahan: ' + (err.responseJSON?.message || 'Unknown error'));
-            });
         });
     </script>
 

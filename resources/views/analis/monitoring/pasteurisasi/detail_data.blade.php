@@ -163,7 +163,7 @@
                                 <tr>
                                     <th>PO</th>
                                     <th>Batch</th>
-                                    <th>Nomor Pasteurisasi</th>
+                                    <th>Nomor Blending</th>
                                     <th>Storage</th>
                                     <th>Input Data</th>
                                     <th>Input Disposisi</th>
@@ -187,7 +187,7 @@
                                             @else
                                             @endif
                                         </td>
-                                        <td>{{ $data->nomor_pasteurisasi }}</td>
+                                        <td>{{ $data->nomor_blending }}</td>
                                         <td>{{ $data->storage }}</td>
                                         <td>
                                             <button class="btn btn-sm btn-primary btn-lihat" data-id="{{ $data->id }}">

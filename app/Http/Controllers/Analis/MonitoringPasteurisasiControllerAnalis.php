@@ -70,7 +70,7 @@ class MonitoringPasteurisasiControllerAnalis extends Controller
             'batch' => 'required',
             // 'batch_end' => 'required',
             'storage' => 'nullable|string', // ← ubah jadi nullable
-            'no_pasteurisasi' => 'required',
+            'no_blending' => 'required',
             //required colume harus decimal
             'volume' => 'required|numeric',
         ]);
@@ -98,7 +98,7 @@ class MonitoringPasteurisasiControllerAnalis extends Controller
         MonitoringPasteurisasi::create([
             'production_batch_id' => $request->production_batch_id,
             'batch_range' => $request->batch,
-            'nomor_pasteurisasi' => $request->no_pasteurisasi,
+            'nomor_blending' => $request->no_blending,
             'volume_pasteurisasi' => $request->volume
         ]);
 
@@ -289,7 +289,6 @@ class MonitoringPasteurisasiControllerAnalis extends Controller
             ], 422);
         }
 
-
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -304,8 +303,8 @@ class MonitoringPasteurisasiControllerAnalis extends Controller
             $remarks = '-';
         }
         $username = session('username');
-        $dataUpdate = [
 
+        $dataUpdate = [
             'disposition' => $disposition,
             'disposition_remarks' => $remarks,
             'created_by' => $username,
@@ -316,21 +315,20 @@ class MonitoringPasteurisasiControllerAnalis extends Controller
             $dataUpdate['adjustment_qty_air'] = $request->adjustment_qty_air;
             $dataUpdate['adjustment_qty_garam'] = $request->adjustment_qty_garam;
             $dataUpdate['adjustment_qty_gula'] = $request->adjustment_qty_gula;
-            $dataUpdate['not_standar'] = true;
+            $dataUpdate['not_standard'] = true;
         }
         if ($disposition === 'Jalan Bareng') {
 
-            $dataUpdate['not_standar'] = true;
+            $dataUpdate['not_standard'] = true;
         }
         if ($disposition === 'Leveling') {
-
-            $dataUpdate['not_standar'] = true;
+            $dataUpdate['not_standard'] = true;
         }
 
         // Jika resampling
         if ($disposition === 'Resampling') {
             // $dataUpdate['disposition_remarks'] = $disposition;
-            $dataUpdate['not_standar'] = true;
+            $dataUpdate['not_standard'] = true;
         }
 
         $blending->update($dataUpdate);

@@ -9,7 +9,7 @@
 
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Blending Awal</a></li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">Monitoring Turun Blending</a></li>
                         <li class="breadcrumb-item active">Product Details</li>
                     </ol>
                 </div>
@@ -119,7 +119,7 @@
                                             <li class="nav-item">
                                                 <a class="nav-link active" id="nav-speci-tab" data-bs-toggle="tab"
                                                     href="#nav-speci" role="tab" aria-controls="nav-speci"
-                                                    aria-selected="true">Blending Kimia</a>
+                                                    aria-selected="true">Monitoring Turun Blending</a>
                                             </li>
                                         </ul>
                                     </nav>
@@ -145,8 +145,8 @@
                                                                 <tr>
                                                                     <td>{{ $blending->batch_range }}
                                                                         @if ($blending->has_relation == true)
-                                                                            <span class="badge bg-info text-dark ms-2">
-                                                                                - {{ $blending->related_batches }}
+                                                                            <span class="badge bg-info ms-2">
+                                                                                -{{ $blending->related_batches }}
                                                                                 {{ $blending->additional_batches }}
 
                                                                             </span>
@@ -345,39 +345,73 @@
 
     <!-- Modal Generate Ulang -->
     <div class="modal fade" id="generateRevisiModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <form id="generateRevisiForm">
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Generate Revisi Batch</h5>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body row g-3">
                         <input type="hidden" name="id_old_blending" id="modal_id_blending">
                         <input type="hidden" name="production_batch_id" id="modal_po_id">
                         <input type="hidden" name="disposition" id="modal_disposition">
                         <input type="hidden" id="modal_additional_batch_po_id" name="additional_batch_po_id">
 
                         <!-- <input type="hidden" name="revisi" id="modal_revisi" readonly> -->
-                        <div class="mb-3">
+                        <div class="col-lg-12">
                             <label>Batch</label>
                             <input type="text" class="form-control" id="modal_batch" name="batch_range" readonly>
                         </div>
-                        <div class="mb-3">
+                        <div class="col-lg-6">
                             <label>Revisi Ke-</label>
                             <input type="text" class="form-control" id="modal_revisi_display" name="revisi"
                                 readonly>
                         </div>
-                        <div class="mb-3">
+                        <div class="col-lg-6">
                             <label>Nomor Blending</label>
                             <input type="text" class="form-control" name="no_blending">
                         </div>
-                        <div class="mb-3">
+                        <div class="col-lg-6">
                             <label>Volume</label>
                             <input type="text" class="form-control" name="volume">
                         </div>
-                        <div class="mb-3 d-none" id="additional_batch_group">
-                            <label for="additional_batch">Pilih Batch Tambahan (Jalan Bareng / Leveling)</label>
+                        <div class="col-lg-6">
+                            <label for="storage" class="form-label">Storage (Optional)</label>
+                            <select name="storage" class="form-select">
+                                <option value="">-- Pilih Storage --</option>
+                                <optgroup label="A">
+                                    <option value="A1">A1</option>
+                                    <option value="A2">A2</option>
+                                    <option value="A3">A3</option>
+                                    <option value="A4">A4</option>
+                                    <option value="A5">A5</option>
+                                </optgroup>
+                                <optgroup label="B">
+                                    <option value="B1">B1</option>
+                                    <option value="B2">B2</option>
+                                    <option value="B3">B3</option>
+                                    <option value="B4">B4</option>
+                                    <option value="B5">B5</option>
+                                </optgroup>
+                                <optgroup label="C">
+                                    <option value="C1">C1</option>
+                                    <option value="C2">C2</option>
+                                    <option value="C3">C3</option>
+                                    <option value="C4">C4</option>
+                                    <option value="C5">C5</option>
+                                </optgroup>
+                                <optgroup label="D">
+                                    <option value="D1">D1</option>
+                                    <option value="D2">D2</option>
+                                    <option value="D3">D3</option>
+                                    <option value="D4">D4</option>
+                                    <option value="D5">D5</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="col-lg-d6 d-none" id="additional_batch_group">
+                            <label for="aditional_batch">Pilih Batch Tambahan (Jalan Bareng / Leveling)</label>
                             <select name="additional_batch" id="additional_batch" class="form-control">
                                 <option value="">-- Pilih Batch --</option>
                             </select>
@@ -393,30 +427,30 @@
     </div>
 
     <script>
-        const allBatches = JSON.parse('{!! addslashes(json_encode($filteredBatchGroups)) !!}');
-        const validGgasBatches = JSON.parse('{!! addslashes(json_encode($filteredBatchGroups)) !!}');
+        const allBatches = @json($filteredBatchGroups);
+        const validGgasBatches = @json($filteredBatchGroups);
 
         // Isi select option hanya dengan batch yang valid
         function populateBatchOptions() {
             const $start = $('#batch_start');
-            // const $end = $('#batch_end');
-
             $start.empty();
-            //    $end.empty();
 
-            if (validGgasBatches.length === 0) {
+            if (!validGgasBatches || validGgasBatches.length === 0) {
                 $start.append('<option disabled>Belum ada Batch yang lolos blending(Release)</option>');
-                //$end.append('<option disabled>Semua batch belum lolos GGAS</option>');
                 return;
             }
 
             validGgasBatches.forEach(batch => {
                 $start.append(`<option value="${batch}">${batch}</option>`);
-                // $end.append(`<option value="${batch}">${batch}</option>`);
             });
+
+            console.log('Options added:', $start.find('option').length);
         }
 
-        populateBatchOptions();
+        // Panggil saat document ready
+        $(document).ready(function() {
+            populateBatchOptions();
+        });
 
         function printQR(id) {
             const content = document.getElementById(id).innerHTML;
@@ -449,45 +483,25 @@
                         text: res.message
                     }).then(() => {
                         $('#inputModal').modal('hide');
-                        // Optionally reload data or page
                         form[0].reset();
                         location.reload();
                     });
                 },
                 error: function(xhr) {
-                    if (xhr.status === 422) {
-                        const res = xhr.responseJSON;
+                    const res = xhr.responseJSON;
+                    let errors = res.errors;
+                    let msg = res.message;
 
-                        let errors = res.errors;
-                        let msg = res.message;
-
-                        let errorMessages = msg;
-                        if (errors) {
-                            errorMessages = Object.values(errors).map(e => e.join(', ')).join('\n');
-                        }
-
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Validasi Gagal',
-                            text: errorMessages
-                        });
-                    } else {
-                        const res = xhr.responseJSON;
-
-                        let errors = res.errors;
-                        let msg = res.message;
-
-                        let errorMessages = msg;
-                        if (errors) {
-                            errorMessages = Object.values(errors).map(e => e.join(', ')).join('\n');
-                        }
-
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Validasi Gagal',
-                            text: errorMessages
-                        });
+                    let errorMessages = msg;
+                    if (errors) {
+                        errorMessages = Object.values(errors).map(e => e.join(', ')).join('\n');
                     }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validasi Gagal',
+                        text: errorMessages
+                    });
                 }
             });
         });
@@ -501,7 +515,8 @@
             $('#modal_po_id').val(poId);
             $('#modal_id_blending').val(id_blending);
             $('#modal_batch').val(batch);
-            $('#modal_additional_batch_po_id').val(''); // reset PO ID tambahan
+            $('#modal_disposition').val(disposition);
+            $('#modal_additional_batch_po_id').val('');
 
             $.get('{{ url('/analis/productionbatch/processmonitoring/get-last-revisi') }}', {
                 production_batch_id: poId,
@@ -519,9 +534,9 @@
                     }, function(batchRes) {
                         console.log(batchRes);
                         batchRes.data.forEach(function(batchItem) {
-                            let value = `${batchItem.batch_number}`;
+                            let value = `${batchItem.batch_range}`;
                             $('#additional_batch').append(
-                                `<option value="${value}">Batch ${batchItem.batch_number} (PO ${batchItem.po_number})</option>`
+                                `<option value="${value}">Batch ${batchItem.batch_range} (PO ${batchItem.po_number})</option>`
                             );
                         });
                     });
@@ -553,9 +568,8 @@
             });
         });
 
-        // Saat user memilih additional_batch, simpan PO ID-nya di hidden input
         $('#additional_batch').on('change', function() {
-            const selected = $(this).val(); // contoh: "4|3"
+            const selected = $(this).val();
             if (selected) {
                 const [batch_number, po_id] = selected.split('|');
                 $('#modal_additional_batch').val(batch_number);
@@ -566,20 +580,33 @@
             }
         });
 
-
+        // PERBAIKAN: Gunakan promise chain yang benar
         $('#submit_generate').click(function(e) {
-            e.preventDefault(); // cegah tombol submit reload page
+            e.preventDefault();
 
             let form = $('#generateRevisiForm');
             let formData = form.serialize();
 
-            $.post('{{ url('/analis/productionbatch/processmonitoring/generate-revisi') }}', formData, function(
-                res) {
-                alert('Revisi berhasil dibuat!');
-                location.reload();
-            }).fail(function(err) {
-                alert('Terjadi kesalahan: ' + (err.responseJSON?.message || 'Unknown error'));
-            });
+            $.post('{{ url('/analis/productionbatch/processmonitoring/generate-revisi') }}', formData)
+                .done(function(res) {
+                    $('#generateRevisiModal').modal('hide');
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: "Revisi berhasil dibuat!"
+                    }).then(function() {
+                        location.reload();
+                    });
+                })
+                .fail(function(err) {
+                    const message = err.responseJSON?.message || 'Unknown error';
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Terjadi Kesalahan',
+                        text: message
+                    });
+                });
         });
     </script>
 

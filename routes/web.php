@@ -59,7 +59,6 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/mikro/monitoring/storage', [DashboardController::class, 'dashboard_monitoring_storage_mikro'])->name('dashboard.mikro_monitoring_storage');
 });
 
-
 Route::prefix('analis')->group(function () {
     Route::get('/analisa/temp/{identitasId}', [AuthController::class, 'getTemporary']);
     Route::post('/analisa/temp/save', [AuthController::class, 'saveTemporary']);
@@ -192,7 +191,7 @@ Route::prefix('analis')->group(function () {
     });
 
     Route::prefix('blending')->group(function () {
-        Route::get('/menu', [BlendingAwalController::class, 'menu']);
+        Route::get('/menu', [BlendingAwalController::class, 'menu'])->name('blending.menu');
         Route::get('/awal/detail/{id}', [BlendingAwalController::class, 'Blending_detail']);
         Route::get('/awal/detail/form/{id}', [BlendingAwalController::class, 'showInputFormBlendingAwal']);
         Route::post('/store', [BlendingAwalController::class, 'store'])->name('blending.store');

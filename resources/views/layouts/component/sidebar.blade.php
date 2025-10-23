@@ -160,8 +160,6 @@
                     </li>
                     <li class="menu-title"><span>Menu</span></li>
 
-
-
                     <li class="nav-item">
                         <a class="nav-link menu-link" href="{{ url('foreman/rmpm/list/rm') }}">
                             <i class="mdi mdi-database-search"></i> <span>Data RM</span>
@@ -229,6 +227,10 @@
                             <i class="mdi mdi-puzzle-outline"></i> <span data-key="t-widgets">Scan</span>
                         </a>
                     </li>
+                @elseif(Session::get('role') === 'analis' && Session::get('role_group') === 'field')
+                    <li class="nav-item"><a class="nav-link menu-link"
+                            href="{{ url('supervisor/blending/menu') }}"><i class="mdi mdi-blender-software"></i>
+                            Blending</a></li>
                 @elseif(
                     (Session::get('role') === 'analis' && Session::get('role_group') === 'mikro') ||
                         Session::get('role_group') === 'makro')

@@ -131,12 +131,11 @@
                                             <div class="table-responsive">
 
                                                 @if ($productionBatch->GgaProcesses->count() > 0)
-                                                    <table class="table mb-0">
+                                                    <table class="table table-bordered text-center">
                                                         <thead>
                                                             <tr>
                                                                 <th>Batch Number</th>
                                                                 <th>Dissolver</th>
-
                                                                 <th>QR Code (URL)</th>
                                                                 <th>Disposisi</th>
                                                                 <th>Catatan</th>

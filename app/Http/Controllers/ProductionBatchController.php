@@ -466,7 +466,6 @@ class ProductionBatchController extends Controller
             }
         }
 
-
         return view('productionbatch.detail_blending_awal', compact(
             'productionBatch',
             'batches',
@@ -497,7 +496,6 @@ class ProductionBatchController extends Controller
 
     public function generateRevisiBlendingAwal(Request $request)
     {
-
         $validated = $request->validate([
             'id_old_blending' => 'required|integer',
             'production_batch_id' => 'required|integer|exists:production_batches,id',
@@ -507,6 +505,7 @@ class ProductionBatchController extends Controller
             'production_batch_id_leveling' => 'nullable|array',
             'no_blending' => 'required|string',
             'volume' => 'required|string',
+            'storage' => 'nullable|string',
         ]);
 
         $old = BlendingAwalModel::findOrFail($validated['id_old_blending']);
@@ -547,6 +546,7 @@ class ProductionBatchController extends Controller
                     'batch_range' => $validated['batch_range'],
                     'nomor_blending' => $validated['no_blending'],
                     'volume' => $validated['volume'],
+                    'storage' => $validated['storage'],
                     'brix' => null,
                     'nacl' => null,
                     'bj' => null,
@@ -1097,8 +1097,6 @@ class ProductionBatchController extends Controller
         return response()->json(['message' => 'Revisi Blending Awal berhasil dibuat.']);
     }
 
-
-
     public function show_monitoring_blending($id)
     {
         $productionBatch = ProductionBatch::with([
@@ -1111,11 +1109,6 @@ class ProductionBatchController extends Controller
             ->whereIn('disposition', $validDispositions)
             ->get();
 
-        // $adjustmentBlending = BlendingAfterAdjustModel::where('production_batch_id', $id)
-        // ->whereIn('disposition', $validDispositions)
-        // ->get();
-
-
         $all = $blendingAwal;
 
         $grouped = $all->groupBy('batch_range');
@@ -1123,39 +1116,102 @@ class ProductionBatchController extends Controller
 
         foreach ($grouped as $batchRange => $items) {
             $chosen = $items->sortByDesc(
-                fn($item) =>
-                is_numeric($item->revisi) ? (int)$item->revisi : 0
+                fn($item) => is_numeric($item->revisi) ? (int)$item->revisi : 0
             )->first();
 
-            $fullRange = $chosen->batch_range;
+            if (! $chosen) continue;
 
-            $relatedBatches = DB::table('blending_batch_relations')
-                ->where('blending_awal_id', $chosen->id)
-                ->pluck('batch');
+            $numbers = [];
 
-            foreach ($relatedBatches as $relRange) {
-                $fullRange .= '-' . $relRange;
+            // expand main batch_range
+            if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $chosen->batch_range, $m)) {
+                $numbers = range((int)$m[1], (int)$m[2]);
+            } else {
+                $numbers = [(int) filter_var($chosen->batch_range, FILTER_SANITIZE_NUMBER_INT)];
             }
 
-            $rawBatchGroups[] = $fullRange;
+            // expand related batches from blending_batch_relations
+            $relatedBatches = DB::table('blending_batch_relations')
+                ->where('blending_awal_id', $chosen->id)
+                ->pluck('batch')
+                ->toArray();
+
+            foreach ($relatedBatches as $relRange) {
+                $relRange = trim($relRange);
+                if ($relRange === '') continue;
+                if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $relRange, $rm)) {
+                    $numbers = array_merge($numbers, range((int)$rm[1], (int)$rm[2]));
+                } else {
+                    $numbers[] = (int) filter_var($relRange, FILTER_SANITIZE_NUMBER_INT);
+                }
+            }
+
+            $numbers = array_values(array_unique($numbers));
+            sort($numbers, SORT_NUMERIC);
+
+            if (!empty($numbers)) {
+                $rawBatchGroups[] = [
+                    'numbers' => $numbers,
+                    'source_id' => $chosen->id,
+                    'production_batch_id' => $chosen->production_batch_id,
+                ];
+            }
         }
 
-        // Hilangkan batch-range yang merupakan bagian dari string lain
-        $filteredBatchGroups = [];
-        foreach ($rawBatchGroups as $i => $range) {
+        // Collect numbers already used in MonitoringTurunBlending (for this production batch)
+        $usedMonitoringNumbers = [];
+        foreach ($productionBatch->MonitoringTurunBlending as $mEntry) {
+            // expand main range
+            if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $mEntry->batch_range, $mm)) {
+                $usedMonitoringNumbers = array_merge($usedMonitoringNumbers, range((int)$mm[1], (int)$mm[2]));
+            } else {
+                $usedMonitoringNumbers[] = (int) filter_var($mEntry->batch_range, FILTER_SANITIZE_NUMBER_INT);
+            }
+
+            // expand related monitoring_turun_blending_relations
+            $mRelated = DB::table('monitoring_turun_blending_relations')
+                ->where('monitoring_turun_blending_id', $mEntry->id)
+                ->pluck('batch')
+                ->toArray();
+
+            foreach ($mRelated as $mr) {
+                $mr = trim($mr);
+                if ($mr === '') continue;
+                if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $mr, $rmr)) {
+                    $usedMonitoringNumbers = array_merge($usedMonitoringNumbers, range((int)$rmr[1], (int)$rmr[2]));
+                } else {
+                    $usedMonitoringNumbers[] = (int) filter_var($mr, FILTER_SANITIZE_NUMBER_INT);
+                }
+            }
+        }
+        $usedMonitoringNumbers = array_values(array_unique($usedMonitoringNumbers));
+
+        // Filter candidates: remove any candidate that overlaps with already used numbers
+        $candidates = array_filter($rawBatchGroups, function ($grp) use ($usedMonitoringNumbers) {
+            if (empty($grp['numbers'])) return false;
+            return empty(array_intersect($grp['numbers'], $usedMonitoringNumbers));
+        });
+
+        // Remove candidates that are subsets of another candidate (keep only maximal groups)
+        $finalCandidates = [];
+        foreach ($candidates as $i => $cand) {
             $isSubset = false;
-            foreach ($rawBatchGroups as $j => $compare) {
-                if (
-                    $i !== $j && strpos($compare, $range) !== false
-                ) {
+            foreach ($candidates as $j => $other) {
+                if ($i === $j) continue;
+                if (empty(array_diff($cand['numbers'], $other['numbers']))) {
                     $isSubset = true;
                     break;
                 }
             }
             if (!$isSubset) {
-                $filteredBatchGroups[] = $range;
+                $finalCandidates[] = $cand;
             }
         }
+
+        // Convert to strings for view (e.g. "1-2-3" or "5")
+        $filteredBatchGroups = array_map(function ($grp) {
+            return implode('-', $grp['numbers']);
+        }, $finalCandidates);
 
         foreach ($productionBatch->MonitoringTurunBlending as $data) {
             $data->has_relation = $data->additionalBatches && $data->additionalBatches->isNotEmpty();
@@ -1183,54 +1239,123 @@ class ProductionBatchController extends Controller
 
         $validDispositions = ['Release', 'Release Bersyarat'];
 
-        $monitorTurunBlending = MonitoringTurunBlending::where('production_batch_id', $id)
+        $monitoringTurunBlending = MonitoringTurunBlending::where('production_batch_id', $id)
             ->whereIn('disposition', $validDispositions)
             ->get();
 
-        // $adjustmentBlending = BlendingAfterAdjustModel::where('production_batch_id', $id)
-        // ->whereIn('disposition', $validDispositions)
-        // ->get();
+        $all = $monitoringTurunBlending;
 
-        $all = $monitorTurunBlending;
-
+        // Build candidate groups as arrays of numbers (not ambiguous strings)
         $grouped = $all->groupBy('batch_range');
-        $rawBatchGroups = [];
+        $rawBatchGroups = []; // each entry: ['numbers' => [1,2,3], 'source_id' => id, 'po_id' => production_batch_id]
 
         foreach ($grouped as $batchRange => $items) {
             $chosen = $items->sortByDesc(
-                fn($item) =>
-                is_numeric($item->revisi) ? (int)$item->revisi : 0
+                fn($item) => is_numeric($item->revisi) ? (int)$item->revisi : 0
             )->first();
 
-            $fullRange = $chosen->batch_range;
-
-            $relatedBatches = DB::table('monitoring_turun_blending_relations')
-                ->where('monitoring_turun_blending_id', $chosen->id)
-                ->pluck('batch');
-
-            foreach ($relatedBatches as $relRange) {
-                $fullRange .= '-' . $relRange;
+            if (!$chosen) {
+                continue;
             }
 
-            $rawBatchGroups[] = $fullRange;
+            $numbers = [];
+
+            // robustly parse main batch_range:
+            // - if it's exactly "start-end" (two tokens) treat as range
+            // - otherwise split on '-' and treat each token as an individual number
+            $tokens = preg_split('/\s*-\s*/', trim($chosen->batch_range), -1, PREG_SPLIT_NO_EMPTY);
+            if (count($tokens) === 2 && preg_match('/^\d+$/', $tokens[0]) && preg_match('/^\d+$/', $tokens[1])) {
+                $numbers = range((int)$tokens[0], (int)$tokens[1]);
+            } else {
+                foreach ($tokens as $t) {
+                    $n = (int) filter_var($t, FILTER_SANITIZE_NUMBER_INT);
+                    if ($n !== 0 || $t === '0') {
+                        $numbers[] = $n;
+                    }
+                }
+            }
+
+            // expand related batches from monitoring_turun_blending_relations
+            $relatedBatches = DB::table('monitoring_turun_blending_relations')
+                ->where('monitoring_turun_blending_id', $chosen->id)
+                ->pluck('batch')
+                ->toArray();
+
+            foreach ($relatedBatches as $relRange) {
+                $relRange = trim($relRange);
+                if ($relRange === '') continue;
+                if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $relRange, $rm)) {
+                    $numbers = array_merge($numbers, range((int)$rm[1], (int)$rm[2]));
+                } else {
+                    $numbers[] = (int) filter_var($relRange, FILTER_SANITIZE_NUMBER_INT);
+                }
+            }
+
+            $numbers = array_values(array_unique($numbers));
+            sort($numbers, SORT_NUMERIC);
+
+            $rawBatchGroups[] = [
+                'numbers' => $numbers,
+                'source_id' => $chosen->id,
+                'production_batch_id' => $chosen->production_batch_id,
+            ];
         }
 
-        // Hilangkan batch-range yang merupakan bagian dari string lain
-        $filteredBatchGroups = [];
-        foreach ($rawBatchGroups as $i => $range) {
+        // Collect numbers already used in MonitoringPasteurisasi (for this production batch)
+        $usedMonitoringNumbers = [];
+        foreach ($productionBatch->MonitoringPasteurisasi as $mEntry) {
+            // expand main range
+            if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $mEntry->batch_range, $mm)) {
+                $usedMonitoringNumbers = array_merge($usedMonitoringNumbers, range((int)$mm[1], (int)$mm[2]));
+            } else {
+                $usedMonitoringNumbers[] = (int) filter_var($mEntry->batch_range, FILTER_SANITIZE_NUMBER_INT);
+            }
+
+            // expand related monitoring_pasteurisasi_relations
+            $mRelated = DB::table('monitoring_pasteurisasi_relations')
+                ->where('monitoring_pasteurisasi_id', $mEntry->id)
+                ->pluck('batch')
+                ->toArray();
+
+            foreach ($mRelated as $mr) {
+                $mr = trim($mr);
+                if ($mr === '') continue;
+                if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $mr, $rmr)) {
+                    $usedMonitoringNumbers = array_merge($usedMonitoringNumbers, range((int)$rmr[1], (int)$rmr[2]));
+                } else {
+                    $usedMonitoringNumbers[] = (int) filter_var($mr, FILTER_SANITIZE_NUMBER_INT);
+                }
+            }
+        }
+        $usedMonitoringNumbers = array_values(array_unique($usedMonitoringNumbers));
+
+        // Filter candidates: remove any candidate that overlaps with already used numbers
+        $candidates = array_filter($rawBatchGroups, function ($grp) use ($usedMonitoringNumbers) {
+            if (empty($grp['numbers'])) return false;
+            return empty(array_intersect($grp['numbers'], $usedMonitoringNumbers));
+        });
+
+        // Remove candidates that are subsets of another candidate (keep only maximal groups)
+        $finalCandidates = [];
+        foreach ($candidates as $i => $cand) {
             $isSubset = false;
-            foreach ($rawBatchGroups as $j => $compare) {
-                if (
-                    $i !== $j && strpos($compare, $range) !== false
-                ) {
+            foreach ($candidates as $j => $other) {
+                if ($i === $j) continue;
+                // if all numbers in cand are present in other => cand is subset
+                if (empty(array_diff($cand['numbers'], $other['numbers']))) {
                     $isSubset = true;
                     break;
                 }
             }
             if (!$isSubset) {
-                $filteredBatchGroups[] = $range;
+                $finalCandidates[] = $cand;
             }
         }
+
+        // Convert to strings for view (e.g. "1-2-3" or "5" depending on numbers)
+        $filteredBatchGroups = array_map(function ($grp) {
+            return implode('-', $grp['numbers']);
+        }, $finalCandidates);
 
         foreach ($productionBatch->MonitoringPasteurisasi as $data) {
             $data->has_relation = $data->additionalBatches && $data->additionalBatches->isNotEmpty();
@@ -1252,7 +1377,6 @@ class ProductionBatchController extends Controller
 
     public function getLastRevisiMonitoring(Request $request)
     {
-
         $request->validate([
             'production_batch_id' => 'required|integer|exists:production_batches,id',
             'batch_range' => 'required|string',
@@ -1266,69 +1390,6 @@ class ProductionBatchController extends Controller
         $nextRevisi = is_null($lastRevisi) ? 1 : $lastRevisi + 1;
 
         return response()->json(['revisi' => $nextRevisi]);
-    }
-
-
-    public function getAvailableAdditionalBatchMonitoring(Request $request)
-    {
-        $request->validate([
-            'production_batch_id' => 'required|integer|exists:production_batches,id',
-            'exclude_batch' => 'required|string'
-        ]);
-
-        $productionBatch = ProductionBatch::findOrFail($request->production_batch_id);
-
-        $validDispositions = ['Release', 'Release Bersyarat', 'Adjustment', 'Resampling'];
-
-        // Fungsi ambil batch valid beserta PO id-nya
-        $getAvailableBatchesByPo = function ($poId, $exclude) use ($validDispositions) {
-            $po = ProductionBatch::findOrFail($poId);
-
-            // $validGgasBatches = $po->GgasProcesses()
-            //     ->whereIn('disposition', $validDispositions)
-            //     ->pluck('batch_number')
-            //     ->map(fn ($b) => (int)$b)
-            //     ->unique()
-            //     ->toArray();
-
-            $usedInBlending = $po->MonitoringTurunBlending->flatMap(function ($item) {
-                if (preg_match('/(\d+)\s*-\s*(\d+)/', $item->batch_range, $matches)) {
-                    return range((int)$matches[1], (int)$matches[2]);
-                }
-                return [(int)$item->batch_range];
-            })->toArray();
-
-            $usedInRelation = DB::table('monitoring_turun_blending_relations')
-                ->join('monitoring_turun_blending', 'monitoring_turun_blending_relations.monitoring_turun_blending_id', '=', 'monitoring_turun_blending_id')
-                ->where('monitoring_turun_blending.production_batch_id', $po->id)
-                ->pluck('batch')
-                ->map(fn($b) => (int)$b)
-                ->toArray();
-
-            $availableBatches = array_values(array_diff($usedInBlending, $usedInRelation, $exclude));
-
-            // Return array dengan struktur: ['po_id' => ..., 'batch_number' => ...]
-            return array_map(fn($batch) => ['po_id' => $poId, 'batch_number' => $batch, 'po_number' => $po->po_number,], $availableBatches);
-        };
-
-        $exclude = explode('-', $request->exclude_batch);
-        $exclude = array_map('intval', $exclude);
-
-        $available = $getAvailableBatchesByPo($productionBatch->id, $exclude);
-
-        if (empty($available)) {
-            $otherPOs = ProductionBatch::where('id', '!=', $productionBatch->id)->get();
-
-            foreach ($otherPOs as $otherPO) {
-                $batchesFromOtherPo = $getAvailableBatchesByPo($otherPO->id, $exclude);
-                if (!empty($batchesFromOtherPo)) {
-                    $available = $batchesFromOtherPo;
-                    break;
-                }
-            }
-        }
-
-        return response()->json(['data' => $available]);
     }
 
     public function getMainMonitoringJalanBareng(Request $request)
@@ -1383,6 +1444,7 @@ class ProductionBatchController extends Controller
             'additional_batch' => 'nullable',
             'no_blending' => 'required',
             'volume' => 'required',
+            'storage' => 'nullable|string',
         ]);
 
         $old = MonitoringTurunBlending::findOrFail($validated['id_old_blending']);
@@ -1425,6 +1487,7 @@ class ProductionBatchController extends Controller
             'batch_range' => $validated['batch_range'],
             'nomor_blending' => $validated['no_blending'],
             'volume_blending' => $validated['volume'],
+            'storage' => $validated['storage'],
             'disposition' => null,
             'disposition_remarks' => null,
             'adjusment_qty' => null,
@@ -1457,11 +1520,12 @@ class ProductionBatchController extends Controller
             'additional_batch' => 'nullable',
             'no_blending' => 'required',
             'volume' => 'required',
+            'storage' => 'nullable|string',
         ]);
 
         $old = MonitoringPasteurisasi::findOrFail($validated['id_old_blending']);
         $old->update([
-            'not_standar' => false, // atau logika lain sesuai kebutuhanmu
+            'not_standard' => false, // atau logika lain sesuai kebutuhanmu
         ]);
         // Ambil disposisi data lama
         $oldDisposition = $old->disposition;
@@ -1499,6 +1563,7 @@ class ProductionBatchController extends Controller
             'batch_range' => $validated['batch_range'],
             'nomor_blending' => $validated['no_blending'],
             'volume_blending' => $validated['volume'],
+            'storage' => $validated['storage'],
             'disposition' => null,
             'disposition_remarks' => null,
             'adjusment_qty' => null,
@@ -1510,7 +1575,7 @@ class ProductionBatchController extends Controller
         // Simpan batch tambahan hanya jika disposisi Jalan Bareng atau Leveling dan ada input tambahan_batch
         if (in_array($oldDisposition, ['Jalan Bareng', 'Leveling']) && !empty($validated['additional_batch'])) {
             DB::table('monitoring_pasteurisasi_relations')->insert([
-                'monitoring_turun_blending_id' => $new->id,
+                'monitoring_pasteurisasi_id' => $new->id,
                 'batch' => $validated['additional_batch'],
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -1523,79 +1588,290 @@ class ProductionBatchController extends Controller
 
     public function getLastRevisiMonitoringPasteurisasi(Request $request)
     {
+        // $request->validate([
+        //     'production_batch_id' => 'required|integer|exists:production_batches,id',
+        //     'batch_range' => 'required|string',
+        // ]);
 
-        $request->validate([
-            'production_batch_id' => 'required|integer|exists:production_batches,id',
-            'batch_range' => 'required|string',
-        ]);
+        // $lastRevisi = MonitoringPasteurisasi::where('production_batch_id', $request->production_batch_id)
+        //     ->where('batch_range', $request->batch_range)
+        //     ->max('revisi');
 
-        $lastRevisi = MonitoringPasteurisasi::where('production_batch_id', $request->production_batch_id)
-            ->where('batch_range', $request->batch_range)
-            ->max('revisi');
+        // // Jika belum ada, revisi dimulai dari 1
+        // $nextRevisi = is_null($lastRevisi) ? 1 : $lastRevisi + 1;
 
-        // Jika belum ada, revisi dimulai dari 1
-        $nextRevisi = is_null($lastRevisi) ? 1 : $lastRevisi + 1;
-
-        return response()->json(['revisi' => $nextRevisi]);
+        // return response()->json(['revisi' => $nextRevisi]);
     }
 
     public function getAvailableAdditionalBatchMonitoringPasteurisasi(Request $request)
     {
         $request->validate([
             'production_batch_id' => 'required|integer|exists:production_batches,id',
-            'exclude_batch' => 'required|string'
+            'batch_range' => 'required|string'
         ]);
 
-        $productionBatch = ProductionBatch::findOrFail($request->production_batch_id);
+        // parse exclude into integer list
+        $exclude = array_map('intval', explode('-', $request->exclude_batch));
 
         $validDispositions = ['Release', 'Release Bersyarat', 'Adjustment', 'Resampling'];
 
-        // Fungsi ambil batch valid beserta PO id-nya
-        $getAvailableBatchesByPo = function ($poId, $exclude) use ($validDispositions) {
-            $po = ProductionBatch::findOrFail($poId);
+        $currentPo = ProductionBatch::findOrFail($request->production_batch_id);
+        $poNumber = $currentPo->po_number;
 
-            // $validGgasBatches = $po->GgasProcesses()
-            //     ->whereIn('disposition', $validDispositions)
-            //     ->pluck('batch_number')
-            //     ->map(fn ($b) => (int)$b)
-            //     ->unique()
-            //     ->toArray();
+        // helper: proses kandidat untuk daftar production_batch_id tertentu
+        $processCandidates = function (array $productionBatchIds) use ($validDispositions, $exclude) {
+            $all = MonitoringTurunBlending::whereIn('production_batch_id', $productionBatchIds)
+                ->whereIn('disposition', $validDispositions)
+                ->get();
 
-            $usedInBlending = $po->MonitoringPasteurisasi->flatMap(function ($item) {
-                if (preg_match('/(\d+)\s*-\s*(\d+)/', $item->batch_range, $matches)) {
-                    return range((int)$matches[1], (int)$matches[2]);
+            // group by composite key production_batch_id|batch_range to avoid mixing across PO
+            $grouped = $all->groupBy(function ($item) {
+                return $item->production_batch_id . '|' . $item->batch_range;
+            });
+
+            $result = [];
+
+            foreach ($grouped as $key => $items) {
+                $chosen = $items->sortByDesc(function ($item) {
+                    return is_numeric($item->revisi) ? (int) $item->revisi : 0;
+                })->first();
+
+                if (! $chosen) continue;
+
+                $numbers = [];
+
+                // expand main batch_range (contoh "1-3" => [1,2,3])
+                if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $chosen->batch_range, $m)) {
+                    $numbers = range((int)$m[1], (int)$m[2]);
+                } else {
+                    $numbers = [(int) filter_var($chosen->batch_range, FILTER_SANITIZE_NUMBER_INT)];
                 }
-                return [(int)$item->batch_range];
-            })->toArray();
 
-            $usedInRelation = DB::table('monitoring_pasteurisasi_relations')
-                ->join('monitoring_turun_blending', 'monitoring_pasteurisasi_relations.monitoring_turun_blending_id', '=', 'monitoring_turun_blending_id')
-                ->where('monitoring_turun_blending.production_batch_id', $po->id)
-                ->pluck('batch')
-                ->map(fn($b) => (int)$b)
-                ->toArray();
+                // ambil relasi tambahan dan expand tiap entry (bisa "5" atau "7-8")
+                $related = DB::table('monitoring_turun_blending_relations')
+                    ->where('monitoring_turun_blending_id', $chosen->id)
+                    ->pluck('batch')
+                    ->toArray();
 
-            $availableBatches = array_values(array_diff($usedInBlending, $usedInRelation, $exclude));
+                foreach ($related as $rel) {
+                    $rel = trim($rel);
+                    if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $rel, $rm)) {
+                        $numbers = array_merge($numbers, range((int)$rm[1], (int)$rm[2]));
+                    } elseif ($rel !== '') {
+                        $numbers[] = (int) filter_var($rel, FILTER_SANITIZE_NUMBER_INT);
+                    }
+                }
 
-            // Return array dengan struktur: ['po_id' => ..., 'batch_number' => ...]
-            return array_map(fn($batch) => ['po_id' => $poId, 'batch_number' => $batch, 'po_number' => $po->po_number,], $availableBatches);
+                // unique dan sort ascending
+                $numbers = array_values(array_unique($numbers));
+                sort($numbers, SORT_NUMERIC);
+
+                // jika ada irisan dengan exclude, skip
+                if (!empty(array_intersect($numbers, $exclude))) {
+                    continue;
+                }
+
+                // jika batch sudah ada di monitoring_turun_blending untuk PO yang sama, skip --
+                $monitoringEntries = MonitoringPasteurisasi::where('production_batch_id', $chosen->production_batch_id)->get();
+
+                $usedMonitoringNumbers = [];
+                foreach ($monitoringEntries as $mEntry) {
+                    // expand monitoring main batch_range
+                    if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $mEntry->batch_range, $mm)) {
+                        $usedMonitoringNumbers = array_merge($usedMonitoringNumbers, range((int)$mm[1], (int)$mm[2]));
+                    } else {
+                        $usedMonitoringNumbers[] = (int) filter_var($mEntry->batch_range, FILTER_SANITIZE_NUMBER_INT);
+                    }
+
+                    // expand related monitoring batches
+                    $mRelated = DB::table('monitoring_pasteurisasi_relations')
+                        ->where('monitoring_pasteurisasi_id', $mEntry->id)
+                        ->pluck('batch')
+                        ->toArray();
+
+                    foreach ($mRelated as $mr) {
+                        $mr = trim($mr);
+                        if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $mr, $rmr)) {
+                            $usedMonitoringNumbers = array_merge($usedMonitoringNumbers, range((int)$rmr[1], (int)$rmr[2]));
+                        } elseif ($mr !== '') {
+                            $usedMonitoringNumbers[] = (int) filter_var($mr, FILTER_SANITIZE_NUMBER_INT);
+                        }
+                    }
+                }
+
+                $usedMonitoringNumbers = array_values(array_unique($usedMonitoringNumbers));
+
+                // jika ada overlap dengan monitoring yang sudah ada, skip
+                if (!empty(array_intersect($numbers, $usedMonitoringNumbers))) {
+                    continue;
+                }
+
+                $result[] = [
+                    'batch_range' => implode('-', $numbers),
+                    'source_blending_id' => $chosen->id,
+                    'production_batch_id' => $chosen->production_batch_id,
+                ];
+            }
+
+            return $result;
         };
 
-        $exclude = explode('-', $request->exclude_batch);
-        $exclude = array_map('intval', $exclude);
+        // Prioritas: semua production_batch dengan po_number yang sama
+        $poGroupIds = ProductionBatch::where('po_number', $poNumber)->pluck('id')->toArray();
+        $available = $processCandidates($poGroupIds);
 
-        $available = $getAvailableBatchesByPo($productionBatch->id, $exclude);
-
+        // Jika tidak ada di PO yang sama, cari dari PO lain (semua production_batch yang po_number berbeda)
         if (empty($available)) {
-            $otherPOs = ProductionBatch::where('id', '!=', $productionBatch->id)->get();
+            $otherPoIds = ProductionBatch::where('po_number', '!=', $poNumber)->pluck('id')->toArray();
+            $available = $processCandidates($otherPoIds);
+        }
 
-            foreach ($otherPOs as $otherPO) {
-                $batchesFromOtherPo = $getAvailableBatchesByPo($otherPO->id, $exclude);
-                if (!empty($batchesFromOtherPo)) {
-                    $available = $batchesFromOtherPo;
-                    break;
-                }
+        // lampirkan po_number ke setiap hasil
+        if (!empty($available)) {
+            $poIds = array_unique(array_column($available, 'production_batch_id'));
+            $poMap = ProductionBatch::whereIn('id', $poIds)->pluck('po_number', 'id')->toArray();
+
+            foreach ($available as &$row) {
+                $row['po_number'] = $poMap[$row['production_batch_id']] ?? null;
             }
+            unset($row);
+        }
+
+        return response()->json(['data' => $available]);
+    }
+
+    public function getAvailableAdditionalBatchMonitoring(Request $request)
+    {
+        $request->validate([
+            'production_batch_id' => 'required|integer|exists:production_batches,id',
+            'exclude_batch' => 'required|string'
+        ]);
+
+        // parse exclude into integer list
+        $exclude = array_map('intval', explode('-', $request->exclude_batch));
+
+        $validDispositions = ['Release', 'Release Bersyarat', 'Adjustment', 'Resampling'];
+
+        $currentPo = ProductionBatch::findOrFail($request->production_batch_id);
+        $poNumber = $currentPo->po_number;
+
+        // helper: proses kandidat untuk daftar production_batch_id tertentu
+        $processCandidates = function (array $productionBatchIds) use ($validDispositions, $exclude) {
+            $all = BlendingAwalModel::whereIn('production_batch_id', $productionBatchIds)
+                ->whereIn('disposition', $validDispositions)
+                ->get();
+
+            // group by composite key production_batch_id|batch_range to avoid mixing across PO
+            $grouped = $all->groupBy(function ($item) {
+                return $item->production_batch_id . '|' . $item->batch_range;
+            });
+
+            $result = [];
+
+            foreach ($grouped as $key => $items) {
+                $chosen = $items->sortByDesc(function ($item) {
+                    return is_numeric($item->revisi) ? (int) $item->revisi : 0;
+                })->first();
+
+                if (! $chosen) continue;
+
+                $numbers = [];
+
+                // expand main batch_range (contoh "1-3" => [1,2,3])
+                if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $chosen->batch_range, $m)) {
+                    $numbers = range((int)$m[1], (int)$m[2]);
+                } else {
+                    $numbers = [(int) filter_var($chosen->batch_range, FILTER_SANITIZE_NUMBER_INT)];
+                }
+
+                // ambil relasi tambahan dan expand tiap entry (bisa "5" atau "7-8")
+                $related = DB::table('blending_batch_relations')
+                    ->where('blending_awal_id', $chosen->id)
+                    ->pluck('batch')
+                    ->toArray();
+
+                foreach ($related as $rel) {
+                    $rel = trim($rel);
+                    if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $rel, $rm)) {
+                        $numbers = array_merge($numbers, range((int)$rm[1], (int)$rm[2]));
+                    } elseif ($rel !== '') {
+                        $numbers[] = (int) filter_var($rel, FILTER_SANITIZE_NUMBER_INT);
+                    }
+                }
+
+                // unique dan sort ascending
+                $numbers = array_values(array_unique($numbers));
+                sort($numbers, SORT_NUMERIC);
+
+                // jika ada irisan dengan exclude, skip
+                if (!empty(array_intersect($numbers, $exclude))) {
+                    continue;
+                }
+
+                // jika batch sudah ada di monitoring_turun_blending untuk PO yang sama, skip --
+                $monitoringEntries = MonitoringTurunBlending::where('production_batch_id', $chosen->production_batch_id)->get();
+
+                $usedMonitoringNumbers = [];
+                foreach ($monitoringEntries as $mEntry) {
+                    // expand monitoring main batch_range
+                    if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $mEntry->batch_range, $mm)) {
+                        $usedMonitoringNumbers = array_merge($usedMonitoringNumbers, range((int)$mm[1], (int)$mm[2]));
+                    } else {
+                        $usedMonitoringNumbers[] = (int) filter_var($mEntry->batch_range, FILTER_SANITIZE_NUMBER_INT);
+                    }
+
+                    // expand related monitoring batches
+                    $mRelated = DB::table('monitoring_turun_blending_relations')
+                        ->where('monitoring_turun_blending_id', $mEntry->id)
+                        ->pluck('batch')
+                        ->toArray();
+
+                    foreach ($mRelated as $mr) {
+                        $mr = trim($mr);
+                        if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $mr, $rmr)) {
+                            $usedMonitoringNumbers = array_merge($usedMonitoringNumbers, range((int)$rmr[1], (int)$rmr[2]));
+                        } elseif ($mr !== '') {
+                            $usedMonitoringNumbers[] = (int) filter_var($mr, FILTER_SANITIZE_NUMBER_INT);
+                        }
+                    }
+                }
+
+                $usedMonitoringNumbers = array_values(array_unique($usedMonitoringNumbers));
+
+                // jika ada overlap dengan monitoring yang sudah ada, skip
+                if (!empty(array_intersect($numbers, $usedMonitoringNumbers))) {
+                    continue;
+                }
+
+                $result[] = [
+                    'batch_range' => implode('-', $numbers),
+                    'source_blending_id' => $chosen->id,
+                    'production_batch_id' => $chosen->production_batch_id,
+                ];
+            }
+
+            return $result;
+        };
+
+        // Prioritas: semua production_batch dengan po_number yang sama
+        $poGroupIds = ProductionBatch::where('po_number', $poNumber)->pluck('id')->toArray();
+        $available = $processCandidates($poGroupIds);
+
+        // Jika tidak ada di PO yang sama, cari dari PO lain (semua production_batch yang po_number berbeda)
+        if (empty($available)) {
+            $otherPoIds = ProductionBatch::where('po_number', '!=', $poNumber)->pluck('id')->toArray();
+            $available = $processCandidates($otherPoIds);
+        }
+
+        // lampirkan po_number ke setiap hasil
+        if (!empty($available)) {
+            $poIds = array_unique(array_column($available, 'production_batch_id'));
+            $poMap = ProductionBatch::whereIn('id', $poIds)->pluck('po_number', 'id')->toArray();
+
+            foreach ($available as &$row) {
+                $row['po_number'] = $poMap[$row['production_batch_id']] ?? null;
+            }
+            unset($row);
         }
 
         return response()->json(['data' => $available]);
