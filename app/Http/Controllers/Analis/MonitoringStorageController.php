@@ -146,13 +146,7 @@ class MonitoringStorageController extends Controller
             'nomor_blending' => $request->no_blending,
             'volume_blending' => $request->volume
         ]);
-        MonitoringStorageBeforeUse::create([
-            'production_batch_id' => $request->production_batch_id,
-            'batch_range' => $request->batch,
-            'nomor_blending' => $request->no_blending,
-            'volume_blending' => $request->volume
-        ]);
-
+    
         // Jika ada input 'storage', update di tabel ProductionBatch
         if ($request->filled('storage')) {
             $productionBatch = ProductionBatch::find($request->production_batch_id);

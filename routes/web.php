@@ -124,6 +124,8 @@ Route::prefix('analis')->group(function () {
         Route::get('/data_po/monitoring/blending', [ProductionBatchController::class, 'data_po_monitoring'])->name('productionbatch.data_po_monitoring');
         Route::get('/data_po/monitoring/pasteurisasi', [ProductionBatchController::class, 'data_po_monitoring_pasteurisasi'])->name('productionbatch.data_po_monitoring_pasteurisasi');
         Route::get('/data_po/monitoring/storage', [ProductionBatchController::class, 'data_po_monitoring_storage'])->name('productionbatch.data_po_monitoring_storage');
+        Route::get('/data_po/monitoring/storage/before-use', [ProductionBatchController::class, 'data_po_monitoring_storage_before_use'])->name('productionbatch.data_po_monitoring_storage_before_use');
+        Route::get('/po_masak/monitoring/storage/before-use/{id}', [ProductionBatchController::class, 'show_monitoring_storage_before_use'])->name('productionbatch.show_monitoring_storage_before_use');
         Route::get('/po_masak/blending/awal/{id}', [ProductionBatchController::class, 'show_blending_awal'])->name('productionbatch.show_blending_awal');
         Route::get('/po_masak/blending/adjust/{id}', [ProductionBatchController::class, 'show_blending_after_adjust'])->name('productionbatch.show_blending_adjust');
         Route::get('/po_masak/monitoring/blending/{id}', [ProductionBatchController::class, 'show_monitoring_blending'])->name('productionbatch.show_monitoring_blending');
@@ -253,10 +255,10 @@ Route::prefix('analis')->group(function () {
         Route::post('/update/data/mikro/{id}', [MonitoringStorageController::class, 'update_monitoring_storage_mikro']);
 
         //storage before use
-        Route::get('/data/before-use', [MonitoringStorageBeforeUseController::class, 'index']);
+        Route::get('/data/before-use', [MonitoringStorageBeforeUseController::class, 'index'])->name('analis.monitoring_storage_before_use.index');
+        Route::post('/store/before-use', [MonitoringStorageBeforeUseController::class, 'store'])->name('analis.monitoring_storage_before_use.store');
         Route::get('/detail/before-use/{id}', [MonitoringStorageBeforeUseController::class, 'show']);
-        Route::get('/detail/data/before-use/{id}', [MonitoringStorageBeforeUseController::class, 'Monitoring_Storage_before_use_detail_mikro_id']);
-        Route::post('/update/data/before-use/{id}', [MonitoringStorageBeforeUseController::class, 'update']);
+        Route::post('/update/data/before-use/{id}', [MonitoringStorageBeforeUseController::class, 'update'])->name('analis.monitoring_storage_before_use.update');
     });
 });
 

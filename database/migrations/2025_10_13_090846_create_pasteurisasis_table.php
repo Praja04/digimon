@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('production_batch_id')->unsigned();
             $table->string('batch_range')->nullable();
-            $table->integer('nomor_pasteurisasi')->nullable();
+            $table->integer('nomor_blending')->nullable();
             $table->float('volume_pasteurisasi')->nullable();
             $table->string('storage')->nullable();
             $table->enum('disposition', ['Release', 'Release Bersyarat', 'Resampling', 'Reject', 'Repro', 'Adjustment', 'Jalan Bareng', 'Leveling'])->nullable();

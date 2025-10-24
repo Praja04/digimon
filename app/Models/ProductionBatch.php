@@ -239,4 +239,22 @@ class ProductionBatch extends Model
 
         return $isAllFilled;
     }
+
+    public function isMonitoringStorageBeforeUseComplete()
+    {
+        $monitoring = $this->MonitoringStorageBeforeUse;
+        $data = $monitoring->count();
+
+        // Jika tidak ada data GGA, belum lengkap
+        if ($data === 0) {
+            return false;
+        }
+
+        // Cek apakah semua data brix dan nacl sudah terisi
+        $isAllFilled = $monitoring->every(function ($item) {
+            return !is_null($item->hasil);
+        });
+
+        return $isAllFilled;
+    }
 }

@@ -14,17 +14,18 @@ return new class extends Migration
         Schema::create('monitoring_storage_before_uses', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('production_batch_id');
+            $table->integer('nomor_blending')->nullable();
+            $table->float('volume')->nullable();
             $table->string('batch_range');
-            $table->integer('nomor_blending');
-            $table->float('volume_blending');
+            $table->string('storage')->nullable();
+            $table->enum('jenis_sample', ['Before Tiban', 'Flushing'])->nullable();
             $table->dateTime('waktu_sample')->nullable();
             $table->dateTime('waktu_selesai_pemakaian')->nullable();
-            $table->date('estimasi_kadaluarsa')->nullable();
+            $table->dateTime('estimasi_kadaluarsa')->nullable();
             $table->float('visco')->nullable();
             $table->float('brix')->nullable();
             $table->float('aw')->nullable();
             $table->string('hasil')->nullable();
-            $table->tinyInteger('revisi')->default(0);
             $table->timestamps();
         });
     }

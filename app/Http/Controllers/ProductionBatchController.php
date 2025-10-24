@@ -12,6 +12,7 @@ use App\Models\BlendingBatchRelation;
 use App\Models\BlendingAfterAdjustBatchRelation;
 use App\Models\MonitoringPasteurisasi;
 use App\Models\MonitoringPasteurisasiRelation;
+use App\Models\MonitoringStorageBeforeUse;
 use App\Models\MonitoringTurunBlending;
 use App\Models\MonitoringTurunBlendingRelation;
 use App\Models\MonitoringStorageModel;
@@ -140,6 +141,153 @@ class ProductionBatchController extends Controller
 
         return view('productionbatch.monitoring_storage.data_po_monitoring_storage', compact('productionBatches', 'revisiData'));
     }
+
+    public function data_po_monitoring_storage_before_use()
+    {
+        $productionBatches = ProductionBatch::orderBy('production_date', 'desc')
+            ->get()
+            ->sortBy(function ($batch) {
+                return $batch->isMonitoringStorageBeforeUseComplete() ? 1 : 0;
+            })
+            ->values();
+
+        $revisiData = MonitoringStorageBeforeUse::get()
+            ->mapWithKeys(function ($item) {
+                $key = $item->production_batch_id . '|' . $item->batch_range;
+                return [$key => true];
+            });
+
+        return view('productionbatch.monitoring_storage_before_use.data_po_monitoring_storage_before_use', compact('productionBatches', 'revisiData'));
+    }
+
+    public function show_monitoring_storage_before_use($id)
+    {
+        $productionBatch = ProductionBatch::with('MonitoringStorageBeforeUse')->findOrFail($id);
+
+        $validDispositions = ['Release', 'Release Bersyarat'];
+
+        // Ambil data dari MonitoringPasteurisasi yang sudah Release
+        $monitoringPasteurisasi = MonitoringPasteurisasi::where('production_batch_id', $id)
+            ->whereIn('disposition', $validDispositions)
+            ->get();
+
+        $all = $monitoringPasteurisasi;
+
+        // Kelompokkan berdasarkan batch_range
+        $grouped = $all->groupBy('batch_range');
+
+        $rawBatchGroups = [];
+
+        foreach ($grouped as $batchRange => $items) {
+            $chosen = $items->sortByDesc(
+                fn($item) => is_numeric($item->revisi) ? (int) $item->revisi : 0
+            )->first();
+
+            if (!$chosen) {
+                continue;
+            }
+
+            $numbers = [];
+
+            // Ekspansi batch_range utama
+            $br = trim($chosen->batch_range ?? '');
+            if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $br, $m)) {
+                $numbers = range((int)$m[1], (int)$m[2]);
+            } elseif (strpos($br, '-') !== false) {
+                $parts = array_filter(array_map('trim', explode('-', $br)), fn($p) => $p !== '');
+                $numbers = array_map(fn($p) => (int) filter_var($p, FILTER_SANITIZE_NUMBER_INT), $parts);
+            } else {
+                $numbers = [(int) filter_var($br, FILTER_SANITIZE_NUMBER_INT)];
+            }
+
+            // Ekspansi batch terkait dari tabel relasi
+            $relatedBatches = DB::table('monitoring_pasteurisasi_relations')
+                ->where('monitoring_pasteurisasi_id', $chosen->id)
+                ->pluck('batch')
+                ->toArray();
+
+            foreach ($relatedBatches as $relRange) {
+                $relRange = trim($relRange);
+                if ($relRange === '') continue;
+
+                if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $relRange, $rm)) {
+                    $numbers = array_merge($numbers, range((int)$rm[1], (int)$rm[2]));
+                } elseif (strpos($relRange, '-') !== false) {
+                    $parts = array_filter(array_map('trim', explode('-', $relRange)), fn($p) => $p !== '');
+                    $partsNums = array_map(fn($p) => (int) filter_var($p, FILTER_SANITIZE_NUMBER_INT), $parts);
+                    $numbers = array_merge($numbers, $partsNums);
+                } else {
+                    $numbers[] = (int) filter_var($relRange, FILTER_SANITIZE_NUMBER_INT);
+                }
+            }
+
+            $numbers = array_values(array_unique($numbers));
+            sort($numbers, SORT_NUMERIC);
+
+            $rawBatchGroups[] = [
+                'numbers' => $numbers,
+                'source_id' => $chosen->id,
+                'production_batch_id' => $chosen->production_batch_id,
+            ];
+        }
+
+        // Ambil nomor batch yang sudah digunakan di MonitoringStorageBeforeUse
+        $usedMonitoringNumbers = [];
+        foreach ($productionBatch->MonitoringStorageBeforeUse as $mEntry) {
+            $mbr = trim($mEntry->batch_range ?? '');
+            if (preg_match('/^\s*(\d+)\s*-\s*(\d+)\s*$/', $mbr, $mm)) {
+                $usedMonitoringNumbers = array_merge($usedMonitoringNumbers, range((int)$mm[1], (int)$mm[2]));
+            } elseif (strpos($mbr, '-') !== false) {
+                $parts = array_filter(array_map('trim', explode('-', $mbr)), fn($p) => $p !== '');
+                $usedMonitoringNumbers = array_merge(
+                    $usedMonitoringNumbers,
+                    array_map(fn($p) => (int) filter_var($p, FILTER_SANITIZE_NUMBER_INT), $parts)
+                );
+            } else {
+                $usedMonitoringNumbers[] = (int) filter_var($mbr, FILTER_SANITIZE_NUMBER_INT);
+            }
+        }
+        $usedMonitoringNumbers = array_values(array_unique($usedMonitoringNumbers));
+
+        // Filter kandidat agar tidak duplikat dengan batch yang sudah dipakai
+        $candidates = array_filter($rawBatchGroups, function ($grp) use ($usedMonitoringNumbers) {
+            if (empty($grp['numbers'])) return false;
+            return empty(array_intersect($grp['numbers'], $usedMonitoringNumbers));
+        });
+
+        // Hapus kandidat yang subset dari kandidat lain
+        $finalCandidates = [];
+        foreach ($candidates as $i => $cand) {
+            $isSubset = false;
+            foreach ($candidates as $j => $other) {
+                if ($i === $j) continue;
+                if (empty(array_diff($cand['numbers'], $other['numbers']))) {
+                    $isSubset = true;
+                    break;
+                }
+            }
+            if (!$isSubset) {
+                $finalCandidates[] = $cand;
+            }
+        }
+
+        // Konversi ke string agar mudah ditampilkan di view
+        $filteredBatchGroups = array_map(function ($grp) {
+            return implode('-', $grp['numbers']);
+        }, $finalCandidates);
+
+        // Tambahkan properti tambahan agar view tidak error
+        foreach ($productionBatch->MonitoringStorageBeforeUse as $data) {
+            $data->has_relation = false;
+            $data->related_batches = null;
+        }
+
+        return view('productionbatch.monitoring_storage_before_use.detail_monitoring_storage_before_use', compact(
+            'productionBatch',
+            'filteredBatchGroups'
+        ));
+    }
+
 
     public function menu()
     {
@@ -798,9 +946,6 @@ class ProductionBatchController extends Controller
 
 
     //Blending After Adjust
-
-
-
     public function show_blending_after_adjust($id)
     {
         $productionBatch = ProductionBatch::with([
@@ -876,7 +1021,6 @@ class ProductionBatchController extends Controller
 
     public function getLastRevisiBlendingAdjust(Request $request)
     {
-
         $request->validate([
             'production_batch_id' => 'required|integer|exists:production_batches,id',
             'batch_range' => 'required|string',
@@ -2091,7 +2235,7 @@ class ProductionBatchController extends Controller
                 $addBatch->po_number = $po->po_number ?? null;
             }
         }
-        
+
         return view('productionbatch.monitoring_storage.detail_monitoring_storage', compact(
             'productionBatch',
             'filteredBatchGroups'

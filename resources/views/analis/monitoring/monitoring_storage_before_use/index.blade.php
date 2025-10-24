@@ -97,8 +97,8 @@
                                         <tr>
                                             <td>{{ $batch->po_number }}</td>
                                             <td>{{ $batch->production_date }}</td>
-                                            <td>{{ $batch->MonitoringStorage->count() }}</td>
-                                            <td>{{ $batch->isMonitoringStorageMikroComplete() ? '✅ Complete' : '⌛ Progress' }}
+                                            <td>{{ $batch->MonitoringStorageBeforeUse->count() }}</td>
+                                            <td>{{ $batch->isMonitoringStorageBeforeUseComplete() ? '✅ Complete' : '⌛ Progress' }}
                                             </td>
                                             <td>
                                                 <a href="{{ url('analis/monitoring/storage/detail/before-use/' . $batch->id) }}"

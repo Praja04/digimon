@@ -180,8 +180,9 @@
                         <div class="mb-4">
                             <div
                                 class="avatar-xl bg-light border rounded-4 mx-auto d-flex align-items-center justify-content-center mb-3">
-                                <img src="{{ asset('assets/images/blending_adjust.png') }}" alt="Monitoring Storage Kimia"
-                                    class="rounded-3" height="80" style="object-fit: cover;">
+                                <img src="{{ asset('assets/images/blending_adjust.png') }}"
+                                    alt="Monitoring Storage Kimia" class="rounded-3" height="80"
+                                    style="object-fit: cover;">
                             </div>
                             <h5 class="mb-2 fw-semibold">
                                 <a href="{{ url('analis/productionbatch/data_po/monitoring/storage') }}"
@@ -194,6 +195,36 @@
 
                         <a href="{{ url('analis/productionbatch/data_po/monitoring/storage') }}"
                             class="btn btn-secondary w-100 rounded-pill">
+                            <i class="ri-eye-line me-2"></i>Lihat Detail
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monitoring Storage Card -->
+        <div class="col-xl-4 col-lg-6">
+            <div class="card h-100 border-0 shadow-sm hover-shadow-lg transition-all">
+                <div class="position-relative overflow-hidden">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-4">
+                            <div
+                                class="avatar-xl bg-light border rounded-4 mx-auto d-flex align-items-center justify-content-center mb-3">
+                                <img src="{{ asset('assets/images/blending_adjust.png') }}"
+                                    alt="Monitoring Storage Before Use" class="rounded-3" height="80"
+                                    style="object-fit: cover;">
+                            </div>
+                            <h5 class="mb-2 fw-semibold">
+                                <a href="{{ url('analis/productionbatch/data_po/monitoring/storage/before-use') }}"
+                                    class="link-secondary text-decoration-none">
+                                    Monitoring Storage Before Use
+                                </a>
+                            </h5>
+                            <p class="text-muted mb-3 fs-14">Real-time Monitoring Storage Before Use</p>
+                        </div>
+
+                        <a href="{{ url('analis/productionbatch/data_po/monitoring/storage/before-use') }}"
+                            class="btn btn-primary w-100 rounded-pill">
                             <i class="ri-eye-line me-2"></i>Lihat Detail
                         </a>
                     </div>

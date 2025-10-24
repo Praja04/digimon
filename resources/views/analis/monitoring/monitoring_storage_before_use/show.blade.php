@@ -166,42 +166,49 @@
                                     <th>Batch Range</th>
                                     <th>No Blending</th>
                                     <th>Volume</th>
-                                    <th>EB</th>
-                                    <th>TPC</th>
-                                    <th>YM</th>
-
-                                    <th>Action</th>
+                                    <th>Visco</th>
+                                    <th>Brix</th>
+                                    <th>AW</th>
+                                    <th>Aksi</th>
                                     <th>Hasil</th>
                                 </tr>
                             </thead>
                             <tbody class="list form-check-all">
-                                @if ($productionBatch && $productionBatch->MonitoringStorageMikro)
-                                    @foreach ($productionBatch->MonitoringStorageMikro as $data)
-                                        <tr>
-                                            <td>{{ $productionBatch->po_number }}</td>
-                                            <td>{{ $data->batch_range }}</td>
-                                            <td>{{ $data->nomor_blending }}</td>
-                                            <td>{{ $data->volume_blending }}</td>
-                                            <td>{{ $data->eb ?? '-' }}</td>
-                                            <td>{{ $data->tpc ?? '-' }}</td>
-                                            <td>{{ $data->ym ?? '-' }}</td>
-                                            <td>
-                                                @if (is_null($data->ym))
-                                                    <button class="btn btn-sm btn-primary open-modal"
-                                                        data-id="{{ $data->id }}">Input Analisa Monitoring
-                                                        Storage</button>
-                                                @else
-                                                    <span class="text-muted">✓ Lengkap</span>
-                                                @endif
-                                            </td>
-                                            <td>{{ $data->hasil ?? '-' }}</td>
-                                        </tr>
-                                    @endforeach
-                                @else
+                                @forelse ($productionBatch->MonitoringStorageBeforeUse as $data)
+                                    <tr>
+                                        <td>{{ $productionBatch->po_number }}</td>
+                                        <td>{{ $data->batch_range }}</td>
+                                        <td>{{ $data->nomor_blending }}</td>
+                                        <td>{{ $data->volume }}</td>
+                                        <td>{{ $data->visco ?? '-' }}</td>
+                                        <td>{{ $data->brix ?? '-' }}</td>
+                                        <td>{{ $data->aw ?? '-' }}</td>
+                                        <td>
+                                            @if (is_null($data->aw))
+                                                <button class="btn btn-sm btn-primary open-modal"
+                                                    data-id="{{ $data->id }}">Input Analisa
+                                                    Storage</button>
+                                            @else
+                                                <span class="text-muted">✓ Lengkap</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($data->hasil === 'OK')
+                                                <span class="badge bg-success">OK</span>
+                                            @elseif ($data->hasil === 'NOT OK')
+                                                <span class="badge bg-danger">NOT OK</span>
+                                            @elseif ($data->hasil === 'PENDING')
+                                                <span class="badge bg-warning text-dark">PENDING</span>
+                                            @else
+                                                <span class="badge bg-secondary">-</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
                                     <tr>
                                         <td colspan="10">Tidak ada data blending untuk batch ini.</td>
                                     </tr>
-                                @endif
+                                @endforelse
                                 <!-- Modal input GGA tunggal -->
                                 <div class="modal fade" id="inputModal" tabindex="-1" aria-labelledby="inputModalLabel"
                                     aria-hidden="true">
@@ -217,38 +224,21 @@
                                                 <div class="modal-body row g-3">
                                                     <div class="alert alert-danger d-none error-alert"></div>
                                                     <input type="hidden" name="id" id="id">
-                                                    <div class="col-md-6">
-                                                        <label class="form-label">Waktu Sample</label>
-                                                        <input type="datetime-local" name="waktu_sample"
-                                                            class="form-control" required
-                                                            value="{{ old('waktu_sample', now()->format('Y-m-d\TH:i')) }}">
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label class="form-label">Waktu Selesai Pemakaian</label>
-                                                        <input type="datetime-local" name="waktu_selesai_pemakaian"
-                                                            class="form-control" required>
-                                                    </div>
-                                                    <div class="col-md-4">
+                                                    <div class="col-lg-12">
                                                         <label class="form-label">Visco</label>
                                                         <input type="number" name="visco" step="0.01"
                                                             class="form-control" required>
                                                     </div>
-                                                    <div class="col-md-4">
+                                                    <div class="col-lg-12">
                                                         <label class="form-label">Brix</label>
                                                         <input type="number" name="brix" step="0.01"
                                                             class="form-control" required>
                                                     </div>
-                                                    <div class="col-md-4">
+                                                    <div class="col-lg-12">
                                                         <label class="form-label">Aw</label>
-                                                        <input type="number" name="AW" step="0.01"
+                                                        <input type="number" name="aw" step="0.01"
                                                             class="form-control" required>
                                                     </div>
-                                                    <div class="col-md-12">
-                                                        <label class="form-label">Estimasi Kadaluarsa</label>
-                                                        <input type="date" name="AW" class="form-control"
-                                                            required>
-                                                    </div>
-
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="submit" class="btn btn-primary">Simpan</button>
@@ -285,17 +275,6 @@
     </div>
     <!--end row-->
     <script>
-        $('#parameterSelector').on('change', function() {
-            const selected = $(this).val();
-
-            // Sembunyikan semua
-            $('#ebContainer, #tpcContainer, #ymContainer').addClass('d-none');
-
-            // Tampilkan sesuai pilihan
-            if (selected === 'eb') $('#ebContainer').removeClass('d-none');
-            if (selected === 'tpc') $('#tpcContainer').removeClass('d-none');
-            if (selected === 'ym') $('#ymContainer').removeClass('d-none');
-        });
         $(document).ready(function() {
             $.ajaxSetup({
                 headers: {
@@ -313,8 +292,6 @@
             });
 
             // Show/hide adjustment qty saat ganti disposition
-
-
             // Reset form saat modal dibuka
             $('#inputModal').on('shown.bs.modal', function() {
                 $('#monitoring_form')[0].reset();

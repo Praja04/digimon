@@ -8,9 +8,11 @@ class MonitoringStorageBeforeUse extends Model
 {
     protected $fillable = [
         'production_batch_id',
-        'batch_range',
         'nomor_blending',
-        'volume_blending',
+        'volume',
+        'batch_range',
+        'storage',
+        'jenis_sample',
         'waktu_sample',
         'waktu_selesai_pemakaian',
         'estimasi_kadaluarsa',
@@ -18,7 +20,6 @@ class MonitoringStorageBeforeUse extends Model
         'brix',
         'aw',
         'hasil',
-        'revisi',
     ];
 
     public function ProductionBatch()

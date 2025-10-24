@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ManageWarnaModel;
 use App\Models\MonitoringPasteurisasi;
 use App\Models\MonitoringPasteurisasiData;
+use App\Models\MonitoringStorageBeforeUse;
 use App\Models\ProductionBatch;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -332,7 +333,6 @@ class MonitoringPasteurisasiControllerAnalis extends Controller
         }
 
         $blending->update($dataUpdate);
-
         return response()->json([
             'success' => true,
             'message' => 'Data berhasil disimpan.'
