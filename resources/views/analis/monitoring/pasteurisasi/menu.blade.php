@@ -53,17 +53,17 @@
                 </div>
             </div>
 
-            <!-- Storage Makro -->
+            <!-- Storage Kimia -->
             <div class="col-12 col-sm-6 col-lg-4 col-xl-6">
                 <div class="card border h-100">
                     <div class="card-body p-3 text-center">
                         <div class="mb-2">
-                            <span class="badge bg-success-subtle text-success small">Storage Makro</span>
+                            <span class="badge bg-success-subtle text-success small">Storage Kimia</span>
                         </div>
-                        <img src="{{ asset('assets/images/blending_adjust.png') }}" alt="Storage Makro" class="mb-2"
+                        <img src="{{ asset('assets/images/blending_adjust.png') }}" alt="Storage Kimia" class="mb-2"
                             height="60">
                         <h6 class="mb-1 fw-semibold">Monitoring Storage</h6>
-                        <p class="text-muted small mb-3">Analisis Storage Makro</p>
+                        <p class="text-muted small mb-3">Analisis Storage Kimia</p>
                         <div id="chart-sm" data-colors='["--vz-primary"]' style="height: 50px;" class="mb-3">
                         </div>
                         <a href="{{ url('analis/monitoring/storage/data') }}"

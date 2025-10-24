@@ -234,7 +234,7 @@ class ProductionBatch extends Model
 
         // Cek apakah semua data brix dan nacl sudah terisi
         $isAllFilled = $monitoring->every(function ($item) {
-            return !is_null($item->disposition);
+            return !is_null($item->hasil);
         });
 
         return $isAllFilled;

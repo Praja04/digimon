@@ -71,7 +71,6 @@
                             <option value="progress">⌛ Progress</option>
                         </select>
                     </div>
-
                 </div>
             </div>
             <div class="card-body">

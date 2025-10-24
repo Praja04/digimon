@@ -72,11 +72,8 @@
                                             <div class="text-muted">Tanggal Produksi : <span
                                                     class="text-body fw-medium">{{ $productionBatch->production_date }}</span>
                                             </div>
-
-
                                         </div>
                                     </div>
-
                                 </div>
 
 
@@ -174,7 +171,6 @@
                                     <th>EB</th>
                                     <th>TPC</th>
                                     <th>YM</th>
-
                                     <th>Action</th>
                                     <th>Hasil</th>
                                 </tr>
@@ -199,7 +195,17 @@
                                                     <span class="text-muted">✓ Lengkap</span>
                                                 @endif
                                             </td>
-                                            <td>{{ $data->hasil ?? '-' }}</td>
+                                            <td>
+                                                @if ($data->hasil === 'OK')
+                                                    <span class="badge bg-success">OK</span>
+                                                @elseif ($data->hasil === 'NOT OK')
+                                                    <span class="badge bg-danger">NOT OK</span>
+                                                @elseif ($data->hasil === 'PENDING')
+                                                    <span class="badge bg-warning text-dark">PENDING</span>
+                                                @else
+                                                    <span class="badge bg-secondary">-</span>
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforeach
                                 @else
