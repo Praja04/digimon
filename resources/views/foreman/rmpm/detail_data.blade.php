@@ -40,35 +40,42 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-12">
             <div class="card" id="leadsList">
                 <div class="card-header border-0">
-                    <div class="row g-4 align-items-center">
-                        <div class="col-sm-3">
-                            <a class="btn btn-danger" href="{{ url('foreman/rmpm/list/rm') }}">Kembali</a>
+                    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+
+                        <!-- Tombol Kembali -->
+                        <div class="text-center text-md-start">
+                            <a class="btn btn-danger w-100 w-md-auto" href="{{ url('foreman/rmpm/list/rm') }}">
+                                Kembali
+                            </a>
                         </div>
-                        <div class="col-sm-auto ms-auto">
-                            <div class="hstack gap-2">
-                                <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal"
-                                    data-bs-target="#samplingModal">
-                                    <i class="ri-add-line align-bottom me-1"></i> Sampling
-                                </button>
-                                <button type="button" class="btn btn-warning" id="btnBukaModalKonfirmasi">
-                                    Konfirmasi
-                                </button>
-                                <button type="button" class="btn btn-info" data-bs-toggle="modal"
-                                    data-bs-target="#modalAnalisa"> <i class="ri-filter-3-line align-bottom me-1"></i>
-                                    Analisa </button>
-                                <button class="btn btn-danger" id="remove-actions" onClick="deleteMultiple()">
-                                    <i class="ri-delete-bin-2-line"></i>
-                                </button>
-                            </div>
+
+                        <!-- Grup Tombol Aksi -->
+                        <div class="d-flex flex-wrap justify-content-center justify-content-md-end gap-2">
+                            <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal"
+                                data-bs-target="#samplingModal">
+                                <i class="ri-add-line align-bottom me-1"></i> Sampling
+                            </button>
+                            <button type="button" class="btn btn-warning" id="btnBukaModalKonfirmasi">
+                                Konfirmasi
+                            </button>
+                            <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                                data-bs-target="#modalAnalisa">
+                                <i class="ri-filter-3-line align-bottom me-1"></i> Analisa
+                            </button>
+                            <button class="btn btn-danger" id="remove-actions" onClick="deleteMultiple()">
+                                <i class="ri-delete-bin-2-line"></i>
+                            </button>
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 
     <div class="row justify-content-center">
         <div class="col-xxl-12">
@@ -86,13 +93,18 @@
                                             {{ $identitas->no_spb }}</small>
                                     </div>
                                 </div>
-                                <div class="text-end">
-                                    <span
-                                        class="badge bg-primary fs-20">{{ \Carbon\Carbon::parse($identitas->tanggal_kedatangan)->format('d M Y') }}</span>
-                                    <div class="text-muted fs-17 mt-1">
-                                        {{ \Carbon\Carbon::parse($identitas->tanggal_kedatangan)->format('H:i') }}
-                                        WIB</div>
+                                <div
+                                    class="d-flex flex-column flex-sm-row justify-content-sm-end align-items-sm-center text-sm-end text-center mt-2">
+                                    <div>
+                                        <span class="badge bg-primary fs-6 fw-semibold mb-1 mb-sm-0">
+                                            {{ \Carbon\Carbon::parse($identitas->tanggal_kedatangan)->format('d M Y') }}
+                                        </span>
+                                        <div class="text-muted fs-6 mt-1">
+                                            {{ \Carbon\Carbon::parse($identitas->tanggal_kedatangan)->format('H:i') }} WIB
+                                        </div>
+                                    </div>
                                 </div>
+
                             </div>
 
                             <div class="row g-2 text-center">
@@ -2804,6 +2816,200 @@
                     });
                 }
             });
+        }
+
+        // Tambahkan script ini di bagian bawah, setelah function handleFormSubmit
+
+        function validateCurrentTab() {
+            const activeTab = $('.tab-pane.active');
+            const inputs = activeTab.find('input[type="text"], select');
+            let allFilled = true;
+
+            inputs.each(function() {
+                const value = $(this).val();
+                if (!value || value.trim() === '') {
+                    allFilled = false;
+                    return false; // break loop
+                }
+            });
+
+            return allFilled;
+        }
+
+        // Modifikasi function renderAnalysisFields untuk menambahkan disabled state
+        function renderAnalysisFields(jumlahData, analisaType = null) {
+            let fields = [];
+
+            if (jenisGula === 'Gula' || jenisGula === 'Garam') {
+                fields = ['fisik', '%ka', 'kotoran', 'organo', 'warna', 'aroma', '%nacl', 'gross_weight', 'disposisi'];
+            } else {
+                if (!analisaType) {
+                    analisaType = $('input[name="analisa_type"]:checked').val();
+                }
+
+                if (analisaType === 'short-term') {
+                    fields = ['brix', 'ph', 'kotoran', 'ka', 'organo', 'warna', 'aroma', 'disposisi'];
+                } else if (analisaType === 'long-term') {
+                    fields = ['uji_kristal', 'attachment', 'disposisi'];
+                }
+            }
+
+            let navHtml = `<ul class="nav nav-tabs nav-tabs-custom" id="analisaTab" role="tablist">`;
+            let tabContentHtml = `<div class="tab-content mt-3">`;
+
+            fields.forEach((field, idx) => {
+                const activeClass = idx === 0 ? 'active' : '';
+                const showClass = idx === 0 ? 'show active' : '';
+
+                const labelMap = {
+                    fisik: 'Fisik',
+                    '%ka': '%KA',
+                    kotoran: 'Kotoran',
+                    organo: 'Organo',
+                    warna: 'Warna',
+                    aroma: 'Aroma',
+                    '%nacl': '%NaCl',
+                    gross_weight: 'Gross Weight',
+                    disposisi: 'Disposisi',
+                    brix: 'Brix',
+                    ph: 'pH',
+                    ka: 'KA',
+                    uji_kristal: 'Uji Kristal',
+                    attachment: 'Lampiran'
+                };
+
+                navHtml += `
+        <li class="nav-item" role="presentation">
+            <button class="nav-link ${activeClass}" id="${field}-tab" data-bs-toggle="tab" 
+                    data-bs-target="#tab-${field}" type="button" role="tab" 
+                    aria-controls="tab-${field}" aria-selected="${idx === 0 ? 'true' : 'false'}">
+                ${labelMap[field] || field.toUpperCase()}
+            </button>
+        </li>`;
+
+                tabContentHtml += `
+        <div class="tab-pane fade ${showClass}" id="tab-${field}" role="tabpanel" aria-labelledby="${field}-tab">
+            ${renderFieldInput(field, jumlahData)}
+        </div>`;
+            });
+
+            navHtml += `</ul>`;
+            tabContentHtml += `</div>`;
+
+            formContent.html(navHtml + tabContentHtml);
+            console.log('Analysis fields rendered with validation');
+
+            // Setup validation after rendering
+            setupTabValidation();
+        }
+
+        function setupTabValidation() {
+            // Monitor input changes
+            $(document).on('input change', '#form-analisa-content input, #form-analisa-content select', function() {
+                saveDraft();
+            });
+
+            // Prevent tab switching if current tab is not complete
+            $(document).on('show.bs.tab', '#analisaTab button[data-bs-toggle="tab"]', function(e) {
+                const clickedTab = $(e.target);
+                const clickedIndex = $('#analisaTab .nav-link').index(clickedTab);
+                const currentActiveTab = $('#analisaTab .nav-link.active').not(clickedTab);
+                const currentActiveIndex = $('#analisaTab .nav-link').index(currentActiveTab);
+
+                // Allow clicking on previous or current tabs
+                if (clickedIndex <= currentActiveIndex) {
+                    return;
+                }
+
+                // Check if ALL previous tabs are complete
+                let incompleteTabIndex = -1;
+                let incompleteTabName = '';
+
+                for (let i = 0; i < clickedIndex; i++) {
+                    const tab = $('#analisaTab .nav-link').eq(i);
+                    const tabId = tab.attr('data-bs-target');
+                    const tabPane = $(tabId);
+                    const tabName = tab.text().trim();
+                    const inputs = tabPane.find('input[type="text"], select').not('[type="file"]');
+
+                    let allFilled = true;
+                    inputs.each(function() {
+                        const value = $(this).val();
+                        if (!value || value.trim() === '') {
+                            allFilled = false;
+                            return false;
+                        }
+                    });
+
+                    if (!allFilled) {
+                        incompleteTabIndex = i;
+                        incompleteTabName = tabName;
+                        break;
+                    }
+                }
+
+                // If there's an incomplete tab, prevent switching and show alert
+                if (incompleteTabIndex !== -1) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Switch back to the incomplete tab
+                    const incompleteTab = $('#analisaTab .nav-link').eq(incompleteTabIndex);
+                    const incompleteTabId = incompleteTab.attr('data-bs-target');
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Perhatian',
+                        text: `Harap lengkapi isian pada tab "${incompleteTabName}" terlebih dahulu!`,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Activate the incomplete tab
+                        const tabTrigger = new bootstrap.Tab(incompleteTab[0]);
+                        tabTrigger.show();
+
+                        // Focus on first empty input
+                        const firstEmptyInput = $(incompleteTabId).find('input[type="text"], select')
+                            .filter(function() {
+                                const val = $(this).val();
+                                return !val || val.trim() === '';
+                            }).first();
+
+                        if (firstEmptyInput.length > 0) {
+                            setTimeout(() => {
+                                firstEmptyInput.focus();
+                            }, 300);
+                        }
+                    });
+
+                    return false;
+                }
+            });
+        }
+
+        // CSS untuk visual feedback - tambahkan di <style> section
+        const validationStyles = `
+<style>
+.tab-pane input:focus,
+.tab-pane select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.tab-pane input.is-invalid,
+.tab-pane select.is-invalid {
+    border-color: #dc3545;
+}
+
+.tab-pane input.is-valid,
+.tab-pane select.is-valid {
+    border-color: #198754;
+}
+</style>
+`;
+
+        // Inject styles
+        if (!$('#tab-validation-styles').length) {
+            $('head').append(validationStyles.replace('<style>', '<style id="tab-validation-styles">'));
         }
     </script>
 @endsection
