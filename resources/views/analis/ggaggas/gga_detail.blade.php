@@ -72,14 +72,9 @@
                                             <div class="text-muted">Tanggal Produksi : <span
                                                     class="text-body fw-medium">{{ $productionBatch->production_date }}</span>
                                             </div>
-
-
                                         </div>
                                     </div>
-
                                 </div>
-
-
 
                                 <div class="row mt-4">
                                     <div class="col-lg-6 col-sm-6">
@@ -222,17 +217,19 @@
                                                 </div>
                                                 <div class="modal-body">
                                                     <div class="alert alert-danger d-none error-alert"></div>
-
                                                     <div class="mb-3">
                                                         <label class="form-label">BRIX</label>
-                                                        <input type="number" step="0.01" max="100"
-                                                            min="0" name="brix" class="form-control" required>
+                                                        <input type="text" name="brix"
+                                                            class="form-control comma-input" required
+                                                            placeholder="Contoh: 5,25">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">NACL</label>
-                                                        <input type="number" step="0.01" max="100"
-                                                            min="0" name="nacl" class="form-control" required>
+                                                        <input type="text" name="nacl"
+                                                            class="form-control comma-input" placeholder="Contoh: 2,75"
+                                                            required>
                                                     </div>
+
                                                     <div class="mb-3">
                                                         <label class="form-label">Warna</label>
                                                         <select name="warna" class="form-select" required>
@@ -328,11 +325,35 @@
         $(document).on('input', '.kapital-case', function() {
             $(this).val($(this).val().toUpperCase());
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            function validateInput(input) {
+                const value = input.value;
+
+                // Jika ada titik, tampilkan peringatan
+                if (value.includes('.')) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Format Salah!',
+                        text: 'Gunakan tanda koma (,) untuk desimal, bukan titik (.)',
+                        confirmButtonText: 'Mengerti',
+                        confirmButtonColor: '#3085d6'
+                    });
+
+                    // Ganti titik menjadi koma otomatis
+                    input.value = value.replace(/\./g, ',');
+                }
+            }
+
+            // Event listener untuk kedua input
+            document.querySelectorAll('.comma-input').forEach(function(el) {
+                el.addEventListener('input', function() {
+                    validateInput(this);
+                });
+            });
+        });
+
         $(document).ready(function() {
-
-
-
-
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

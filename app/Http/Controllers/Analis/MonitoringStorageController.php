@@ -106,6 +106,10 @@ class MonitoringStorageController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge([
+            'volume' => str_replace(',', '.', $request->volume),
+        ]);
+        
         $validator = Validator::make($request->all(), [
             'production_batch_id' => 'required|exists:production_batches,id',
             'batch' => 'required',
@@ -146,7 +150,7 @@ class MonitoringStorageController extends Controller
             'nomor_blending' => $request->no_blending,
             'volume_blending' => $request->volume
         ]);
-    
+
         // Jika ada input 'storage', update di tabel ProductionBatch
         if ($request->filled('storage')) {
             $productionBatch = ProductionBatch::find($request->production_batch_id);
@@ -162,6 +166,16 @@ class MonitoringStorageController extends Controller
 
     public function update_monitoring_storage_makro(Request $request, $id)
     {
+        $request->merge([
+            'brix' => str_replace(',', '.', $request->brix),
+            'nacl' => str_replace(',', '.', $request->nacl),
+            'bj' => str_replace(',', '.', $request->bj),
+            'visco' => str_replace(',', '.', $request->visco),
+            'aw' => str_replace(',', '.', $request->aw),
+            'buih' => str_replace(',', '.', $request->buih),
+            'ph' => str_replace(',', '.', $request->ph),
+        ]);
+
         $validator = Validator::make($request->all(), [
             'brix' => 'required|numeric|min:0|max:100',
             'nacl' => 'required|numeric|min:0|max:100',

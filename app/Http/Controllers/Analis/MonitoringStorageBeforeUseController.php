@@ -34,8 +34,21 @@ class MonitoringStorageBeforeUseController extends Controller
         return view('analis.monitoring.monitoring_storage_before_use.show', compact('productionBatch'));
     }
 
+    public function show_batch($id)
+    {
+        $monitoringStorageBeforeUse = MonitoringStorageBeforeUse::with([
+            'productionBatch'
+        ])->findOrFail($id);
+
+        return view('analis.monitoring.monitoring_storage_before_use.show_batch', compact('monitoringStorageBeforeUse'));
+    }
+
     public function store(Request $request)
     {
+        $request->merge([
+            'volume' => str_replace(',', '.', $request->volume),
+        ]);
+
         $validator = Validator::make($request->all(), [
             'production_batch_id' => 'required|exists:production_batches,id',
             'no_blending' => 'required',
@@ -88,6 +101,12 @@ class MonitoringStorageBeforeUseController extends Controller
 
     public function update(Request $request)
     {
+        $request->merge([
+            'visco' => str_replace(',', '.', $request->visco),
+            'brix' => str_replace(',', '.', $request->brix),
+            'aw' => str_replace(',', '.', $request->aw),
+        ]);
+
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:monitoring_storage_before_uses,id',
             'visco' => 'required|numeric',

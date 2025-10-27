@@ -22,6 +22,7 @@ class MonitoringPasteurisasiData extends Model
         'warna',
         'shift',
         'production_time',
+        'line',
         'created_by',
     ];
 

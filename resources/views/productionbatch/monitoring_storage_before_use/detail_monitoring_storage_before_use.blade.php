@@ -176,7 +176,7 @@
                                                                                     <div class="modal-body text-center"
                                                                                         id="qrPrintArea{{ $row->id }}">
                                                                                         <div style="display: inline-block;">
-                                                                                            <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(url('analis/monitoring/storage/detail/before-use/' . $row->productionBatch->id), 'QRCODE') }}"
+                                                                                            <img src="data:image/png;base64,{{ DNS2D::getBarcodePNG(route('analis.monitoring_storage_before_use.show_batch', $row->id), 'QRCODE') }}"
                                                                                                 alt="QR Code">
                                                                                         </div>
                                                                                         <p>
@@ -262,7 +262,8 @@
 
                         <div class="col-lg-6">
                             <label for="volume" class="form-label">Volume</label>
-                            <input type="string" name="volume" class="form-control">
+                            <input type="string" name="volume" class="form-control comma-input"
+                                placeholder="Contoh: 2,75">
                         </div>
 
                         <div class="col-lg-12">
@@ -336,6 +337,33 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function validateInput(input) {
+                const value = input.value;
+
+                // Jika ada titik, tampilkan peringatan
+                if (value.includes('.')) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Format Salah!',
+                        text: 'Gunakan tanda koma (,) untuk desimal, bukan titik (.)',
+                        confirmButtonText: 'Mengerti',
+                        confirmButtonColor: '#3085d6'
+                    });
+
+                    // Ganti titik menjadi koma otomatis
+                    input.value = value.replace(/\./g, ',');
+                }
+            }
+
+            // Event listener untuk kedua input
+            document.querySelectorAll('.comma-input').forEach(function(el) {
+                el.addEventListener('input', function() {
+                    validateInput(this);
+                });
+            });
+        });
+
         const allBatches = @json($filteredBatchGroups);
         const validGgasBatches = @json($filteredBatchGroups);
 

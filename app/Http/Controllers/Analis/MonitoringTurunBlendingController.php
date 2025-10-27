@@ -67,7 +67,6 @@ class MonitoringTurunBlendingController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
         $validator = Validator::make($request->all(), [
             'production_batch_id' => 'required|exists:production_batches,id',
             'batch' => 'required',
@@ -115,6 +114,16 @@ class MonitoringTurunBlendingController extends Controller
 
     public function store_data_analisa(Request $request)
     {
+        $request->merge([
+            'brix' => str_replace(',', '.', $request->brix),
+            'nacl' => str_replace(',', '.', $request->nacl),
+            'bj' => str_replace(',', '.', $request->bj),
+            'visco' => str_replace(',', '.', $request->visco),
+            'aw' => str_replace(',', '.', $request->aw),
+            'buih' => str_replace(',', '.', $request->buih),
+            'ph' => str_replace(',', '.', $request->ph),
+        ]);
+
         // Validasi input
         $validator = Validator::make($request->all(), [
             'monitoring_turun_blending_id' => 'required|exists:monitoring_turun_blending,id',
@@ -221,6 +230,13 @@ class MonitoringTurunBlendingController extends Controller
 
     public function updateMonitoringBlending(Request $request)
     {
+        $request->merge([
+            'adjustment_qty_air' => str_replace(',', '.', $request->adjustment_qty_air),
+            'adjustment_qty_garam' => str_replace(',', '.', $request->adjustment_qty_garam),
+            'adjustment_qty_gula' => str_replace(',', '.', $request->adjustment_qty_gula),
+        ]);
+
+
         $validator = Validator::make($request->all(), [
             'monitoring_id' => 'required|exists:monitoring_turun_blending,id',
             'disposition' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment,Jalan Bareng,Leveling',

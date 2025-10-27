@@ -64,6 +64,10 @@ class MonitoringPasteurisasiControllerForeman extends Controller
 
     public function store(Request $request)
     {
+        $request->merge([
+            'volume' => str_replace(',', '.', $request->volume),
+        ]);
+
         $validator = Validator::make($request->all(), [
             'production_batch_id' => 'required|exists:production_batches,id',
             'batch' => 'required',

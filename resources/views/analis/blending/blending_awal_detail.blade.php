@@ -71,14 +71,9 @@
                                             <div class="text-muted">Tanggal Produksi : <span
                                                     class="text-body fw-medium">{{ $productionBatch->production_date }}</span>
                                             </div>
-
-
                                         </div>
                                     </div>
-
                                 </div>
-
-
 
                                 <div class="row mt-4">
                                     <div class="col-lg-6 col-sm-6">
@@ -253,38 +248,50 @@
 
                                                     <div class="col-md-4">
                                                         <label class="form-label">BRIX</label>
-                                                        <input type="number" step="0.01" max="100"
-                                                            min="0" name="brix" class="form-control" required>
+                                                        <input type="text" step="0.01" max="100"
+                                                            min="0" name="brix"
+                                                            class="form-control comma-input" placeholder="Contoh: 5,25"
+                                                            required>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label">NACL</label>
-                                                        <input type="number" step="0.01" max="100"
-                                                            min="0" name="nacl" class="form-control" required>
+                                                        <input type="text" step="0.01" max="100"
+                                                            min="0" name="nacl"
+                                                            class="form-control comma-input" placeholder="Contoh: 5,25"
+                                                            required>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label">Bj</label>
-                                                        <input type="number" step="0.01" max="100"
-                                                            min="0" name="bj" class="form-control" required>
+                                                        <input type="text" step="0.01" max="100"
+                                                            min="0" name="bj"
+                                                            class="form-control comma-input" placeholder="Contoh: 5,25"
+                                                            required>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label">Visco</label>
-                                                        <input type="number" step="0.01" max="100"
-                                                            min="0" name="visco" class="form-control" required>
+                                                        <input type="text" step="0.01" max="100"
+                                                            min="0" name="visco"
+                                                            class="form-control comma-input" placeholder="Contoh: 5,25"
+                                                            required>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label">Aw</label>
-                                                        <input type="number" step="0.01" max="100"
-                                                            min="0" name="aw" class="form-control" required>
+                                                        <input type="text" step="0.01" max="100"
+                                                            min="0" name="aw"
+                                                            class="form-control comma-input" placeholder="Contoh: 5,25"
+                                                            required>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label">pH</label>
-                                                        <input type="number" step="0.01" max="100"
-                                                            min="0" name="ph" class="form-control">
+                                                        <input type="text" step="0.01" max="100"
+                                                            min="0" name="ph"
+                                                            class="form-control comma-input" placeholder="Contoh: 5,25">
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label">Buih</label>
-                                                        <input type="number" step="0.01" max="100"
-                                                            min="0" name="buih" class="form-control">
+                                                        <input type="text" step="0.01" max="100"
+                                                            min="0" name="buih"
+                                                            class="form-control comma-input" placeholder="Contoh: 5,25">
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label">Organo</label>
@@ -335,24 +342,24 @@
                                                         <div class="row g-3">
                                                             <div class="col-md-4">
                                                                 <label class="form-label">Air (Liter)</label>
-                                                                <input type="number" step="0.01"
+                                                                <input type="text" step="0.01"
                                                                     name="adjustment_qty_air"
-                                                                    class="form-control adjustment-qty"
-                                                                    placeholder="0.00">
+                                                                    class="form-control adjustment-qty comma-input"
+                                                                    placeholder="0,00">
                                                             </div>
                                                             <div class="col-md-4">
                                                                 <label class="form-label">Gula (Kg)</label>
-                                                                <input type="number" step="0.01"
+                                                                <input type="text" step="0.01"
                                                                     name="adjustment_qty_gula"
-                                                                    class="form-control adjustment-qty"
-                                                                    placeholder="0.00">
+                                                                    class="form-control adjustment-qty comma-input"
+                                                                    placeholder="0,00">
                                                             </div>
                                                             <div class="col-md-4">
                                                                 <label class="form-label">Garam (Kg)</label>
-                                                                <input type="number" step="0.01"
+                                                                <input type="text" step="0.01"
                                                                     name="adjustment_qty_garam"
-                                                                    class="form-control adjustment-qty"
-                                                                    placeholder="0.00">
+                                                                    class="form-control adjustment-qty comma-input"
+                                                                    placeholder="0,00">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -392,6 +399,33 @@
     </div>
     <!--end row-->
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function validateInput(input) {
+                const value = input.value;
+
+                // Jika ada titik, tampilkan peringatan
+                if (value.includes('.')) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Format Salah!',
+                        text: 'Gunakan tanda koma (,) untuk desimal, bukan titik (.)',
+                        confirmButtonText: 'Mengerti',
+                        confirmButtonColor: '#3085d6'
+                    });
+
+                    // Ganti titik menjadi koma otomatis
+                    input.value = value.replace(/\./g, ',');
+                }
+            }
+
+            // Event listener untuk kedua input
+            document.querySelectorAll('.comma-input').forEach(function(el) {
+                el.addEventListener('input', function() {
+                    validateInput(this);
+                });
+            });
+        });
+
         $(document).ready(function() {
             $.ajaxSetup({
                 headers: {

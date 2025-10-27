@@ -158,6 +158,11 @@ class GgaGgasController extends Controller
 
     public function updateAjaxGGA(Request $request, $id)
     {
+        $request->merge([
+            'brix' => str_replace(',', '.', $request->brix),
+            'nacl' => str_replace(',', '.', $request->nacl),
+        ]);
+
         $validator = Validator::make($request->all(), [
             'brix' => 'required|numeric|min:0|max:100',
             'nacl' => 'required|numeric|min:0|max:100',
@@ -244,9 +249,6 @@ class GgaGgasController extends Controller
         ]);
     }
 
-
-
-
     public function showInputFormGGA($id)
     {
         $gga = GgaProcess::find($id);
@@ -263,6 +265,11 @@ class GgaGgasController extends Controller
 
     public function updateAjaxGGAS(Request $request, $id)
     {
+        $request->merge([
+            'brix' => str_replace(',', '.', $request->brix),
+            'nacl' => str_replace(',', '.', $request->nacl),
+        ]);
+
         $validator = Validator::make($request->all(), [
             'brix' => 'required|numeric|min:0|max:100',
             'nacl' => 'nullable|numeric|min:0|max:100',

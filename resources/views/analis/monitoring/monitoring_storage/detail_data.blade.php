@@ -242,38 +242,47 @@
                                                     <input type="hidden" name="id" id="monitoringId">
                                                     <div class="col-md-4">
                                                         <label class="form-label">BRIX</label>
-                                                        <input type="number" step="0.01" max="100"
-                                                            min="0" name="brix" class="form-control" required>
+                                                        <input type="text" step="0.01" max="100"
+                                                            min="0" name="brix"
+                                                            class="form-control comma-input" placeholder="Contoh: 2,75"
+                                                            required>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label">NACL</label>
-                                                        <input type="number" step="0.01" max="100"
-                                                            min="0" name="nacl" class="form-control" required>
+                                                        <input type="text" step="0.01" max="100"
+                                                            min="0" name="nacl"
+                                                            class="form-control comma-input" placeholder="Contoh: 2,75"
+                                                            required>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label">Bj</label>
-                                                        <input type="number" step="0.01" name="bj"
-                                                            class="form-control" required>
+                                                        <input type="text" step="0.01" name="bj"
+                                                            class="form-control comma-input" placeholder="Contoh: 2,75"
+                                                            required>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label">Visco</label>
-                                                        <input type="number" step="0.01" name="visco"
-                                                            class="form-control" required>
+                                                        <input type="text" step="0.01" name="visco"
+                                                            class="form-control comma-input" placeholder="Contoh: 2,75"
+                                                            required>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label">Aw</label>
-                                                        <input type="number" step="0.01" name="aw"
-                                                            class="form-control" required>
+                                                        <input type="text" step="0.01" name="aw"
+                                                            class="form-control comma-input" placeholder="Contoh: 2,75"
+                                                            required>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label">Buih</label>
-                                                        <input type="number" step="0.01" name="buih"
-                                                            class="form-control" required>
+                                                        <input type="text" step="0.01" name="buih"
+                                                            class="form-control comma-input" placeholder="Contoh: 2,75"
+                                                            required>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label">PH</label>
-                                                        <input type="number" step="0.01" name="ph"
-                                                            class="form-control" required>
+                                                        <input type="text" step="0.01" name="ph"
+                                                            class="form-control comma-input" placeholder="Contoh: 2,75"
+                                                            required>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label">Organo</label>
@@ -292,7 +301,8 @@
                                                             <option value="">-- Pilih Warna --</option>
                                                             @foreach ($manageWarna as $item)
                                                                 <option value="{{ $item->nama_warna }}">
-                                                                    {{ $item->nama_warna }} ({{ $item->code_warna }})</option>
+                                                                    {{ $item->nama_warna }} ({{ $item->code_warna }})
+                                                                </option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -352,6 +362,33 @@
     </div>
     <!--end row-->
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function validateInput(input) {
+                const value = input.value;
+
+                // Jika ada titik, tampilkan peringatan
+                if (value.includes('.')) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Format Salah!',
+                        text: 'Gunakan tanda koma (,) untuk desimal, bukan titik (.)',
+                        confirmButtonText: 'Mengerti',
+                        confirmButtonColor: '#3085d6'
+                    });
+
+                    // Ganti titik menjadi koma otomatis
+                    input.value = value.replace(/\./g, ',');
+                }
+            }
+
+            // Event listener untuk kedua input
+            document.querySelectorAll('.comma-input').forEach(function(el) {
+                el.addEventListener('input', function() {
+                    validateInput(this);
+                });
+            });
+        });
+
         $(document).ready(function() {
             const warnaUrl = "{{ url('/data/warna') }}";
 

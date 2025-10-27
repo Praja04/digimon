@@ -245,50 +245,50 @@
 
                                             <div class="col-md-6">
                                                 <label for="brix" class="form-label">Brix</label>
-                                                <input type="number" step="0.01" class="form-control" name="brix"
-                                                    id="brix" required>
+                                                <input type="text" step="0.01" class="form-control comma-input"
+                                                    placeholder="Contoh: 2,75" name="brix" id="brix" required>
                                             </div>
 
                                             <div class="col-md-6">
                                                 <label for="nacl" class="form-label">NaCl</label>
-                                                <input type="number" step="0.01" class="form-control" name="nacl"
-                                                    id="nacl" required>
+                                                <input type="text" step="0.01" class="form-control comma-input"
+                                                    placeholder="Contoh: 2,75" name="nacl" id="nacl" required>
                                             </div>
 
                                             <div class="col-md-6">
                                                 <label for="bj" class="form-label">BJ</label>
-                                                <input type="number" step="0.01" class="form-control" name="bj"
-                                                    id="bj" required>
+                                                <input type="text" step="0.01" class="form-control comma-input"
+                                                    placeholder="Contoh: 2,75" name="bj" id="bj" required>
                                             </div>
 
                                             <div class="col-md-6">
                                                 <label for="visco" class="form-label">Visco</label>
-                                                <input type="number" step="0.01" class="form-control" name="visco"
-                                                    id="visco">
+                                                <input type="text" step="0.01" class="form-control comma-input"
+                                                    placeholder="Contoh: 2,75" name="visco" id="visco">
                                             </div>
 
                                             <div class="col-md-6">
                                                 <label for="aw" class="form-label">AW</label>
-                                                <input type="number" step="0.01" class="form-control" name="aw"
-                                                    id="aw">
+                                                <input type="text" step="0.01" class="form-control comma-input"
+                                                    placeholder="Contoh: 2,75" name="aw" id="aw">
                                             </div>
 
                                             <div class="col-md-6">
                                                 <label for="buih" class="form-label">Buih</label>
-                                                <input type="number" step="0.01" class="form-control" name="buih"
-                                                    id="buih">
+                                                <input type="text" step="0.01" class="form-control comma-input"
+                                                    placeholder="Contoh: 2,75" name="buih" id="buih">
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label for="ph" class="form-label">pH</label>
+                                                <input type="text" step="0.01" class="form-control comma-input"
+                                                    placeholder="Contoh: 2,75" name="ph" id="ph">
                                             </div>
 
                                             <div class="col-md-6">
                                                 <label for="organo" class="form-label">Organo</label>
                                                 <input type="text" class="form-control" name="organo"
                                                     id="organo">
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <label for="ph" class="form-label">pH</label>
-                                                <input type="number" step="0.01" class="form-control" name="ph"
-                                                    id="ph">
                                             </div>
 
                                             <div class="col-md-6">
@@ -302,7 +302,8 @@
                                                 <select name="warna" id="warna" class="form-select" required>
                                                     <option value="">-- Pilih Warna --</option>
                                                     @foreach ($manageWarna as $item)
-                                                        <option value="{{ $item->nama_warna }}">{{ $item->nama_warna }} ({{ $item->code_warna }})   
+                                                        <option value="{{ $item->nama_warna }}">{{ $item->nama_warna }}
+                                                            ({{ $item->code_warna }})
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -368,18 +369,21 @@
                                                 <div class="row g-3">
                                                     <div class="col-md-4">
                                                         <label class="form-label">Air (Liter)</label>
-                                                        <input type="number" step="0.01" name="adjustment_qty_air"
-                                                            class="form-control adjustment-qty" placeholder="0.00">
+                                                        <input type="text" step="0.01" name="adjustment_qty_air"
+                                                            class="form-control adjustment-qty comma-input"
+                                                            placeholder="Contoh: 2,75" placeholder="0.00">
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label">Gula (Kg)</label>
-                                                        <input type="number" step="0.01" name="adjustment_qty_gula"
-                                                            class="form-control adjustment-qty" placeholder="0.00">
+                                                        <input type="text" step="0.01" name="adjustment_qty_gula"
+                                                            class="form-control adjustment-qty comma-input"
+                                                            placeholder="Contoh: 2,75" placeholder="0.00">
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label">Garam (Kg)</label>
-                                                        <input type="number" step="0.01" name="adjustment_qty_garam"
-                                                            class="form-control adjustment-qty" placeholder="0.00">
+                                                        <input type="text" step="0.01" name="adjustment_qty_garam"
+                                                            class="form-control adjustment-qty comma-input"
+                                                            placeholder="Contoh: 2,75" placeholder="0.00">
                                                     </div>
                                                 </div>
                                             </div>
@@ -394,41 +398,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="modal fade" id="modalEditMonitoring" tabindex="-1"
-                            aria-labelledby="modalEditMonitoringLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <form id="formEditMonitoring">
-                                    @csrf
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Edit Monitoring Blending</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Tutup"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <input type="hidden" name="id_edit" id="edit-id">
-
-                                            @foreach (['brix', 'nacl', 'bj', 'visco', 'aw', 'buih', 'organo', 'ph', 'endapan', 'warna'] as $field)
-                                                <div class="mb-3">
-                                                    <label class="form-label text-capitalize">{{ $field }}</label>
-                                                    <input type="text" name="{{ $field }}_edit"
-                                                        id="edit-{{ $field }}" class="form-control">
-                                                </div>
-                                            @endforeach
-
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="submit" class="btn btn-success">Simpan</button>
-                                            <button type="button" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Batal</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-
-
                     </div>
                     <div class="d-flex justify-content-end mt-2">
                         <div class="pagination-wrap hstack gap-2">
@@ -451,6 +420,33 @@
     </div>
     <script>
         const warnaUrl = "{{ url('/data/warna') }}";
+
+        document.addEventListener('DOMContentLoaded', function() {
+            function validateInput(input) {
+                const value = input.value;
+
+                // Jika ada titik, tampilkan peringatan
+                if (value.includes('.')) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Format Salah!',
+                        text: 'Gunakan tanda koma (,) untuk desimal, bukan titik (.)',
+                        confirmButtonText: 'Mengerti',
+                        confirmButtonColor: '#3085d6'
+                    });
+
+                    // Ganti titik menjadi koma otomatis
+                    input.value = value.replace(/\./g, ',');
+                }
+            }
+
+            // Event listener untuk kedua input
+            document.querySelectorAll('.comma-input').forEach(function(el) {
+                el.addEventListener('input', function() {
+                    validateInput(this);
+                });
+            });
+        });
 
         function loadWarnaOptions() {
             $.ajax({
@@ -509,6 +505,7 @@
                             <thead>
                                 <tr>
                                     <th>Shift</th>
+                                    <th>Line</th>
                                     <th>Brix</th>
                                     <th>NaCl</th>
                                     <th>BJ</th>
@@ -527,7 +524,7 @@
                             response.dataanalis.forEach(function(data) {
                                 html += `
                         <tr>
-                            <td>${data.shift ?? '-'}</td>
+                            <td>Shift ${data.shift ?? '-'}</td>
                             <td>${data.brix ?? '-'}</td>
                             <td>${data.nacl ?? '-'}</td>
                             <td>${data.bj ?? '-'}</td>

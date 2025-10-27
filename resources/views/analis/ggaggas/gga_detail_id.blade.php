@@ -131,14 +131,16 @@
 
                             <div class="mb-3">
                                 <label for="brix" class="form-label">BRIX</label>
-                                <input type="number" step="0.01" max="100" min="0" name="brix"
-                                    id="brix" class="form-control" required value="{{ old('brix', $gga->brix) }}">
+                                <input type="text" step="0.01" max="100" min="0" name="brix"
+                                    id="brix" class="form-control comma-input" placeholder="Contoh: 5,25" required
+                                    value="{{ old('brix', $gga->brix) }}">
                             </div>
 
                             <div class="mb-3">
                                 <label for="nacl" class="form-label">NACL</label>
-                                <input type="number" step="0.01" max="100" min="0" name="nacl"
-                                    id="nacl" class="form-control" required value="{{ old('nacl', $gga->nacl) }}">
+                                <input type="text" step="0.01" max="100" min="0" name="nacl"
+                                    id="nacl" class="form-control comma-input" placeholder="Contoh: 5,25" required
+                                    value="{{ old('nacl', $gga->nacl) }}">
                             </div>
 
                             <div class="mb-3">
@@ -209,6 +211,33 @@
     @endif
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function validateInput(input) {
+                const value = input.value;
+
+                // Jika ada titik, tampilkan peringatan
+                if (value.includes('.')) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Format Salah!',
+                        text: 'Gunakan tanda koma (,) untuk desimal, bukan titik (.)',
+                        confirmButtonText: 'Mengerti',
+                        confirmButtonColor: '#3085d6'
+                    });
+
+                    // Ganti titik menjadi koma otomatis
+                    input.value = value.replace(/\./g, ',');
+                }
+            }
+
+            // Event listener untuk kedua input
+            document.querySelectorAll('.comma-input').forEach(function(el) {
+                el.addEventListener('input', function() {
+                    validateInput(this);
+                });
+            });
+        });
+
         $(document).ready(function() {
 
             $.ajaxSetup({

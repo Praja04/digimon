@@ -294,7 +294,8 @@
 
                         <div class="mb-3">
                             <label for="volume" class="form-label">Volume</label>
-                            <input type="string" name="volume" class="form-control">
+                            <input type="string" name="volume" class="form-control comma-input"
+                                placeholder="Contoh: 2,75">
                         </div>
 
                         <div class="mb-3">
@@ -372,7 +373,8 @@
                         </div>
                         <div class="col-lg-6">
                             <label>Volume</label>
-                            <input type="text" class="form-control" name="volume">
+                            <input type="text" class="form-control comma-input" placeholder="Contoh: 2,75"
+                                name="volume">
                         </div>
                         <div class="col-lg-6">
                             <label for="storage" class="form-label">Storage (Optional)</label>
@@ -428,6 +430,33 @@
 
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function validateInput(input) {
+                const value = input.value;
+
+                // Jika ada titik, tampilkan peringatan
+                if (value.includes('.')) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Format Salah!',
+                        text: 'Gunakan tanda koma (,) untuk desimal, bukan titik (.)',
+                        confirmButtonText: 'Mengerti',
+                        confirmButtonColor: '#3085d6'
+                    });
+
+                    // Ganti titik menjadi koma otomatis
+                    input.value = value.replace(/\./g, ',');
+                }
+            }
+
+            // Event listener untuk kedua input
+            document.querySelectorAll('.comma-input').forEach(function(el) {
+                el.addEventListener('input', function() {
+                    validateInput(this);
+                });
+            });
+        });
+
         const allBatches = @json($filteredBatchGroups);
         const validGgasBatches = @json($filteredBatchGroups);
 

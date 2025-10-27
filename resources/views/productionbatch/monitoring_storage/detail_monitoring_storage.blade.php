@@ -395,7 +395,8 @@
 
                         <div class="mb-3">
                             <label for="volume" class="form-label">Volume</label>
-                            <input type="string" name="volume" class="form-control">
+                            <input type="string" name="volume" class="form-control comma-input"
+                                placeholder="Contoh: 2,75">
                         </div>
                         <div class="mb-3">
                             <label for="storage" class="form-label">Storage (Optional)</label>
@@ -472,7 +473,8 @@
                         </div>
                         <div class="col-lg-6">
                             <label>Volume</label>
-                            <input type="text" class="form-control" name="volume">
+                            <input type="text" class="form-control" name="volume comma-input"
+                                placeholder="Contoh: 2,75">
                         </div>
                         <div class="col-lg-6">
                             <label for="storage" class="form-label">Storage (Optional)</label>
@@ -527,6 +529,33 @@
 
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function validateInput(input) {
+                const value = input.value;
+
+                // Jika ada titik, tampilkan peringatan
+                if (value.includes('.')) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Format Salah!',
+                        text: 'Gunakan tanda koma (,) untuk desimal, bukan titik (.)',
+                        confirmButtonText: 'Mengerti',
+                        confirmButtonColor: '#3085d6'
+                    });
+
+                    // Ganti titik menjadi koma otomatis
+                    input.value = value.replace(/\./g, ',');
+                }
+            }
+
+            // Event listener untuk kedua input
+            document.querySelectorAll('.comma-input').forEach(function(el) {
+                el.addEventListener('input', function() {
+                    validateInput(this);
+                });
+            });
+        });
+
         const allBatches = JSON.parse('{!! addslashes(json_encode($filteredBatchGroups)) !!}');
         const validGgasBatches = JSON.parse('{!! addslashes(json_encode($filteredBatchGroups)) !!}');
 
@@ -702,31 +731,31 @@
 
 
         $('#submit_generate').click(function(e) {
-        e.preventDefault(); // cegah tombol submit reload page
+            e.preventDefault(); // cegah tombol submit reload page
 
-        let form = $('#generateRevisiForm');
-        let formData = form.serialize();
+            let form = $('#generateRevisiForm');
+            let formData = form.serialize();
 
-        $.post('{{ url('/analis/productionbatch/processmonitoringstorage/generate-revisi') }}', formData)
-            .done(function(res) {
-                $('#generateRevisiModal').modal('hide');
+            $.post('{{ url('/analis/productionbatch/processmonitoringstorage/generate-revisi') }}', formData)
+                .done(function(res) {
+                    $('#generateRevisiModal').modal('hide');
 
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: "Revisi berhasil dibuat!"
-                }).then(function() {
-                    location.reload();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: "Revisi berhasil dibuat!"
+                    }).then(function() {
+                        location.reload();
+                    });
+                })
+                .fail(function(err) {
+                    const msg = err.responseJSON?.message || 'Unknown error';
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Terjadi kesalahan: ' + msg
+                    });
                 });
-            })
-            .fail(function(err) {
-                const msg = err.responseJSON?.message || 'Unknown error';
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Terjadi kesalahan: ' + msg
-                });
-            });
         });
     </script>
 

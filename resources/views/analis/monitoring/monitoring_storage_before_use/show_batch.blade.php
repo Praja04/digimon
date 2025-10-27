@@ -63,14 +63,14 @@
                             <div class="mt-xl-0 mt-5">
                                 <div class="d-flex">
                                     <div class="flex-grow-1">
-                                        <h4>{{ $productionBatch->po_number }} (Nomor PO)</h4>
+                                        <h4>{{ $monitoringStorageBeforeUse->productionBatch->po_number }} (Nomor PO)</h4>
                                         <div class="hstack gap-3 flex-wrap">
                                             <div><a href="#"
                                                     class="text-primary d-block">{{ Session::get('username') }}</a></div>
                                             <div class="vr"></div>
 
                                             <div class="text-muted">Tanggal Produksi : <span
-                                                    class="text-body fw-medium">{{ $productionBatch->production_date }}</span>
+                                                    class="text-body fw-medium">{{ $monitoringStorageBeforeUse->productionBatch->production_date }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -87,7 +87,7 @@
                                                 </div>
                                                 <div class="flex-grow-1">
                                                     <p class="text-muted mb-1">Variant :</p>
-                                                    <h5 class="mb-0">{{ $productionBatch->variant }}</h5>
+                                                    <h5 class="mb-0">{{ $monitoringStorageBeforeUse->variant }}</h5>
                                                 </div>
                                             </div>
                                         </div>
@@ -103,7 +103,7 @@
                                                 </div>
                                                 <div class="flex-grow-1">
                                                     <p class="text-muted mb-1">Batch Range :</p>
-                                                    <h5 class="mb-0">{{ $productionBatch->batch_range }}</h5>
+                                                    <h5 class="mb-0">{{ $monitoringStorageBeforeUse->batch_range }}</h5>
                                                 </div>
                                             </div>
                                         </div>
@@ -119,7 +119,7 @@
                                                 </div>
                                                 <div class="flex-grow-1">
                                                     <p class="text-muted mb-1">Storage :</p>
-                                                    <h5 class="mb-0">{{ $productionBatch->storage }}</h5>
+                                                    <h5 class="mb-0">{{ $monitoringStorageBeforeUse->storage }}</h5>
                                                 </div>
                                             </div>
                                         </div>
@@ -134,7 +134,7 @@
 
                                 <div class="mt-4 text-muted">
                                     <h5 class="fs-14">Description :</h5>
-                                    <p>{{ $productionBatch->description }}</p>
+                                    <p>{{ $monitoringStorageBeforeUse->description }}</p>
                                 </div>
 
 
@@ -150,131 +150,51 @@
         </div>
         <div class="col-lg-12">
             <div class="card" id="tasksList">
-                <div class="card-header border-0">
-                    <div class="d-flex align-items-center">
-                        <h5 class="card-title mb-0 flex-grow-1">All Tasks</h5>
-                    </div>
-                </div>
-
-                <!--end card-body-->
                 <div class="card-body">
-                    <div class="table-responsive table-card mb-4">
-                        <table class="table align-middle table-nowrap mb-0 text-center" id="tasksTable">
-                            <thead class="table-light text-muted">
-                                <tr>
-                                    <th>Nomor PO</th>
-                                    <th>Batch Range</th>
-                                    <th>No Blending</th>
-                                    <th>Volume</th>
-                                    <th>Visco</th>
-                                    <th>Brix</th>
-                                    <th>AW</th>
-                                    <th>Aksi</th>
-                                    <th>Hasil</th>
-                                </tr>
-                            </thead>
-                            <tbody class="list form-check-all">
-                                @forelse ($productionBatch->MonitoringStorageBeforeUse as $data)
-                                    <tr>
-                                        <td>{{ $productionBatch->po_number }}</td>
-                                        <td>{{ $data->batch_range }}</td>
-                                        <td>{{ $data->nomor_blending }}</td>
-                                        <td>{{ $data->volume }}</td>
-                                        <td>{{ $data->visco ?? '-' }}</td>
-                                        <td>{{ $data->brix ?? '-' }}</td>
-                                        <td>{{ $data->aw ?? '-' }}</td>
-                                        <td>
-                                            @if (is_null($data->aw))
-                                                <button class="btn btn-sm btn-primary open-modal"
-                                                    data-id="{{ $data->id }}">Input Analisa
-                                                    Storage</button>
-                                            @else
-                                                <span class="text-muted">✓ Lengkap</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if ($data->hasil === 'OK')
-                                                <span class="badge bg-success">OK</span>
-                                            @elseif ($data->hasil === 'NOT OK')
-                                                <span class="badge bg-danger">NOT OK</span>
-                                            @elseif ($data->hasil === 'PENDING')
-                                                <span class="badge bg-warning text-dark">PENDING</span>
-                                            @else
-                                                <span class="badge bg-secondary">-</span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="10">Tidak ada data blending untuk batch ini.</td>
-                                    </tr>
-                                @endforelse
-                                <!-- Modal input GGA tunggal -->
-                                <div class="modal fade" id="inputModal" tabindex="-1" aria-labelledby="inputModalLabel"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog modal-lg">
-                                        <form id="monitoring_form" class="ajax-gga-form">
-                                            @csrf
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Input Data Monitoring Storage</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Tutup"></button>
-                                                </div>
-                                                <div class="modal-body row g-3">
-                                                    <div class="alert alert-danger d-none error-alert"></div>
-                                                    <input type="hidden" name="id" id="id">
-                                                    <div class="col-lg-12">
-                                                        <label class="form-label">Visco</label>
-                                                        <input type="text" name="visco" step="0.01"
-                                                            class="form-control comma-input" placeholder="Contoh: 2,75"
-                                                            required>
-                                                    </div>
-                                                    <div class="col-lg-12">
-                                                        <label class="form-label">Brix</label>
-                                                        <input type="text" name="brix" step="0.01"
-                                                            class="form-control comma-input" placeholder="Contoh: 2,75"
-                                                            required>
-                                                    </div>
-                                                    <div class="col-lg-12">
-                                                        <label class="form-label">Aw</label>
-                                                        <input type="text" name="aw" step="0.01"
-                                                            class="form-control comma-input" placeholder="Contoh: 2,75"
-                                                            required>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-primary">Simpan</button>
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Batal</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
+                    <form id="monitoring_form" class="ajax-gga-form">
+                        @csrf
 
-                            </tbody>
-                        </table>
-                        <!--end table-->
+                        <div class="row g-3">
+                            <!-- Alert Error -->
+                            <div class="alert alert-danger d-none error-alert"></div>
 
-                    </div>
-                    <div class="d-flex justify-content-end mt-2">
-                        <div class="pagination-wrap hstack gap-2">
-                            <a class="page-item pagination-prev disabled" href="#">
-                                Previous
-                            </a>
-                            <ul class="pagination listjs-pagination mb-0"></ul>
-                            <a class="page-item pagination-next" href="#">
-                                Next
-                            </a>
+                            <!-- Hidden ID -->
+                            <input type="hidden" name="id" id="id"
+                                value="{{ $monitoringStorageBeforeUse->id }}">
+
+                            <!-- Input Visco -->
+                            <div class="col-lg-12">
+                                <label for="visco" class="form-label fw-semibold">Visco</label>
+                                <input type="text" name="visco" id="visco" step="0.01"
+                                    class="form-control comma-input" placeholder="Contoh: 2,75" required>
+                            </div>
+
+                            <!-- Input Brix -->
+                            <div class="col-lg-12">
+                                <label for="brix" class="form-label fw-semibold">Brix</label>
+                                <input type="text" name="brix" id="brix" step="0.01"
+                                    class="form-control comma-input" placeholder="Contoh: 2,75" required>
+                            </div>
+
+                            <!-- Input Aw -->
+                            <div class="col-lg-12">
+                                <label for="aw" class="form-label fw-semibold">Aw</label>
+                                <input type="text" name="aw" id="aw" step="0.01"
+                                    class="form-control comma-input" placeholder="Contoh: 2,75" required>
+                            </div>
                         </div>
-                    </div>
+
+                        <!-- Tombol Aksi -->
+                        <div class="mt-4 d-flex justify-content-end gap-2">
+                            <button type="reset" class="btn btn-secondary px-4">Batal</button>
+                            <button type="submit" class="btn btn-primary px-4">Simpan</button>
+                        </div>
+                    </form>
                 </div>
-                <!--end card-body-->
             </div>
-            <!--end card-->
         </div>
-        <!--end col-->
+
+
     </div>
     <!--end row-->
     <script>
@@ -340,19 +260,31 @@
                 alertBox.addClass('d-none').empty();
                 submitBtn.prop('disabled', true).text('Menyimpan...');
 
+                const id = {{ $monitoringStorageBeforeUse->productionBatch->id ?? 'null' }};
+
                 $.ajax({
                     url: "{{ url('/analis/monitoring/storage/update/data/before-use') }}/" +
                         selectedId,
                     method: 'POST',
                     data: form.serialize(),
                     success: function(response) {
-                        $('#inputModal').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',
                             text: response.message || 'Data berhasil disimpan.'
-                        }).then(() => location.reload());
+                        }).then(() => {
+                            if (id) {
+                                // Arahkan ke route analis.monitoring_storage_before_use.show dengan ID
+                                window.location.href =
+                                    "{{ route('analis.monitoring_storage_before_use.show', ':id') }}"
+                                    .replace(':id', id);
+                            } else {
+                                // Jika ID tidak tersedia, fallback reload
+                                location.reload();
+                            }
+                        });
                     },
+
                     error: function(xhr) {
                         let errors = [];
 

@@ -257,7 +257,8 @@ Route::prefix('analis')->group(function () {
         //storage before use
         Route::get('/data/before-use', [MonitoringStorageBeforeUseController::class, 'index'])->name('analis.monitoring_storage_before_use.index');
         Route::post('/store/before-use', [MonitoringStorageBeforeUseController::class, 'store'])->name('analis.monitoring_storage_before_use.store');
-        Route::get('/detail/before-use/{id}', [MonitoringStorageBeforeUseController::class, 'show']);
+        Route::get('/detail/before-use/{id}', [MonitoringStorageBeforeUseController::class, 'show'])->name('analis.monitoring_storage_before_use.show');
+        Route::get('/detail/before-use/batch/{id}', [MonitoringStorageBeforeUseController::class, 'show_batch'])->name('analis.monitoring_storage_before_use.show_batch');
         Route::post('/update/data/before-use/{id}', [MonitoringStorageBeforeUseController::class, 'update'])->name('analis.monitoring_storage_before_use.update');
     });
 });

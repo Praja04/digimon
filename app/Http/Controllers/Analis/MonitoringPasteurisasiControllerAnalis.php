@@ -118,6 +118,16 @@ class MonitoringPasteurisasiControllerAnalis extends Controller
 
     public function store_data_pasteurisasi(Request $request)
     {
+        $request->merge([
+            'brix' => str_replace(',', '.', $request->brix),
+            'nacl' => str_replace(',', '.', $request->nacl),
+            'bj' => str_replace(',', '.', $request->bj),
+            'visco' => str_replace(',', '.', $request->visco),
+            'aw' => str_replace(',', '.', $request->aw),
+            'buih' => str_replace(',', '.', $request->buih),
+            'ph' => str_replace(',', '.', $request->ph),
+        ]);
+
         // Validasi input
         $validator = Validator::make($request->all(), [
             'monitoring_pasteurisasi_id' => 'required|exists:monitoring_pasteurisasi,id',
@@ -186,7 +196,7 @@ class MonitoringPasteurisasiControllerAnalis extends Controller
                 'endapan' => $request->endapan,
                 'warna' => $request->warna,
                 'shift' => $shift,
-                'production_time' =>  Carbon::parse($request->production_time)->format('Y-m-d H:i:s'),
+                // 'production_time' =>  Carbon::parse($request->production_time)->format('Y-m-d H:i:s'),
                 'created_by' => $username,
             ]);
 
@@ -268,6 +278,12 @@ class MonitoringPasteurisasiControllerAnalis extends Controller
 
     public function updateMonitoringPasteurisasi(Request $request)
     {
+        $request->merge([
+            'adjustment_qty_air' => str_replace(',', '.', $request->adjustment_qty_air),
+            'adjustment_qty_garam' => str_replace(',', '.', $request->adjustment_qty_garam),
+            'adjustment_qty_gula' => str_replace(',', '.', $request->adjustment_qty_gula),
+        ]);
+
         $validator = Validator::make($request->all(), [
             'monitoring_id' => 'required|exists:monitoring_pasteurisasi,id',
             'disposition' => 'required|in:Release,Release Bersyarat,Resampling,Reject,Repro,Adjustment,Jalan Bareng,Leveling',

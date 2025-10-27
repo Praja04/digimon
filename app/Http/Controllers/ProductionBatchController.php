@@ -523,9 +523,6 @@ class ProductionBatchController extends Controller
     }
 
     //blending awal
-
-
-
     public function show_blending_awal($id)
     {
         $productionBatch = ProductionBatch::with(['BlendingAwal' => function ($query) {
@@ -622,8 +619,6 @@ class ProductionBatchController extends Controller
         ));
     }
 
-
-
     public function getLastRevisiBlendingAwal(Request $request)
     {
         $request->validate([
@@ -644,6 +639,9 @@ class ProductionBatchController extends Controller
 
     public function generateRevisiBlendingAwal(Request $request)
     {
+        $request->merge([
+            'volume' => str_replace(',', '.', $request->volume),
+        ]);
         $validated = $request->validate([
             'id_old_blending' => 'required|integer',
             'production_batch_id' => 'required|integer|exists:production_batches,id',
@@ -943,8 +941,6 @@ class ProductionBatchController extends Controller
         return response()->json(['data' => $result]);
     }
 
-
-
     //Blending After Adjust
     public function show_blending_after_adjust($id)
     {
@@ -1017,7 +1013,6 @@ class ProductionBatchController extends Controller
 
         ));
     }
-
 
     public function getLastRevisiBlendingAdjust(Request $request)
     {
@@ -1591,6 +1586,10 @@ class ProductionBatchController extends Controller
 
     public function generateRevisiMonitoring(Request $request)
     {
+        $request->merge([
+            'volume' => str_replace(',', '.', $request->volume),
+        ]);
+
         $validated = $request->validate([
             'id_old_blending' => 'required|integer',
             'production_batch_id' => 'required|integer|exists:production_batches,id',
@@ -1667,6 +1666,10 @@ class ProductionBatchController extends Controller
 
     public function generateRevisiMonitoringPasteurisasi(Request $request)
     {
+        $request->merge([
+            'volume' => str_replace(',', '.', $request->volume),
+        ]);
+
         $validated = $request->validate([
             'id_old_blending' => 'required|integer',
             'production_batch_id' => 'required|integer|exists:production_batches,id',
@@ -2370,6 +2373,10 @@ class ProductionBatchController extends Controller
 
     public function generateRevisiMonitoringStorage(Request $request)
     {
+        $request->merge([
+            'volume' => str_replace(',', '.', $request->volume),
+        ]);
+
         $validated = $request->validate([
             'id_old_blending' => 'required|integer',
             'production_batch_id' => 'required|integer|exists:production_batches,id',

@@ -181,14 +181,9 @@
                                                             <p class="text-muted">Belum ada data Blending.</p>
                                                         @endif
 
-
                                                     </div>
                                                 </div>
-
                                             </div>
-
-
-
                                         </div>
                                     </div>
                                 </div>
@@ -219,73 +214,68 @@
                             <input type="hidden" id="monitoring_pasteurisasi_id" name="monitoring_pasteurisasi_id"
                                 value="{{ $monitoring->id }}">
 
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="brix" class="form-label">Brix</label>
-                                <input type="number" step="0.01" class="form-control" name="brix" id="brix"
-                                    required>
+                                <input type="text" step="0.01" class="form-control comma-input"
+                                    placeholder="Contoh: 2,75" name="brix" id="brix" required>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="nacl" class="form-label">NaCl</label>
-                                <input type="number" step="0.01" class="form-control" name="nacl" id="nacl"
-                                    required>
+                                <input type="text" step="0.01" class="form-control comma-input"
+                                    placeholder="Contoh: 2,75" name="nacl" id="nacl" required>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="bj" class="form-label">BJ</label>
-                                <input type="number" step="0.01" class="form-control" name="bj" id="bj"
-                                    required>
+                                <input type="text" step="0.01" class="form-control comma-input"
+                                    placeholder="Contoh: 2,75" name="bj" id="bj" required>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="visco" class="form-label">Visco</label>
-                                <input type="number" step="0.01" class="form-control" name="visco"
-                                    id="visco">
+                                <input type="text" step="0.01" class="form-control comma-input"
+                                    placeholder="Contoh: 2,75" name="visco" id="visco">
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="aw" class="form-label">AW</label>
-                                <input type="number" step="0.01" class="form-control" name="aw"
-                                    id="aw">
+                                <input type="text" step="0.01" class="form-control comma-input"
+                                    placeholder="Contoh: 2,75" name="aw" id="aw">
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="buih" class="form-label">Buih</label>
-                                <input type="number" step="0.01" class="form-control" name="buih"
-                                    id="buih">
+                                <input type="text" step="0.01" class="form-control comma-input"
+                                    placeholder="Contoh: 2,75" name="buih" id="buih">
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6">
+                                <label for="ph" class="form-label">pH</label>
+                                <input type="text" step="0.01" class="form-control comma-input"
+                                    placeholder="Contoh: 2,75" name="ph" id="ph">
+                            </div>
+
+                            <div class="col-md-6">
                                 <label for="organo" class="form-label">Organo</label>
                                 <input type="text" class="form-control" name="organo" id="organo">
                             </div>
 
-                            <div class="col-md-4">
-                                <label for="ph" class="form-label">pH</label>
-                                <input type="number" step="0.01" class="form-control" name="ph"
-                                    id="ph">
-                            </div>
-
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="endapan" class="form-label">Endapan</label>
                                 <input type="text" class="form-control" name="endapan" id="endapan">
                             </div>
 
                             <div class="col-md-6">
                                 <label for="warna" class="form-label">Warna</label>
-                                <!-- <input type="text" class="form-control" name="warna" id="warna"> -->
                                 <select name="warna" id="warna" class="form-select" required>
                                     <option value="">-- Pilih Warna --</option>
                                     @foreach ($manageWarna as $item)
-                                        <option value="{{ $item->nama_warna }}">{{ $item->nama_warna }}</option>
+                                        <option value="{{ $item->nama_warna }}">{{ $item->nama_warna }}
+                                            ({{ $item->code_warna }})
+                                        </option>
                                     @endforeach
                                 </select>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="production_time" class="form-label">Waktu Produksi</label>
-                                <input type="datetime-local" class="form-control" name="production_time"
-                                    id="production_time" value="{{ now()->format('Y-m-d\TH:i') }}" required>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -337,18 +327,21 @@
                                 <div class="row g-3">
                                     <div class="col-md-4">
                                         <label class="form-label">Air (Liter)</label>
-                                        <input type="number" step="0.01" name="adjustment_qty_air"
-                                            class="form-control adjustment-qty" placeholder="0.00">
+                                        <input type="text" step="0.01" name="adjustment_qty_air"
+                                            class="form-control adjustment-qty comma-input" placeholder="Contoh: 2,75"
+                                            placeholder="0.00">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Gula (Kg)</label>
-                                        <input type="number" step="0.01" name="adjustment_qty_gula"
-                                            class="form-control adjustment-qty" placeholder="0.00">
+                                        <input type="text" step="0.01" name="adjustment_qty_gula"
+                                            class="form-control adjustment-qty comma-input" placeholder="Contoh: 2,75"
+                                            placeholder="0.00">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Garam (Kg)</label>
-                                        <input type="number" step="0.01" name="adjustment_qty_garam"
-                                            class="form-control adjustment-qty" placeholder="0.00">
+                                        <input type="text" step="0.01" name="adjustment_qty_garam"
+                                            class="form-control adjustment-qty comma-input" placeholder="Contoh: 2,75"
+                                            placeholder="0.00">
                                     </div>
                                 </div>
                             </div>
@@ -369,6 +362,33 @@
     @endif
     <script>
         const warnaUrl = "{{ url('/data/warna') }}";
+
+        document.addEventListener('DOMContentLoaded', function() {
+            function validateInput(input) {
+                const value = input.value;
+
+                // Jika ada titik, tampilkan peringatan
+                if (value.includes('.')) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Format Salah!',
+                        text: 'Gunakan tanda koma (,) untuk desimal, bukan titik (.)',
+                        confirmButtonText: 'Mengerti',
+                        confirmButtonColor: '#3085d6'
+                    });
+
+                    // Ganti titik menjadi koma otomatis
+                    input.value = value.replace(/\./g, ',');
+                }
+            }
+
+            // Event listener untuk kedua input
+            document.querySelectorAll('.comma-input').forEach(function(el) {
+                el.addEventListener('input', function() {
+                    validateInput(this);
+                });
+            });
+        });
 
         function loadWarnaOptions() {
             $.ajax({

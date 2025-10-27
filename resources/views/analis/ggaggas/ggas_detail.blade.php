@@ -224,13 +224,17 @@
 
                                                     <div class="mb-3">
                                                         <label class="form-label">BRIX</label>
-                                                        <input type="number" step="0.01" max="100"
-                                                            min="0" name="brix" class="form-control" required>
+                                                        <input type="text" step="0.01" max="100"
+                                                            min="0" name="brix"
+                                                            class="form-control comma-input" required
+                                                            placeholder="Contoh: 2,75">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">NACL (Optional)</label>
-                                                        <input type="number" step="0.01" max="100"
-                                                            min="0" name="nacl" class="form-control">
+                                                        <input type="text" step="0.01" max="100"
+                                                            min="0" name="nacl"
+                                                            class="form-control comma-input" required
+                                                            placeholder="Contoh: 2,75">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Warna</label>
@@ -324,7 +328,33 @@
     </div>
     <!--end row-->
     <script>
-        const warnaUrl = "{{ url('/data/warna') }}";
+        document.addEventListener('DOMContentLoaded', function() {
+            function validateInput(input) {
+                const value = input.value;
+
+                // Jika ada titik, tampilkan peringatan
+                if (value.includes('.')) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Format Salah!',
+                        text: 'Gunakan tanda koma (,) untuk desimal, bukan titik (.)',
+                        confirmButtonText: 'Mengerti',
+                        confirmButtonColor: '#3085d6'
+                    });
+
+                    // Ganti titik menjadi koma otomatis
+                    input.value = value.replace(/\./g, ',');
+                }
+            }
+
+            // Event listener untuk kedua input
+            document.querySelectorAll('.comma-input').forEach(function(el) {
+                el.addEventListener('input', function() {
+                    validateInput(this);
+                });
+            });
+        });
+
 
         function loadWarnaOptions() {
             $.ajax({

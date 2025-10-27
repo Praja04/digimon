@@ -20,6 +20,10 @@ class BlendingAwalController extends Controller
     //
     public function store(Request $request)
     {
+        $request->merge([
+            'volume' => str_replace(',', '.', $request->volume),
+        ]);
+
         $validator = Validator::make($request->all(), [
             'production_batch_id' => 'required|exists:production_batches,id',
             'batch_start' => 'required|integer|different:batch_end',
@@ -148,6 +152,19 @@ class BlendingAwalController extends Controller
     }
     public function updateAjaxBlending(Request $request, $id)
     {
+        $request->merge([
+            'brix' => str_replace(',', '.', $request->brix),
+            'nacl' => str_replace(',', '.', $request->nacl),
+            'bj' => str_replace(',', '.', $request->bj),
+            'visco' => str_replace(',', '.', $request->visco),
+            'aw' => str_replace(',', '.', $request->aw),
+            'ph' => str_replace(',', '.', $request->ph),
+            'buih' => str_replace(',', '.', $request->buih),
+            'adjustment_qty_air' => str_replace(',', '.', $request->adjustment_qty_air),
+            'adjustment_qty_garam' => str_replace(',', '.', $request->adjustment_qty_garam),
+            'adjustment_qty_gula' => str_replace(',', '.', $request->adjustment_qty_gula),
+        ]);
+
         $validator = Validator::make($request->all(), [
             'brix' => 'required|numeric|min:0|max:100',
             'nacl' => 'required|numeric|min:0|max:100',

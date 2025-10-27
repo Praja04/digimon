@@ -172,7 +172,7 @@
                                                                                     <div class="modal-header py-2">
                                                                                         <h5 class="modal-title"
                                                                                             id="qrModalLabel{{ $blending->id }}">
-                                                                                            QR Code - Kimia</h5>
+                                                                                            QR Code - Monitoring Turun Blending</h5>
                                                                                         <button type="button"
                                                                                             class="btn-close btn-sm"
                                                                                             data-bs-dismiss="modal"
@@ -296,7 +296,8 @@
 
                         <div class="mb-3">
                             <label for="volume" class="form-label">Volume</label>
-                            <input type="string" name="volume" class="form-control">
+                            <input type="text" name="volume" class="form-control comma-input"
+                                placeholder="Contoh: 2,75">
                         </div>
 
                         <div class="mb-3">
@@ -373,8 +374,9 @@
                             <input type="text" class="form-control" name="no_blending">
                         </div>
                         <div class="col-lg-6">
-                            <label>Volume</label>
-                            <input type="text" class="form-control" name="volume">
+                            <label for="volume" class="form-label">Volume</label>
+                            <input type="text" name="volume" class="form-control comma-input"
+                                placeholder="Contoh: 2,75">
                         </div>
                         <div class="col-lg-6">
                             <label for="storage" class="form-label">Storage (Optional)</label>
@@ -427,6 +429,33 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function validateInput(input) {
+                const value = input.value;
+
+                // Jika ada titik, tampilkan peringatan
+                if (value.includes('.')) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Format Salah!',
+                        text: 'Gunakan tanda koma (,) untuk desimal, bukan titik (.)',
+                        confirmButtonText: 'Mengerti',
+                        confirmButtonColor: '#3085d6'
+                    });
+
+                    // Ganti titik menjadi koma otomatis
+                    input.value = value.replace(/\./g, ',');
+                }
+            }
+
+            // Event listener untuk kedua input
+            document.querySelectorAll('.comma-input').forEach(function(el) {
+                el.addEventListener('input', function() {
+                    validateInput(this);
+                });
+            });
+        });
+
         const allBatches = @json($filteredBatchGroups);
         const validGgasBatches = @json($filteredBatchGroups);
 

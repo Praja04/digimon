@@ -45,7 +45,7 @@
 
 
                                     <div class="row mt-4">
-                                        <div class="col-lg-4 col-sm-6">
+                                        <div class="col-lg-6 col-sm-6">
                                             <div class="p-2 border border-dashed rounded">
                                                 <div class="d-flex align-items-center">
                                                     <div class="avatar-sm me-2">
@@ -61,7 +61,7 @@
                                             </div>
                                         </div>
                                         <!-- end col -->
-                                        <div class="col-lg-4 col-sm-6">
+                                        <div class="col-lg-6 col-sm-6">
                                             <div class="p-2 border border-dashed rounded">
                                                 <div class="d-flex align-items-center">
                                                     <div class="avatar-sm me-2">
@@ -77,7 +77,7 @@
                                             </div>
                                         </div>
                                         <!-- end col -->
-                                        <div class="col-lg-4 col-sm-6">
+                                        {{-- <div class="col-lg-4 col-sm-6">
                                             <div class="p-2 border border-dashed rounded">
                                                 <div class="d-flex align-items-center">
                                                     <div class="avatar-sm me-2">
@@ -91,7 +91,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <!-- end col -->
 
                                         <!-- end col -->
@@ -129,60 +129,63 @@
                             <div class="alert alert-danger d-none error-alert"></div>
 
                             <div class="row g-3">
-                                <div class="col-lg-4">
+                                <div class="col-md-4">
                                     <label class="form-label">BRIX</label>
-                                    <input type="number" step="0.01" max="100" min="0" name="brix"
-                                        class="form-control" required>
+                                    <input type="text" step="0.01" max="100" min="0" name="brix"
+                                        class="form-control comma-input" placeholder="Contoh: 2,75" required>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-md-4">
                                     <label class="form-label">NACL</label>
-                                    <input type="number" step="0.01" max="100" min="0" name="nacl"
-                                        class="form-control" required>
+                                    <input type="text" step="0.01" max="100" min="0" name="nacl"
+                                        class="form-control comma-input" placeholder="Contoh: 2,75" required>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-md-4">
                                     <label class="form-label">Bj</label>
-                                    <input type="number" step="0.01" name="bj" class="form-control" required>
+                                    <input type="text" step="0.01" name="bj" class="form-control comma-input"
+                                        placeholder="Contoh: 2,75" required>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-md-4">
                                     <label class="form-label">Visco</label>
-                                    <input type="number" step="0.01" name="visco" class="form-control" required>
+                                    <input type="text" step="0.01" name="visco" class="form-control comma-input"
+                                        placeholder="Contoh: 2,75" required>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-md-4">
                                     <label class="form-label">Aw</label>
-                                    <input type="number" step="0.01" name="aw" class="form-control" required>
+                                    <input type="text" step="0.01" name="aw" class="form-control comma-input"
+                                        placeholder="Contoh: 2,75" required>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-md-4">
                                     <label class="form-label">Buih</label>
-                                    <input type="number" step="0.01" name="buih" class="form-control" required>
+                                    <input type="text" step="0.01" name="buih" class="form-control comma-input"
+                                        placeholder="Contoh: 2,75" required>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-md-4">
                                     <label class="form-label">PH</label>
-                                    <input type="number" step="0.01" name="ph" class="form-control" required>
+                                    <input type="text" step="0.01" name="ph" class="form-control comma-input"
+                                        placeholder="Contoh: 2,75" required>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-md-4">
                                     <label class="form-label">Organo</label>
-                                    <input type="text" name="organo" class="form-control" required>
+                                    <input type="text" name="organo" class="form-control" required
+                                        oninput="this.value = this.value.toUpperCase();">
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-md-4">
                                     <label class="form-label">Endapan</label>
-                                    <input type="text" name="endapan" class="form-control" required>
+                                    <input type="text" name="endapan" class="form-control" required
+                                        oninput="this.value = this.value.toUpperCase();">
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-md-6">
                                     <label class="form-label">Warna</label>
-                                    <!-- <input type="text" name="warna" class="form-control" required> -->
                                     <select name="warna" id="warna" class="form-select" required>
                                         <option value="">-- Pilih Warna --</option>
                                         @foreach ($manageWarna as $item)
-                                            <option value="{{ $item->nama_warna }}">{{ $item->nama_warna }}</option>
+                                            <option value="{{ $item->nama_warna }}">
+                                                {{ $item->nama_warna }} ({{ $item->code_warna }})
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="production_time" class="form-label">Waktu Produksi</label>
-                                    <input type="datetime-local" class="form-control" name="production_time"
-                                        id="production_time" value="{{ now()->format('Y-m-d\TH:i') }}" required>
-                                </div>
-                                <div class="mb-3">
                                     <label class="form-label">Disposition</label>
                                     <select name="disposition" class="form-select disposition-select" required>
                                         <option value="">-- Pilih Disposition --</option>
@@ -224,6 +227,33 @@
     @endif
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function validateInput(input) {
+                const value = input.value;
+
+                // Jika ada titik, tampilkan peringatan
+                if (value.includes('.')) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Format Salah!',
+                        text: 'Gunakan tanda koma (,) untuk desimal, bukan titik (.)',
+                        confirmButtonText: 'Mengerti',
+                        confirmButtonColor: '#3085d6'
+                    });
+
+                    // Ganti titik menjadi koma otomatis
+                    input.value = value.replace(/\./g, ',');
+                }
+            }
+
+            // Event listener untuk kedua input
+            document.querySelectorAll('.comma-input').forEach(function(el) {
+                el.addEventListener('input', function() {
+                    validateInput(this);
+                });
+            });
+        });
+
         $(document).ready(function() {
 
             const warnaUrl = "{{ url('/data/warna') }}";
