@@ -131,16 +131,14 @@
 
                             <div class="mb-3">
                                 <label for="brix" class="form-label">BRIX</label>
-                                <input type="text" step="0.01" max="100" min="0" name="brix"
-                                    id="brix" class="form-control comma-input" placeholder="Contoh: 5,25" required
-                                    value="{{ old('brix', $gga->brix) }}">
+                                <input type="text" name="brix" id="brix" class="form-control comma-input"
+                                    placeholder="Contoh: 0,00" required value="{{ old('brix', $gga->brix) }}">
                             </div>
 
                             <div class="mb-3">
                                 <label for="nacl" class="form-label">NACL</label>
-                                <input type="text" step="0.01" max="100" min="0" name="nacl"
-                                    id="nacl" class="form-control comma-input" placeholder="Contoh: 5,25" required
-                                    value="{{ old('nacl', $gga->nacl) }}">
+                                <input type="text" name="nacl" id="nacl" class="form-control comma-input"
+                                    placeholder="Contoh: 0,00" required value="{{ old('nacl', $gga->nacl) }}">
                             </div>
 
                             <div class="mb-3">
@@ -179,18 +177,18 @@
                                 <div class="row g-3">
                                     <div class="col-md-4">
                                         <label class="form-label">Air (Liter)</label>
-                                        <input type="number" step="0.01" name="adjustment_qty_air"
-                                            class="form-control adjustment-qty" placeholder="0.00">
+                                        <input type="text" step="0.01" name="adjustment_qty_air"
+                                            class="form-control adjustment-qty comma-input" placeholder="Contoh: 0,00">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Gula (Kg)</label>
-                                        <input type="number" step="0.01" name="adjustment_qty_gula"
-                                            class="form-control adjustment-qty" placeholder="0.00">
+                                        <input type="text" step="0.01" name="adjustment_qty_gula"
+                                            class="form-control adjustment-qty comma-input" placeholder="Contoh: 0,00">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Garam (Kg)</label>
-                                        <input type="number" step="0.01" name="adjustment_qty_garam"
-                                            class="form-control adjustment-qty" placeholder="0.00">
+                                        <input type="text" step="0.01" name="adjustment_qty_garam"
+                                            class="form-control adjustment-qty comma-input" placeholder="Contoh: 0,00">
                                     </div>
                                 </div>
                             </div>

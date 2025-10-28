@@ -224,17 +224,15 @@
 
                                                     <div class="mb-3">
                                                         <label class="form-label">BRIX</label>
-                                                        <input type="text" step="0.01" max="100"
-                                                            min="0" name="brix"
+                                                        <input type="text" name="brix"
                                                             class="form-control comma-input" required
-                                                            placeholder="Contoh: 2,75">
+                                                            placeholder="Contoh: 0,00">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">NACL (Optional)</label>
-                                                        <input type="text" step="0.01" max="100"
-                                                            min="0" name="nacl"
+                                                        <input type="text" name="nacl"
                                                             class="form-control comma-input" required
-                                                            placeholder="Contoh: 2,75">
+                                                            placeholder="Contoh: 0,00">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Warna</label>
@@ -271,24 +269,21 @@
                                                         <div class="row g-3">
                                                             <div class="col-md-4">
                                                                 <label class="form-label">Air (Liter)</label>
-                                                                <input type="number" step="0.01"
-                                                                    name="adjustment_qty_air"
-                                                                    class="form-control adjustment-qty"
-                                                                    placeholder="0.00">
+                                                                <input type="text" name="adjustment_qty_air"
+                                                                    class="form-control adjustment-qty comma-input"
+                                                                    required placeholder="Contoh: 0,00">
                                                             </div>
                                                             <div class="col-md-4">
                                                                 <label class="form-label">Gula (Kg)</label>
-                                                                <input type="number" step="0.01"
-                                                                    name="adjustment_qty_gula"
-                                                                    class="form-control adjustment-qty"
-                                                                    placeholder="0.00">
+                                                                <input type="text" name="adjustment_qty_gula"
+                                                                    class="form-control adjustment-qty comma-input"
+                                                                    required placeholder="Contoh: 0,00">
                                                             </div>
                                                             <div class="col-md-4">
                                                                 <label class="form-label">Garam (Kg)</label>
-                                                                <input type="number" step="0.01"
-                                                                    name="adjustment_qty_garam"
-                                                                    class="form-control adjustment-qty"
-                                                                    placeholder="0.00">
+                                                                <input type="text" name="adjustment_qty_garam"
+                                                                    class="form-control adjustment-qty comma-input"
+                                                                    required placeholder="Contoh: 0,00">
                                                             </div>
                                                         </div>
                                                     </div>

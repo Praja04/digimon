@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Analis;
 
+use App\Events\ProcessOutsideDisposition;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ProductionBatch;
@@ -161,6 +162,9 @@ class GgaGgasController extends Controller
         $request->merge([
             'brix' => str_replace(',', '.', $request->brix),
             'nacl' => str_replace(',', '.', $request->nacl),
+            'adjustment_qty_air' => str_replace(',', '.', $request->adjustment_qty_air),
+            'adjustment_qty_garam' => str_replace(',', '.', $request->adjustment_qty_garam),
+            'adjustment_qty_gula' => str_replace(',', '.', $request->adjustment_qty_gula),
         ]);
 
         $validator = Validator::make($request->all(), [
@@ -217,7 +221,6 @@ class GgaGgasController extends Controller
 
         // Jika disposition Adjustment, update adjustment_qty pada data adjustment yang sudah ada
         if ($disposition === 'Adjustment') {
-
             $gga->update([
                 'brix' => $request->brix,
                 'nacl' => $request->nacl,
@@ -241,6 +244,15 @@ class GgaGgasController extends Controller
                 'disposition_remarks' => $remarks ? $remarks . ' (Resampling)' : 'Resampling',
                 'not_standar' => true,
             ]);
+        }
+
+        if (in_array($disposition, ['Resampling', 'Reject', 'Repro', 'Adjustment'])) {
+            event(new ProcessOutsideDisposition(
+                "GGA - Batch " . $gga->batch_number,
+                $gga->production_batch_id,
+                $disposition,
+                $remarks
+            ));
         }
 
         return response()->json([
@@ -268,6 +280,9 @@ class GgaGgasController extends Controller
         $request->merge([
             'brix' => str_replace(',', '.', $request->brix),
             'nacl' => str_replace(',', '.', $request->nacl),
+            'adjustment_qty_air' => str_replace(',', '.', $request->adjustment_qty_air),
+            'adjustment_qty_garam' => str_replace(',', '.', $request->adjustment_qty_garam),
+            'adjustment_qty_gula' => str_replace(',', '.', $request->adjustment_qty_gula),
         ]);
 
         $validator = Validator::make($request->all(), [
@@ -324,8 +339,6 @@ class GgaGgasController extends Controller
 
         // Jika disposition Adjustment, update adjustment_qty pada data adjustment yang sudah ada
         if ($disposition === 'Adjustment') {
-
-
             $ggas->update([
                 'brix' => $request->brix,
                 'nacl' => $request->nacl,
@@ -349,6 +362,15 @@ class GgaGgasController extends Controller
                 'disposition_remarks' => $remarks ? $remarks . ' (Resampling)' : 'Resampling',
                 'not_standar' => true,
             ]);
+        }
+
+        if (in_array($disposition, ['Resampling', 'Reject', 'Repro', 'Adjustment'])) {
+            event(new ProcessOutsideDisposition(
+                "GGAS - Batch " . $ggas->batch_number,
+                $ggas->production_batch_id,
+                $disposition,
+                $remarks
+            ));
         }
 
 

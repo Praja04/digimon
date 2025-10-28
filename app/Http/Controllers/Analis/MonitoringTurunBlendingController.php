@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Analis;
 
+use App\Events\ProcessOutsideDisposition;
 use App\Http\Controllers\Controller;
 use App\Models\ManageWarnaModel;
 use Illuminate\Http\Request;
@@ -62,8 +63,6 @@ class MonitoringTurunBlendingController extends Controller
             'manageWarna' => $manageWarna
         ]);
     }
-
-
 
     public function store(Request $request)
     {
@@ -259,7 +258,6 @@ class MonitoringTurunBlendingController extends Controller
             ], 422);
         }
 
-
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -304,6 +302,15 @@ class MonitoringTurunBlendingController extends Controller
         }
 
         $blending->update($dataUpdate);
+
+        if (in_array($disposition, ['Resampling', 'Reject', 'Repro', 'Adjustment', 'Jalan Bareng', 'Leveling'])) {
+            event(new ProcessOutsideDisposition(
+                "Turun Blending - Batch " . $blending->batch_range,
+                $blending->production_batch_id,
+                $disposition,
+                $remarks
+            ));
+        }
 
         return response()->json([
             'success' => true,

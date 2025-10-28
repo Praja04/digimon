@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Analis;
 
+use App\Events\ProcessOutsideDisposition;
 use App\Http\Controllers\Controller;
 use App\Models\ManageWarnaModel;
 use App\Models\MonitoringPasteurisasi;
@@ -349,6 +350,16 @@ class MonitoringPasteurisasiControllerAnalis extends Controller
         }
 
         $blending->update($dataUpdate);
+
+        if (in_array($disposition, ['Resampling', 'Reject', 'Repro', 'Adjustment', 'Jalan Bareng', 'Leveling'])) {
+            event(new ProcessOutsideDisposition(
+                "Pasteurisasi - Batch " . $blending->batch_range,
+                $blending->production_batch_id,
+                $disposition,
+                $remarks
+            ));
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Data berhasil disimpan.'

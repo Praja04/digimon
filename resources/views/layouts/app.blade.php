@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
+    data-sidebar-image="none" data-preloader="disable">
 
 <head>
 
@@ -67,12 +68,6 @@
     <!-- END layout-wrapper -->
 
 
-
-
-
-
-
-
     <!-- JAVASCRIPT -->
     <script src="{{ asset('material/assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('material/assets/libs/simplebar/simplebar.min.js') }}"></script>
@@ -95,9 +90,95 @@
     <!-- animation init -->
     <script src="{{ asset('material/assets/js/pages/animation-aos.init.js') }}"></script>
 
+    @if (Session::get('role') === 'foreman' || Session::get('role') === 'supervisor')
+        <script>
+            async function loadNotifications() {
+                const list = document.getElementById('notification-list');
+                const badge = document.getElementById('notif-badge');
 
+                try {
+                    const res = await fetch('/notifications/unread');
+                    const data = await res.json();
+
+                    list.innerHTML = ''; // Kosongkan dulu
+
+                    if (data.length === 0) {
+                        list.innerHTML = `<div class="text-center text-muted py-3">Tidak ada notifikasi baru</div>`;
+                        badge.classList.add('d-none');
+                        return;
+                    }
+
+                    // Tampilkan jumlah notifikasi
+                    badge.textContent = data.length;
+                    badge.classList.remove('d-none');
+
+                    // Render setiap notifikasi
+                    data.forEach(n => {
+                        const item = document.createElement('div');
+                        item.className =
+                            'text-reset notification-item d-block dropdown-item position-relative border-bottom';
+                        item.style.cursor = 'pointer';
+                        item.innerHTML = `
+                            <div class="d-flex">
+                                <div class="flex-1">
+                                    <h6 class="mt-0 mb-2 lh-base">
+                                        <b>${n.title}</b> - Disposisi: <span class="text-danger">${n.disposisi}</span>
+                                    </h6>
+                                    <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                                        <i class="mdi mdi-clock-outline"></i> ${new Date(n.created_at).toLocaleString()}
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+                        // Ketika notifikasi diklik
+                        item.addEventListener('click', async () => {
+                            try {
+                                await fetch(`/notifications/mark-read/${n.id}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': document.querySelector(
+                                            'meta[name="csrf-token"]').content
+                                    }
+                                });
+
+                                window.location.href = '/notifications'; // arahkan ke index notifikasi
+                            } catch (err) {
+                                console.error('Gagal menandai sebagai dibaca:', err);
+                            }
+                        });
+
+                        list.appendChild(item);
+                    });
+                } catch (error) {
+                    console.error('Gagal memuat notifikasi:', error);
+                    list.innerHTML = `<div class="text-center text-danger py-3">Gagal memuat notifikasi</div>`;
+                }
+            }
+
+
+            // Mark all as read
+            async function markAllRead() {
+                await fetch('/notifications/mark-all-read', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
+
+                loadNotifications(); // reload list
+            }
+        </script>
+    @endif
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadNotifications();
+            document.getElementById('mark-all-read').addEventListener('click', markAllRead);
+
+            // Polling ringan setiap 5 detik
+            setInterval(loadNotifications, 5000);
+        });
+
         $(document).ready(function() {
             // Logout button handler
             $('#logoutButton').click(function() {
@@ -138,7 +219,8 @@
                                     icon: 'success',
                                     confirmButtonText: 'OK'
                                 }).then(() => {
-                                    window.location.href = "{{ url('/') }}"; // Redirect ke halaman utama atau login
+                                    window.location.href =
+                                        "{{ url('/') }}"; // Redirect ke halaman utama atau login
                                 });
                             },
                             error: function(xhr) {

@@ -74,7 +74,6 @@ class MonitoringPasteurisasiControllerForeman extends Controller
             // 'batch_end' => 'required',
             'storage' => 'nullable|string', // ← ubah jadi nullable
             'no_blending' => 'required',
-            //required colume harus decimal
             'volume' => 'required|numeric',
         ]);
 

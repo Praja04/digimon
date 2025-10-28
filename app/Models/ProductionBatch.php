@@ -75,6 +75,11 @@ class ProductionBatch extends Model
         return $this->hasMany(GgasProcess::class);
     }
 
+    public function notification()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
     public function isGGaComplete(): bool
     {
         $ggaItems = $this->GgaProcesses;

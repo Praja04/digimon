@@ -297,7 +297,7 @@
                         <div class="mb-3">
                             <label for="volume" class="form-label">Volume</label>
                             <input type="text" name="volume" class="form-control comma-input"
-                                placeholder="Contoh: 2,75">
+                                placeholder="Contoh: 0,00">
                         </div>
 
                         <div class="mb-3">
@@ -376,7 +376,7 @@
                         <div class="col-lg-6">
                             <label for="volume" class="form-label">Volume</label>
                             <input type="text" name="volume" class="form-control comma-input"
-                                placeholder="Contoh: 2,75">
+                                placeholder="Contoh: 0,00">
                         </div>
                         <div class="col-lg-6">
                             <label for="storage" class="form-label">Storage (Optional)</label>

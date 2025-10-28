@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Analis;
 
+use App\Events\ProcessOutsideDisposition;
 use App\Http\Controllers\Controller;
 use App\Models\MonitoringStorageModel;
 use App\Models\MonitoringStorageMikroModel;
@@ -109,7 +110,7 @@ class MonitoringStorageController extends Controller
         $request->merge([
             'volume' => str_replace(',', '.', $request->volume),
         ]);
-        
+
         $validator = Validator::make($request->all(), [
             'production_batch_id' => 'required|exists:production_batches,id',
             'batch' => 'required',
@@ -211,8 +212,6 @@ class MonitoringStorageController extends Controller
             ], 422);
         }
 
-
-
         $disposition = $request->disposition;
         $remarks = $request->disposition_remarks ?? null;
 
@@ -264,6 +263,15 @@ class MonitoringStorageController extends Controller
         }
 
         $data->update($dataUpdate);
+
+        if (in_array($disposition, ['Resampling', 'Reject', 'Repro', 'Jalan Bareng', 'Leveling', 'Hold'])) {
+            event(new ProcessOutsideDisposition(
+                "Storage Kimia - Batch " . $data->batch_range,
+                $data->production_batch_id,
+                $disposition,
+                $remarks
+            ));
+        }
 
         return response()->json([
             'success' => true,

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Analis;
 
+use App\Events\ProcessOutsideDisposition;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -255,6 +256,15 @@ class BlendingAwalController extends Controller
 
         $blending->update($dataUpdate);
 
+        if (in_array($disposition, ['Resampling', 'Reject', 'Repro', 'Adjustment', 'Jalan Bareng', 'Leveling'])) {
+            event(new ProcessOutsideDisposition(
+                "Blending Awal - Batch " . $blending->batch_range,
+                $blending->production_batch_id,
+                $disposition,
+                $remarks
+            ));
+        }
+        
         return response()->json([
             'success' => true,
             'message' => 'Data berhasil disimpan.'

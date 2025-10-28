@@ -295,7 +295,7 @@
                         <div class="mb-3">
                             <label for="volume" class="form-label">Volume</label>
                             <input type="string" name="volume" class="form-control comma-input"
-                                placeholder="Contoh: 2,75">
+                                placeholder="Contoh: 0,00">
                         </div>
 
                         <div class="mb-3">
@@ -373,7 +373,7 @@
                         </div>
                         <div class="col-lg-6">
                             <label>Volume</label>
-                            <input type="text" class="form-control comma-input" placeholder="Contoh: 2,75"
+                            <input type="text" class="form-control comma-input" placeholder="Contoh: 0,00"
                                 name="volume">
                         </div>
                         <div class="col-lg-6">

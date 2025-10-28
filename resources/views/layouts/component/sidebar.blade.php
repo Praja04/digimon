@@ -188,7 +188,7 @@
                     <a class="nav-link menu-link" href="{{ url('foreman/monitoring/blending/menu') }}">
                         <i class="mdi mdi-monitor-dashboard"></i> <span>Monitoring Blending</span>
                     </a>
-                </li> --}}
+                     </li> --}}
 
                     <li class="nav-item">
                         <a class="nav-link menu-link" href="{{ url('foreman/monitoring/pasteurisasi/menu') }}">
@@ -228,8 +228,8 @@
                         </a>
                     </li>
                 @elseif(Session::get('role') === 'analis' && Session::get('role_group') === 'field')
-                    <li class="nav-item"><a class="nav-link menu-link"
-                            href="{{ route('blending_analis.menu')}}"><i class="mdi mdi-blender-software"></i>
+                    <li class="nav-item"><a class="nav-link menu-link" href="{{ route('blending_analis.menu') }}"><i
+                                class="mdi mdi-blender-software"></i>
                             Blending</a></li>
                 @elseif(
                     (Session::get('role') === 'analis' && Session::get('role_group') === 'mikro') ||
@@ -267,6 +267,13 @@
                     </li>
                 @endif
 
+                @if (Session::get('role') === 'foreman' || Session::get('role') === 'supervisor')
+                    <li class="nav-item">
+                        <a class="nav-link menu-link" href="{{ route('notifications.index') }}">
+                            <i class="mdi mdi-bell"></i> <span data-key="t-widgets">Notifikasi</span>
+                        </a>
+                    </li>
+                @endif
             </ul>
         </div>
         <!-- Sidebar -->

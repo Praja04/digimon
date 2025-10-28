@@ -211,44 +211,44 @@
 
                             <div class="col-md-6">
                                 <label for="brix" class="form-label">Brix</label>
-                                <input type="text" step="0.01" class="form-control comma-input"
-                                    placeholder="Contoh: 2,75" name="brix" id="brix" required>
+                                <input type="text" class="form-control comma-input" placeholder="Contoh: 0,00"
+                                    name="brix" id="brix" required>
                             </div>
 
                             <div class="col-md-6">
                                 <label for="nacl" class="form-label">NaCl</label>
-                                <input type="text" step="0.01" class="form-control comma-input"
-                                    placeholder="Contoh: 2,75" name="nacl" id="nacl" required>
+                                <input type="text" class="form-control comma-input" placeholder="Contoh: 0,00"
+                                    name="nacl" id="nacl" required>
                             </div>
 
                             <div class="col-md-6">
                                 <label for="bj" class="form-label">BJ</label>
-                                <input type="text" step="0.01" class="form-control comma-input"
-                                    placeholder="Contoh: 2,75" name="bj" id="bj" required>
+                                <input type="text" class="form-control comma-input" placeholder="Contoh: 0,00"
+                                    name="bj" id="bj" required>
                             </div>
 
                             <div class="col-md-6">
                                 <label for="visco" class="form-label">Visco</label>
-                                <input type="text" step="0.01" class="form-control comma-input"
-                                    placeholder="Contoh: 2,75" name="visco" id="visco">
+                                <input type="text" class="form-control comma-input" placeholder="Contoh: 0,00"
+                                    name="visco" id="visco">
                             </div>
 
                             <div class="col-md-6">
                                 <label for="aw" class="form-label">AW</label>
-                                <input type="text" step="0.01" class="form-control comma-input"
-                                    placeholder="Contoh: 2,75" name="aw" id="aw">
+                                <input type="text" class="form-control comma-input" placeholder="Contoh: 0,00"
+                                    name="aw" id="aw">
                             </div>
 
                             <div class="col-md-6">
                                 <label for="buih" class="form-label">Buih</label>
-                                <input type="text" step="0.01" class="form-control comma-input"
-                                    placeholder="Contoh: 2,75" name="buih" id="buih">
+                                <input type="text" class="form-control comma-input" placeholder="Contoh: 0,00"
+                                    name="buih" id="buih">
                             </div>
 
-                             <div class="col-md-6">
+                            <div class="col-md-6">
                                 <label for="ph" class="form-label">pH</label>
-                                <input type="text" step="0.01" class="form-control comma-input"
-                                    placeholder="Contoh: 2,75" name="ph" id="ph">
+                                <input type="text" class="form-control comma-input" placeholder="Contoh: 0,00"
+                                    name="ph" id="ph">
                             </div>
 
                             <div class="col-md-6">
@@ -325,18 +325,18 @@
                                 <div class="row g-3">
                                     <div class="col-md-4">
                                         <label class="form-label">Air (Liter)</label>
-                                        <input type="number" step="0.01" name="adjustment_qty_air"
-                                            class="form-control adjustment-qty" placeholder="0.00">
+                                        <input type="text" name="adjustment_qty_air"
+                                            class="form-control adjustment-qty comma-input" placeholder="Contoh: 0,00">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Gula (Kg)</label>
-                                        <input type="number" step="0.01" name="adjustment_qty_gula"
-                                            class="form-control adjustment-qty" placeholder="0.00">
+                                        <input type="text" name="adjustment_qty_gula"
+                                            class="form-control adjustment-qty comma-input" placeholder="Contoh: 0,00">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Garam (Kg)</label>
-                                        <input type="number" step="0.01" name="adjustment_qty_garam"
-                                            class="form-control adjustment-qty" placeholder="0.00">
+                                        <input type="text" name="adjustment_qty_garam"
+                                            class="form-control adjustment-qty comma-input" placeholder="Contoh: 0,00">
                                     </div>
                                 </div>
                             </div>

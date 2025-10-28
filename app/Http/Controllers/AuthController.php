@@ -30,6 +30,7 @@ class AuthController extends Controller
 
             $user = Auth::user();
 
+            Session::put('id', $user->id);
             Session::put('username', $user->name);
             Session::put('role', $user->role);
             Session::put('role_group', $user->role_group);

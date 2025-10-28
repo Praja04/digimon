@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\ProcessOutsideDisposition;
 use App\Http\Controllers\Analis\BlendingAdjustController;
 use App\Http\Controllers\Analis\MonitoringTurunBlendingController;
 use Milon\Barcode\DNS2D;
@@ -32,8 +33,11 @@ use App\Http\Controllers\Supervisor\SamplingControllerSupervisor;
 use App\Http\Controllers\Supervisor\BlendingAwalControllerSupervisor;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Foreman\MonitoringPasteurisasiControllerForeman;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Supervisor\MonitoringPasteurisasiControllerSupervisor;
 use App\Models\MonitoringStorageBeforeUse;
+use App\Models\Notification;
+use Illuminate\Support\Facades\Session;
 
 // Login & Logout
 Route::get('/', [AuthController::class, 'loginForm']);
@@ -601,7 +605,10 @@ Route::get('/api/qr-code/{id}', function ($id) {
     return response($qr)->header('Content-Type', 'image/png');
 });
 
-
+Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+Route::get('/notifications/unread', [NotificationController::class, 'unreadNotifications']);
+Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+Route::post('/notifications/mark-read/{id}', [NotificationController::class, 'markAsRead']);
 
 Route::prefix('data')->group(function () {
     Route::get('/', [ManageStandarDataController::class, 'tampilan']);          // 🔍 List semua warna
