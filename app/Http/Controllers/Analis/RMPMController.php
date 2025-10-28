@@ -79,7 +79,8 @@ class RMPMController extends Controller
             'samplingFisikRaw',
             'analisaGaramGula',
             'analisaShortTerm',
-            'analisaLongTerm'
+            'analisaLongTerm',
+            'konfirmasi'
         ])->findOrFail($id);
 
         // Ambil data analisa short term pertama berdasarkan id_identitas
@@ -207,14 +208,14 @@ class RMPMController extends Controller
     {
         $request->validate([
             'id_identitas' => 'required|exists:identitas_rm_master,id',
-            'fisik' => 'required|array',
-            '%ka' => 'required|array',
-            'kotoran' => 'required|array',
-            'organo' => 'required|array',
-            'warna' => 'required|array',
-            'aroma' => 'required|array',
-            '%nacl' => 'required|array',
-            'gross_weight' => 'required|array',
+            'fisik' => 'nullable|array',
+            '%ka' => 'nullable|array',
+            'kotoran' => 'nullable|array',
+            'organo' => 'nullable|array',
+            'warna' => 'nullable|array',
+            'aroma' => 'nullable|array',
+            '%nacl' => 'nullable|array',
+            'gross_weight' => 'nullable|array',
         ]);
 
         $username = session('username');
@@ -344,7 +345,7 @@ class RMPMController extends Controller
             'samplingMobil',
             'samplingDokumen',
             'samplingFisikKemasan',
-            'samplingFisikRaw'
+            'samplingFisikRaw',
         ])->findOrFail($id);
 
         $jamAnalisaExist = KonfirmasiKedatangan::where('id_identitas', $id)->exists();

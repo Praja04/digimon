@@ -199,6 +199,7 @@ class RMPMControllerForeman extends Controller
         // $analisa_short_term = $identitas->analisaShortTerm()->with('disposisi')->get();
         // $analisa_garam_gula = $identitas->analisaGaramGula()->with('disposisi')->get();
         $analisa_long_term = $identitas->analisaLongTerm;
+
         return view('foreman.rmpm.detail_data', compact('identitas', 'disposisi', 'data_dokumen', 'data_mobil', 'data_kemasan', 'data_raw', 'analisa_garam_gula', 'analisa_short_term', 'analisa_long_term'));
     }
 

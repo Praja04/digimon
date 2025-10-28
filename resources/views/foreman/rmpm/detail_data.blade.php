@@ -1582,24 +1582,6 @@
                                 value="{{ now()->format('Y-m-d\TH:i') }}">
                         </div>
                     </div>
-
-                    @php
-                        $samplingComplete =
-                            !is_null($identitas->samplingMobil) &&
-                            !is_null($identitas->samplingDokumen) &&
-                            !is_null($identitas->samplingFisikKemasan) &&
-                            !is_null($identitas->samplingFisikRaw);
-                    @endphp
-
-                    @if ($samplingComplete)
-                        <div class="alert alert-info text-center" id="pesanRequiredSampling" style="display:none;">
-                            Konfirmasi kedatangan sudah dilakukan.
-                        </div>
-                    @else
-                        <div class="alert alert-danger text-center" id="pesanRequiredSampling" style="display:none;">
-                            Silakan isi sampling terlebih dahulu.
-                        </div>
-                    @endif
                 </div>
                 <div class="modal-footer">
                     <button type="button" id="btnSimpanJam" class="btn btn-primary">Simpan</button>
@@ -1615,11 +1597,18 @@
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
 
     <script>
+        // =====================================
+        // AJAX SETUP & GLOBAL CSRF TOKEN
+        // =====================================
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+
+        // =====================================
+        // PDF DOWNLOAD HANDLER
+        // =====================================
         document.getElementById('downloadBtn').addEventListener('click', function() {
             var element = document.getElementById('demo');
 
@@ -1643,6 +1632,9 @@
             html2pdf().set(opt).from(element).save();
         });
 
+        // =====================================
+        // SAMPLING MODAL HANDLER
+        // =====================================
         document.addEventListener('DOMContentLoaded', function() {
             const samplingButtons = document.querySelectorAll('.sampling-option');
 
@@ -1678,20 +1670,20 @@
             });
         });
 
-        // Buat template URL dengan placeholder
+        // =====================================
+        // UPDATE DISPOSISI LONG TERM
+        // =====================================
         const updateDisposisiUrlTemplate = "{{ route('rmpm_foreman.updateDisposisiLong', ['id' => '__ID__']) }}";
 
-        // Ketika tombol Edit diklik
         $(document).on('click', '.btn-edit-disposisi', function() {
             const id = $(this).data('id');
             const currentDisposisi = $(this).data('disposisi');
 
             $('#disposisi').val(currentDisposisi);
-            $('#disposisi_id').val(id); // hidden input
+            $('#disposisi_id').val(id);
             $('#updateDisposisiModal').modal('show');
         });
 
-        // Submit form update disposisi
         $('#formUpdateDisposisi').on('submit', function(e) {
             e.preventDefault();
 
@@ -1702,13 +1694,16 @@
             $.post(url, data, function(res) {
                 $('#updateDisposisiModal').modal('hide');
                 Swal.fire('Sukses', 'Disposisi berhasil diperbarui', 'success').then(() => {
-                    location.reload(); // atau update baris tanpa reload
+                    location.reload();
                 });
             }).fail(function(xhr) {
                 Swal.fire('Gagal', 'Terjadi kesalahan saat mengirim data.', 'error');
             });
         });
 
+        // =====================================
+        // EDIT DOKUMEN FORM
+        // =====================================
         $('#editDokumenForm').on('submit', function(e) {
             e.preventDefault();
 
@@ -1753,6 +1748,9 @@
             });
         });
 
+        // =====================================
+        // EDIT KEMASAN FORM
+        // =====================================
         $('#editKemasanForm').on('submit', function(e) {
             e.preventDefault();
 
@@ -1760,7 +1758,6 @@
                 _token: $('meta[name="csrf-token"]').attr('content'),
                 _method: 'POST',
                 id: $('input[name="id_kemasan"]').val(),
-                coa: $('input[name="coa"]:checked').val(),
                 kotor: $('input[name="kotor"]:checked').val(),
                 rusak: $('input[name="rusak"]:checked').val(),
                 sesuai_std: $('input[name="sesuai_std"]:checked').val(),
@@ -1779,7 +1776,7 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'Berhasil!',
-                        text: 'Data dokumen berhasil diperbarui',
+                        text: 'Data kemasan berhasil diperbarui',
                         confirmButtonText: 'OK'
                     }).then(() => {
                         location.reload();
@@ -1799,6 +1796,9 @@
             });
         });
 
+        // =====================================
+        // EDIT MOBIL FORM
+        // =====================================
         $('#editMobilForm').on('submit', function(e) {
             e.preventDefault();
 
@@ -1823,7 +1823,7 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'Berhasil!',
-                        text: 'Data dokumen berhasil diperbarui',
+                        text: 'Data mobil berhasil diperbarui',
                         confirmButtonText: 'OK'
                     }).then(() => {
                         location.reload();
@@ -1843,6 +1843,9 @@
             });
         });
 
+        // =====================================
+        // EDIT RAW FORM
+        // =====================================
         $('#editRawForm').on('submit', function(e) {
             e.preventDefault();
 
@@ -1866,7 +1869,7 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'Berhasil!',
-                        text: 'Data dokumen berhasil diperbarui',
+                        text: 'Data raw berhasil diperbarui',
                         confirmButtonText: 'OK'
                     }).then(() => {
                         location.reload();
@@ -1886,39 +1889,38 @@
             });
         });
 
-
+        // =====================================
+        // SAMPLING FORM HANDLERS
+        // =====================================
         $(document).ready(function() {
-            // Tampilkan atau sembunyikan input tambahan
+            // Show/hide input tambahan based on radio selection
             $('form.form-sampling input[type=radio]').on('change', function() {
                 const parent = $(this).closest('.mb-3');
                 const wrapper = parent.find('.zak-input-wrapper');
                 const value = $(this).val();
-                const name = $(this).attr('name'); // ambil nama input (misalnya: sesuai_std, kotor, dll)
+                const name = $(this).attr('name');
 
-                // Default hide dulu
                 wrapper.hide();
                 wrapper.find('.zak-qty-input').val('');
 
                 if (name === 'sesuai_std') {
-                    // KHUSUS untuk Sesuai STD
                     if (value === 'no') {
                         wrapper.show();
                     }
                 } else {
-                    // Untuk field lain
                     if (value === 'yes') {
                         wrapper.show();
                     }
                 }
             });
 
+            // Close modal handler
             $('.modal').on('hidden.bs.modal', function() {
                 $('body').removeClass('modal-open');
                 $('.modal-backdrop').remove();
             });
 
-
-            // Fungsi untuk memproses value radio sebelum submit
+            // Prepare radio values before submit
             function prepareRadioValues(form) {
                 form.find('.mb-3').each(function() {
                     const parent = $(this);
@@ -1931,6 +1933,7 @@
                 });
             }
 
+            // Submit Kondisi Mobil
             $('#form-kondisi-mobil').on('submit', function(e) {
                 e.preventDefault();
 
@@ -1949,7 +1952,7 @@
                             title: 'Berhasil',
                             text: response.message || 'Data berhasil disimpan!',
                         }).then(() => {
-                            location.reload(); // Reload halaman untuk update data
+                            location.reload();
                         });
                     },
                     error: function(err) {
@@ -1963,6 +1966,7 @@
                 });
             });
 
+            // Submit Dokumen & Kemasan
             $('#form-dokumen, #form-kemasan').on('submit', function(e) {
                 e.preventDefault();
 
@@ -2003,6 +2007,7 @@
                 });
             });
 
+            // Submit Raw
             $('#form-raw').on('submit', function(e) {
                 e.preventDefault();
 
@@ -2012,16 +2017,16 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: '{{ route('sampling.fisik_raw.store') }}', // Pastikan route ini sesuai di Laravel Anda
+                    url: '{{ route('sampling.fisik_raw.store') }}',
                     data: data,
                     success: function(response) {
-                        $('#modalFisikRaw').modal('hide');
+                        $('#modalRaw').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil',
                             text: response.message || 'Data berhasil disimpan!',
                         }).then(() => {
-                            location.reload(); // Reload halaman untuk update data
+                            location.reload();
                         });
                     },
                     error: function(err) {
@@ -2034,10 +2039,11 @@
                     }
                 });
             });
-
         });
 
-
+        // =====================================
+        // KONFIRMASI JAM HANDLER
+        // =====================================
         $(document).ready(function() {
             var tipeInput = 'kedatangan';
 
@@ -2067,7 +2073,6 @@
                     }
                 });
 
-
                 $('#btnSimpanJam').click(function() {
                     var jam = $('#jamInput').val();
 
@@ -2078,17 +2083,16 @@
                         data: {
                             tipe: tipeInput,
                             jam: jam,
-                            _token: '{{ csrf_token() }}' // jangan lupa CSRF token
+                            _token: '{{ csrf_token() }}'
                         },
                         success: function(response) {
                             console.log('Response simpan:', response);
                             $('#statusMessage').show().text(response.message);
 
-                            // Kalau baru input kedatangan, sekarang lanjut analisa
                             if (tipeInput === 'kedatangan') {
                                 tipeInput = 'analisa';
                                 $('#labelJam').text('Jam Analisa');
-                                $('#jamInput').val(''); // kosongkan input
+                                $('#jamInput').val('');
                             } else {
                                 $('#modalKonfirmasi').modal('hide');
                                 Swal.fire({
@@ -2096,8 +2100,7 @@
                                     title: 'Berhasil',
                                     text: response.message || 'Data berhasil disimpan!',
                                 }).then(() => {
-                                    location
-                                        .reload(); // Reload halaman untuk update data
+                                    location.reload();
                                 });
                             }
                         },
@@ -2108,110 +2111,35 @@
                 });
             }
 
-            // Update setiap detik
             Konfirmasi();
         });
 
-        document.getElementById('downloadBtn').addEventListener('click', function() {
-            var element = document.getElementById('demo');
-
-            var opt = {
-                margin: 0.5,
-                filename: 'data-kedatangan.pdf',
-                image: {
-                    type: 'jpeg',
-                    quality: 0.98
-                },
-                html2canvas: {
-                    scale: 1
-                },
-                jsPDF: {
-                    unit: 'in',
-                    format: 'letter',
-                    orientation: 'portrait'
-                }
-            };
-
-            html2pdf().set(opt).from(element).save();
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const samplingButtons = document.querySelectorAll('.sampling-option');
-
-            samplingButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const samplingType = this.getAttribute('data-sampling');
-
-                    setTimeout(() => {
-                        let modalId = '';
-
-                        switch (samplingType) {
-                            case 'kondisi_mobil':
-                                modalId = 'modalKondisiMobil';
-                                break;
-                            case 'kondisi_dokumen':
-                                modalId = 'modalDokumen';
-                                break;
-                            case 'kondisi_kemasan':
-                                modalId = 'modalKemasan';
-                                break;
-                            case 'kondisi_raw':
-                                modalId = 'modalRaw';
-                                break;
-                        }
-
-                        if (modalId) {
-                            const modal = new bootstrap.Modal(document.getElementById(
-                                modalId));
-                            modal.show();
-                        }
-                    }, 500);
-                });
-            });
-
-
-        });
-    </script>
-
-    <script>
+        // =====================================
+        // ANALISA FORM - MAIN LOGIC
+        // =====================================
         const formContent = $('#form-analisa-content');
         let jenisGula = $('#jenis_gula').val();
 
-        // Initialize when document is ready
         $(document).ready(function() {
-            // Event handlers setup
             setupEventHandlers();
         });
 
         function setupEventHandlers() {
-            // Image compression handler
             $(document).on('change', 'input[name="attachment"]', handleImageCompression);
-
-            // Input formatting handlers
             $(document).on('input', '.decimal-only', formatDecimalInput);
             $(document).on('input', '.kapital-case', formatCapitalCase);
-
-            // Dynamic crystal test handling
             $(document).on('change', '#select-uji-kristal', handleCrystalTestChange);
-
-            // Enter key navigation
             $(document).on('keydown', 'input', handleEnterKey);
 
-            // Modal handlers
             $('#modalAnalisa')
                 .on('show.bs.modal', initializeModal)
                 .on('shown.bs.modal', function() {
-                    // Load draft setelah modal sepenuhnya terbuka
                     setTimeout(loadDraft, 100);
                 });
 
-            // Form submission
             $('#formAnalisa').on('submit', handleFormSubmit);
-
-            // Next button
             $('#nextBtn').click(handleNextButton);
 
-            // Auto-save changes
             $(document).on('input change',
                 '#form-analisa-content input, #form-analisa-content select, #form-analisa-content textarea',
                 function() {
@@ -2219,11 +2147,10 @@
                 });
         }
 
+        // Image compression handler
         async function handleImageCompression(event) {
             const file = event.target.files[0];
-            if (!file) return;
-
-            if (file.size <= 2 * 1024 * 1024) return;
+            if (!file || file.size <= 2 * 1024 * 1024) return;
 
             const options = {
                 maxSizeMB: 2,
@@ -2242,6 +2169,7 @@
             }
         }
 
+        // Format decimal input
         function formatDecimalInput() {
             let val = $(this).val();
             val = val.replace(/[^0-9,]/g, '');
@@ -2249,50 +2177,13 @@
             $(this).val(val);
         }
 
+        // Format capital case
         function formatCapitalCase() {
             let value = $(this).val().toUpperCase().replace(/[^A-Z\s]/g, '');
             $(this).val(value);
         }
 
-        function handleCrystalTestChange() {
-            const value = $(this).val();
-            console.log('Crystal test changed to:', value);
-
-            // Hide all sections first
-            $('.attachment-wrapper, .disposisi-wrapper, .disposisi-wrapper-negatif, .disposisi').hide();
-
-            if (value === 'negatif') {
-                console.log('Showing disposisi-wrapper-negatif');
-                $('.disposisi-wrapper-negatif').show();
-
-                // Auto-set disposisi to Release for negatif
-                $('.disposisi-wrapper-negatif select[name="disposisi"]').val('Release');
-
-                // Trigger save draft
-                saveDraft();
-
-            } else if (value === 'positif') {
-                console.log('Showing attachment-wrapper');
-                $('.attachment-wrapper').show();
-
-                // Clear disposisi for positif (backend will handle)
-                $('select[name="disposisi"]').val('');
-
-                // Trigger save draft
-                saveDraft();
-
-            } else {
-                console.log('Showing default disposisi');
-                $('.disposisi').show();
-
-                // Clear disposisi when no selection
-                $('.disposisi select[name="disposisi"]').val('');
-
-                // Trigger save draft
-                saveDraft();
-            }
-        }
-
+        // Handle enter key navigation
         function handleEnterKey(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -2303,10 +2194,36 @@
             }
         }
 
+        // Crystal test change handler
+        function handleCrystalTestChange() {
+            const value = $(this).val();
+            console.log('Crystal test changed to:', value);
+
+            $('.attachment-wrapper, .disposisi-wrapper, .disposisi-wrapper-negatif, .disposisi').hide();
+
+            if (value === 'negatif') {
+                console.log('Showing disposisi-wrapper-negatif');
+                $('.disposisi-wrapper-negatif').show();
+                $('.disposisi-wrapper-negatif select[name="disposisi"]').val('Release');
+                saveDraft();
+            } else if (value === 'positif') {
+                console.log('Showing attachment-wrapper');
+                $('.attachment-wrapper').show();
+                $('select[name="disposisi"]').val('');
+                saveDraft();
+            } else {
+                console.log('Showing default disposisi');
+                $('.disposisi').show();
+                $('.disposisi select[name="disposisi"]').val('');
+                saveDraft();
+            }
+        }
+
+        // Initialize modal
         function initializeModal() {
             formContent.html('');
             $('#analisa-type-select, #analisa-jumlah').hide();
-            $(' #nextBtn').show().text('Berikutnya');
+            $('#nextBtn').show().text('Berikutnya');
 
             const draft = localStorage.getItem('analisaDraft');
             console.log('Draft analisa:', draft);
@@ -2314,32 +2231,25 @@
             if (draft) {
                 const draftData = JSON.parse(draft);
 
-                // Check if there's actual analysis data (not just analisaType and jumlahData)
                 const hasOtherData = Object.keys(draftData).some(key => {
                     const cleanKey = key.replace(/\[\]$/, '');
-                    // Skip analisaType and jumlahData
                     if (['analisaType', 'jumlahData'].includes(cleanKey)) {
                         return false;
                     }
 
-                    // Check if this field has meaningful data
                     const value = draftData[key];
                     if (Array.isArray(value)) {
-                        // For arrays, check if at least one element is not empty
                         return value.some(item => item && item.toString().trim() !== '');
                     } else {
-                        // For non-arrays, check if not empty
                         return value && value.toString().trim() !== '';
                     }
                 });
 
                 console.log('Has other data:', hasOtherData);
-                console.log('Draft data keys:', Object.keys(draftData));
 
                 if (hasOtherData && draftData.jumlahData && draftData.analisaType) {
                     console.log('Loading existing draft data...');
 
-                    // Update jenisGula if available in draft
                     if (draftData.jenisGula) {
                         jenisGula = draftData.jenisGula;
                     }
@@ -2347,17 +2257,12 @@
                     const jumlahData = parseInt(draftData.jumlahData);
                     const analisaType = draftData.analisaType;
 
-                    // Render analysis fields immediately
                     renderAnalysisFields(jumlahData, analisaType);
-
-                    // Hide the navigation buttons since we're going directly to the analysis form
                     $('#prevBtn, #nextBtn').hide();
-
-                    return; // Exit early, loadDraft will be called in shown.bs.modal
+                    return;
                 }
             }
 
-            // Fallback - show initial selection screens
             if (jenisGula === 'Gula Kelapa' || jenisGula === 'Gula Tebu') {
                 $('#analisa-type-select').show();
             } else if (jenisGula === 'Gula' || jenisGula === 'Garam') {
@@ -2370,6 +2275,7 @@
             }
         }
 
+        // Handle next button
         function handleNextButton() {
             if ($('#analisa-type-select').is(':visible')) {
                 const analisaType = $('input[name="analisa_type"]:checked').val();
@@ -2378,7 +2284,6 @@
                     return;
                 }
 
-                // Jika long-term langsung render form tanpa input jumlah data
                 if (analisaType === 'long-term') {
                     $('#analisa-type-select').hide();
                     $('#prevBtn, #nextBtn').hide();
@@ -2386,7 +2291,6 @@
                     return;
                 }
 
-                // Jika short-term tampilkan input jumlah data
                 $('#analisa-type-select').hide();
                 $('#analisa-jumlah').show();
                 return;
@@ -2407,11 +2311,15 @@
             }
         }
 
+        // Render analysis fields - FIXED FOR GARAM
         function renderAnalysisFields(jumlahData, analisaType = null) {
             let fields = [];
 
             if (jenisGula === 'Gula' || jenisGula === 'Garam') {
-                fields = ['fisik', '%ka', 'kotoran', 'organo', 'warna', 'aroma', '%nacl', 'gross_weight', 'disposisi'];
+                // FIX: Use safe field names for IDs
+                fields = ['fisik', 'persen_ka', 'kotoran', 'organo', 'warna', 'aroma', 'persen_nacl', 'gross_weight',
+                    'disposisi'
+                ];
             } else {
                 if (!analisaType) {
                     analisaType = $('input[name="analisa_type"]:checked').val();
@@ -2430,14 +2338,15 @@
             fields.forEach((field, idx) => {
                 const activeClass = idx === 0 ? 'active' : '';
                 const showClass = idx === 0 ? 'show active' : '';
+
                 const labelMap = {
                     fisik: 'Fisik',
-                    '%ka': '%KA',
+                    persen_ka: '%KA',
                     kotoran: 'Kotoran',
                     organo: 'Organo',
                     warna: 'Warna',
                     aroma: 'Aroma',
-                    '%nacl': '%NaCl',
+                    persen_nacl: '%NaCl',
                     gross_weight: 'Gross Weight',
                     disposisi: 'Disposisi',
                     brix: 'Brix',
@@ -2448,16 +2357,18 @@
                 };
 
                 navHtml += `
-        <li class="nav-item" role="presentation">
-            <button class="nav-link ${activeClass}" id="${field}-tab" data-bs-toggle="tab" data-bs-target="#tab-${field}" type="button" role="tab" aria-controls="tab-${field}" aria-selected="${idx === 0 ? 'true' : 'false'}">
-                ${labelMap[field] || field.toUpperCase()}
-            </button>
-        </li>`;
+            <li class="nav-item" role="presentation">
+                <button class="nav-link ${activeClass}" id="${field}-tab" data-bs-toggle="tab" 
+                        data-bs-target="#tab-${field}" type="button" role="tab" 
+                        aria-controls="tab-${field}" aria-selected="${idx === 0 ? 'true' : 'false'}">
+                    ${labelMap[field] || field.toUpperCase()}
+                </button>
+            </li>`;
 
                 tabContentHtml += `
-        <div class="tab-pane fade ${showClass}" id="tab-${field}" role="tabpanel" aria-labelledby="${field}-tab">
-            ${renderFieldInput(field, jumlahData)}
-        </div>`;
+            <div class="tab-pane fade ${showClass}" id="tab-${field}" role="tabpanel" aria-labelledby="${field}-tab">
+                ${renderFieldInput(field, jumlahData)}
+            </div>`;
             });
 
             navHtml += `</ul>`;
@@ -2465,61 +2376,66 @@
 
             formContent.html(navHtml + tabContentHtml);
             console.log('Analysis fields rendered');
+
+            setupTabValidation();
         }
 
+        // Render field input - FIXED MAPPING
         function renderFieldInput(fieldName, count) {
-            const commonInput = (label, name, placeholder, extraClass = '') => `
-        <div class="mb-3">
-            <label class="form-label fw-medium">${label}</label>
-            <input type="text" class="form-control ${extraClass}" name="${name}" placeholder="${placeholder}">
-        </div>`;
+            // Map clean field names to actual form names
+            const nameMap = {
+                'persen_ka': '%ka',
+                'persen_nacl': '%nacl'
+            };
+
+            const actualFieldName = nameMap[fieldName] || fieldName;
 
             switch (fieldName) {
                 case 'disposisi':
                     return `
-            <div class="disposisi-wrapper" style="display:none;">
-                <label class="form-label fw-medium">Disposisi</label>
-                <select class="form-select mb-3" name="disposisi">
-                    <option value="">Pilih Disposisi</option>
-                    <option value="Release">Release</option>
-                    <option value="Reject">Reject</option>
-                </select>
-            </div>
-            <div class="disposisi-wrapper-negatif" style="display:none;">
-                <label class="form-label fw-medium">Disposisi</label>
-                <select class="form-select mb-3" name="disposisi">
-                    <option value="">Pilih Disposisi</option>
-                    <option value="Release">Release</option>
-                </select>
-            </div>
-            <div class="disposisi">
-                <label class="form-label fw-medium">Disposisi</label>
-                <select class="form-select mb-3" name="disposisi">
-                    <option value="">Pilih Disposisi</option>
-                    <option value="Release">Release</option>
-                    <option value="Reject">Reject</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 mt-3">Simpan</button>`;
+                <div class="disposisi-wrapper" style="display:none;">
+                    <label class="form-label fw-medium">Disposisi</label>
+                    <select class="form-select mb-3" name="disposisi">
+                        <option value="">Pilih Disposisi</option>
+                        <option value="Release">Release</option>
+                        <option value="Reject">Reject</option>
+                    </select>
+                </div>
+                <div class="disposisi-wrapper-negatif" style="display:none;">
+                    <label class="form-label fw-medium">Disposisi</label>
+                    <select class="form-select mb-3" name="disposisi">
+                        <option value="">Pilih Disposisi</option>
+                        <option value="Release">Release</option>
+                    </select>
+                </div>
+                <div class="disposisi">
+                    <label class="form-label fw-medium">Disposisi</label>
+                    <select class="form-select mb-3" name="disposisi">
+                        <option value="">Pilih Disposisi</option>
+                        <option value="Release">Release</option>
+                        <option value="Reject">Reject</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mt-3">Simpan</button>`;
 
                 case 'uji_kristal':
                     return `
-            <div class="mb-3">
-                <label class="form-label fw-medium">Hasil Uji Kristal</label>
-                <select class="form-select" name="uji_kristal" id="select-uji-kristal">
-                    <option value="">Pilih Hasil Uji</option>
-                    <option value="negatif">Negatif</option>
-                    <option value="positif">Positif</option>
-                </select>
-            </div>`;
+                <div class="mb-3">
+                    <label class="form-label fw-medium">Hasil Uji Kristal</label>
+                    <select class="form-select" name="uji_kristal" id="select-uji-kristal">
+                        <option value="">Pilih Hasil Uji</option>
+                        <option value="negatif">Negatif</option>
+                        <option value="positif">Positif</option>
+                    </select>
+                </div>`;
 
                 case 'attachment':
                     return `
-            <div class="attachment-wrapper">
-                <label class="form-label fw-medium">Lampirkan Gambar</label>
-                <input type="file" class="form-control" name="attachment" accept="image/*">
-                <div class="form-text">Format: JPG, PNG, max 2 MB</div>
-            </div>`;
+                <div class="attachment-wrapper">
+                    <label class="form-label fw-medium">Lampirkan Gambar</label>
+                    <input type="file" class="form-control" name="attachment" accept="image/*">
+                    <div class="form-text">Format: JPG, PNG, max 2 MB</div>
+                </div>`;
 
                 case 'organo':
                 case 'warna':
@@ -2527,10 +2443,10 @@
                     let html = '<div class="row g-2">';
                     for (let i = 1; i <= count; i++) {
                         html += `
-                <div class="col-md-6 col-lg-4">
-                    <label class="form-label fw-medium">Sampel ${i}</label>
-                    <input type="text" class="form-control kapital-case" name="${fieldName}[]" placeholder="${fieldName} ke-${i}">
-                </div>`;
+                    <div class="col-md-6 col-lg-4">
+                        <label class="form-label fw-medium">Sampel ${i}</label>
+                        <input type="text" class="form-control kapital-case" name="${actualFieldName}[]" placeholder="Sampel ${i}">
+                    </div>`;
                     }
                     html += '</div>';
                     return html;
@@ -2539,25 +2455,24 @@
                     let defaultHtml = '<div class="row g-2">';
                     for (let i = 1; i <= count; i++) {
                         defaultHtml += `
-                <div class="col-md-6 col-lg-4">
-                    <label class="form-label fw-medium">Sampel ${i}</label>
-                    <input type="text" class="form-control decimal-only" name="${fieldName}[]" placeholder="${fieldName} ke-${i}">
-                </div>`;
+                    <div class="col-md-6 col-lg-4">
+                        <label class="form-label fw-medium">Sampel ${i}</label>
+                        <input type="text" class="form-control decimal-only" name="${actualFieldName}[]" placeholder="Sampel ${i}">
+                    </div>`;
                     }
                     defaultHtml += '</div>';
                     return defaultHtml;
             }
         }
 
+        // Save draft
         function saveDraft() {
             let draftData = {};
 
-            // Get existing draft first to preserve analisaType and jumlahData
             const existingDraft = localStorage.getItem('analisaDraft');
             if (existingDraft) {
                 try {
                     const existing = JSON.parse(existingDraft);
-                    // Preserve important meta fields
                     if (existing.analisaType) draftData.analisaType = existing.analisaType;
                     if (existing.jumlahData) draftData.jumlahData = existing.jumlahData;
                     if (existing.jenisGula) draftData.jenisGula = existing.jenisGula;
@@ -2566,7 +2481,6 @@
                 }
             }
 
-            // Collect current form data
             $('#form-analisa-content').find('input, select, textarea').each(function() {
                 let name = $(this).attr('name');
                 let value = $(this).val();
@@ -2581,21 +2495,19 @@
                 }
             });
 
-            // Try to get analysis type and jumlah data from current form state
             const analisaTypeFromForm = $('input[name="analisa_type"]:checked').val();
             const jumlahDataFromForm = $('#jumlah_data').val();
 
-            // Update with current form values if available
             if (analisaTypeFromForm) draftData.analisaType = analisaTypeFromForm;
             if (jumlahDataFromForm) draftData.jumlahData = jumlahDataFromForm;
 
-            // Always save jenisGula for context
             draftData.jenisGula = jenisGula;
 
             localStorage.setItem('analisaDraft', JSON.stringify(draftData));
             console.log('Draft saved:', draftData);
         }
 
+        // Load draft
         function loadDraft(draftData = null) {
             if (!draftData) {
                 const draft = localStorage.getItem('analisaDraft');
@@ -2605,10 +2517,9 @@
 
             console.log('Loading draft:', draftData);
 
-            // Load form values
             for (const name in draftData) {
                 if (['analisaType', 'jumlahData', 'jenisGula'].includes(name)) {
-                    continue; // Skip meta fields
+                    continue;
                 }
 
                 const elements = $(`[name="${name}"]`);
@@ -2625,14 +2536,12 @@
                 }
             }
 
-            // Handle crystal test change if uji_kristal exists
             if (draftData.uji_kristal) {
                 setTimeout(() => {
                     $('#select-uji-kristal').trigger('change');
                 }, 100);
             }
 
-            // Show the first tab (usually BRIX for short-term)
             setTimeout(() => {
                 const firstTab = $('.nav-tabs a').first();
                 if (firstTab.length) {
@@ -2643,24 +2552,20 @@
             console.log('Draft loaded successfully');
         }
 
+        // Handle form submit
         function handleFormSubmit(e) {
             e.preventDefault();
 
-            // Convert comma decimals to dots
             $('.decimal-only').each(function() {
                 const val = $(this).val().replace(',', '.');
                 $(this).val(val);
             });
 
             const jenis = $('#jenis_gula').val();
-
-            // Get analisaType from multiple sources - prioritas dari draft
             let analisaType = null;
 
-            // 1. Try to get from checked radio button
             analisaType = $('input[name="analisa_type"]:checked').val();
 
-            // 2. If not found, try to get from localStorage draft
             if (!analisaType) {
                 const draft = localStorage.getItem('analisaDraft');
                 if (draft) {
@@ -2674,12 +2579,10 @@
 
             let url = '';
 
-            // Create FormData FIRST
             const token = $('meta[name="csrf-token"]').attr('content');
             const formData = new FormData(this);
             formData.append('_token', token);
 
-            // Add analisaType to formData if available
             if (analisaType) {
                 formData.append('analisa_type', analisaType);
             }
@@ -2691,25 +2594,20 @@
                     const kristalVal = $('select[name="uji_kristal"]').val();
                     console.log('kristalVal:', kristalVal);
 
-                    // Validasi wajib uji_kristal untuk long-term
                     if (!kristalVal) {
                         alert('Silakan pilih hasil uji kristal.');
                         return;
                     }
 
-                    // Jika uji kristal negatif, disposisi wajib Release dan attachment dihapus
                     if (kristalVal === 'negatif') {
                         console.log('Kristal negatif - setting disposisi to Release');
 
-                        // Set disposisi ke Release di form dan formData
                         $('.disposisi-wrapper-negatif select[name="disposisi"]').val('Release');
                         formData.set('disposisi', 'Release');
 
-                        // Hapus attachment dari formData jika ada
                         formData.delete('attachment');
                     }
 
-                    // Jika positif, wajib lampirkan gambar dan hapus disposisi (biar backend handle)
                     if (kristalVal === 'positif') {
                         console.log('Kristal positif - checking attachment');
 
@@ -2719,16 +2617,13 @@
                             return;
                         }
 
-                        // Hapus disposisi dari formData (biar backend yang handle)
                         formData.delete('disposisi');
                         console.log('Attachment found, disposisi removed from formData');
                     }
 
                 } else if (analisaType === 'short-term') {
-                    // short-term
                     url = '/analis/analisa/short-term';
 
-                    // Ambil disposisi dari form - cari yang visible/active untuk short-term
                     const disposisiVal = $('.disposisi select[name="disposisi"]:visible').val();
                     console.log('Short-term disposisiVal:', disposisiVal);
 
@@ -2744,7 +2639,6 @@
             } else if (jenis === 'Gula' || jenis === 'Garam') {
                 url = '/analis/analisa/garam-gula';
 
-                // Untuk Gula/Garam, cek disposisi - cari yang visible/active
                 const disposisiVal = $('.disposisi select[name="disposisi"]:visible').val();
                 console.log('Gula/Garam disposisiVal:', disposisiVal);
 
@@ -2757,18 +2651,15 @@
                 return;
             }
 
-            // Log formData contents for debugging
             console.log('FormData contents:');
             for (let pair of formData.entries()) {
                 console.log(pair[0] + ': ' + pair[1]);
             }
 
-            // Build proper URL
-            const baseUrl = "{{ url('/') }}";
+            const baseUrl = window.location.origin;
             const fullUrl = baseUrl + url;
             console.log('Submitting to URL:', fullUrl);
 
-            // Final validation
             if (!url) {
                 alert('URL tidak dapat dibentuk. Silakan refresh halaman dan coba lagi.');
                 return;
@@ -2818,110 +2709,22 @@
             });
         }
 
-        // Tambahkan script ini di bagian bawah, setelah function handleFormSubmit
-
-        function validateCurrentTab() {
-            const activeTab = $('.tab-pane.active');
-            const inputs = activeTab.find('input[type="text"], select');
-            let allFilled = true;
-
-            inputs.each(function() {
-                const value = $(this).val();
-                if (!value || value.trim() === '') {
-                    allFilled = false;
-                    return false; // break loop
-                }
-            });
-
-            return allFilled;
-        }
-
-        // Modifikasi function renderAnalysisFields untuk menambahkan disabled state
-        function renderAnalysisFields(jumlahData, analisaType = null) {
-            let fields = [];
-
-            if (jenisGula === 'Gula' || jenisGula === 'Garam') {
-                fields = ['fisik', '%ka', 'kotoran', 'organo', 'warna', 'aroma', '%nacl', 'gross_weight', 'disposisi'];
-            } else {
-                if (!analisaType) {
-                    analisaType = $('input[name="analisa_type"]:checked').val();
-                }
-
-                if (analisaType === 'short-term') {
-                    fields = ['brix', 'ph', 'kotoran', 'ka', 'organo', 'warna', 'aroma', 'disposisi'];
-                } else if (analisaType === 'long-term') {
-                    fields = ['uji_kristal', 'attachment', 'disposisi'];
-                }
-            }
-
-            let navHtml = `<ul class="nav nav-tabs nav-tabs-custom" id="analisaTab" role="tablist">`;
-            let tabContentHtml = `<div class="tab-content mt-3">`;
-
-            fields.forEach((field, idx) => {
-                const activeClass = idx === 0 ? 'active' : '';
-                const showClass = idx === 0 ? 'show active' : '';
-
-                const labelMap = {
-                    fisik: 'Fisik',
-                    '%ka': '%KA',
-                    kotoran: 'Kotoran',
-                    organo: 'Organo',
-                    warna: 'Warna',
-                    aroma: 'Aroma',
-                    '%nacl': '%NaCl',
-                    gross_weight: 'Gross Weight',
-                    disposisi: 'Disposisi',
-                    brix: 'Brix',
-                    ph: 'pH',
-                    ka: 'KA',
-                    uji_kristal: 'Uji Kristal',
-                    attachment: 'Lampiran'
-                };
-
-                navHtml += `
-        <li class="nav-item" role="presentation">
-            <button class="nav-link ${activeClass}" id="${field}-tab" data-bs-toggle="tab" 
-                    data-bs-target="#tab-${field}" type="button" role="tab" 
-                    aria-controls="tab-${field}" aria-selected="${idx === 0 ? 'true' : 'false'}">
-                ${labelMap[field] || field.toUpperCase()}
-            </button>
-        </li>`;
-
-                tabContentHtml += `
-        <div class="tab-pane fade ${showClass}" id="tab-${field}" role="tabpanel" aria-labelledby="${field}-tab">
-            ${renderFieldInput(field, jumlahData)}
-        </div>`;
-            });
-
-            navHtml += `</ul>`;
-            tabContentHtml += `</div>`;
-
-            formContent.html(navHtml + tabContentHtml);
-            console.log('Analysis fields rendered with validation');
-
-            // Setup validation after rendering
-            setupTabValidation();
-        }
-
+        // Setup tab validation
         function setupTabValidation() {
-            // Monitor input changes
             $(document).on('input change', '#form-analisa-content input, #form-analisa-content select', function() {
                 saveDraft();
             });
 
-            // Prevent tab switching if current tab is not complete
             $(document).on('show.bs.tab', '#analisaTab button[data-bs-toggle="tab"]', function(e) {
                 const clickedTab = $(e.target);
                 const clickedIndex = $('#analisaTab .nav-link').index(clickedTab);
                 const currentActiveTab = $('#analisaTab .nav-link.active').not(clickedTab);
                 const currentActiveIndex = $('#analisaTab .nav-link').index(currentActiveTab);
 
-                // Allow clicking on previous or current tabs
                 if (clickedIndex <= currentActiveIndex) {
                     return;
                 }
 
-                // Check if ALL previous tabs are complete
                 let incompleteTabIndex = -1;
                 let incompleteTabName = '';
 
@@ -2948,12 +2751,10 @@
                     }
                 }
 
-                // If there's an incomplete tab, prevent switching and show alert
                 if (incompleteTabIndex !== -1) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    // Switch back to the incomplete tab
                     const incompleteTab = $('#analisaTab .nav-link').eq(incompleteTabIndex);
                     const incompleteTabId = incompleteTab.attr('data-bs-target');
 
@@ -2963,11 +2764,9 @@
                         text: `Harap lengkapi isian pada tab "${incompleteTabName}" terlebih dahulu!`,
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        // Activate the incomplete tab
                         const tabTrigger = new bootstrap.Tab(incompleteTab[0]);
                         tabTrigger.show();
 
-                        // Focus on first empty input
                         const firstEmptyInput = $(incompleteTabId).find('input[type="text"], select')
                             .filter(function() {
                                 const val = $(this).val();
@@ -2986,30 +2785,32 @@
             });
         }
 
-        // CSS untuk visual feedback - tambahkan di <style> section
+        // Validation styles
         const validationStyles = `
-<style>
-.tab-pane input:focus,
-.tab-pane select:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
+    <style id="tab-validation-styles">
+    .tab-pane input:focus,
+    .tab-pane select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
 
-.tab-pane input.is-invalid,
-.tab-pane select.is-invalid {
-    border-color: #dc3545;
-}
+    .tab-pane input.is-invalid,
+    .tab-pane select.is-invalid {
+        border-color: #dc3545;
+    }
 
-.tab-pane input.is-valid,
-.tab-pane select.is-valid {
-    border-color: #198754;
-}
-</style>
-`;
+    .tab-pane input.is-valid,
+    .tab-pane select.is-valid {
+        border-color: #198754;
+    }
+    </style>
+    `;
 
-        // Inject styles
+        // Inject styles if not exists
         if (!$('#tab-validation-styles').length) {
-            $('head').append(validationStyles.replace('<style>', '<style id="tab-validation-styles">'));
+            $('head').append(validationStyles);
         }
     </script>
+
+
 @endsection

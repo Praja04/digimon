@@ -10,7 +10,7 @@
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
                         <li class="breadcrumb-item"><a href="javascript: void(0);">QC</a></li>
-                        <li class="breadcrumb-item active">Analis</li>
+                        <li class="breadcrumb-item active">Foreman</li>
                     </ol>
                 </div>
 
@@ -24,29 +24,6 @@
                 <div class="flex-grow-1">
                     <h4 class="fs-16 mb-1">Selamat Datang, {{ Session::get('username') }}!</h4>
                     <p class="text-muted mb-0">Mari tingkatkan kualitas agar menjadi perusahaan makanan kelas dunia.</p>
-                </div>
-                <div class="mt-3 mt-lg-0">
-                    <form action="javascript:void(0);">
-                        <div class="row g-3 mb-0 align-items-center">
-                            <div class="col-sm-auto">
-                                <div class="input-group">
-                                    <input id="date-picker" type="text"
-                                        class="form-control border-0 dash-filter-picker shadow" data-provider="flatpickr"
-                                        data-range-date="true" data-date-format="d M, Y"
-                                        data-default-date="01 Jan 2022 to 31 Jan 2022">
-                                    <div class="input-group-text bg-primary border-primary text-white">
-                                        <i class="ri-calendar-2-line"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <button type="button"
-                                    class="btn btn-soft-info btn-icon waves-effect waves-light layout-rightside-btn shadow-none">
-                                    <i class="ri-pulse-line"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
@@ -182,7 +159,7 @@
 
             <!-- Modal untuk input identitas RM -->
             <div class="modal fade" id="showModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="modalLabel">Input Identitas RM</h5>
@@ -206,8 +183,7 @@
                                 <div class="mb-3">
                                     <label for="tanggal_kedatangan" class="form-label">Tanggal & Jam Kedatangan</label>
                                     <input type="datetime-local" class="form-control" id="tanggal_kedatangan"
-                                        name="tanggal_kedatangan" required>
-
+                                        name="tanggal_kedatangan" value="{{ now()->format('Y-m-d\TH:i') }}" required>
                                 </div>
 
                                 <div class="mb-3">
@@ -235,12 +211,12 @@
                                 <div class="mb-3">
                                     <label for="jumlah_kedatangan" class="form-label">Jumlah Kedatangan (kg)</label>
                                     <input type="number" class="form-control" id="jumlah_kedatangan"
-                                        name="jumlah_kedatangan" placeholder="input dalam kilogram">
+                                        name="jumlah_kedatangan" placeholder="input dalam kilogram" required>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="lot_batch" class="form-label">Lot / Batch</label>
-                                    <input type="text" class="form-control" id="lot_batch" name="lot_batch">
+                                    <input type="text" class="form-control" id="lot_batch" name="lot_batch" required>
                                 </div>
 
                                 <div class="modal-footer">
@@ -255,7 +231,7 @@
             </div>
             <div class="modal fade" id="qrModalDynamic" tabindex="-1" aria-labelledby="qrModalDynamicLabel"
                 aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered mod al-lg">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content">
                         <div class="modal-header py-2">
                             <h5 class="modal-title" id="qrModalDynamicLabel">QR Code - ID</h5>
@@ -280,7 +256,7 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
-        const itemsPerPageRM = 20;
+        const itemsPerPageRM = 10;
         let dataRMStore = {
             tabAll: [],
             gulatebu: [],
@@ -316,9 +292,18 @@
         <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
             <a class="page-link rm-page-btn" href="#" data-tab="${tabId}" data-page="${currentPage - 1}">←</a>
         </li>
-    `);
+     `);
 
-            for (let i = 1; i <= totalPages; i++) {
+            const maxVisiblePages = 7;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+            // Adjust startPage if we're near the end
+            if (endPage - startPage < maxVisiblePages - 1) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
                 $pagination.append(`
             <li class="page-item ${i === currentPage ? 'active' : ''}">
                 <a class="page-link rm-page-btn" href="#" data-tab="${tabId}" data-page="${i}">${i}</a>
@@ -331,7 +316,7 @@
         <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
             <a class="page-link rm-page-btn" href="#" data-tab="${tabId}" data-page="${currentPage + 1}">→</a>
         </li>
-    `);
+      `);
 
             // Event klik pagination
             $('.rm-page-btn').click(function(e) {
@@ -348,6 +333,8 @@
             const statusFilter = $('#filterStatus').val();
             const startDate = $('#start_date').val();
             const endDate = $('#end_date').val();
+
+
             $.ajax({
                 url: "{{ url('analis/rmpm/data/rm') }}",
                 method: 'GET',
@@ -385,28 +372,29 @@
                         if (startDateObj && itemDate < startDateObj) return;
                         if (endDateObj && itemDate > endDateObj) return;
 
+
                         const row = `
-<tr>
-    <td>${index + 1}</td>
-    <td>${item.no_spb}</td>
-    <td>${item.jenis_gula}</td>
-    <td>${item.nama_bahan}</td>
-    <td>${item.suplier_manufactur}</td>
-    <td>${item.tanggal_kedatangan}</td>
-    <td>${item.asal_bahan}</td>
-    <td>${item.jumlah_kedatangan}</td>
-    <td>${item.status === 'done' ? '✅ Selesai' : '⌛ Proses'}</td>
-    <td>
-        <a href="{{ url('/analis/rmpm/detail-identitas/${item.id}') }}" class="btn btn-sm btn-info">
-            <i class="ri-eye-line"></i> View
-        </a>
-    </td>
-    <td>
-        <button type="button" class="btn btn-sm btn-primary" onclick="showQrModal(${item.id}, '${item.id}_${item.no_spb}_${item.tanggal_kedatangan}_${item.nama_bahan}')">
-            QR Code
-        </button>
-    </td>
-</tr>`;
+            <tr>
+                <td>${index + 1}</td>
+                <td>${item.no_spb}</td>
+                <td>${item.jenis_gula}</td>
+                <td>${item.nama_bahan}</td>
+                <td>${item.suplier_manufactur}</td>
+                <td>${item.tanggal_kedatangan}</td>
+                <td>${item.asal_bahan}</td>
+                <td>${item.jumlah_kedatangan}</td>
+                <td>${item.status === 'done' ? '✅ Selesai' : '⌛ Proses'}</td>
+                <td>
+                    <a href="{{ url('/analis/rmpm/detail-identitas/${item.id}') }}" class="btn btn-sm btn-info">
+                        <i class="ri-eye-line"></i> View
+                    </a>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showQrModal(${item.id}, '${item.id}_${item.no_spb}_${item.tanggal_kedatangan}_${item.nama_bahan}')">
+                        QR Code
+                    </button>
+                </td>
+            </tr>`;
 
                         tabRows.tabAll.push(row);
                         if (item.jenis_gula === 'Gula') tabRows.gula.push(row);
@@ -441,7 +429,7 @@
 
             const qrArea = document.getElementById('qrImageArea');
             qrArea.innerHTML = ''; // Clear previous QR
-            const urlToEncode = `${window.location.origin}/analis/rmpm/detail-identitas/${id}`;
+            const urlToEncode = `${window.location.origin}/analis/rmpm/detail/data/${id}`;
 
             new QRCode(qrArea, {
                 text: urlToEncode,
